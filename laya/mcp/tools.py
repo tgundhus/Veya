@@ -48,7 +48,8 @@ def get_available_presets() -> dict[str, dict[str, Any]]:
     about. Builders are resolved through ``laya`` at call time, the way ``laya.mcp.server`` resolves
     them, so a preset added in a newer version shows up here as soon as it is importable.
     """
-    import laya
+    from importlib import import_module
+    laya = import_module("..", __package__)
 
     aliases: dict[str, list[str]] = {}
     for alias, target in PRESET_ALIASES.items():
@@ -257,7 +258,7 @@ def validate_model(model: Any) -> str:
         return AUTO
     if isinstance(model, str) and model.strip().lower() == AUTO:
         return AUTO
-    from laya.router import normalise_name
+    from ..router import normalise_name
 
     try:
         return normalise_name(model)
@@ -277,7 +278,7 @@ def validate_task(task: Any) -> str | None:
     """
     if task is None:
         return None
-    from laya.router import normalise_name
+    from ..router import normalise_name
 
     # The remap is core's own expression, copied rather than relied upon through the alias table:
     # `Router._route` turns task="typed_decisions" (the underscore form the CLI and the question ids
@@ -768,7 +769,7 @@ def laya_shortlist(
             "laya_predict with head_max_len raised, or run the MCP server without LAYA_BASE_URL.",
         )
     # Lazy: keeps numpy/shortlist out of module import for laya.mcp.tools.
-    from laya.shortlist import (
+    from ..shortlist import (
         DEFAULT_SHORTLIST_K,
         cached_embed_fn,
         embed_fn_from_agent,
@@ -852,6 +853,9 @@ def laya_shortlist(
         predict_kwargs.update(budget)
 
     if embed_fn is None:
+        if getattr(router, "backend", None) == "onnx" or getattr(embed_agent, "_tokenizer_backend", None) == "tokenizers":
+            raise ToolError("unsupported_backend", "laya_shortlist requires checkpoint encoder embeddings, which "
+                            "the ONNX graph does not export; use laya_tournament")
         try:
             embed_fn = _embed_fn_with_cache(embed_agent, embed_fn_from_agent, cached_embed_fn)
         except (AttributeError, TypeError, ValueError) as exc:
@@ -956,7 +960,7 @@ def laya_tournament(
     if "lang" in routing_overrides:
         forward["lang"] = routing_overrides["lang"]
 
-    from laya.shortlist import predict_tournament
+    from ..shortlist import predict_tournament
 
     started = time.perf_counter()
     routing = None
@@ -1188,7 +1192,8 @@ def _remote_status(router: Any, preload: bool) -> dict:
     """``laya_status`` for a remote router: the server's own /health, no torch import here."""
     versions: dict[str, str | None] = {"laya": None}
     try:
-        versions["laya"] = getattr(__import__("laya"), "__version__", "unknown")
+        from .. import __version__
+        versions["laya"] = __version__
     except Exception:
         pass
     out: dict[str, Any] = {
@@ -1208,7 +1213,7 @@ def _remote_status(router: Any, preload: bool) -> dict:
     out["server"] = health
     loaded = health.get("loaded")
     out["loaded"] = [v for v in loaded if isinstance(v, str)] if isinstance(loaded, list) else []
-    for key in ("device", "device_is_preference", "checkpoint_devices", "decision_cache",
+    for key in ("backend", "device", "device_is_preference", "checkpoint_devices", "decision_cache",
                 "performance_mode", "performance_config"):
         if key in health:
             out[key] = health[key]
@@ -1216,11 +1221,12 @@ def _remote_status(router: Any, preload: bool) -> dict:
 
 
 def laya_status(*, router: Any = None, loaded: list[str] | None = None, preload: bool = True,
-                performance_mode=None) -> dict:
-    from ..serve import _decision_cache_report, _performance_report, _server_performance_config
+                performance_mode=None, backend=None) -> dict:
+    from ..serve import _decision_cache_report, _performance_report, _server_performance_config, _inference_backend
 
     if router is not None and hasattr(router, "base_url") and hasattr(router, "health"):
         return _remote_status(router, preload)
+    backend = getattr(router, "backend", None) or _inference_backend(backend)
     config = getattr(router, "_laya_server_performance_config", getattr(router, "performance_config", None))
     if config is None and not hasattr(router, "_laya_server_performance_config"):
         config = _server_performance_config(performance_mode)
@@ -1228,13 +1234,16 @@ def laya_status(*, router: Any = None, loaded: list[str] | None = None, preload:
     # availability becomes known when a checkpoint is built; this is its preference only.
     report = ({"device": os.environ.get("LAYA_DEVICE", "").strip().lower() or "auto",
                "torch_cuda": None, "torch_version": None}
-              if router is None and config is not None else device_report())
+              if router is None and config is not None and backend == "torch"
+              else device_report(backend=backend) if backend == "onnx" else device_report())
     versions: dict[str, str | None] = {
         "laya": None,
         "torch": report.get("torch_version"),
         "transformers": None,
     }
-    for pkg in (("laya",) if router is None and config is not None else ("laya", "transformers")):
+    from .. import __version__
+    versions["laya"] = __version__
+    for pkg in (() if backend == "onnx" or (router is None and config is not None) else ("transformers",)):
         try:
             mod = __import__(pkg)
             versions[pkg] = getattr(mod, "__version__", "unknown")
@@ -1262,6 +1271,7 @@ def laya_status(*, router: Any = None, loaded: list[str] | None = None, preload:
         **report,
         **_performance_report(router, config),
         **_decision_cache_report(router),
+        "backend": backend,
         "device": actual or report["device"],
         "device_is_preference": actual is None,
         "checkpoint_devices": checkpoint_devices,
@@ -1562,7 +1572,7 @@ def laya_decide(
     """
     # Lazy: keeps laya.structured (pure Python, but a module import is still a
     # module import) out of this module's import-time surface.
-    from laya.structured import SchemaError, decide
+    from ..structured import SchemaError, decide
 
     state_d = validate_state(state)
     model_name = _routed_control(model, validate_model, router)

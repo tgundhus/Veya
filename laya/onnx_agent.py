@@ -86,6 +86,7 @@ class ONNXAgent(HookRegistry):
     performance_config = None
     performance_mode = None
     _tokenizer_backend = "transformers"
+    _cpu_only = False
 
     def __init__(
         self,
@@ -205,9 +206,10 @@ class ONNXAgent(HookRegistry):
         # produced by newer Transformers versions can contain TokenizersBackend or a list-valued
         # extra_special_tokens field that older loaders cannot parse.
         from .checkpoint import _checkpoint_signature, _fix_tokenizer_config
-        _fix_tokenizer_config(model_dir)
+        if self._tokenizer_backend != "tokenizers":
+            _fix_tokenizer_config(model_dir)
         source_weights = os.path.join(model_dir, "model.safetensors")
-        source_artifact = source_weights if os.path.isfile(source_weights) else onnx_path
+        source_artifact = source_weights if os.path.isfile(source_weights) and not self._cpu_only else onnx_path
         self._checkpoint_signature = (_checkpoint_signature(model_dir, source_artifact, expected_sha256)
                                       if self.revision is None else None)
         tok_dir = os.path.join(model_dir, "tokenizer")
@@ -222,7 +224,7 @@ class ONNXAgent(HookRegistry):
         available = ort.get_available_providers()
         providers = (
             ["CUDAExecutionProvider", "CPUExecutionProvider"]
-            if "CUDAExecutionProvider" in available
+            if "CUDAExecutionProvider" in available and not self._cpu_only
             else ["CPUExecutionProvider"]
         )
         # Enable ONNX Runtime's full graph optimization (operator fusion, constant folding).
@@ -232,6 +234,13 @@ class ONNXAgent(HookRegistry):
         so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         if self.performance_config:
             so.intra_op_num_threads = self.performance_config["threads"]
+        elif self._cpu_only:
+            try:
+                threads = int(os.environ.get("LAYA_THREADS", ""))
+            except ValueError:
+                threads = 0
+            if threads > 0:
+                so.intra_op_num_threads = threads
         try:
             self.session = ort.InferenceSession(onnx_path, sess_options=so, providers=providers)
         except Exception:
@@ -922,3 +931,11 @@ class ONNXAgent(HookRegistry):
                              **predict_kwargs)
 
     predict = system_one
+
+
+class _NativeONNXAgent(ONNXAgent):
+    """Local service runtime: native tokenizer and CPU sessions, with no Torch imports."""
+
+    _tokenizer_backend = "tokenizers"
+    _cpu_only = True
+    device = "cpu"

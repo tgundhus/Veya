@@ -92,6 +92,14 @@ for label, fn in (("Agent.__init__", Agent.__init__), ("load", load),
 
 check_param("Router.__init__", Router.__init__, "max_loaded", None)
 check_param("Router.__init__", Router.__init__, "preload", None)
+check_param("Router.__init__", Router.__init__, "backend", None, inspect.Parameter.KEYWORD_ONLY)
+check_param("Router.__init__", Router.__init__, "onnx_paths", None, inspect.Parameter.KEYWORD_ONLY)
+check("laya/default inference backend", laya.DEFAULT_INFERENCE_BACKEND, "torch")
+from laya.serve import build_router as _build_router, create_app as _create_app  # noqa: E402
+from laya.mcp.tools import laya_status as _laya_status  # noqa: E402
+check_param("serve.build_router", _build_router, "backend", None, inspect.Parameter.KEYWORD_ONLY)
+check_param("serve.create_app", _create_app, "backend", None, inspect.Parameter.KEYWORD_ONLY)
+check_param("mcp.laya_status", _laya_status, "backend", None, inspect.Parameter.KEYWORD_ONLY)
 for _performance_helper in ("parse_performance_mode", "resolve_performance_mode"):
     check_true("laya/%s exported" % _performance_helper,
                _performance_helper in laya.__all__ and callable(getattr(laya, _performance_helper, None)))

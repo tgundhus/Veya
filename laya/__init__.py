@@ -21,6 +21,8 @@ import os as _os
 # (the torch-backed names are lazy, see `_LAZY_ATTRS`), so this runs first in the normal case.
 _os.environ.setdefault("USE_TF", "0")
 
+DEFAULT_INFERENCE_BACKEND = "torch"
+
 from .consistency import DecisionCache, DecisionStore, decision_margins
 from .email import clean_email_body, email_state
 from .hooks import AsyncHook, BaseHook, Hook, PredictContext, PredictHook

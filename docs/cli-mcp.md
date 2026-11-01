@@ -138,6 +138,14 @@ laya-mcp-server
 python -m laya.mcp.server
 ```
 
+For an installation without Torch or Transformers, use
+`python -m pip install "./runtime/onnx[mcp]"` and launch `laya-onnx-mcp`, or
+`python -m laya_onnx.mcp.server`. Configure its local checkpoint and exported graph
+pairs using [Lightweight ONNX runtime](onnx-runtime.md#http-and-local-mcp).
+The full package also accepts `laya-mcp-server --backend onnx`; its default remains
+Torch. ONNX supports the tools below except encoder embedding shortlisting;
+`laya_tournament` provides narrowing through model decisions instead.
+
 The server speaks MCP over **stdio**, not HTTP. Configure the client with the console script:
 
 ```json
@@ -272,6 +280,8 @@ the server is ready.
 | Variable | Default | Meaning |
 |---|---|---|
 | `LAYA_DEVICE` | automatic | Device preference passed to PyTorch, such as `cpu` or `cuda`. Case is normalized; values PyTorch refuses or rewrites to another device are rejected. |
+| `LAYA_BACKEND` | `torch` in full package; `onnx` in lightweight | Local inference backend; `--backend` takes precedence. Lightweight installations support ONNX only. Ignored when `LAYA_BASE_URL` delegates inference. |
+| `LAYA_ONNX_PATHS` | unset | JSON map of model names to local exported graphs, paired with local `LAYA_EXTRA_MODELS` checkpoint directories. ONNX preloads configured graph names when `LAYA_MODELS` is omitted. |
 | `LAYA_PERFORMANCE_MODE` | unset | Opt-in resource profile `1`–`5`, or `default` for existing defaults. Sets thread, batch, resident-model and preload budgets for local inference. Explicit existing settings override profile values. |
 | `LAYA_MAX_LOADED` | Router default | Maximum resident checkpoints. Overrides the profile's model cap. |
 | `LAYA_PRELOAD` | `1` | Build the configured checkpoints at startup. Set to `0` for lazy loading. |

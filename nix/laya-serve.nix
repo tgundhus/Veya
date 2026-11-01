@@ -51,6 +51,23 @@ in
       description = "Resource preset, from 1 (minimal) to 5 (dedicated). null preserves existing defaults.";
     };
 
+    backend = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "onnx";
+      description = ''
+        Inference runtime (LAYA_BACKEND). null preserves Torch. For ONNX, supply
+        a package with ONNX Runtime and tokenizers, set device to cpu, and pair
+        local extraModels with onnxPaths. Set models to the installed checkpoints.
+      '';
+    };
+
+    onnxPaths = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "JSON map of checkpoint names to local exported graphs (LAYA_ONNX_PATHS).";
+    };
+
     rootPath = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
@@ -409,6 +426,10 @@ in
         LAYA_JEV_STRICT = if cfg.jevStrict then "1" else "0";
       } // lib.optionalAttrs (cfg.performanceMode != null) {
         LAYA_PERFORMANCE_MODE = toString cfg.performanceMode;
+      } // lib.optionalAttrs (cfg.backend != null) {
+        LAYA_BACKEND = cfg.backend;
+      } // lib.optionalAttrs (cfg.onnxPaths != null) {
+        LAYA_ONNX_PATHS = cfg.onnxPaths;
       } // lib.optionalAttrs (cfg.preload != null) {
         LAYA_PRELOAD = if cfg.preload then "1" else "0";
       } // lib.optionalAttrs (cfg.threads != null) {

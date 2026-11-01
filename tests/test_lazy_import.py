@@ -66,7 +66,8 @@ check("no-torch/import laya succeeds", proc.returncode, 0)
 out = proc.stdout.strip().split()
 check("no-torch/detect_script works", out[0] if out else None, "latin")
 check("no-torch/Agent stays lazy", out[1] if len(out) > 1 else None, "blocked")
-check("no-torch/shortlist stays lazy", out[2] if len(out) > 2 else None, "blocked")
+check("no-torch/shortlist resolves without encoder imports", out[2] if len(out) > 2 else None,
+      "resolved-without-torch")
 check("no-torch/PINNED_REVISIONS resolves", out[3] if len(out) > 3 else None, "ok")
 
 

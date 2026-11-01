@@ -8,10 +8,14 @@ import tempfile
 import unittest
 
 
+class HeavyImportForbidden(BaseException):
+    """Keep a forbidden import visible even inside optional-import fallbacks."""
+
+
 class NoHeavyImports(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
         if fullname.split(".")[0] in ("torch", "transformers", "laya"):
-            raise AssertionError("light runtime imported " + fullname)
+            raise HeavyImportForbidden("light runtime imported " + fullname)
 
 
 sys.meta_path.insert(0, NoHeavyImports())

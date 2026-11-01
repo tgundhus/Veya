@@ -52,10 +52,11 @@ except ImportError as exc:  # mcp extra not installed
 
 # laya.serve only imports os/typing at module level, so reusing its helpers
 # keeps one meaning for LAYA_PRELOAD / LAYA_THREADS / LAYA_DEFAULT_MODEL across the package.
-from laya.serve import (
+from ..serve import (
     _apply_thread_limit, _close_decision_cache, _configure_decision_cache,
     _default_model_option, _env_bool, _extra_models_option, _resolve_max_loaded,
     _record_server_performance, _server_performance_config, _server_preload_names,
+    _inference_backend, _onnx_paths_option,
 )
 
 from .device import env_device
@@ -78,15 +79,14 @@ from .tools import (
 try:
     _LAYA_VERSION = _metadata.version("laya-pro")
 except Exception:  # running from a source checkout without install metadata
-    import laya as _laya
-
-    _LAYA_VERSION = getattr(_laya, "__version__", "")
+    from .. import __version__ as _LAYA_VERSION
 
 server = MCPServer("laya-pro", version=_LAYA_VERSION)
 
 _ROUTER: Any = None
 _ROUTER_LOCK = threading.Lock()
 _PERFORMANCE_MODE = None
+_BACKEND = None
 
 # MCP default preload list. laya.serve preloads every checkpoint when LAYA_MODELS
 # is empty; MCP keeps typed-decisions lazy on purpose (it is ~as big as the other
@@ -197,18 +197,22 @@ def _ensure_router() -> Any:
             _ROUTER = router
             return router
         try:
-            from laya import Router
+            from .. import Router
         except Exception as exc:
             raise ToolError("internal_error", f"cannot import laya: {exc}") from exc
         try:
+            backend = _inference_backend(_BACKEND)
             config = _server_performance_config(_PERFORMANCE_MODE)
             preload = config["preload"] if config is not None else _env_bool("LAYA_PRELOAD", True)
-            if config is None:
+            if config is None and backend == "torch":
                 _apply_thread_limit()
             extra_models = _extra_models_option()
-            options = {"device": env_device(),
+            options = {"device": env_device(backend=backend) if backend == "onnx" else env_device(),
                        "auto_task_detection": _env_bool("LAYA_AUTO_TASK", False),
+                       **_onnx_paths_option(backend),
                        **_default_model_option(extra_models)}
+            if backend == "onnx":
+                options["backend"] = backend
             if config is not None:
                 options.update(performance_mode=config["mode"], preload=False)
             elif _PERFORMANCE_MODE is not None:
@@ -221,7 +225,8 @@ def _ensure_router() -> Any:
             router = Router(**options)
             _configure_decision_cache(router)
             if preload:
-                router.preload(_server_preload_names(config, list(_DEFAULT_MODELS)))
+                names = list(router.onnx_paths) if backend == "onnx" else list(_DEFAULT_MODELS)
+                router.preload(_server_preload_names(config, names))
             _record_server_performance(router, config)
         except (Exception, SystemExit) as exc:
             if "router" in locals():
@@ -244,7 +249,8 @@ def _router_or_error() -> Any:
 
 
 def _preset_builder(attr_name: str) -> dict:
-    import laya
+    from importlib import import_module
+    laya = import_module("..", __package__)
 
     builder = getattr(laya, attr_name, None)
     if builder is None:
@@ -281,7 +287,7 @@ def laya_status_tool() -> str:
     config = None if _remote_base_url() else _server_performance_config(_PERFORMANCE_MODE)
     return _wrap(laya_status, router=router,
                  preload=config["preload"] if config is not None else _env_bool("LAYA_PRELOAD", True),
-                 performance_mode=_PERFORMANCE_MODE)
+                 performance_mode=_PERFORMANCE_MODE, backend=_BACKEND)
 
 
 @server.tool(
@@ -654,12 +660,15 @@ def laya_predict_long_tool(state: dict, questions: dict, model: str | None = Non
 def main(argv=None) -> None:
     import argparse
 
-    global _PERFORMANCE_MODE
+    global _PERFORMANCE_MODE, _BACKEND
     parser = argparse.ArgumentParser(description="Serve Laya tools over MCP stdio")
+    parser.add_argument("--backend", choices=("torch", "onnx"),
+                        help="local inference runtime; overrides LAYA_BACKEND (remote mode uses the server's backend)")
     parser.add_argument("--performance-mode", choices=("1", "2", "3", "4", "5", "default"),
                         help="local resource preset; default disables the environment preset")
     args = parser.parse_args(argv)
     _PERFORMANCE_MODE = args.performance_mode
+    _BACKEND = args.backend
     # Windows without Developer Mode cannot create HF cache symlinks (WinError
     # 1314). On POSIX the cache uses symlinks by default and disabling them
     # would copy the files and double disk use, so the override is Windows-only.

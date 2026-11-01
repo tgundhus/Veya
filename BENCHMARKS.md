@@ -539,6 +539,56 @@ hardware; its maximum batch was only 760 padded tokens. Full raw outputs, sample
 memory counters and pinned artifact/source hashes: `research/results/performance_modes_cpu_20261030.json`.
 The [mode guide](docs/performance-modes.md) documents settings and reproduction.
 
+## Lightweight HTTP and MCP (1 November 2026)
+
+Optional ONNX services were compared with the unchanged default Torch service at
+`e823ea169941193b83b91322ecd01b1d21f32a83`. These are real localhost HTTP requests
+and MCP stdio calls against the same pinned English checkpoint and fp32 graph.
+Each row is the median of three fresh processes on Windows CPU with four threads.
+Decision caching was disabled for startup and warm inference.
+
+| transport | backend | startup through first answer s | warm single ms | warm batch, 4 states ms | peak working set MiB | peak private commit MiB |
+|---|---|---:|---:|---:|---:|---:|
+| HTTP | default Torch | 5.671 | 279.28 | 1739.57 | 2060.8 | 4233.1 |
+| HTTP | lightweight ONNX | 2.593 | 266.89 | 1669.84 | 1863.2 | 2127.9 |
+| MCP | default Torch | 5.452 | 287.59 | 1760.19 | 2094.4 | 4246.7 |
+| MCP | lightweight ONNX | 2.426 | 265.49 | 1690.17 | 1880.5 | 2142.3 |
+
+Startup includes Python, imports, preloading, protocol readiness and the first answer.
+ONNX startup was 54–56% lower; peak working set was 198–214 MiB lower. Warm single
+requests were 4–8% faster on this workload. These measurements do not establish a
+general throughput advantage. Peaks cover the process lifetime through batching,
+parity and cache checks. Private commit and working set measure different memory;
+neither is the graph's disk size.
+
+The full package with `--backend onnx` was also measured as a control: its runtime
+code and graph match the standalone service, and results were similar. All variants
+used one interpreter and identical numerical dependencies, with the lightweight
+wheel extracted into its own namespace. Separately, isolated wheel and rebuilt
+source-package checks exercised both protocols with Torch, Transformers and the
+full engine absent. The base installation adds no service dependencies.
+
+All shared rounded answer fields matched across the 18 processes. Four states
+covered choice, score and yes/no questions; maximum raw logit difference was
+`1.33e-5`, probability difference `8.94e-7`, and action-probability difference zero.
+The HTTP-only `x_jev_confidence` extension is excluded from cross-transport comparison.
+This checks numerical parity on these inputs, not decision accuracy on a labelled set.
+Mixed F16/F32 source tensors were loaded as fp32; no quantization or autocast was used.
+
+Resident in-memory cache hits, measured separately, took 0.71 ms over HTTP and
+0.83 ms over MCP for the lightweight service. HTTP work outside the Router took
+about 0.9 ms for a warm single request; MCP took about 1.1 ms. That includes client,
+framework and serialization work, rather than network time alone. Filesystem caches
+were left intact and the workstation was otherwise uncontrolled.
+
+Reproduce with `research/scripts/bench_onnx_services.py --model <checkpoint-dir>
+--onnx <graph> --light-wheel <built-wheel> --out <report.json>` after building
+`runtime/onnx`. The harness verifies canonical wheel/source equality, fp32 execution,
+CPU providers, thread counts, cache counters and model/artifact identities. Windows
+memory is read from the actual worker PID, not the virtual-environment launcher.
+[Complete tables and methodology](research/results/onnx_services_20261101.md),
+[raw JSON](research/results/onnx_services_20261101.json).
+
 ## Loading memory and standalone ONNX (31 October 2026)
 
 These runs use the real cached English checkpoint at snapshot

@@ -10,6 +10,8 @@ HERE = Path(__file__).resolve().parent
 MODULES = (
     "onnx_agent", "inference_common", "inference", "checkpoint", "calibration",
     "hooks", "revisions", "confidence", "performance", "structured", "consistency",
+    "router", "serve", "shortlist", "lang", "presets",
+    "mcp/__init__", "mcp/device", "mcp/remote", "mcp/server", "mcp/tools",
 )
 
 
@@ -25,7 +27,9 @@ def copy_shared(command, destination):
         source = shared_source() / (module + ".py")
         if not source.is_file():
             raise FileNotFoundError("missing canonical runtime source: %s" % source)
-        command.copy_file(str(source), str(destination / source.name))
+        target = destination / (module + ".py")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        command.copy_file(str(source), str(target))
 
 
 class BuildRuntime(build_py):

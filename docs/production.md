@@ -26,6 +26,10 @@ MCP over stdio uses the same local models and cache settings. It can instead cal
 server using `LAYA_BASE_URL`. In that mode, configure retention on the HTTP server.
 See [HTTP configuration](http-api.md), [MCP](cli-mcp.md) and [Docker](docker.md).
 
+For a smaller CPU installation, the optional [ONNX services](onnx-runtime.md#http-and-local-mcp)
+use exported graphs with local checkpoint configurations and tokenizers. Install
+`"./runtime/onnx[serve,mcp]"` from the checkout; the full engine keeps its current default.
+
 ## Cache configuration
 
 Caching is opt-in. Both the HTTP and local MCP builders read:

@@ -34,7 +34,7 @@ from typing import Any
 _ENV_KEY = "LAYA_DEVICE"
 
 
-def env_device() -> str | None:
+def env_device(*, backend="torch") -> str | None:
     """LAYA_DEVICE (empty or unset = None), ready for Router(device=...).
 
     Lower-cased, not verbatim. torch's device parser is case-sensitive -- it accepts ``cuda``
@@ -64,6 +64,10 @@ def env_device() -> str | None:
     kind, sep, index = value.partition(":")
     kind = kind.lower()
     normalised = "%s%s%s" % (kind, sep, index) if sep else kind
+    if backend == "onnx":
+        if normalised != "cpu":
+            raise ValueError("LAYA_DEVICE must be 'cpu' or unset for the CPU ONNX service backend")
+        return "cpu"
     _check_torch_device(normalised)
     return normalised
 
@@ -101,7 +105,7 @@ def _check_torch_device(value: str) -> None:
         )
 
 
-def resolve_device(force: str | None = None) -> str:
+def resolve_device(force: str | None = None, *, backend="torch") -> str:
     """Best-effort label of the configured torch device preference.
 
     Priority:
@@ -125,6 +129,8 @@ def resolve_device(force: str | None = None) -> str:
     """
     if force:
         return force
+    if backend == "onnx":
+        return env_device(backend=backend) or "cpu"
     value = env_device()
     if value is not None:
         return value
@@ -148,12 +154,14 @@ def resolve_device(force: str | None = None) -> str:
     return "cpu"
 
 
-def device_report() -> dict:
+def device_report(*, backend="torch") -> dict:
     """Structured device info for laya_status.
 
     ``device`` is the configured preference (see ``resolve_device``); it is
     the top-level answer only before any checkpoint is loaded.
     """
+    if backend == "onnx":
+        return {"device": resolve_device(backend=backend), "torch_cuda": None, "torch_version": None}
     torch_cuda = False
     torch_version = None
     try:
@@ -215,7 +223,7 @@ def router_agent(router: Any, name: str) -> Any | None:
     # same way); try the core normaliser for aliased inputs, without heavy
     # imports at module level.
     try:
-        from laya.router import normalise_name
+        from ..router import normalise_name
 
         key = normalise_name(name)
     except Exception:

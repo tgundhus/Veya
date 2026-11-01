@@ -18,8 +18,8 @@ python -m pip install ./runtime/onnx
 ```
 
 The two distributions use different import names and can be installed together. Installing
-the lightweight package alone does not install the full engine's command-line tools,
-HTTP server or MCP server. Optional typed-model helpers use the `structured` extra:
+the lightweight package alone installs only inference dependencies. Optional typed-model
+helpers use the `structured` extra:
 
 ```bash
 python -m pip install "./runtime/onnx[structured]"
@@ -90,8 +90,97 @@ between runtimes.
 
 The existing `from laya.onnx_agent import ONNXAgent` interface remains available in
 the full distribution. Its default tokenizer continues to use Transformers.
-The standalone package does not provide `Router`, PyTorch `Agent`, training, model
-export or every full-package integration.
+The standalone package does not provide the PyTorch `Agent`, training, model export
+or every full-package integration.
+
+## HTTP and local MCP
+
+Install only the service extras you need:
+
+```bash
+python -m pip install "./runtime/onnx[serve,mcp]"
+```
+
+The lightweight entry points are `laya-onnx-serve` and `laya-onnx-mcp` (stdio).
+Their module equivalents are `python -m laya_onnx.serve` and
+`python -m laya_onnx.mcp.server`. Both use ONNX by default. The full package's
+`laya-serve` and `laya-mcp-server` retain their current Torch default; select
+`--backend onnx` or set `LAYA_BACKEND=onnx` to use the same native ONNX path there.
+An explicit command-line backend takes precedence over the environment.
+In the full checkout, install its `onnx` extra alongside `serve` or `mcp` before
+selecting this backend, for example `python -m pip install ".[serve,mcp,onnx]"`.
+
+Register the local checkpoint configuration and tokenizer directory under a model
+name, then map that same name to its exported graph. For example, in a POSIX shell:
+
+```bash
+export LAYA_EXTRA_MODELS='{"english":"/models/english"}'
+export LAYA_ONNX_PATHS='{"english":"/models/english.onnx"}'
+export LAYA_MODELS=english
+export LAYA_THREADS=4
+laya-onnx-serve
+```
+
+For an MCP client, put the same configuration in its server environment:
+
+```json
+{
+  "mcpServers": {
+    "laya-pro": {
+      "command": "laya-onnx-mcp",
+      "env": {
+        "LAYA_EXTRA_MODELS": "{\"english\":\"C:/models/english\"}",
+        "LAYA_ONNX_PATHS": "{\"english\":\"C:/models/english.onnx\"}",
+        "LAYA_MODELS": "english",
+        "LAYA_THREADS": "4"
+      }
+    }
+  }
+}
+```
+
+Model aliases such as `en` resolve to their canonical name. Each configured graph
+needs its own local checkpoint directory; Hub IDs are refused on this service path.
+Paths are resolved when the router is built. The service uses CPU execution;
+`LAYA_DEVICE` must be unset or `cpu`. `LAYA_THREADS` and performance modes set each
+ONNX session's thread budget without changing Torch's global thread settings.
+
+When `LAYA_MODELS` is omitted, ONNX preloading uses the configured graph names.
+Automatic routing can still select another registered checkpoint: provide its
+configuration and graph too, or pin a request's `model` to the installed checkpoint.
+A missing graph produces a configuration error. Clients cannot supply graph paths
+or change the backend through prediction requests.
+
+HTTP keeps the existing `/v1/systemone`, batch, bearer authentication, request limits
+and health behavior. Local MCP keeps prediction, batching, routing, long scans,
+structured decisions, presets and tournament tools. Encoder embedding shortlisting
+is unavailable on ONNX; use tournament narrowing instead. Status reports the backend
+and CPU device without importing Torch or Transformers. The existing decision
+cache retention variables apply to both services; see [Consistency](consistency.md).
+
+With `LAYA_BASE_URL` set, MCP delegates inference to the HTTP server. Local backend
+and graph settings do not configure that remote server.
+
+### Service measurements
+
+Three fresh processes per configuration, Windows CPU, four threads, one pinned
+English checkpoint and the same fp32 graph; cache disabled for inference timing:
+
+| transport | backend | startup through first answer s | warm single ms | peak working set MiB |
+|---|---|---:|---:|---:|
+| HTTP | current default Torch | 5.671 | 279.28 | 2060.8 |
+| HTTP | lightweight ONNX | 2.593 | 266.89 | 1863.2 |
+| MCP | current default Torch | 5.452 | 287.59 | 2094.4 |
+| MCP | lightweight ONNX | 2.426 | 265.49 | 1880.5 |
+
+All shared rounded answer fields matched for the four test states. Raw probabilities
+differed by at most `8.94e-7`. These are numerical and resource measurements, not an
+accuracy evaluation or a promise for other hardware. Startup includes protocol
+readiness and first inference; memory peaks include batch, parity and cache checks.
+The full package's ONNX backend gave similar results. Independently installed
+wheel and rebuilt source-package checks confirmed that the lightweight services
+run without Torch, Transformers or the full engine.
+[Batch timings, cache hits and full methodology](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#lightweight-http-and-mcp-1-november-2026).
 
 ## Loading and memory measurements
 
