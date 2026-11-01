@@ -19,15 +19,24 @@ The same entry point runs embedded in any ASGI server: `laya.serve.create_app()`
 app, optionally with a `Router` you inject (`create_app(router)`) instead of one built from the
 environment.
 
+For a smaller installation without Torch or Transformers, install
+`"./runtime/onnx[serve]"` from this checkout and run `laya-onnx-serve`.
+The full package also accepts `laya-serve --backend onnx`. Both need local checkpoint
+and exported graph pairs; see [Lightweight ONNX runtime](onnx-runtime.md#http-and-local-mcp).
+The full package's default remains Torch.
+
 ## Configuration
 
-Everything is environment variables, so one image serves a laptop dev run and a systemd unit.
+Configure the server through environment variables. The `--backend` and
+`--performance-mode` startup arguments take precedence over their corresponding variables.
 
 | env var | meaning | default |
 |---|---|---|
 | `LAYA_HOST` | bind address | `0.0.0.0` |
 | `LAYA_PORT` | bind port | `8000` |
 | `LAYA_ROOT_PATH` | public URL prefix when served behind a reverse proxy | empty |
+| `LAYA_BACKEND` | inference backend, `torch` or `onnx`; the lightweight distribution supports ONNX only | `torch` in full package; `onnx` in lightweight |
+| `LAYA_ONNX_PATHS` | JSON map of checkpoint names to exported graph files; ONNX requires matching local `LAYA_EXTRA_MODELS` registrations | none |
 | `LAYA_DEVICE` | torch device for every checkpoint | auto |
 | `LAYA_PERFORMANCE_MODE` | opt-in resource profile `1`–`5`, or `default` to retain existing defaults; explicit settings override profile values | unset |
 | `LAYA_MAX_LOADED` | maximum resident checkpoints; overrides a profile's model cap | Router default |
@@ -57,6 +66,8 @@ is selected. `LAYA_THREADS`, `LAYA_MAX_LOADED`, `LAYA_PRELOAD`, `LAYA_MAX_CONCUR
 `LAYA_MAX_BATCH_TOKENS` take precedence over corresponding profile values. Profiles keep the
 same checkpoints, precision, token windows and decision-cache policy. Torch threads are
 process-global; select the profile before starting inference.
+ONNX uses per-session threads and CPU execution; set `LAYA_DEVICE=cpu` or leave it unset.
+Without `LAYA_MODELS`, ONNX preloads only graph-configured checkpoints.
 
 For a deployment published under a prefix such as `/laya`, set `LAYA_ROOT_PATH=/laya`.
 FastAPI uses it when generating OpenAPI and Swagger UI URLs. Configure the reverse proxy to
@@ -85,7 +96,7 @@ no `LAYA_API_KEY` set, every caller gets the full payload shown here.
 
 ```json
 {"status": "ok", "loaded": ["english", "multilingual"], "revisions": {"english": "...", "multilingual": "..."},
- "device": "cuda", "device_is_preference": false,
+ "backend": "torch", "device": "cuda", "device_is_preference": false,
  "performance_mode": null, "performance_config": null,
  "checkpoint_devices": {"english": "cuda", "multilingual": "cuda"},
  "cpu_fallbacks": {"english": {"count": 0, "last_reason": null}, "multilingual": {"count": 0, "last_reason": null}}}
@@ -100,6 +111,7 @@ With idle unloading enabled, authenticated health responses also include `idle_u
 Health probes do not reset that clock. An empty `loaded` list is normal after an idle unload.
 
 - `status` is `ok` whenever the process answers at all. It says nothing about the checkpoints.
+- `backend` is the configured inference runtime, `torch` or `onnx`.
 - `performance_mode` is the selected profile number, or null with existing defaults.
 - `performance_config` reports the profile's effective budgets and explicit overrides, or null
   without a profile. It describes configuration, not measured free memory or throughput.

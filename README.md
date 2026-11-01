@@ -36,7 +36,11 @@ download checkpoints beforehand and pass their directories to the Router.
 For an exported ONNX model, the separate `laya-pro-onnx` distribution uses the
 `laya_onnx` import and runs without PyTorch or Transformers. Install from a checkout
 with `python -m pip install ./runtime/onnx`; it has not been published to a registry.
-The full package remains the export toolchain.
+Optional HTTP and local MCP services are available with
+`python -m pip install "./runtime/onnx[serve,mcp]"`. Start them with
+`laya-onnx-serve` or `laya-onnx-mcp`; configure local checkpoint and exported graph
+pairs as described below. The full package remains the export toolchain and keeps
+its current default backend.
 [Lightweight ONNX setup](https://tgundhus.github.io/laya-pro/onnx-runtime/).
 
 ## First decision

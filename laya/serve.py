@@ -1237,21 +1237,46 @@ def _performance_report(router, config=None):
             "performance_config": config}
 
 
-def build_router(performance_mode=None):
+def _inference_backend(backend=None):
+    from .router import normalise_backend
+    if backend is None:
+        backend = os.environ.get("LAYA_BACKEND", "").strip() or None
+    return normalise_backend(backend)
+
+
+def _onnx_paths_option(backend):
+    """Read operator-owned graph paths only for local ONNX inference."""
+    if backend != "onnx":
+        return {}
+    raw = os.environ.get("LAYA_ONNX_PATHS", "").strip()
+    try:
+        paths = json.loads(raw) if raw else {}
+    except ValueError as exc:
+        raise ValueError("LAYA_ONNX_PATHS must be a JSON object mapping checkpoint names to local ONNX files") from exc
+    if not isinstance(paths, dict) or not paths:
+        raise ValueError("LAYA_ONNX_PATHS must be a non-empty JSON object mapping checkpoint names to local ONNX files")
+    return {"onnx_paths": paths}
+
+
+def build_router(performance_mode=None, *, backend=None):
     """Build a Router from the environment, preloading unless told otherwise."""
     from .mcp.device import env_device
     from .router import Router
 
+    backend = _inference_backend(backend)
     config = _server_performance_config(performance_mode)
     preload = config["preload"] if config is not None else _env_bool("LAYA_PRELOAD", True)
-    if config is None:
+    if config is None and backend == "torch":
         _apply_thread_limit()
     # `env_device` rather than a raw read: it strips, the way `LAYA_MODELS` two lines
     # below is stripped. A value copied out of a Dockerfile or a `.env` file carries a
     # trailing newline, and torch refuses that as an invalid device string.
-    device = env_device()
+    device = env_device(backend=backend) if backend == "onnx" else env_device()
     preload_names = _server_preload_names(config, None)
-    options = {"device": device, "auto_task_detection": _env_bool("LAYA_AUTO_TASK", False)}
+    options = {"device": device, "auto_task_detection": _env_bool("LAYA_AUTO_TASK", False),
+               **_onnx_paths_option(backend)}
+    if backend == "onnx":
+        options["backend"] = backend
     if config is not None:
         options.update(performance_mode=config["mode"], preload=False)
     elif performance_mode is not None:
@@ -1275,6 +1300,8 @@ def build_router(performance_mode=None):
     try:
         _configure_decision_cache(router)
         if preload:
+            if backend == "onnx":
+                preload_names = _server_preload_names(config, list(router.onnx_paths))
             router.preload(preload_names)
         _record_server_performance(router, config)
     except BaseException:
@@ -1335,7 +1362,7 @@ def _decision_cache_report(router):
                                "renew_on_hit": cache.renew_on_hit, **info}}
 
 
-def create_app(router: Optional[Any] = None, *, performance_mode=None):
+def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=None):
     """Build the FastAPI app. Pass a Router to inject one (tests); otherwise one
     is built from the environment (and preloaded) at app-creation time. An injected
     Router owns its runtime profile; an explicit app mode must match it."""
@@ -1349,7 +1376,10 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None):
 
     owns_router = router is None
     if router is None:
-        router = build_router() if performance_mode is None else build_router(performance_mode)
+        options = {} if backend is None else {"backend": backend}
+        router = build_router(**options) if performance_mode is None else build_router(performance_mode, **options)
+    elif backend is not None and _inference_backend(backend) != getattr(router, "backend", "torch"):
+        raise ValueError("backend must match the injected router's backend")
     config = getattr(router, "_laya_server_performance_config", getattr(router, "performance_config", None))
     if not owns_router and performance_mode is not None:
         from .performance import parse_performance_mode
@@ -1538,7 +1568,9 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None):
             **_decision_cache_report(router),
             "loaded": router.loaded,
             "revisions": getattr(router, "loaded_revisions", {}),
-            "device": actual or resolve_device(),
+            "backend": getattr(router, "backend", "torch"),
+            "device": actual or (resolve_device(backend="onnx") if getattr(router, "backend", "torch") == "onnx"
+                                 else resolve_device()),
             "device_is_preference": actual is None,
             "checkpoint_devices": checkpoint_devices,
             "cpu_fallbacks": fallbacks,
@@ -1818,6 +1850,8 @@ def main(argv=None) -> None:
     from uvicorn.protocols.http.auto import AutoHTTPProtocol
 
     parser = argparse.ArgumentParser(description="Serve Laya over HTTP")
+    parser.add_argument("--backend", choices=("torch", "onnx"),
+                        help="inference runtime; overrides LAYA_BACKEND")
     parser.add_argument("--performance-mode", choices=("1", "2", "3", "4", "5", "default"),
                         help="resource preset (1 minimal through 5 dedicated); default disables the environment preset")
     args = parser.parse_args(argv)
@@ -1834,8 +1868,11 @@ def main(argv=None) -> None:
                     pass  # a latency hint, never a reason to drop the connection
             super().connection_made(transport)
 
+    options = {} if args.backend is None else {"backend": args.backend}
+    if args.performance_mode is not None:
+        options["performance_mode"] = args.performance_mode
     uvicorn.run(
-        create_app() if args.performance_mode is None else create_app(performance_mode=args.performance_mode),
+        create_app(**options),
         host=os.environ.get("LAYA_HOST", "0.0.0.0"),
         port=_resolve_port(),
         log_level=_resolve_log_level(),

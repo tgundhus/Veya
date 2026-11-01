@@ -66,6 +66,20 @@ STANDALONE_MODELS = {
 }
 
 
+def normalise_backend(backend=None) -> str:
+    """Resolve a runtime without importing either inference backend."""
+    if backend is None:
+        from . import DEFAULT_INFERENCE_BACKEND
+        backend = DEFAULT_INFERENCE_BACKEND
+    if not isinstance(backend, str) or backend.strip().lower() not in ("torch", "onnx"):
+        raise ValueError("backend must be 'torch' or 'onnx'")
+    backend = backend.strip().lower()
+    from . import DEFAULT_INFERENCE_BACKEND
+    if backend == "torch" and DEFAULT_INFERENCE_BACKEND == "onnx":
+        raise ValueError("the standalone ONNX package supports backend='onnx' only; install laya-pro for Torch")
+    return backend
+
+
 def _repo_str(spec):
     """Human-readable id for a model spec: 'repo' or 'repo/subfolder'."""
     repo, sub = _split(spec)
@@ -450,11 +464,11 @@ _ROUTER_OWNED_AGENT_ARGS = frozenset({
     "model_id_or_path", "device", "token", "subfolder", "revision",
     "hooks", "on_predict_start", "on_predict_end", "hooks_raise", "hooks_concurrent",
     "hooks_timeout",
-    "performance_mode",
+    "performance_mode", "onnx_path",
 })
 
 
-def check_agent_kwargs(agent_kwargs: Dict[str, Any]) -> None:
+def check_agent_kwargs(agent_kwargs: Dict[str, Any], *, backend="torch") -> None:
     """Reject `agent_kwargs` names a Router cannot honour, before any checkpoint is loaded.
 
     The accepted names are read out of `Agent.__init__`'s signature rather than written down here:
@@ -463,7 +477,10 @@ def check_agent_kwargs(agent_kwargs: Dict[str, Any]) -> None:
     The import is only reached when a caller passes the argument, which is also the moment torch is
     about to be loaded anyway.
     """
-    from .agent import Agent
+    if backend == "onnx":
+        from .onnx_agent import ONNXAgent as Agent
+    else:
+        from .agent import Agent
 
     accepted = set(inspect.signature(Agent.__init__).parameters) - {"self"}
     reserved = sorted(set(agent_kwargs) & _ROUTER_OWNED_AGENT_ARGS)
@@ -619,6 +636,18 @@ class Router(HookRegistry):
     Models are downloaded and built on first use. `max_loaded` caps how many stay resident
     (least-recently-used is evicted), because all three together are ~1.16B parameters.
 
+    `backend="onnx"` uses native tokenization and CPU ONNX Runtime sessions without importing
+    Torch or Transformers. Pair each exported graph in `onnx_paths` with its original local
+    checkpoint directory in `models`; aliases resolve to the same checkpoint on both mappings.
+    Graphs and checkpoint paths are resolved when this Router is constructed. A checkpoint with
+    no configured graph can still be routed to, but loading it raises a configuration error.
+
+        r = Router(backend="onnx", models={"en": "/models/english"},
+                   onnx_paths={"en": "/models/english/laya.onnx"})
+
+    Explicit preloads without a name list build only configured ONNX exports. Performance
+    presets and `LAYA_THREADS` set ONNX session threads without changing Torch's global threads.
+
     The default is 2, because automatic routing only ever chooses between `english` and
     `multilingual`: a cap of one rebuilds the checkpoint it just evicted on every script switch,
     which is seconds per request on exactly the traffic the Router exists for. Traffic that only
@@ -747,6 +776,7 @@ class Router(HookRegistry):
     agent_kwargs: Dict[str, Any] = {}
     performance_config = None
     performance_mode = None
+    backend = "torch"
 
     def __init__(
         self,
@@ -771,7 +801,10 @@ class Router(HookRegistry):
         sha256_digests: Optional[Dict[str, Optional[Dict[str, str]]]] = None,
         *,
         performance_mode=None,
+        backend=None,
+        onnx_paths: Optional[Dict[str, str]] = None,
     ):
+        self.backend = normalise_backend(backend)
         self.performance_config = resolve_performance_mode(performance_mode)
         self.performance_mode = self.performance_config["mode"] if self.performance_config else None
         automatic_preload = preload is None and bool(self.performance_config and self.performance_config["preload"])
@@ -793,6 +826,30 @@ class Router(HookRegistry):
         self.descriptions: Dict[str, str] = {}
         for k, v in (models or {}).items():
             self._add(k, v)
+        self.onnx_paths: Dict[str, str] = {}
+        if onnx_paths is not None and not isinstance(onnx_paths, dict):
+            raise TypeError("onnx_paths must be a mapping of checkpoint names to local ONNX files")
+        for name, path in (onnx_paths or {}).items():
+            key = self.resolve(name)
+            if key in self.onnx_paths:
+                raise ValueError("onnx_paths names checkpoint %r more than once (including aliases)" % key)
+            if not isinstance(path, str) or not path.strip():
+                raise ValueError("onnx_paths[%r] must be a non-empty local file path" % name)
+            path = os.path.abspath(os.path.expanduser(path))
+            if self.backend == "onnx":
+                if not os.path.isfile(path):
+                    raise FileNotFoundError("ONNX graph for checkpoint %r not found: %r" % (key, path))
+                repo, sub = _split(self.models[key])
+                repo = os.path.abspath(os.path.expanduser(repo))
+                checkpoint = os.path.join(repo, sub) if sub else repo
+                if not os.path.isfile(os.path.join(checkpoint, "rl_agent_config.json")):
+                    raise ValueError("ONNX checkpoint %r requires a local checkpoint directory with "
+                                     "rl_agent_config.json; set models / LAYA_EXTRA_MODELS to the "
+                                     "checkpoint paired with its exported graph" % key)
+                self.models[key] = (repo, sub)
+            self.onnx_paths[key] = path
+        if self.backend == "onnx" and device is not None and str(device).strip().lower() != "cpu":
+            raise ValueError("the ONNX service backend runs on CPU; set device / LAYA_DEVICE to 'cpu' or leave it unset")
         self.device = device
         self.token = token or os.environ.get("HF_TOKEN")
         # Optional Hub revision (commit SHA/branch/tag) applied to every checkpoint load.
@@ -806,7 +863,7 @@ class Router(HookRegistry):
         # this line rather than the first request that happens to load a checkpoint.
         self.agent_kwargs: Dict[str, Any] = dict(agent_kwargs or {})
         if self.agent_kwargs:
-            check_agent_kwargs(self.agent_kwargs)
+            check_agent_kwargs(self.agent_kwargs, backend=self.backend)
         # Per checkpoint SHA-256 map: seeded from a model-named `LAYA_SHA256_DIGESTS`, then
         # overridden checkpoint by checkpoint by the argument. Keyed and normalised exactly like
         # `revisions`, so a misspelled model name fails here rather than leaving that checkpoint
@@ -839,11 +896,14 @@ class Router(HookRegistry):
         self._lock = threading.RLock()
         self._build_lock = threading.Lock()
         self._loading: Dict[str, _InFlightBuild] = {}
-        _apply_torch_threads(self.performance_config)
+        if self.backend == "torch":
+            _apply_torch_threads(self.performance_config)
         if preload:
             self.preload()
         elif automatic_preload:
             names = [self.default] + [n for n in self.models if n != self.default]
+            if self.backend == "onnx":
+                names = [n for n in names if n in self.onnx_paths]
             self.preload([n for n in names if self.models[n] is not None][:self.max_loaded])
         if self.performance_config:
             self.performance_config.update(max_loaded=self.max_loaded, preload=bool(preload or automatic_preload))
@@ -1060,13 +1120,24 @@ class Router(HookRegistry):
 
     def _build(self, key: str):
         """Construct the Agent for `key`: config is read under `_lock`, the build runs outside it."""
-        from .agent import Agent
+        if self.backend == "onnx":
+            from .onnx_agent import _NativeONNXAgent as Agent
+        else:
+            from .agent import Agent
         with self._lock:
             if self.models.get(key) is None:
                 raise ValueError("checkpoint %r has no source to load from: it was attached as a built Agent "
                                  "and is no longer resident; attach it again, or register a path or repo" % key)
             repo, sub = _split(self.models[key])
             kwargs = {"device": self.device, "token": self.token, "subfolder": sub}
+            if self.backend == "onnx":
+                if key not in self.onnx_paths:
+                    raise ValueError("no ONNX export configured for checkpoint %r; add its local checkpoint "
+                                     "to models / LAYA_EXTRA_MODELS and its graph to onnx_paths / LAYA_ONNX_PATHS" % key)
+                if not os.path.isdir(os.path.join(repo, sub) if sub else repo):
+                    raise ValueError("ONNX checkpoint %r must use its paired local checkpoint directory" % key)
+                kwargs.pop("device")
+                kwargs["onnx_path"] = self.onnx_paths[key]
             # A None or blank entry in `revisions` is "no pin of its own", so the checkpoint
             # inherits `revision`. Reading it as a pin of nothing dropped the caller's `revision`
             # and handed that one checkpoint to `$LAYA_REVISION` instead, which is the opposite of
@@ -1116,6 +1187,8 @@ class Router(HookRegistry):
         if evicted:
             gc.collect()
             try:
+                if self.backend == "onnx":
+                    return evicted
                 import torch
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
@@ -1168,7 +1241,8 @@ class Router(HookRegistry):
             # Every checkpoint that has a source to build from; an `attach`ed agent registered
             # without one is resident already and would raise here once evicted.
             with self._lock:
-                names = [n for n, source in self.models.items() if source is not None]
+                names = [n for n, source in self.models.items() if source is not None
+                         and (self.backend != "onnx" or n in self.onnx_paths)]
         names = [self.resolve(n) for n in names]
         with self._lock:
             self.max_loaded = max(self.max_loaded, len(set(names) | set(self._agents)))
@@ -1196,6 +1270,8 @@ class Router(HookRegistry):
                     del agent
                     gc.collect()
                     try:
+                        if self.backend == "onnx":
+                            break
                         import torch
                         if torch.cuda.is_available():
                             torch.cuda.empty_cache()
@@ -1227,6 +1303,8 @@ class Router(HookRegistry):
                         self._order.clear()
                         gc.collect()
                         try:
+                            if self.backend == "onnx":
+                                break
                             import torch
                             if torch.cuda.is_available():
                                 torch.cuda.empty_cache()

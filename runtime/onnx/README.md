@@ -35,6 +35,34 @@ tokenizer. The full package retains its existing Transformers tokenizer by defau
 hook types, `decide` and `decide_batch` are available from `laya_onnx`. JSON schemas need
 no extra dependency; install `.[structured]` here to use Pydantic model schemas.
 
+HTTP and local MCP services are optional:
+
+```bash
+python -m pip install './runtime/onnx[serve]'  # FastAPI and uvicorn, from the repository root
+python -m pip install './runtime/onnx[mcp]'    # MCP stdio protocol, from the repository root
+```
+
+Configure local checkpoint directories and their exported graphs, then start either service:
+
+```bash
+export LAYA_EXTRA_MODELS='{"english":"/path/to/checkpoint"}'
+export LAYA_ONNX_PATHS='{"english":"/path/to/model.onnx"}'
+export LAYA_MODELS=english
+laya-onnx-serve --performance-mode 2
+# Equivalent: python -m laya_onnx.serve
+laya-onnx-mcp --performance-mode 2
+# Equivalent: python -m laya_onnx.mcp.server
+```
+
+These commands default to ONNX. `LAYA_BACKEND` and `--backend` select the runtime,
+with the command-line flag taking precedence; this distribution supports `onnx`
+only. Services use the CPU provider; set `LAYA_DEVICE=cpu` or leave it unset.
+Other service device types are rejected.
+The canonical HTTP authentication, validation, routing, batch inference, cache
+retention and idle unloading apply here too. MCP uses the same local router and
+tools; encoder embedding shortlisting is unavailable for exported decision graphs.
+The base install adds neither HTTP nor MCP dependencies.
+
 The `laya_onnx` namespace is separate from `laya`, so both distributions can be installed
 together. Their runtime code is copied from the canonical repository modules at build
 time. Source distributions carry those inputs and can be rebuilt outside the checkout.

@@ -15,6 +15,12 @@ dependencies = ["numpy>=1.24.2", "onnxruntime>=1.20.0", "tokenizers>=0.20.0", "h
 
 [project.optional-dependencies]
 structured = ["pydantic>=2.0.0"]
+serve = ["fastapi>=0.110.0", "uvicorn>=0.27.0"]
+mcp = ["mcp>=2.2.0"]
+
+[project.scripts]
+laya-onnx-serve = "laya_onnx.serve:main"
+laya-onnx-mcp = "laya_onnx.mcp.server:main"
 
 [project.urls]
 Homepage = "https://tgundhus.github.io/laya-pro/"

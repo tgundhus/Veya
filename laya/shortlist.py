@@ -25,7 +25,7 @@ from typing import Any, Callable, Dict, List, Optional, Sequence
 
 import numpy as np
 
-from .common import encode_text, render_options, serialize_state
+from .inference_common import encode_text, render_options, serialize_state
 
 DEFAULT_SHORTLIST_K = 20
 DEFAULT_TOURNAMENT_GROUP = 16
@@ -259,10 +259,12 @@ def embed_fn_from_agent(
     if isinstance(batch_size, bool) or not isinstance(batch_size, int) or batch_size < 1:
         raise ValueError("batch_size must be a positive integer, got %r" % (batch_size,))
 
-    import torch
-
     tok = agent.tok
+    if not hasattr(agent, "model") or not hasattr(agent.model, "encoder"):
+        raise ValueError("checkpoint encoder embeddings are unavailable with the ONNX backend; "
+                         "use predict_tournament or provide an embed_fn")
     encoder = agent.model.encoder
+    import torch
 
     def embed_fn(texts: Sequence[str]) -> np.ndarray:
         rows = ["" if text is None else str(text) for text in texts]
