@@ -104,6 +104,16 @@ from laya.mcp.tools import laya_status as _laya_status  # noqa: E402
 check_param("serve.build_router", _build_router, "backend", None, inspect.Parameter.KEYWORD_ONLY)
 check_param("serve.create_app", _create_app, "backend", None, inspect.Parameter.KEYWORD_ONLY)
 check_param("mcp.laya_status", _laya_status, "backend", None, inspect.Parameter.KEYWORD_ONLY)
+from types import SimpleNamespace as _StatusNamespace  # noqa: E402
+from unittest.mock import patch as _status_patch  # noqa: E402
+_cold_status_router = _StatusNamespace(backend="torch", device="cpu", loaded=[],
+                                      replay_manifest="approved.json", _laya_server_performance_config=None)
+with _status_patch("laya.mcp.tools.device_report", side_effect=AssertionError("cold replay must not probe Torch")):
+    _cold_status = _laya_status(router=_cold_status_router)
+check("mcp status/cold replay configuration", _cold_status["model_free_replay"], {"enabled": True})
+check("mcp status/deferred device preference", (_cold_status["device"], _cold_status["device_is_preference"]),
+      ("cpu", True))
+check("mcp status/unloaded checkpoint policies", _cold_status["checkpoint_policies"], {})
 for _performance_helper in ("parse_performance_mode", "resolve_performance_mode"):
     check_true("laya/%s exported" % _performance_helper,
                _performance_helper in laya.__all__ and callable(getattr(laya, _performance_helper, None)))

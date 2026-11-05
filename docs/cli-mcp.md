@@ -178,7 +178,7 @@ Laya does not open a network port.
 | `laya_preset` | Runs a built-in workflow using its built-in question set. | `preset`, `state`, optional `task`, `lang`, `lang_guess`, `max_len`, `head_max_len`, `min_confidence` |
 | `laya_predict_batch` | Answers many requests in one call. Requests are routed first and grouped by checkpoint, so matching question schemas share forward passes; answers come back in input order. | `requests`, each `{state, questions, model?, task?, lang?, lang_guess?, max_len?, head_max_len?}`, optional `batch_size`, `hooks_timeout`, `min_confidence`, `sort_by_length` |
 | `laya_route_batch` | Decides which checkpoint would answer each request, with no forward pass and no checkpoint load. | `requests`, each `{state, questions, model?, task?, lang?, lang_guess?}`, optional `hooks_timeout`, `explain` |
-| `laya_decide` | Answers a JSON-schema-shaped decision in one forward pass and returns the decided values with per-field confidence, instead of an answer map to parse. Schema properties may be enum choices, booleans, or integers with a minimum and maximum; free strings, arrays, and nested objects are rejected by path. | `state`, `schema`, optional `model`, `min_confidence` |
+| `laya_decide` | Answers a JSON-schema-shaped decision and returns decided values with per-field confidence. Schema properties may be enum choices, booleans, or integers with a minimum and maximum. Free strings, arrays, and nested objects are rejected by path. | `state`, `schema`, optional `model`, `min_confidence` |
 
 The three batch and schema tools exist because the same operations are available on the SDK and
 `laya-serve`: handling many requests, or serving a caller that already knows the answer shape,
@@ -282,6 +282,8 @@ the server is ready.
 | `LAYA_DEVICE` | automatic | Device preference passed to PyTorch, such as `cpu` or `cuda`. Case is normalized; values PyTorch refuses or rewrites to another device are rejected. |
 | `LAYA_BACKEND` | `torch` in full package; `onnx` in lightweight | Local inference backend; `--backend` takes precedence. Lightweight installations support ONNX only. Ignored when `LAYA_BASE_URL` delegates inference. |
 | `LAYA_ONNX_PATHS` | unset | JSON map of model names to local exported graphs, paired with local `LAYA_EXTRA_MODELS` checkpoint directories. ONNX preloads configured graph names when `LAYA_MODELS` is omitted. |
+| `LAYA_EXTRA_MODELS` | unset | JSON map from checkpoint names to local directories or registered model sources. Send the custom name as `model` to select it explicitly. |
+| `LAYA_SHA256_DIGESTS` | unset | Artifact digest map or nested map keyed by checkpoint name. Use per-checkpoint pins when loading more than one checkpoint. |
 | `LAYA_PERFORMANCE_MODE` | unset | Opt-in resource profile `1`–`5`, or `default` for existing defaults. Sets thread, batch, resident-model and preload budgets for local inference. Explicit existing settings override profile values. |
 | `LAYA_MAX_LOADED` | Router default | Maximum resident checkpoints. Overrides the profile's model cap. |
 | `LAYA_PRELOAD` | `1` | Build the configured checkpoints at startup. Set to `0` for lazy loading. |
@@ -304,6 +306,9 @@ the server is ready.
 | `LAYA_USER_AGENT` | `veya/<version>` | HTTP client identity in remote mode. Empty values use the default; invalid header characters are refused. Custom `RemoteRouter(user_agent=...)` overrides the environment. |
 
 `laya_status` includes `performance_mode` and `performance_config` (both null without a profile).
+`checkpoint_policies` reports the effective policy of each resident local checkpoint.
+`model_free_replay.enabled` reports whether replay metadata is configured. Cold Torch
+status reports the configured device preference without probing Torch when replay is configured.
 The configuration reports effective budgets and overrides. Torch thread changes affect the
 whole process; choose the mode at startup. The [mode guide](performance-modes.md) lists all five
 budgets, Python examples and the limits of the measurements.

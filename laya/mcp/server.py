@@ -100,7 +100,8 @@ _DEFAULT_MODELS = ("english", "multilingual")
 # of deciding, so it does not carry them.
 _GUARDRAILS = (
     "Use for structured decisions only: choice (finite labels), score (ordinal rubric), "
-    "noul (P(true)). Answers in one forward pass; latency depends on hardware and input size. "
+    "noul (P(true)). Canonical direct prediction uses one forward per batch chunk. "
+    "Latency depends on hardware, input size and the configured decision policy. "
     "No text generation; predictions can still be wrong. Do NOT use for open Q&A, summarization, "
     "rewriting, code, or multi-hop reasoning. Do NOT use for >20-option choice "
     "questions without narrowing (use laya_shortlist or laya_tournament)."

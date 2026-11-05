@@ -1217,7 +1217,7 @@ def _remote_status(router: Any, preload: bool) -> dict:
     loaded = health.get("loaded")
     out["loaded"] = [v for v in loaded if isinstance(v, str)] if isinstance(loaded, list) else []
     for key in ("backend", "device", "device_is_preference", "checkpoint_devices", "decision_cache",
-                "performance_mode", "performance_config"):
+                "performance_mode", "performance_config", "model_free_replay", "revisions"):
         if key in health:
             out[key] = health[key]
     return out
@@ -1225,7 +1225,8 @@ def _remote_status(router: Any, preload: bool) -> dict:
 
 def laya_status(*, router: Any = None, loaded: list[str] | None = None, preload: bool = True,
                 performance_mode=None, backend=None) -> dict:
-    from ..serve import _decision_cache_report, _performance_report, _server_performance_config, _inference_backend
+    from ..serve import (_decision_cache_report, _performance_report, _server_performance_config,
+                         _inference_backend, _replay_manifest_option)
 
     if router is not None and hasattr(router, "base_url") and hasattr(router, "health"):
         return _remote_status(router, preload)
@@ -1233,11 +1234,21 @@ def laya_status(*, router: Any = None, loaded: list[str] | None = None, preload:
     config = getattr(router, "_laya_server_performance_config", getattr(router, "performance_config", None))
     if config is None and not hasattr(router, "_laya_server_performance_config"):
         config = _server_performance_config(performance_mode)
+    if loaded is None and router is not None:
+        try:
+            loaded = list(getattr(router, "loaded", []) or [])
+        except Exception:
+            loaded = []
+    manifest = (_replay_manifest_option().get("replay_manifest") if router is None else
+                getattr(router, "replay_manifest", None))
+    deferred = backend == "torch" and ((manifest and not loaded) or (router is None and config is not None))
     # A preset can be inspected before constructing a Router or importing torch. Device
     # availability becomes known when a checkpoint is built; this is its preference only.
-    report = ({"device": os.environ.get("LAYA_DEVICE", "").strip().lower() or "auto",
+    preference = (getattr(router, "device", None) if router is not None else
+                  os.environ.get("LAYA_DEVICE", "").strip().lower())
+    report = ({"device": str(preference or "auto"),
                "torch_cuda": None, "torch_version": None}
-              if router is None and config is not None and backend == "torch"
+              if deferred
               else device_report(backend=backend) if backend == "onnx" else device_report())
     versions: dict[str, str | None] = {
         "laya": None,
@@ -1246,28 +1257,27 @@ def laya_status(*, router: Any = None, loaded: list[str] | None = None, preload:
     }
     from .. import __version__
     versions["laya"] = __version__
-    for pkg in (() if backend == "onnx" or (router is None and config is not None) else ("transformers",)):
+    for pkg in (() if backend == "onnx" or deferred else ("transformers",)):
         try:
             mod = __import__(pkg)
             versions[pkg] = getattr(mod, "__version__", "unknown")
         except Exception:
             versions[pkg] = None
 
-    if loaded is None and router is not None:
-        try:
-            loaded = list(getattr(router, "loaded", []) or [])
-        except Exception:
-            loaded = []
-
     # Real device of every loaded checkpoint (Agent.device reflects a silent
     # GPU -> CPU fallback). The top-level "device" is that fact when something
     # is loaded; before any load it is the configured preference (LAYA_DEVICE
     # or auto), which "device_is_preference" flags as such.
     checkpoint_devices: dict[str, str] = {}
+    checkpoint_policies: dict[str, str] = {}
     for name in (loaded or []):
-        device = agent_device(router_agent(router, name))
+        agent = router_agent(router, name)
+        device = agent_device(agent)
         if device:
             checkpoint_devices[name] = device
+        policy = getattr(agent, "decision_policy", None)
+        if isinstance(policy, str):
+            checkpoint_policies[name] = policy
     actual = next(iter(checkpoint_devices.values()), None)
 
     return {
@@ -1278,6 +1288,9 @@ def laya_status(*, router: Any = None, loaded: list[str] | None = None, preload:
         "device": actual or report["device"],
         "device_is_preference": actual is None,
         "checkpoint_devices": checkpoint_devices,
+        "checkpoint_policies": checkpoint_policies,
+        "model_free_replay": {"enabled": bool(manifest)},
+        "revisions": getattr(router, "loaded_revisions", {}),
         "loaded": list(loaded or []),
         "router_preload": config["preload"] if config is not None else bool(preload),
         "router_ready": router is not None,
