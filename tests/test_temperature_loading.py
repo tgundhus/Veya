@@ -148,6 +148,20 @@ class TemperatureLoadingTests(unittest.TestCase):
             self.assertIn(entry, messages[0])
         self.assert_predictions(agent, choice=5.0, score=0.5, noul=0.5)
 
+    def test_wide_json_integers_keep_neutral_fallback_and_warn(self):
+        for value in (10 ** 400, -(10 ** 400), 2 ** 1024):
+            with self.subTest(value=value):
+                agent, messages = self.load_config(temperature=[value, 2.0, 3.0],
+                                                  temperature_by_options={"choice:2": value})
+                self.assertEqual(agent.temperature, [1.0, 2.0, 3.0])
+                self.assertEqual(agent.temperature_by_options, {"choice:2": 1.0})
+                self.assertEqual(len(messages), 1)
+                self.assertIn("temperature[0]", messages[0])
+                self.assertIn("choice:2", messages[0])
+                self.assertIn(str(value), messages[0])
+                self.assertIn("uncalibrated", messages[0])
+                self.assert_predictions(agent, choice=1.0, score=2.0, noul=3.0)
+
     def test_valid_numbers_and_numeric_strings_do_not_warn(self):
         agent, messages = self.load_config(temperature=[0.5, "2", 5],
                                           temperature_by_options={"choice:2": "1.5", "score:3-5": 2.5, "noul:2": "5.0"})
@@ -194,6 +208,10 @@ class TemperatureRejectionPredicateTests(unittest.TestCase):
             ({}, 1.0, True),
             (float("nan"), 1.0, True),
             (float("inf"), 1.0, True),
+            (10 ** 400, 1.0, True),
+            (-(10 ** 400), 1.0, True),
+            (2 ** 1024, 1.0, True),
+            (2 ** 1023, TEMP_MAX, True),
         ]
         for raw, applied, want in cases:
             with self.subTest(raw=raw, applied=applied):

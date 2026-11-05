@@ -713,6 +713,9 @@ _refuses("shape/binning Infinity", {"temperature": [1.0, 1.0, 1.0], "binning_map
 _refuses("shape/binning bool value", {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": [True]}}}, "number")
 _refuses("shape/binning string value", {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": ["0.5"]}}}, "number")
 _refuses("shape/binning null value", {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": [None]}}}, "number")
+for _value in (10 ** 400, -(10 ** 400), 2 ** 1024):
+    _refuses("shape/binning wide integer %r" % _value,
+             {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": [_value]}}}, "number")
 _refuses("shape/scalar temperature", {"temperature": 5}, "[3 floats]")
 _refuses("shape/string temperature", {"temperature": "abc"}, "[3 floats]")
 _refuses("shape/dict temperature", {"temperature": {"a": 1, "b": 2, "c": 3}}, "[3 floats]")

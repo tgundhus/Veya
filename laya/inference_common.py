@@ -597,7 +597,7 @@ def clamp_temperature(t, lo: float = TEMP_MIN, hi: float = TEMP_MAX) -> float:
         return 1.0
     try:
         t = float(t)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return 1.0
     if t != t or t in (float("inf"), float("-inf")):    # NaN / inf
         return 1.0
@@ -619,7 +619,7 @@ def temperature_rejected(raw, applied: float) -> bool:
         return True
     try:
         value = float(raw)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return True
     return value != applied
 
