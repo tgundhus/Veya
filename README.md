@@ -1,6 +1,6 @@
-# Laya-Pro
+# Veya
 
-Laya-Pro is a local AI decision engine for classification, scoring and yes/no questions.
+Veya is a local AI decision engine for classification, scoring and yes/no questions.
 Use it for ticket routing, moderation, guardrails and structured decisions in your own applications.
 It runs on your hardware through Python or ONNX Runtime, with HTTP and local MCP interfaces.
 
@@ -10,30 +10,40 @@ The pretrained models remain upstream Laya checkpoints; the fork maintains its o
 SDKs, documentation and measurements.
 
 Selected upstream changes are reviewed through Laya 0.4.6. The
-[12 October review](https://tgundhus.github.io/laya-pro/reports/upstream-review-2026-10-12/)
+[12 October review](https://tgundhus.github.io/Veya/reports/upstream-review-2026-10-12/)
 records the adopted fixes, measured costs and deferred features.
 
-[Documentation](https://tgundhus.github.io/laya-pro/) · [Integration](https://github.com/tgundhus/laya-pro/blob/main/docs/integration.md) ·
-[Benchmarks](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md) · [Deployment](https://github.com/tgundhus/laya-pro/blob/main/docs/production.md)
+[Documentation](https://tgundhus.github.io/Veya/) · [Integration](https://github.com/tgundhus/Veya/blob/main/docs/integration.md) ·
+[Benchmarks](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md) · [Deployment](https://github.com/tgundhus/Veya/blob/main/docs/production.md)
 
 ## Install
 
 ```bash
-python -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+python -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 # HTTP and MCP support
-python -m pip install "laya-pro[serve,mcp] @ git+https://github.com/tgundhus/laya-pro.git"
+python -m pip install "veya[serve,mcp] @ git+https://github.com/tgundhus/Veya.git"
 ```
 
-Python 3.10–3.13. The distribution is `laya-pro`; imports and commands remain `laya`.
+Python 3.10–3.13. The distribution is `veya`; imports and commands remain `laya`
+for compatibility. The HTTP client distributions are `veya-client`, and the
+lightweight inference distribution is `veya-onnx`. Native SDK import names remain compatible.
 Install it separately from upstream `laya`, since both provide that import.
-Source installation is supported until a Laya-Pro registry release is published.
+When upgrading an existing environment, uninstall the former `laya-pro`,
+`laya-pro-client` or `laya-pro-onnx` distribution before installing its renamed
+replacement. Pip treats these as different projects even though their import
+paths overlap; uninstalling the old package afterward can remove the new files.
+Source installation is supported until a Veya registry release is published.
 For reproducible deployment, append a reviewed commit SHA to the Git URL.
+
+Historical benchmark artifacts retain their original labels, source hashes and
+recorded filesystem paths. The local checkout directory can still have its former
+name; it is independent of the GitHub repository and package identity.
 
 The first model load downloads a checkpoint. Inference runs locally. For offline use,
 download checkpoints beforehand and pass their directories to the Router.
-[Installation and platform notes](https://github.com/tgundhus/laya-pro/blob/main/docs/guide.md#installation).
+[Installation and platform notes](https://github.com/tgundhus/Veya/blob/main/docs/guide.md#installation).
 
-For an exported ONNX model, the separate `laya-pro-onnx` distribution uses the
+For an exported ONNX model, the separate `veya-onnx` distribution uses the
 `laya_onnx` import and runs without PyTorch or Transformers. Install from a checkout
 with `python -m pip install ./runtime/onnx`; it has not been published to a registry.
 Optional HTTP and local MCP services are available with
@@ -41,7 +51,7 @@ Optional HTTP and local MCP services are available with
 `laya-onnx-serve` or `laya-onnx-mcp`; configure local checkpoint and exported graph
 pairs as described below. The full package remains the export toolchain and keeps
 its current default backend.
-[Lightweight ONNX setup](https://tgundhus.github.io/laya-pro/onnx-runtime/).
+[Lightweight ONNX setup](https://tgundhus.github.io/Veya/onnx-runtime/).
 
 ## First decision
 
@@ -78,7 +88,7 @@ Questions in a request share a forward pass. `predict_batch` handles multiple st
 `predict_long` handles documents beyond the context window. Routing selects an English,
 multilingual or task-specific checkpoint. Explicit `model` and `lang` overrides are available.
 
-The experimental, opt-in [`ContextCompactor`](https://github.com/tgundhus/laya-pro/blob/main/docs/compaction.md) uses local decisions
+The experimental, opt-in [`ContextCompactor`](https://github.com/tgundhus/Veya/blob/main/docs/compaction.md) uses local decisions
 to prune explicitly replayable tool history. Conservative defaults retain uncertain,
 protected or incompletely scored content; evaluate retention before using it in an agent loop.
 
@@ -98,23 +108,23 @@ protected or incompletely scored content; evaluate retention before using it in 
 The cache stores request hashes and result payloads, including option labels and probabilities.
 It does not store the original request text. Expiry prevents replay; physical deletion requires
 pruning and a policy for database files, journals and backups. A cached answer can still be
-wrong. [Cache behavior and retention](https://github.com/tgundhus/laya-pro/blob/main/docs/consistency.md).
+wrong. [Cache behavior and retention](https://github.com/tgundhus/Veya/blob/main/docs/consistency.md).
 
 ## Integration
 
 | Application | Interface |
 |---|---|
 | Python, in process | `Router`, `Agent`, `ONNXAgent`, typed schemas and prediction hooks |
-| JavaScript / TypeScript, HTTP | [HTTP client](https://github.com/tgundhus/laya-pro/blob/main/sdk/typescript/README.md) for your own `laya-serve` |
-| JavaScript / TypeScript, in process | [ONNX SDK](https://github.com/tgundhus/laya-pro/blob/main/laya-ts/README.md) |
-| Java, in process | [Java SDK](https://github.com/tgundhus/laya-pro/blob/main/laya-java/README.md) |
-| .NET, in process | [.NET SDK](https://github.com/tgundhus/laya-pro/blob/main/laya-dotnet/README.md) |
-| Editor or agent tools | [MCP over stdio](https://github.com/tgundhus/laya-pro/blob/main/docs/cli-mcp.md), local inference or your own HTTP server |
-| Agent frameworks | [LangChain / LangGraph](https://github.com/tgundhus/laya-pro/blob/main/docs/langchain.md), [LlamaIndex](https://github.com/tgundhus/laya-pro/blob/main/docs/llamaindex.md), [CrewAI](https://github.com/tgundhus/laya-pro/blob/main/docs/crewai.md) |
+| JavaScript / TypeScript, HTTP | [HTTP client](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) for your own `laya-serve` |
+| JavaScript / TypeScript, in process | [ONNX SDK](https://github.com/tgundhus/Veya/blob/main/laya-ts/README.md) |
+| Java, in process | [Java SDK](https://github.com/tgundhus/Veya/blob/main/laya-java/README.md) |
+| .NET, in process | [.NET SDK](https://github.com/tgundhus/Veya/blob/main/laya-dotnet/README.md) |
+| Editor or agent tools | [MCP over stdio](https://github.com/tgundhus/Veya/blob/main/docs/cli-mcp.md), local inference or your own HTTP server |
+| Agent frameworks | [LangChain / LangGraph](https://github.com/tgundhus/Veya/blob/main/docs/langchain.md), [LlamaIndex](https://github.com/tgundhus/Veya/blob/main/docs/llamaindex.md), [CrewAI](https://github.com/tgundhus/Veya/blob/main/docs/crewai.md) |
 
 The SDKs have different capabilities. Pro's persistent decision cache runs in the Python engine;
 HTTP clients and MCP can use that engine's cache. Native SDKs do not implement the same
-persistence policy. [Capability table and examples](https://github.com/tgundhus/laya-pro/blob/main/docs/integration.md).
+persistence policy. [Capability table and examples](https://github.com/tgundhus/Veya/blob/main/docs/integration.md).
 
 Start a local HTTP server with `laya-serve`, then call `POST /v1/systemone` or
 `POST /v1/systemone/batch`. Set these variables in the server's environment for a seven-day cache:
@@ -126,13 +136,13 @@ LAYA_CACHE_MAXSIZE=100000
 ```
 
 The same cache variables apply to `laya-mcp-server`. Authentication, request bounds,
-concurrency and offline setup are covered in the [deployment guide](https://github.com/tgundhus/laya-pro/blob/main/docs/production.md).
+concurrency and offline setup are covered in the [deployment guide](https://github.com/tgundhus/Veya/blob/main/docs/production.md).
 
 Use `Router(performance_mode=2)`, `laya --performance-mode 2`, or
 `LAYA_PERFORMANCE_MODE=2` in the engine's environment to choose a resource budget.
 Explicit settings override profile values; `performance_mode="default"` ignores the environment
 for an instance. Modes keep the same model and precision. Higher modes are not necessarily
-faster on your hardware. [Mode budgets and measurements](https://github.com/tgundhus/laya-pro/blob/main/docs/performance-modes.md).
+faster on your hardware. [Mode budgets and measurements](https://github.com/tgundhus/Veya/blob/main/docs/performance-modes.md).
 
 ## Measurements
 
@@ -140,18 +150,18 @@ On a pinned real English CPU checkpoint, bounded loading reduced peak working se
 764 MiB (28%), with unchanged steady memory and inference time. The standalone ONNX
 runtime reduced startup to the first answer from 5.37 to 1.78 s on the same graph;
 warm inference stayed the same and all 12 typed answers matched exactly.
-[Loading measurements and limits](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#loading-memory-and-standalone-onnx-31-october-2026).
+[Loading measurements and limits](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#loading-memory-and-standalone-onnx-31-october-2026).
 
 The October CPU check used a pinned English checkpoint, fp32 and four threads. Median single
 inference was 571.5 ms; a SQLite repeat was 0.148 ms. All 12 answers agreed between serial and
 grouped batch execution. Workstation load was uncontrolled and this small check does not
-measure accuracy. [Current results and methods](https://github.com/tgundhus/laya-pro/blob/main/docs/reports/production-review.md).
+measure accuracy. [Current results and methods](https://github.com/tgundhus/Veya/blob/main/docs/reports/production-review.md).
 
 These archived results used published checkpoints on an Apple M4 Max in September 2026,
 against Laya 0.3.20/0.3.21. They describe those runs, not a guarantee for newer versions or
-another machine. [Method and raw results](https://github.com/tgundhus/laya-pro/blob/main/docs/reports/real-checkpoints-m4-max.md).
+another machine. [Method and raw results](https://github.com/tgundhus/Veya/blob/main/docs/reports/real-checkpoints-m4-max.md).
 
-| Workload | Upstream run | Laya-Pro run |
+| Workload | Upstream run | Veya run |
 |---|---|---|
 | Repeated three-question ticket, CPU | 143.9 ms | 0.037 ms, memory cache |
 | Repeated three-question ticket, MPS | 34.1 ms | 0.058 ms, memory cache |
@@ -163,28 +173,28 @@ another machine. [Method and raw results](https://github.com/tgundhus/laya-pro/b
 New requests are dominated by inference; cache speed depends on repeat frequency.
 Earlier parity checks covered 841 requests in 11 languages. Precision changes can change
 decisions, so validate fp16, bf16 or int8 on your own data before adopting them.
-The [October review](https://github.com/tgundhus/laya-pro/blob/main/docs/reports/production-review.md) records current checks, fixes,
+The [October review](https://github.com/tgundhus/Veya/blob/main/docs/reports/production-review.md) records current checks, fixes,
 measurements and verification limits separately from these archived results.
 
 ## Limits and version policy
 
 This version incorporates upstream **0.3.29** and selected correctness and integration changes
-reviewed through **0.4.18**. The distribution remains 0.3.29 and retains Laya-Pro's English
+reviewed through **0.4.18**. The distribution remains 0.3.29 and retains Veya's English
 fallback for ambiguous Latin text. This is selected upstream coverage, not complete behavioral
-parity; the [30 October review](https://github.com/tgundhus/laya-pro/blob/main/docs/reports/upstream-review-2026-10-30.md)
+parity; the [30 October review](https://github.com/tgundhus/Veya/blob/main/docs/reports/upstream-review-2026-10-30.md)
 records adopted changes, measurements and limits.
 
 Validate accuracy and confidence on representative labelled data. Large choice sets,
 underspecified criteria and ordinal scores remain difficult. Replay improves repeatability,
 not accuracy; an expired, evicted or unavailable entry is computed again.
-See [measured limits](https://github.com/tgundhus/laya-pro/blob/main/docs/limits.md) and the [evaluation harness](https://github.com/tgundhus/laya-pro/blob/main/docs/evals.md).
+See [measured limits](https://github.com/tgundhus/Veya/blob/main/docs/limits.md) and the [evaluation harness](https://github.com/tgundhus/Veya/blob/main/docs/evals.md).
 
 ## Development and license
 
-[Contributing](https://github.com/tgundhus/laya-pro/blob/main/CONTRIBUTING.md) covers test suites, required lint and compile gates, and strict
+[Contributing](https://github.com/tgundhus/Veya/blob/main/CONTRIBUTING.md) covers test suites, required lint and compile gates, and strict
 documentation builds. Changes should include a runnable regression check and measured evidence
 when they alter performance or numerical behavior.
 
-Laya was created by Nandakishor M and developed by Convai Innovations. Laya-Pro's additions
+Laya was created by Nandakishor M and developed by Convai Innovations. Veya's additions
 are maintained by Tobias Gundhus. The engine, checkpoints and fork are licensed under
-[Apache 2.0](https://github.com/tgundhus/laya-pro/blob/main/LICENSE). Laya-Pro is an independent fork, with no endorsement implied.
+[Apache 2.0](https://github.com/tgundhus/Veya/blob/main/LICENSE). Veya is an independent fork, with no endorsement implied.

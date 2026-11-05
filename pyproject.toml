@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "laya-pro"
+name = "veya"
 version = "0.3.29"
 description = "Local typed AI decisions with configurable cache retention, Python SDK, HTTP API and MCP"
 readme = "README.md"
@@ -38,22 +38,22 @@ dependencies = [
 packages = ["laya", "laya.backends", "laya.mcp", "laya.integrations"]
 
 [project.optional-dependencies]
-# `pip install laya-pro[serve]` adds the HTTP server (laya.serve / the laya-serve CLI).
+# `pip install veya[serve]` adds the HTTP server (laya.serve / the laya-serve CLI).
 serve = [
     "fastapi>=0.110.0",
     "uvicorn>=0.27.0",
     "python-multipart>=0.0.9",  # examples/server.py form uploads
 ]
-# `pip install laya-pro[fast]` adds the TileLang GPU fast path (laya/fast.py); everything else works without it.
+# `pip install veya[fast]` adds the TileLang GPU fast path (laya/fast.py); everything else works without it.
 fast = ["tilelang>=0.1.14"]
 
-# `pip install laya-pro[mcp]` adds the MCP stdio server (laya.mcp / the laya-mcp-server CLI).
+# `pip install veya[mcp]` adds the MCP stdio server (laya.mcp / the laya-mcp-server CLI).
 mcp = ["mcp>=2.2.0"]
 
-# `pip install laya-pro[structured]` adds pydantic for the typed-model helpers (laya/structured.py).
+# `pip install veya[structured]` adds pydantic for the typed-model helpers (laya/structured.py).
 structured = ["pydantic>=2.0.0"]
 
-# `pip install laya-pro[onnx]` adds ONNX Runtime for `laya.onnx_agent` and `onnxscript`, which
+# `pip install veya[onnx]` adds ONNX Runtime for `laya.onnx_agent` and `onnxscript`, which
 # `torch.onnx.export` requires (`scripts/export_onnx.py`, `tests/test_onnx.py`).
 #
 # The NumPy cap is not about ONNX: the extra's own resolution (onnx -> ml-dtypes) otherwise
@@ -71,7 +71,7 @@ structured = ["pydantic>=2.0.0"]
 onnx = ["onnx", "onnxruntime", "onnxscript",
         "numpy<2; platform_system == 'Darwin' and platform_machine == 'x86_64'"]
 
-# `pip install laya-pro[langchain]` adds the LangChain / LangGraph integrations (laya.integrations).
+# `pip install veya[langchain]` adds the LangChain / LangGraph integrations (laya.integrations).
 langchain = [
     "langchain-core>=0.2.0",
     "langgraph>=0.1.0",
@@ -81,12 +81,12 @@ langgraph = [
     "langgraph>=0.1.0",
 ]
 
-# `pip install laya-pro[llamaindex]` adds the LlamaIndex query router & selector integrations (laya.integrations).
+# `pip install veya[llamaindex]` adds the LlamaIndex query router & selector integrations (laya.integrations).
 llamaindex = [
     "llama-index-core>=0.10.0",
 ]
 
-# `pip install laya-pro[crewai]` adds the CrewAI multi-agent delegation router (laya.integrations).
+# `pip install veya[crewai]` adds the CrewAI multi-agent delegation router (laya.integrations).
 # 1.15.6 is the first CrewAI that pins a patched json-repair (GHSA-xf7x-x43h-rpqh). Those releases
 # also pin mcp~=1.28, so this extra cannot share an install with the `mcp` extra (mcp>=2.2).
 crewai = [
@@ -104,8 +104,8 @@ laya-mcp-server = "laya.mcp.server:main"
 laya-train = "laya.train_cli:main"
 
 [project.urls]
-Homepage = "https://tgundhus.github.io/laya-pro/"
-Documentation = "https://tgundhus.github.io/laya-pro/"
-Repository = "https://github.com/tgundhus/laya-pro"
-Issues = "https://github.com/tgundhus/laya-pro/issues"
+Homepage = "https://tgundhus.github.io/Veya/"
+Documentation = "https://tgundhus.github.io/Veya/"
+Repository = "https://github.com/tgundhus/Veya"
+Issues = "https://github.com/tgundhus/Veya/issues"
 "Upstream models" = "https://huggingface.co/convaiinnovations/laya"

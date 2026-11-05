@@ -21,7 +21,7 @@ Installing the package installs the `laya` entry point. Run `laya --help` for th
 option list.
 
 ```bash
-python -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+python -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 laya --help
 ```
 
@@ -132,7 +132,7 @@ installation, Hub access, and the selected device before retrying.
 The MCP server is an optional extra. The core package does not install the `mcp` dependency:
 
 ```bash
-python -m pip install "laya-pro[mcp] @ git+https://github.com/tgundhus/laya-pro.git"
+python -m pip install "veya[mcp] @ git+https://github.com/tgundhus/Veya.git"
 laya-mcp-server
 # equivalent module form:
 python -m laya.mcp.server
@@ -291,7 +291,7 @@ the server is ready.
 | `LAYA_DEFAULT_MODEL` | `english` | The checkpoint a state with no language evidence falls back to, same meaning as in `laya.serve`. Unlike `laya.serve`, an unresolvable name does not stop the server: it comes back as a `router construction failed` tool error on the next call, because a stdio server has no startup to refuse. |
 | `LAYA_BASE_URL` | unset | Send predictions to a `laya-serve` on your own hardware instead of loading checkpoints in each MCP process. A bare `host:port` is read as HTTP. |
 | `LAYA_REMOTE_TIMEOUT` | `300` | HTTP timeout in seconds when `LAYA_BASE_URL` is set, including the server's cold load. Invalid or non-positive values use the default. |
-| `LAYA_USER_AGENT` | `laya-pro/<version>` | HTTP client identity in remote mode. Empty values use the default; invalid header characters are refused. Custom `RemoteRouter(user_agent=...)` overrides the environment. |
+| `LAYA_USER_AGENT` | `veya/<version>` | HTTP client identity in remote mode. Empty values use the default; invalid header characters are refused. Custom `RemoteRouter(user_agent=...)` overrides the environment. |
 
 `laya_status` includes `performance_mode` and `performance_config` (both null without a profile).
 The configuration reports effective budgets and overrides. Torch thread changes affect the

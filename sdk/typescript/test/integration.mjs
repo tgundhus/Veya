@@ -5,7 +5,7 @@ import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 import { test } from 'node:test';
-import { Laya, LayaAPIError, triageQuestions, emailQuestions, guardQuestions, moderationQuestions, routerQuestions } from 'laya-pro-client';
+import { Laya, LayaAPIError, triageQuestions, emailQuestions, guardQuestions, moderationQuestions, routerQuestions } from 'veya-client';
 
 test('JavaScript → HTTP → Python Router → real offline Agent inference', { timeout: 90_000 }, async t => {
   const script = fileURLToPath(new URL('../../../tests/sdk_server_fixture.py', import.meta.url));

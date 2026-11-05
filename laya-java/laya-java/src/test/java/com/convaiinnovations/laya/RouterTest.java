@@ -558,7 +558,7 @@ class RouterTest {
     @DisplayName("the default checkpoint is the only knob for unidentified Latin text")
     void defaultCheckpointDecidesUndecided() {
         String undecided = "Quero cancelar";
-        // Laya-Pro keeps the English fallback. Both explicit policies remain available.
+        // Veya keeps the English fallback. Both explicit policies remain available.
         assertEquals(Router.Checkpoint.ENGLISH,
                 Router.withDefaults().route(undecided).model());
         assertEquals(Router.Checkpoint.ENGLISH,

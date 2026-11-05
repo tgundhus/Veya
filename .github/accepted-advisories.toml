@@ -1,6 +1,6 @@
 # Advisories the dependency audit (.github/workflows/security.yml) accepts, read by
 # scripts/pip_audit_policy.py. Each was reviewed and has no fixed release: every version up to the
-# latest is affected. None can be reached through Laya-Pro, and only an optional integration pulls
+# latest is affected. None can be reached through Veya, and only an optional integration pulls
 # these packages in, never the core package, the Docker image or the Nix build. The audit fails
 # again for an entry as soon as a fixed release exists, so each is looked at again then.
 
@@ -9,7 +9,7 @@ id = "PYSEC-2026-311"
 aliases = ["CVE-2026-45829", "GHSA-f4j7-r4q5-qw2c"]
 package = "chromadb"
 via = "laya[crewai]: crewai pins chromadb~=1.1.0"
-reason = "Unauthenticated code injection in ChromaDB's HTTP server, through its collections endpoint with trust_remote_code. Nothing in Laya-Pro or its CrewAI integration starts that server."
+reason = "Unauthenticated code injection in ChromaDB's HTTP server, through its collections endpoint with trust_remote_code. Nothing in Veya or its CrewAI integration starts that server."
 reviewed = "2026-09-29"
 
 [[advisory]]
@@ -17,7 +17,7 @@ id = "PYSEC-2026-3814"
 aliases = ["CVE-2026-45833", "GHSA-36p7-vc44-83pf"]
 package = "chromadb"
 via = "laya[crewai]: crewai pins chromadb~=1.1.0"
-reason = "Authenticated code injection in ChromaDB's HTTP server, through the same endpoint. Nothing in Laya-Pro or its CrewAI integration starts that server."
+reason = "Authenticated code injection in ChromaDB's HTTP server, through the same endpoint. Nothing in Veya or its CrewAI integration starts that server."
 reviewed = "2026-09-29"
 
 [[advisory]]
@@ -25,7 +25,7 @@ id = "PYSEC-2026-3815"
 aliases = ["CVE-2026-45831", "GHSA-xph7-9rjv-w5fr"]
 package = "chromadb"
 via = "laya[crewai]: crewai pins chromadb~=1.1.0"
-reason = "The ChromaDB server's SimpleRBACAuthorizationProvider does not scope permissions to a tenant. Nothing in Laya-Pro or its CrewAI integration starts that server."
+reason = "The ChromaDB server's SimpleRBACAuthorizationProvider does not scope permissions to a tenant. Nothing in Veya or its CrewAI integration starts that server."
 reviewed = "2026-09-29"
 
 [[advisory]]
@@ -33,7 +33,7 @@ id = "PYSEC-2026-3813"
 aliases = ["CVE-2026-45830", "GHSA-2wm9-hf6c-p5cr"]
 package = "chromadb"
 via = "laya[crewai]: crewai pins chromadb~=1.1.0"
-reason = "The ChromaDB server lets any authenticated user read and write other tenants' collections. Nothing in Laya-Pro or its CrewAI integration starts that server."
+reason = "The ChromaDB server lets any authenticated user read and write other tenants' collections. Nothing in Veya or its CrewAI integration starts that server."
 reviewed = "2026-09-29"
 
 [[advisory]]
@@ -41,5 +41,5 @@ id = "PYSEC-2026-3740"
 aliases = ["CVE-2026-81726", "GHSA-8mgp-746c-j5xp"]
 package = "nltk"
 via = "laya[llamaindex]: llama-index-core requires nltk>=3.9.3"
-reason = "NLTK's model-artifact APIs accept caller-controlled paths outside its data root. Exploiting it needs code that passes an attacker's path to those APIs; Laya-Pro never calls NLTK."
+reason = "NLTK's model-artifact APIs accept caller-controlled paths outside its data root. Exploiting it needs code that passes an attacker's path to those APIs; Veya never calls NLTK."
 reviewed = "2026-09-29"

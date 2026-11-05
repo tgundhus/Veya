@@ -91,7 +91,7 @@ A `DecisionStore` needs seven methods: `get`, `add`, `renew`, `prune`, `__len__`
 `close`, over bytes keys and values with expiries in Unix seconds. It must be thread-safe, and
 its `add` must keep an existing unexpired value and return it. That one rule is what makes the
 first decision win across machines.
-[`examples/hooks/decision_store_redis.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/decision_store_redis.py)
+[`examples/hooks/decision_store_redis.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/decision_store_redis.py)
 implements it with `SET ... NX` and Redis's own expiry. Laya itself ships no network store.
 
 ## Pre-warming

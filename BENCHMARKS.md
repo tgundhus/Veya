@@ -1,6 +1,6 @@
-# Laya and Laya-Pro benchmarks
+# Laya and Veya benchmarks
 
-The [October 2026 Laya-Pro review](docs/reports/production-review.md) records current CPU
+The [October 2026 Veya review](docs/reports/production-review.md) records current CPU
 smoke measurements, cache before/after results and SDK verification. Historical upstream and
 fork runs below retain their original versions and hardware.
 
@@ -332,7 +332,7 @@ An independent study measured `laya` as a dynamically batched service on a froze
 SAM.gov notices. Each request asked the same three typed questions, so the table reports decisions per second
 (three decisions per request) at the highest tested load that met both the latency SLO and the achieved-rate gate.
 The study pinned Laya to
-[`6a58191`](https://github.com/tgundhus/laya-pro/commit/6a5819129eb220570792e417e49723d697efd76f)
+[`6a58191`](https://github.com/tgundhus/Veya/commit/6a5819129eb220570792e417e49723d697efd76f)
 and recorded the checkpoint hashes, software versions and GPU environments. Sweep rows, parity counts, the replay
 summary and the environments: `research/results/nvidia_capacity_20260925.json`. Sweep and replay script:
 `research/scripts/bench_nvidia_capacity.py`.
@@ -630,7 +630,7 @@ with ONNX, maximum absolute logit difference was `5.60e-6`, probability differen
 `7.45e-7`, and the typed answers also matched. The host was otherwise uncontrolled;
 small warm timing differences do not show a speed improvement.
 
-Installed dependency files occupied **879.7 MiB** for the existing full `laya-pro[onnx]`
+Installed dependency files occupied **879.7 MiB** for the existing full `veya[onnx]`
 closure and **134.4 MiB** for a fresh lightweight installation. These sums exclude project
 code and unrelated bootstrap tools; required dependencies such as Torch's setuptools
 remain included. The environments resolved different dependency versions, so these are

@@ -15,10 +15,10 @@
     <Version>0.1.0</Version>
     <PackageId>Laya.Onnx</PackageId>
     <Authors>Convai Innovations</Authors>
-    <Description>.NET port of the Laya Python SDK. Runs the multilingual, english and typed-decisions checkpoints locally on ONNX Runtime, with no Python at runtime. Laya is a non-autoregressive System 1 decision engine with calibrated probabilities.</Description>
+    <Description>Veya .NET SDK. Runs upstream Laya multilingual, English and typed-decisions checkpoints locally on ONNX Runtime, with no Python at runtime.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/tgundhus/laya-pro/tree/main/laya-dotnet</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/tgundhus/laya-pro</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tgundhus/Veya/tree/main/laya-dotnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tgundhus/Veya</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>laya;onnx;onnxruntime;llm;classification;nlp;decision-engine</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

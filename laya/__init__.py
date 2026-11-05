@@ -1,4 +1,4 @@
-"""Laya: Fast, non-autoregressive System 1 decision engine with calibrated probabilities."""
+"""Veya: local typed decisions and replay, with the compatible laya import API."""
 
 import os as _os
 

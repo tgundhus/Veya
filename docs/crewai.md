@@ -1,6 +1,6 @@
 # CrewAI Integration
 
-Laya-Pro provides local decision components for **CrewAI** multi-agent crews. Latency depends
+Veya provides local decision components for **CrewAI** multi-agent crews. Latency depends
 on hardware, checkpoint and questions; see the [current review](reports/production-review.md)
 and [archived benchmarks](benchmarks.md).
 
@@ -16,12 +16,12 @@ Supports both **local in-process inference** (`Agent` or `Router`) and **remote 
 ## Installation
 
 ```bash
-pip install "laya-pro[crewai] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[crewai] @ git+https://github.com/tgundhus/Veya.git"
 ```
 
 The extra needs CrewAI 1.15.6 or newer, the first release that pins a patched `json-repair`. Those
-releases also pin `mcp~=1.28`, while Laya-Pro's MCP server needs `mcp>=2.2`, so `laya-pro[crewai]` and
-`laya-pro[mcp]` cannot share one environment; install them in separate ones.
+releases also pin `mcp~=1.28`, while Veya's MCP server needs `mcp>=2.2`, so `veya[crewai]` and
+`veya[mcp]` cannot share one environment; install them in separate ones.
 
 ---
 

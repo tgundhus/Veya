@@ -1,11 +1,11 @@
-# Laya-Pro examples — a learning path
+# Veya examples — a learning path
 
 41 runnable scripts arranged as eight stages. Each stage assumes the one before it and adds one
 idea, so you can stop wherever you already have what you need. Every script runs against the real
 checkpoints and prints real output — nothing here is a mock, and the numbers you see come from the
 model on your machine. `_common.py` prefers `../models` when a local copy is there and otherwise
 loads the same checkpoints from the Hub (`convaiinnovations/laya`) on first use, so these run after
-an installation from this repository (`pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"`).
+an installation from this repository (`pip install "veya @ git+https://github.com/tgundhus/Veya.git"`).
 
 ```bash
 cd ..                                            # repository root

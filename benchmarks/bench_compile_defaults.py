@@ -1,6 +1,6 @@
 """Cold process measurements; use a fresh cache, then repeat the identical command.
 
-Example: TORCHINDUCTOR_CACHE_DIR=/tmp/laya-probe python benchmarks/bench_compile_defaults.py --model /path/to/checkpoint
+Example: TORCHINDUCTOR_CACHE_DIR=/tmp/veya-probe python benchmarks/bench_compile_defaults.py --model /path/to/checkpoint
 """
 import argparse
 import json

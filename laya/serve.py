@@ -1495,7 +1495,7 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
     # without adding a second auth path, so they are not served at all; run the server without a
     # key (or read docs/http-api.md) when you need the schema.
     app = FastAPI(
-        title="Laya-Pro local decision server",
+        title="Veya local decision server",
         summary="Local decisions with cache retention over the Jev-compatible /v1/systemone protocol",
         root_path=os.environ.get("LAYA_ROOT_PATH", ""),
         lifespan=lifespan,

@@ -1,6 +1,6 @@
 ---
 title: SDKs and local MCP integration
-description: Connect Python, TypeScript, Java or .NET applications to Laya-Pro, or expose local decisions through MCP tools.
+description: Connect Python, TypeScript, Java or .NET applications to Veya, or expose local decisions through MCP tools.
 ---
 
 # SDKs and integration
@@ -70,7 +70,7 @@ result = client.predict("Please refund the duplicate charge", questions, model="
 batch = client.predict_batch(["Payment failed", "Cannot sign in"], questions, batch_size=2)
 ```
 
-The [client README](https://github.com/tgundhus/laya-pro/tree/main/sdk/python) covers errors,
+The [client README](https://github.com/tgundhus/Veya/tree/main/sdk/python) covers errors,
 strict response validation, controls and isolated package verification.
 
 ## TypeScript over HTTP
@@ -83,11 +83,11 @@ npm ci
 npm test
 npm pack
 # In your application:
-npm install /path/to/laya-pro/sdk/typescript/laya-pro-client-0.1.0.tgz
+npm install /path/to/veya/sdk/typescript/veya-client-0.1.0.tgz
 ```
 
 ```typescript
-import { Laya, triageQuestions } from 'laya-pro-client';
+import { Laya, triageQuestions } from 'veya-client';
 
 const client = new Laya({ baseURL: 'http://127.0.0.1:8000', timeoutMs: 120_000 });
 const result = await client.predict('Payment failed', triageQuestions());
@@ -98,7 +98,7 @@ const batch = await client.predictBatch(
 
 The client validates requests and responses, preserves routing and confidence fields,
 supports cancellation and deadlines, and reports server errors. It does not retry inference
-automatically. [HTTP SDK source and full API](https://github.com/tgundhus/laya-pro/tree/main/sdk/typescript).
+automatically. [HTTP SDK source and full API](https://github.com/tgundhus/Veya/tree/main/sdk/typescript).
 
 ## Native SDKs
 
@@ -107,26 +107,26 @@ finalists after elimination; their probabilities describe that final set. The bo
 cache reuses label vectors between requests and stays in memory. Clear it when the model changes;
 it is separate from Python's decision retention policy.
 
-- [TypeScript ONNX SDK](https://github.com/tgundhus/laya-pro/tree/main/laya-ts): export ONNX
+- [TypeScript ONNX SDK](https://github.com/tgundhus/Veya/tree/main/laya-ts): export ONNX
   artifacts, build with `npm ci` and `npm run build`, then install the packed local package.
-- [Java SDK](https://github.com/tgundhus/laya-pro/tree/main/laya-java): build and test with
+- [Java SDK](https://github.com/tgundhus/Veya/tree/main/laya-java): build and test with
   the checked-in Gradle wrapper and a compatible JDK. The source API namespace is retained
   for compatibility.
-- [.NET SDK](https://github.com/tgundhus/laya-pro/tree/main/laya-dotnet): build the solution,
+- [.NET SDK](https://github.com/tgundhus/Veya/tree/main/laya-dotnet): build the solution,
   then reference the local project or packed artifact. Follow its exporter and tokenizer guide.
 
-Use artifacts built from this checkout for Laya-Pro. Maven Central, NuGet and npm names in
+Use artifacts built from this checkout for Veya. Maven Central, NuGet and npm names in
 upstream examples identify upstream releases until this fork publishes its own artifacts.
 
 ## Local MCP
 
-Install `laya-pro[mcp]` from the repository. Configure your editor with the absolute executable
+Install `veya[mcp]` from the repository. Configure your editor with the absolute executable
 path from the environment where it is installed:
 
 ```json
 {
   "mcpServers": {
-    "laya-pro": {
+    "veya": {
       "command": "/absolute/path/to/venv/bin/laya-mcp-server",
       "env": {
         "LAYA_DEVICE": "cpu",

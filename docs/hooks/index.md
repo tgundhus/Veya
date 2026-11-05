@@ -142,7 +142,7 @@ automatically. `Agent` hooks fire whenever the Router runs an attached or built 
 
 ## See also
 
-- [`examples/hooks/`](https://github.com/tgundhus/laya-pro/tree/main/examples/hooks/): runnable audit, redact, cache and metrics hooks.
-- [`tests/test_hooks.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks.py): the behaviour spec.
-- [`tests/test_hooks_api.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks_api.py): the API-stability guard.
-- [`laya/hooks.py`](https://github.com/tgundhus/laya-pro/blob/main/laya/hooks.py): the implementation.
+- [`examples/hooks/`](https://github.com/tgundhus/Veya/tree/main/examples/hooks/): runnable audit, redact, cache and metrics hooks.
+- [`tests/test_hooks.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks.py): the behaviour spec.
+- [`tests/test_hooks_api.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks_api.py): the API-stability guard.
+- [`laya/hooks.py`](https://github.com/tgundhus/Veya/blob/main/laya/hooks.py): the implementation.

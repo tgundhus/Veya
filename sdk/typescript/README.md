@@ -1,6 +1,6 @@
-# laya-pro-client
+# veya-client
 
-A dependency-free HTTP client for self-hosted Laya-Pro `laya-serve` predictions. Supports ESM and
+A dependency-free HTTP client for self-hosted Veya `laya-serve` predictions. Supports ESM and
 CommonJS on Node.js 22+, and browsers with `fetch`, `AbortController`, and
 `structuredClone`. TypeScript consumers need TypeScript 5 or newer.
 
@@ -41,7 +41,7 @@ Set `LAYA_PRELOAD=0` to defer loading until the first prediction. Initial loads
 download weights and need sufficient memory and disk space. The client timeout
 defaults to 120 seconds; the example allows 10 minutes for a cold load. Server
 configuration uses environment variables, not command-line flags. See the
-[server guide](https://github.com/tgundhus/laya-pro/blob/main/docs/guide.md#http-server-jev-compatible).
+[server guide](https://github.com/tgundhus/Veya/blob/main/docs/guide.md#http-server-jev-compatible).
 
 ## Install in another JavaScript project
 
@@ -53,11 +53,11 @@ separate release step; the commands here use the source you have reviewed:
 npm pack
 
 # From your app, substitute the actual checkout path:
-npm install /path/to/laya-pro/sdk/typescript/laya-pro-client-0.1.0.tgz
+npm install /path/to/veya/sdk/typescript/veya-client-0.1.0.tgz
 ```
 
 ```js
-import { Laya, triageQuestions } from 'laya-pro-client';
+import { Laya, triageQuestions } from 'veya-client';
 
 const laya = new Laya({ baseURL: 'http://127.0.0.1:8000' });
 const result = await laya.predict(
@@ -90,7 +90,7 @@ also accept `option_order`, a permutation of their option indices, while answers
 CommonJS works too:
 
 ```js
-const { Laya, triageQuestions } = require('laya-pro-client');
+const { Laya, triageQuestions } = require('veya-client');
 const laya = new Laya();
 laya.predict({ message: 'Please refund my order' }, triageQuestions())
   .then(result => console.log(result.answers));
@@ -103,7 +103,7 @@ Question IDs, primitive types, and choice labels are inferred. Use
 Inline schemas also infer automatically.
 
 ```ts
-import { Laya, defineQuestions } from 'laya-pro-client';
+import { Laya, defineQuestions } from 'veya-client';
 
 const laya = new Laya();
 const questions = defineQuestions({
@@ -160,7 +160,7 @@ question's options no longer have a token span each. See the `usage` table in
 
 ## Local model selection
 
-By default, `laya-pro-client` sends no `model` property. `laya-serve` then chooses
+By default, `veya-client` sends no `model` property. `laya-serve` then chooses
 the appropriate local checkpoint automatically. Set a client-wide `model` or
 override it per prediction only when a specific local checkpoint is required:
 
@@ -171,7 +171,7 @@ await laya.predict(state, questions, { model: 'multilingual' });
 ```
 
 Laya accepts its local checkpoint aliases. The HTTP endpoint forwards the
-per-request controls documented in the [HTTP API](https://github.com/tgundhus/laya-pro/blob/main/docs/http-api.md)
+per-request controls documented in the [HTTP API](https://github.com/tgundhus/Veya/blob/main/docs/http-api.md)
 reference, and this client exposes them as options on `predict()`:
 
 | option | wire field | meaning |
@@ -206,7 +206,7 @@ called by `predict()`.
 
 ## Which JavaScript client?
 
-Use `laya-pro-client` when a JavaScript or TypeScript application talks over HTTP to
+Use `veya-client` when a JavaScript or TypeScript application talks over HTTP to
 self-hosted Python `laya-serve`. Use `laya-ts` when inference must run directly
 inside JavaScript through its local ONNX runtime, without a Python server.
 
@@ -217,14 +217,14 @@ Available preset functions: `triageQuestions()`, `emailQuestions(categories?)`,
 a fresh schema. Email categories can be customized:
 
 ```js
-import { emailQuestions } from 'laya-pro-client';
+import { emailQuestions } from 'veya-client';
 const questions = emailQuestions({ finance: 'payments', engineering: 'bugs' });
 ```
 
 ## Errors, cancellation, authentication
 
 ```js
-import { Laya, LayaAPIError, LayaTimeoutError } from 'laya-pro-client';
+import { Laya, LayaAPIError, LayaTimeoutError } from 'veya-client';
 
 const client = new Laya({
   baseURL: 'http://127.0.0.1:8000',
@@ -307,7 +307,7 @@ with `python3 scripts/sync_presets.py` after editing that source.
 
 ## Publishing
 
-Publish `laya-pro-client` from `sdk/typescript` using an npm account with publishing
+Publish `veya-client` from `sdk/typescript` using an npm account with publishing
 rights for that package name.
 
 ```sh
@@ -334,6 +334,6 @@ package. npm does not allow republishing an already-used name/version pair.
 After publication, verify the release and install it into a clean project:
 
 ```sh
-npm view laya-pro-client version --registry=https://registry.npmjs.org
-npm install laya-pro-client
+npm view veya-client version --registry=https://registry.npmjs.org
+npm install veya-client
 ```

@@ -103,7 +103,7 @@ span in both or you will double-count.
 
 ## OpenTelemetry
 
-The example [`examples/hooks/otel.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/otel.py) records counters and a
+The example [`examples/hooks/otel.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/otel.py) records counters and a
 histogram. For real spans, drive the OTel API from the tracer. Hooks are synchronous, so use the
 synchronous exporter (or enqueue and export from a worker).
 

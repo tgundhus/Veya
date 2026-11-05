@@ -110,7 +110,7 @@ breached; promotion is a bounded step, not a permanent declaration that the mode
 
 ## Application/Laya boundary
 
-Laya provides the decision evidence and exposes it through the existing API and hooks. The
+Veyavides the decision evidence and exposes it through the existing API and hooks. The
 application owns the incumbent result, action execution, eligibility rules, threshold, review,
 fallback and rollback. Hooks can log or annotate evidence, but they do not make a high-impact action
 safe to execute.

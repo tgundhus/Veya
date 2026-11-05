@@ -4,7 +4,7 @@ On the typed-decisions benchmark the base checkpoints score near chance zero-sho
 0.35 against a 0.318 random baseline — while the fine-tuned checkpoint reaches **0.766** on the
 same 2,000 decisions, above TypeSafe Jev's published 0.727 and above the 0.735 teacher
 self-agreement ceiling. Fine-tuning is where most of the value is, and the public
-[fine-tuning notebook](https://github.com/tgundhus/laya-pro/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb)
+[fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb)
 runs the whole loop on Kaggle's free 2xT4 GPUs: build the dataset, train with RLCD, fit
 calibration temperatures, evaluate, and push the result to the Hub. This page walks that
 notebook and points at the parts that stay load-bearing when you swap the data for your own.

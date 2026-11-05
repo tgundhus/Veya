@@ -3,9 +3,9 @@ requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "laya-pro-onnx"
+name = "veya-onnx"
 version = "0.3.29"
-description = "Local Laya-Pro ONNX inference without PyTorch or Transformers"
+description = "Local Veya ONNX inference without PyTorch or Transformers"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -23,10 +23,10 @@ laya-onnx-serve = "laya_onnx.serve:main"
 laya-onnx-mcp = "laya_onnx.mcp.server:main"
 
 [project.urls]
-Homepage = "https://tgundhus.github.io/laya-pro/"
-Documentation = "https://tgundhus.github.io/laya-pro/onnx-runtime/"
-Repository = "https://github.com/tgundhus/laya-pro"
-Issues = "https://github.com/tgundhus/laya-pro/issues"
+Homepage = "https://tgundhus.github.io/Veya/"
+Documentation = "https://tgundhus.github.io/Veya/onnx-runtime/"
+Repository = "https://github.com/tgundhus/Veya"
+Issues = "https://github.com/tgundhus/Veya/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

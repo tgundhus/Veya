@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import {
   Laya, LayaAPIError, LayaAbortError, LayaConnectionError, LayaTimeoutError,
   LayaValidationError, LayaResponseError, emailQuestions, triageQuestions,
-} from 'laya-pro-client';
+} from 'veya-client';
 
 const questions = { refund: { type: 'noul', instructions: 'Refund?' } };
 
@@ -89,7 +89,7 @@ const prediction = { model: 'laya-rl-agent', routing: route, usage: { input_toke
   answers: { refund: { type: 'noul', noul: 0.9, confidence: 0.9, action: { act_probability: 0.8 } } } };
 
 test('ESM and CommonJS exports can be consumed by ordinary JavaScript', () => {
-  const cjs = createRequire(import.meta.url)('laya-pro-client');
+  const cjs = createRequire(import.meta.url)('veya-client');
   assert.equal(typeof cjs.Laya, 'function');
   assert.deepEqual(cjs.triageQuestions(), triageQuestions());
 });

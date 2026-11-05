@@ -56,7 +56,7 @@ class APITests(unittest.TestCase):
         self.assertIn("routing", Prediction.__optional_keys__)
 
     def test_installed_package_has_no_runtime_requirements(self):
-        distribution = importlib.metadata.distribution("laya-pro-client")
+        distribution = importlib.metadata.distribution("veya-client")
         self.assertFalse(distribution.requires)
         installed = Path(distribution.locate_file("laya_client/__init__.py")).resolve()
         self.assertEqual(Path(laya_client.__file__).resolve(), installed)
@@ -66,7 +66,7 @@ class APITests(unittest.TestCase):
 
     def test_no_inference_or_http_dependencies_in_client_environment(self):
         names = {d.metadata["Name"].lower().replace("_", "-") for d in importlib.metadata.distributions()}
-        forbidden = {"laya", "laya-pro", "torch", "transformers", "numpy", "safetensors",
+        forbidden = {"laya", "veya", "torch", "transformers", "numpy", "safetensors",
                      "huggingface-hub", "requests", "httpx"}
         self.assertFalse(names & forbidden, names & forbidden)
         self.assertFalse(set(sys.modules) & {"laya", "torch", "transformers", "numpy"})

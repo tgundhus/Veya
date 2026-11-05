@@ -123,7 +123,7 @@ def run_cell(text: str, extra: Optional[Dict[str, Any]] = None) -> Any:
 AGENT_PY = os.path.join("laya", "agent.py")
 ONNX_PY = os.path.join("laya", "onnx_agent.py")
 EXAMPLE03 = os.path.join("examples", "03_reading_the_result.py")
-README = os.path.join("docs", "guide.md")  # Laya-Pro: the reference text moved from README.md
+README = os.path.join("docs", "guide.md")  # Veya: the reference text moved from README.md
 
 
 def _own_nodes(func: ast.AST) -> List[ast.AST]:

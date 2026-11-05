@@ -1,6 +1,6 @@
 # LangChain & LangGraph Integration
 
-Laya provides fast, non-autoregressive decision components for **LangChain** and **LangGraph** (single-question latency measured at **32.8 ms** with `laya-multilingual` and **39.5 ms** with `laya` on a Tesla T4 GPU; 193–464 ms on CPU):
+Veyavides fast, non-autoregressive decision components for **LangChain** and **LangGraph** (single-question latency measured at **32.8 ms** with `laya-multilingual` and **39.5 ms** with `laya` on a Tesla T4 GPU; 193–464 ms on CPU):
 
 * **`LayaRouter`**: Conditional edge and branch router with confidence fallback gating.
 * **`LayaGuardrail`**: Sub-40ms inline screening for prompt injections, jailbreaks, and sensitive data.
@@ -17,9 +17,9 @@ Supports both **local in-process inference** (`Agent` or `Router`) and **remote 
 ## Installation
 
 ```bash
-pip install "laya-pro[langchain] @ git+https://github.com/tgundhus/laya-pro.git"   # langchain-core and langgraph
+pip install "veya[langchain] @ git+https://github.com/tgundhus/Veya.git"   # langchain-core and langgraph
 # or
-pip install "laya-pro[langgraph] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[langgraph] @ git+https://github.com/tgundhus/Veya.git"
 ```
 
 ---

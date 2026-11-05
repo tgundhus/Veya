@@ -157,14 +157,14 @@ subprojects {
                     description.set(
                         when (project.name) {
                             "laya-java" ->
-                                "Laya on the JVM: a fast, local, non-autoregressive decision model " +
+                                "Veya on the JVM: a fast, local, non-autoregressive decision model " +
                                 "runtime (tokenizer, sequence builder, ONNX inference, typed answers)."
                             else ->
                                 "HTTP client for a self-hosted laya-serve, sharing laya-java's " +
                                 "typed answers."
                         }
                     )
-                    url.set("https://github.com/tgundhus/laya-pro")
+                    url.set("https://github.com/tgundhus/Veya")
                     licenses {
                         license {
                             name.set("Apache-2.0")
@@ -178,9 +178,9 @@ subprojects {
                         }
                     }
                     scm {
-                        url.set("https://github.com/tgundhus/laya-pro")
-                        connection.set("scm:git:https://github.com/tgundhus/laya-pro.git")
-                        developerConnection.set("scm:git:ssh://git@github.com/tgundhus/laya-pro.git")
+                        url.set("https://github.com/tgundhus/Veya")
+                        connection.set("scm:git:https://github.com/tgundhus/Veya.git")
+                        developerConnection.set("scm:git:ssh://git@github.com/tgundhus/Veya.git")
                     }
                 }
             }

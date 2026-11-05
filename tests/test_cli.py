@@ -474,7 +474,7 @@ check("sort: one group keeps the file-wide wording, sized by the group core saw"
 # are taught, so the same pages that teach `--batch-size` have to teach the grouping that makes a
 # bounded pass cheap -- including the condition it needs, since a run without it changes nothing.
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Laya-Pro teaches the CLI and the playground in docs/guide.md, not README.md.
+# Veya teaches the CLI and the playground in docs/guide.md, not README.md.
 with open(os.path.join(_ROOT, "docs", "guide.md"), encoding="utf-8") as handle:
     readme = handle.read()
 

@@ -9,7 +9,7 @@ This review covers **210 commits, including 128 non-merge commits**, from upstre
 [`68804629` (0.4.2)](https://github.com/NandhaKishorM/laya/commit/68804629e8ccd9d616d48a40e87de9fabbeae069)
 through [`c73908d` (0.4.6)](https://github.com/NandhaKishorM/laya/commit/c73908d96ff73c0062c340a11bf7c54ec7d8bc4d).
 The [comparison](https://github.com/NandhaKishorM/laya/compare/68804629e8ccd9d616d48a40e87de9fabbeae069...c73908d96ff73c0062c340a11bf7c54ec7d8bc4d)
-records the boundary. Laya-Pro remains version 0.3.29 with selected upstream changes;
+records the boundary. Veya remains version 0.3.29 with selected upstream changes;
 it keeps its English fallback, typed schema identity and decision retention policies.
 Checkpoint weights and shipped calibration files are unchanged.
 
@@ -56,8 +56,8 @@ Fitter medians for the mixed 2/9 and negative 2/4 panels were **16.179→2.285 m
 only from 1.063982619 to 1.063981773; the fixed-width panel cost **50.778→51.049 ms**.
 The fix adds width-group work when both fits already converge. These are small fitter-only
 measurements, separate from inference latency.
-[Harness](https://github.com/tgundhus/laya-pro/blob/main/research/scripts/bench_calibration_ragged.py),
-[raw comparison](https://github.com/tgundhus/laya-pro/blob/main/research/results/calibration_ragged_windows_20261012.json).
+[Harness](https://github.com/tgundhus/Veya/blob/main/research/scripts/bench_calibration_ragged.py),
+[raw comparison](https://github.com/tgundhus/Veya/blob/main/research/results/calibration_ragged_windows_20261012.json).
 
 The native TypeScript embedding benchmark uses the retained English checkpoint, a 20-label
 catalog and two distinct requests per repeat, two warmups and three alternating timed repeats.
@@ -65,7 +65,7 @@ Reusing label vectors reduced measured encoder rows from **126 to 6**, with iden
 and median request cost from **294.525 to 33.726 ms**. This measures embedding and ranking,
 excluding decision inference. Two ONNX Runtime threads, a 64-token embedding window and graph
 hashes are recorded with the
-[raw samples](https://github.com/tgundhus/laya-pro/blob/main/laya-ts/examples/results/cached-embedder-windows-20261012.json).
+[raw samples](https://github.com/tgundhus/Veya/blob/main/laya-ts/examples/results/cached-embedder-windows-20261012.json).
 
 The HTTP English smoke used checkpoint `55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851`, two CPU Torch
 threads, two warmups and three alternating repeats. One-pass cost was **344.143 ms**, versus
@@ -74,15 +74,15 @@ HTTP timing includes the transport; this demonstrates additional cost, not a spe
 Finalist probabilities matched direct Python tournament output exactly, and a 128-label request
 completed with eight finalists. The checkpoint's 11+ temperature is clamped to 0.5 by the existing
 loader and remains uncalibrated. Measurements ran on an active Windows workstation.
-[Harness](https://github.com/tgundhus/laya-pro/blob/main/research/scripts/http_tournament_smoke.py),
-[raw samples](https://github.com/tgundhus/laya-pro/blob/main/research/results/http_tournament_windows_20261012.json).
+[Harness](https://github.com/tgundhus/Veya/blob/main/research/scripts/http_tournament_smoke.py),
+[raw samples](https://github.com/tgundhus/Veya/blob/main/research/results/http_tournament_windows_20261012.json).
 
 Native TypeScript passed **887 tests**, type checks and an external packed-package consumer.
 The HTTP client passed **33 tests**, including packaging and typed tournament metadata.
 Four real English tournament scenarios covered zero, one and two elimination rounds. Winners,
 finalists, call counts and usage matched Python exactly; the largest returned numeric difference
 was `1e-4`, one four-decimal rounding unit.
-[Parity record](https://github.com/tgundhus/laya-pro/blob/main/laya-ts/examples/results/tournament-parity-windows-20261012.json).
+[Parity record](https://github.com/tgundhus/Veya/blob/main/laya-ts/examples/results/tournament-parity-windows-20261012.json).
 
 ## Validation
 
@@ -99,7 +99,7 @@ defects in the complete diff, including new files.
 The new Go port currently supplies language detection and internal tokenizer foundations;
 its agent, router and ONNX inference layers are planned for later changes. It is not adopted
 as a production decision SDK. The upstream multilingual default would change ambiguous-state
-routing, so Laya-Pro retains English and supports explicit multilingual configuration.
+routing, so Veya retains English and supports explicit multilingual configuration.
 
 Native TypeScript hook deadlines remain deferred. The newer formatting and timer cleanup do
 not prevent an abandoned callback from modifying its shared context. Awaited hooks keep their

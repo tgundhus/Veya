@@ -22,10 +22,10 @@ def check_wheel(path):
         metadata = [name for name in names if name.endswith(".dist-info/METADATA")]
         assert len(metadata) == 1
         message = BytesParser().parsebytes(archive.read(metadata[0]))
-        assert message["Name"] == "laya-pro-onnx"
+        assert message["Name"] == "veya-onnx"
         requirements = message.get_all("Requires-Dist") or []
         assert all(not any(req.lower().startswith(name) for name in (
-            "torch", "transformers", "safetensors", "onnxscript", "laya-pro ")) for req in requirements), requirements
+            "torch", "transformers", "safetensors", "onnxscript", "veya ")) for req in requirements), requirements
         assert {req.split(">=")[0] for req in requirements if ";" not in req} == {
             "numpy", "onnxruntime", "tokenizers", "huggingface_hub"}, requirements
         assert set(message.get_all("Provides-Extra")) == {"structured", "serve", "mcp"}
@@ -40,7 +40,7 @@ def check_wheel(path):
         for module in ("router", "serve", "shortlist", "lang", "presets", "mcp/server", "mcp/tools"):
             assert "laya_onnx/_runtime/" + module + ".py" in names, module
         assert any("LICENSE" in name for name in names)
-        assert all(name.startswith(("laya_onnx/", "laya_pro_onnx-")) for name in names), names
+        assert all(name.startswith(("laya_onnx/", "veya_onnx-")) for name in names), names
         assert not any(name.endswith(("/agent.py", "/common.py", "/calibrate.py")) for name in names)
 
 

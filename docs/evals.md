@@ -142,7 +142,7 @@ can invalidate it. An interval containing zero does not establish equivalence.
 Inspect slices and individual decisions for label skew, and use labelled evals
 for correctness or calibration claims.
 
-[`examples/evals/teacher_agreement.py`](https://github.com/tgundhus/Laya-Pro/blob/main/examples/evals/teacher_agreement.py)
+[`examples/evals/teacher_agreement.py`](https://github.com/tgundhus/Veya/blob/main/examples/evals/teacher_agreement.py)
 replays two published teacher observations from a pinned public dataset against
 a local Laya checkpoint, saving the three runs and their report. Its small fixed
 sample demonstrates the workflow, not deployment readiness.

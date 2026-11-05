@@ -1,1 +1,1 @@
-"""Optional local MCP stdio service (install laya-pro-onnx[mcp])."""
+"""Optional local MCP stdio service (install veya-onnx[mcp])."""

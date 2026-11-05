@@ -1495,7 +1495,7 @@ def test_page18_drops_the_unconditional_calibration_claim():
         "the page must carry the README's Calibration condition (mean ECE 0.466 -> 0.081, "
         "both shipped checkpoints over-confident)")
     # The README's exact language lives at line 1586; the page must not misquote it.
-    # Laya-Pro keeps the Calibration section in docs/limits.md, not README.md.
+    # Veya keeps the Calibration section in docs/limits.md, not README.md.
     readme = open(os.path.join(ROOT, "docs", "limits.md"), encoding="utf-8").read()
     assert "Both checkpoints are over-confident as shipped" in readme
     assert "0.466 -> 0.081" in readme

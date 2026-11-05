@@ -76,7 +76,7 @@ def normalise_backend(backend=None) -> str:
     backend = backend.strip().lower()
     from . import DEFAULT_INFERENCE_BACKEND
     if backend == "torch" and DEFAULT_INFERENCE_BACKEND == "onnx":
-        raise ValueError("the standalone ONNX package supports backend='onnx' only; install laya-pro for Torch")
+        raise ValueError("the standalone ONNX package supports backend='onnx' only; install veya for Torch")
     return backend
 
 

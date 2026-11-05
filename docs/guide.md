@@ -1,20 +1,24 @@
-# Using Laya-Pro
+# Using Veya
 
 The engine in detail: installing it, the command line, routing, batches and long documents,
 confidence and abstention, question types, and the HTTP and MCP servers. The
-[README](https://github.com/tgundhus/laya-pro#readme) has the overview, the benchmarks and the
+[README](https://github.com/tgundhus/Veya#readme) has the overview, the benchmarks and the
 quickstart; [Limits](limits.md) has what the models do not do well; [Decision
 consistency](consistency.md) covers the decision cache.
 
 ## Installation
 
 Python 3.10 or newer (`huggingface_hub` 1.x, `transformers` 5.x and `torch` 2.14 set that floor).
-Laya-Pro installs from its repository; `pip install laya` from PyPI installs the original Laya,
-without Laya-Pro's changes. Git must be installed.
+Veya installs from its repository; `pip install laya` from PyPI installs the original Laya,
+without Veya's changes. Git must be installed.
+When upgrading, uninstall the former `laya-pro` distribution before installing
+`veya`; both own the `laya` import namespace. The same rule applies to
+`laya-pro-client` / `veya-client` and `laya-pro-onnx` / `veya-onnx`. Removing an old
+distribution after installing its replacement can delete the replacement's files.
 
 ```bash
-python -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
-python -m pip install "laya-pro[serve,onnx] @ git+https://github.com/tgundhus/laya-pro.git"   # with extras
+python -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
+python -m pip install "veya[serve,onnx] @ git+https://github.com/tgundhus/Veya.git"   # with extras
 python -m pip install -e .                                                           # a source checkout
 ```
 
@@ -26,7 +30,7 @@ TileLang GPU fast path).
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+.venv/bin/python -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 .venv/bin/python -I -c "import laya; print(laya.__version__)"
 ```
 
@@ -34,7 +38,7 @@ On Windows PowerShell:
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+.\.venv\Scripts\python.exe -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 .\.venv\Scripts\python.exe -I -c "import laya; print(laya.__version__)"
 ```
 
@@ -46,20 +50,20 @@ may need `sudo apt install python3-venv` first.
 
 ```bash
 uv venv --python 3.12
-uv pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+uv pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 ```
 
-In a uv project, add it as a dependency with `uv add "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"`.
+In a uv project, add it as a dependency with `uv add "veya @ git+https://github.com/tgundhus/Veya.git"`.
 `uv pip` also takes `--torch-backend=auto` (or a named backend such as `cpu`) to install the PyTorch
 build that matches the machine.
 
 **A specific PyTorch build.** For a CPU-only or a particular CUDA build, install PyTorch first with
-[its installation guide](https://pytorch.org/get-started/locally/), then Laya-Pro. For an Intel GPU
+[its installation guide](https://pytorch.org/get-started/locally/), then Veya. For an Intel GPU
 (XPU), install a supported driver and an XPU build of PyTorch first:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/xpu
-.\.venv\Scripts\python.exe -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+.\.venv\Scripts\python.exe -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 .\.venv\Scripts\python.exe -c "import torch; print(torch.xpu.is_available())"
 ```
 
@@ -82,12 +86,12 @@ it runs a sample request and keeps downloaded models between runs.
 
 PyTorch stops publishing macOS **x86_64** wheels at 2.2.2 (2.3 and later are Apple-silicon only),
 while transformers 5.x requires torch >= 2.4 and torch 2.2.2 was built against NumPy 1.x. A plain
-`pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"` on an Intel Mac therefore resolves a stack that cannot run — torch 2.2.2 with
+`pip install "veya @ git+https://github.com/tgundhus/Veya.git"` on an Intel Mac therefore resolves a stack that cannot run — torch 2.2.2 with
 transformers 5.x and NumPy 2.x, and torch fails to initialise NumPy 2, which `predict()` needs for
 its final `.numpy()` conversion. Pin the stack:
 
 ```bash
-pip install "numpy<2" "torch==2.2.2" "transformers==4.57.6" "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "numpy<2" "torch==2.2.2" "transformers==4.57.6" "veya @ git+https://github.com/tgundhus/Veya.git"
 ```
 
 `transformers` 4.57.x is the last 4.x line and the newest one that runs on torch 2.2.2. The
@@ -143,7 +147,7 @@ router = Router(models={"english": "models/laya",
 ```
 
 Full notes — version rationale, the two portability fixes this needed, and every verification
-run — are in [`LOCAL_SETUP.md`](https://github.com/tgundhus/laya-pro/blob/main/LOCAL_SETUP.md).
+run — are in [`LOCAL_SETUP.md`](https://github.com/tgundhus/Veya/blob/main/LOCAL_SETUP.md).
 
 
 ## Command line
@@ -210,7 +214,7 @@ answer's full distribution and calibrated confidence, copy it as curl or Python)
 JSON API (`/predict`, `/predict/batch`) for scripting against.
 
 ```bash
-pip install "laya-pro[serve] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[serve] @ git+https://github.com/tgundhus/Veya.git"
 python examples/server.py               # http://127.0.0.1:8000
 ```
 
@@ -261,7 +265,7 @@ Measured on the running server: 64 real reviews of 91–2,293 characters, one ch
 
 ### JavaScript / TypeScript
 
-[`laya-pro-client`](https://github.com/tgundhus/laya-pro/blob/main/sdk/typescript/README.md) supports JavaScript and TypeScript
+[`veya-client`](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) supports JavaScript and TypeScript
 applications over HTTP to a self-hosted `laya-serve` `/v1/systemone` server. It
 includes inferred answer types, all five question presets, ESM/CommonJS exports,
 and cancellation.
@@ -278,11 +282,11 @@ npm run build
 node examples/triage.mjs
 ```
 
-The npm package is named `laya-pro-client`. Use it when a JavaScript or TypeScript
+The npm package is named `veya-client`. Use it when a JavaScript or TypeScript
 application talks over HTTP to self-hosted Python `laya-serve`. Use `laya-ts`
 when inference must run directly inside JavaScript through its local ONNX
 runtime, without a Python server.
-See [installation, examples, and publishing](https://github.com/tgundhus/laya-pro/blob/main/sdk/typescript/README.md) and the
+See [installation, examples, and publishing](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) and the
 [repository analysis](typescript-sdk.md) for architecture and scope.
 
 
@@ -567,7 +571,7 @@ your workload, particularly with mixed precision. Batching is a **GPU
 throughput win** — on an RTX 5060 Ti, per-decision latency drops from ~10 ms one-by-one to ~1 ms
 batched (measured ~9–10×). On CPU, increasing batch size alone may not speed up inference;
 length grouping can help by reducing the padded work in a mixed-length workload. See the
-[CPU measurements and reproduction commands](https://github.com/tgundhus/laya-pro/blob/main/research/README.md#length-batching).
+[CPU measurements and reproduction commands](https://github.com/tgundhus/Veya/blob/main/research/README.md#length-batching).
 
 `ONNXAgent.predict_batch(states, questions, batch_size=..., sort_by_length=...)` has the same
 contract, backed by one ONNX Runtime session run per chunk, so an ONNX deployment gets the same
@@ -586,10 +590,10 @@ result = router.predict(long_document, questions, model="multilingual", max_len=
 ```
 
 Accuracy and time by document length, reproducible with
-[`research/scripts/bench_long_context.py`](https://github.com/tgundhus/laya-pro/blob/main/research/scripts/bench_long_context.py):
+[`research/scripts/bench_long_context.py`](https://github.com/tgundhus/Veya/blob/main/research/scripts/bench_long_context.py):
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tgundhus/laya-pro/main/assets/long_context_8192.png" alt="laya-multilingual with max_len=8192: 16 to 18 of 20 requests correct with up to about 4,000 tokens of text before them, more variable beyond" width="100%" />
+  <img src="https://raw.githubusercontent.com/tgundhus/Veya/main/assets/long_context_8192.png" alt="laya-multilingual with max_len=8192: 16 to 18 of 20 requests correct with up to about 4,000 tokens of text before them, more variable beyond" width="100%" />
 </p>
 
 16 to 18 of 20 requests were answered correctly with up to about 4,000 tokens of text before them;
@@ -661,7 +665,7 @@ result = router.predict_long(state, questions, model="multilingual")
 
 ## GPU fast path
 
-`pip install "laya-pro[fast] @ git+https://github.com/tgundhus/laya-pro.git"` adds an optional forward built from fused [TileLang](https://github.com/tile-ai/tilelang)
+`pip install "veya[fast] @ git+https://github.com/tgundhus/Veya.git"` adds an optional forward built from fused [TileLang](https://github.com/tile-ai/tilelang)
 kernels: GEMM + bias/activation epilogues, GEMM + GEGLU, residual + LayerNorm, in-place RoPE, and a
 sliding-window flash attention that reads the packed QKV buffer directly. Weights stay resident in bf16
 and every (batch, length) bucket is captured as a CUDA graph, so a one-question call no longer pays
@@ -674,9 +678,9 @@ agent.predict(state, questions)                            # same API, same answ
 
 Numerics: on a fixed set of 60 states the fast path stays within 0.046 of an fp32 forward and within 0.076 of the stock
 bf16 path (max |Δp| ≤ 0.05 vs fp32 on both checkpoints, argmax agreement ≥ 47/48 per question type; every per-option
-probability is in `benchmarks/results/parity_*.json`) — see `benchmarks/parity_fast.py` and [BENCHMARKS.md](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#gpu-fast-path).
+probability is in `benchmarks/results/parity_*.json`) — see `benchmarks/parity_fast.py` and [BENCHMARKS.md](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#gpu-fast-path).
 The fast path runs in the agent's autocast dtype at the time `accelerate()` is called: bf16 by default, fp16 if
-`agent.dtype` is `torch.float16`, where it stays within 0.009 of fp32 on the same set ([BENCHMARKS.md](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#fp16)).
+`agent.dtype` is `torch.float16`, where it stays within 0.009 of fp32 on the same set ([BENCHMARKS.md](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#fp16)).
 Falls back to the stock forward on CPU/MPS or when `tilelang` is not installed; `agent.deaccelerate()`
 restores it. Kernels compile once per shape bucket on first use (a few seconds, cached on disk).
 
@@ -728,7 +732,7 @@ else:
     escalate_to_human_agent(dept, reason=f"Low confidence ({conf:.2f})")
 ```
 
-A threshold is a policy you choose from measured accuracy at that coverage on your data, not a property of the model. Both checkpoints are over-confident as shipped and `laya-multilingual` has no fitted temperatures at all, so fit them before relying on these numbers — see [Calibration](limits.md#calibration) below, and the [fine-tuning notebook](https://github.com/tgundhus/laya-pro/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb) for the fitting loop itself. Then pick the point where the errors you accept are ones you can live with. Confidence orders decisions; it does not establish that a decision is correct.
+A threshold is a policy you choose from measured accuracy at that coverage on your data, not a property of the model. Both checkpoints are over-confident as shipped and `laya-multilingual` has no fitted temperatures at all, so fit them before relying on these numbers — see [Calibration](limits.md#calibration) below, and the [fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb) for the fitting loop itself. Then pick the point where the errors you accept are ones you can live with. Confidence orders decisions; it does not establish that a decision is correct.
 
 A threshold also depends on the autocast dtype. On CUDA at compute capability 8 or above the runtime uses the checkpoint's `amp_dtype`, which is bf16 for all three shipped checkpoints. On the fixed set from `benchmarks/parity_fast.py` (60 states, 288 questions per checkpoint, RTX 2000 Ada) bf16 moves a probability by up to 0.073 against the fp32 forward and flips 3 of 864 argmaxes across the three checkpoints; fp16 stays within 0.019 and flips none, at the same latency. `LAYA_CUDA_AMP=fp16` selects fp16 and `LAYA_CUDA_AMP=bf16` selects bf16 (`LAYA_CPU_AMP=bf16` is the CPU counterpart). MPS autocasts in fp16 too, but the overhead dominates on a single small row, so there it engages only once a call reaches `mps_amp_min_rows` rows -- 5 by default, `LAYA_MPS_AMP_MIN_ROWS` to move it; a value that does not parse falls back to 5 and anything below 1 is clamped to 1. On MPS, `agent.dtype` is the autocast target, so it says float16 even when every call stays below the gate and runs in fp32; `agent.dtype_for(rows)` returns the precision a call with that many rows runs in. Fit and measure a threshold in the dtype you serve with.
 
@@ -896,7 +900,7 @@ TileLang fast path and `compile=True` refuse such a checkpoint, and `backend="au
 
 ## Presets
 
-Laya provides pre-tuned question schemas for immediate production use:
+Veyavides pre-tuned question schemas for immediate production use:
 
 ```python
 import laya
@@ -928,7 +932,7 @@ needs its `baseUrl` repointed; nothing else changes. A PHP client that targets
 `laya-serve` rather than Jev also exists: [`marcreichel/laya-php`](https://github.com/marcreichel/laya-php).
 
 ```bash
-pip install "laya-pro[serve] @ git+https://github.com/tgundhus/laya-pro.git"          # adds fastapi + uvicorn + python-multipart
+pip install "veya[serve] @ git+https://github.com/tgundhus/Veya.git"          # adds fastapi + uvicorn + python-multipart
 LAYA_DEVICE=cuda LAYA_PRELOAD=1 laya-serve   # binds 0.0.0.0:8000, preloads all 3 checkpoints
 ```
 
@@ -1026,7 +1030,7 @@ client (OpenClaw, Claude Desktop, Cursor, ...) can call typed decisions as tools
 This is an **optional extra**: the core package has no `mcp` dependency.
 
 ```bash
-pip install "laya-pro[mcp] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[mcp] @ git+https://github.com/tgundhus/Veya.git"
 laya-mcp-server          # or: python -m laya.mcp.server
 ```
 
@@ -1050,7 +1054,7 @@ Example MCP client configuration (stdio transport):
 ```
 
 The environment variables follow the contract documented at the top of
-[`laya/serve.py`](https://github.com/tgundhus/laya-pro/blob/main/laya/serve.py), so the same variable has one meaning across the
+[`laya/serve.py`](https://github.com/tgundhus/Veya/blob/main/laya/serve.py), so the same variable has one meaning across the
 package:
 
 | Variable | Default | Meaning |

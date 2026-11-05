@@ -1,9 +1,13 @@
-# Laya-Pro ONNX runtime
+# Veya ONNX runtime
+
+For an existing environment, uninstall `laya-pro-onnx` before installing the
+renamed `veya-onnx` distribution. Both own the `laya_onnx` import path; removing
+the old distribution afterward can delete the new runtime's files.
 
 Local decision inference using ONNX Runtime, NumPy and Hugging Face Tokenizers.
 The package has no PyTorch, Transformers or ONNX exporter dependency.
 
-Build or install from the Laya-Pro checkout:
+Build or install from the Veya checkout:
 
 ```bash
 pip install ./runtime/onnx
@@ -27,7 +31,7 @@ from that checkpoint. Export is a separate step using the full project's
 
 Single, batch and long-window predictions, ordered typed options, schema decisions,
 calibration loading, hooks, decision-cache retention and performance modes use the same
-inference implementation as Laya-Pro. Native tokenization requires saved tokenizer JSON;
+inference implementation as Veya. Native tokenization requires saved tokenizer JSON;
 unsupported or missing tokenizer metadata is an error rather than a fallback to another
 tokenizer. The full package retains its existing Transformers tokenizer by default.
 
@@ -68,5 +72,5 @@ together. Their runtime code is copied from the canonical repository modules at 
 time. Source distributions carry those inputs and can be rebuilt outside the checkout.
 This change does not publish the distribution to PyPI.
 
-See the [runtime guide](https://tgundhus.github.io/laya-pro/onnx-runtime/) for compatibility,
+See the [runtime guide](https://tgundhus.github.io/Veya/onnx-runtime/) for compatibility,
 benchmarks and the distinction between inference and export dependencies.

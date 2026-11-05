@@ -36,10 +36,10 @@ class RuntimeTests(unittest.TestCase):
         self.agent = laya_onnx.ONNXAgent(str(FIXTURE), str(FIXTURE / "model.onnx"), performance_mode=1)
 
     def test_distribution_is_independent_and_has_only_light_dependencies(self):
-        for name in ("torch", "transformers", "laya-pro", "onnx", "onnxscript", "safetensors"):
+        for name in ("torch", "transformers", "veya", "onnx", "onnxscript", "safetensors"):
             with self.assertRaises(importlib.metadata.PackageNotFoundError):
                 importlib.metadata.distribution(name)
-        self.assertEqual(importlib.metadata.version("laya-pro-onnx"), laya_onnx.__version__)
+        self.assertEqual(importlib.metadata.version("veya-onnx"), laya_onnx.__version__)
         self.assertEqual(self.agent.session.get_providers(), ["CPUExecutionProvider"])
         self.assertEqual(self.agent.performance_mode, 1)
         self.assertIs(laya_onnx.Agent, laya_onnx.ONNXAgent)

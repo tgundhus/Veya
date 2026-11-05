@@ -187,7 +187,7 @@ def test_cap_based_figure_overstates_a_high_cardinality_question():
 def _readme_quotes():
     """The figures README.md states, parsed out of the token-budget bullet."""
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # Laya-Pro keeps the token-budget bullet in docs/limits.md, not README.md.
+    # Veya keeps the token-budget bullet in docs/limits.md, not README.md.
     with open(os.path.join(root, "docs", "limits.md"), encoding="utf-8") as fh:
         text = fh.read()
     heads = {int(m) for m in re.findall(r"\*\*(\d+)-token\*\* head", text)}
@@ -292,7 +292,7 @@ def _budget_literals():
     Read out of the function rather than typed in here, so a page holding a stale number fails
     instead of agreeing with itself.
     """
-    # Laya-Pro's `build_head` returns a cached head; the arithmetic lives in the builder it caches.
+    # Veya's `build_head` returns a cached head; the arithmetic lives in the builder it caches.
     tree = ast.parse(textwrap.dedent(inspect.getsource(_build_question_head)))
     found = {}
     for node in ast.walk(tree):

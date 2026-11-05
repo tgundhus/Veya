@@ -1,6 +1,6 @@
 # LlamaIndex Integration
 
-Laya-Pro provides local decision components for **LlamaIndex** RAG pipelines,
+Veya provides local decision components for **LlamaIndex** RAG pipelines,
 `RouterQueryEngine` and tool selection. Latency depends on hardware, checkpoint and questions;
 see the [current review](reports/production-review.md) and [archived benchmarks](benchmarks.md).
 
@@ -15,7 +15,7 @@ Supports both **local in-process inference** (`Agent` or `Router`) and **remote 
 ## Installation
 
 ```bash
-pip install "laya-pro[llamaindex] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[llamaindex] @ git+https://github.com/tgundhus/Veya.git"
 ```
 
 ---

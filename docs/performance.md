@@ -55,7 +55,7 @@ On a CPU the encoder is the request: 89-95% of it, and the decision head most of
 Everything around them -- routing, tokenization, collation, decoding, hooks -- adds up to about
 2.5 ms for three questions on a ticket. An accelerator shortens the encoder but not those
 milliseconds: on a T4, where one question takes 33-40 ms
-([BENCHMARKS.md](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md)), they are a
+([BENCHMARKS.md](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md)), they are a
 visible share, and they are a place to look for the per-call overhead BENCHMARKS.md reports on a
 GB10 and could not place.
 

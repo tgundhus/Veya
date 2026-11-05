@@ -16,7 +16,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { Laya } from 'laya-pro-client';
+import { Laya } from 'veya-client';
 
 const PAGE = fileURLToPath(new URL('../../../docs/typescript-sdk.md', import.meta.url));
 const DECLARATION = new URL('../dist/esm/client.d.ts', import.meta.url);

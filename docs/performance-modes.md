@@ -140,7 +140,7 @@ Cold Agent loads took 1.81–2.15 seconds with the OS file cache left intact.
 The batch needed at most 760 padded tokens, so it did not exercise the HTTP token limits.
 Torch inter-op threads stayed at the existing 24 in every process. These measurements do
 not establish behavior on an older CPU or another backend.
-[Raw samples, probabilities and peak memory](https://github.com/tgundhus/laya-pro/blob/main/research/results/performance_modes_cpu_20261030.json)
-and the [full table with p95](https://github.com/tgundhus/laya-pro/blob/main/research/results/performance_modes_cpu_20261030.md)
+[Raw samples, probabilities and peak memory](https://github.com/tgundhus/Veya/blob/main/research/results/performance_modes_cpu_20261030.json)
+and the [full table with p95](https://github.com/tgundhus/Veya/blob/main/research/results/performance_modes_cpu_20261030.md)
 include the checkpoint weight hash and measured source hashes. With three samples, p95 is
 the slowest observed call.

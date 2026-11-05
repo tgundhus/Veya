@@ -21,11 +21,11 @@ def check_wheel(path):
         metadata = [n for n in names if n.endswith(".dist-info/METADATA")]
         assert len(metadata) == 1
         message = BytesParser().parsebytes(wheel.read(metadata[0]))
-        assert message["Name"] == "laya-pro-client"
+        assert message["Name"] == "veya-client"
         assert not message.get_all("Requires-Dist"), message.get_all("Requires-Dist")
         assert "laya_client/py.typed" in names
         assert any("LICENSE" in n for n in names)
-        assert all(n.startswith(("laya_client/", "laya_pro_client-")) for n in names), names
+        assert all(n.startswith(("laya_client/", "veya_client-")) for n in names), names
 
 
 def extract_sdist(source, destination):

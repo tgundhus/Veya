@@ -38,8 +38,8 @@ FROM ${PYTHON_IMAGE} AS runtime
 ARG MODELSCOPE_MODEL=""
 ARG MODELSCOPE_REVISION="master"
 
-LABEL org.opencontainers.image.title="Laya-Pro Docker quickstart" \
-      org.opencontainers.image.source="https://github.com/tgundhus/laya-pro" \
+LABEL org.opencontainers.image.title="Veya Docker quickstart" \
+      org.opencontainers.image.source="https://github.com/tgundhus/Veya" \
       org.opencontainers.image.licenses="Apache-2.0"
 
 # torch 2.14 swaps some eager CUDA ops (bmm, topk, sum, norms) for Triton kernels that it

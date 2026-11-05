@@ -1,10 +1,10 @@
 # Limits
 
-What the models and Laya-Pro do not do well, measured where it could be. [Benchmarks and known
+What the models and Veya do not do well, measured where it could be. [Benchmarks and known
 limits](benchmarks.md) explains how the benchmarks were run, and
-[BENCHMARKS.md](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md) has every run.
+[BENCHMARKS.md](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md) has every run.
 
-## Laya-Pro's cache and servers
+## Veya's cache and servers
 
 - **The cache replays exact repeats only.** Requests that mean the same but differ in form are new
   requests: reversing the option order changed 19-36% of decisions, and one trailing space changed
@@ -31,7 +31,7 @@ Measurements: [Real checkpoints on an Apple M4 Max](reports/real-checkpoints-m4-
 * **Soft distribution matching:** On typed-decisions, while Laya achieves higher argmax accuracy (0.766 vs 0.727), Jev achieves higher soft accuracy (0.580 vs 0.471) against the teacher's full probability distributions.
 * **Out-of-the-box raw calibration:** Before temperature scaling, the base checkpoint has higher raw ECE (0.213 vs 0.144). Laya achieves its 0.081 ECE after domain temperature fitting.
 
-Full detail, including every workflow and all 51 languages: **[`BENCHMARKS.md`](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md)**.
+Full detail, including every workflow and all 51 languages: **[`BENCHMARKS.md`](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md)**.
 
 ## Calibration
 
@@ -83,7 +83,7 @@ failure; it does not establish calibrated confidence.
   1. Raise `agent.cfg["head_max_len"] = 512` and `agent.cfg["max_len"] = 1024` (or up to 2048 / 4096 / 8192) so every option has enough tokens to remain distinct. Both are also per-request: `predict(state, questions, head_max_len=512, max_len=1024)` widens one question without changing the agent for everyone else, and every LangChain node takes the same two arguments ([LangChain guide](langchain.md)). `laya --questions` takes the same two budgets as `--max-len` / `--head-max-len`.
   2. Or shortlist with embeddings and run one forward pass on the top `k` labels (`predict_shortlist`, example below). `predict` and `system_one` still score every criterion they are given.
   3. Or split the label set yourself into a coarse question and a fine question.
-  4. Or let the decision model narrow the set itself: `laya.predict_tournament(agent, state, questions)` answers the labels in groups of at most 16, every group in the same forward pass, then asks the question again over the group winners, so up to 256 labels take two `predict` calls and no embedder. On the full test splits with the English checkpoint it took BANKING77 (77 labels) from 0.430 to 0.610, CLINC150 (150) from 0.625 to 0.876 and MASSIVE intent (60) from 0.515 to 0.569, with ECE between 0.06 and 0.14 instead of 0.30 to 0.37, at about twice the latency of one question ([`research/benchmarks/tournament`](https://github.com/tgundhus/laya-pro/blob/main/research/benchmarks/tournament/README.md)). When the labels fit uncut in a raised budget, as MASSIVE's 60 do at `head_max_len=512`, raising it did better (0.622 against 0.590 on 500 rows). Probabilities on a tournament choice are over its finalists.
+  4. Or let the decision model narrow the set itself: `laya.predict_tournament(agent, state, questions)` answers the labels in groups of at most 16, every group in the same forward pass, then asks the question again over the group winners, so up to 256 labels take two `predict` calls and no embedder. On the full test splits with the English checkpoint it took BANKING77 (77 labels) from 0.430 to 0.610, CLINC150 (150) from 0.625 to 0.876 and MASSIVE intent (60) from 0.515 to 0.569, with ECE between 0.06 and 0.14 instead of 0.30 to 0.37, at about twice the latency of one question ([`research/benchmarks/tournament`](https://github.com/tgundhus/Veya/blob/main/research/benchmarks/tournament/README.md)). When the labels fit uncut in a raised budget, as MASSIVE's 60 do at `head_max_len=512`, raising it did better (0.622 against 0.590 on 500 rows). Probabilities on a tournament choice are over its finalists.
 
 ```python
 import laya

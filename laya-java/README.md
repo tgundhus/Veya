@@ -1,8 +1,8 @@
-# Laya-Pro for Java
+# Veya for Java
 
-Adapted from Convai Innovations' Java SDK. Build this checkout to use Laya-Pro's routing policy.
+Adapted from Convai Innovations' Java SDK. Build this checkout to use Veya's routing policy.
 
-JVM inference for Laya: `Agent.predict` / `Agent.predictBatch` over the BPE tokenizer, the sequence
+JVM inference for Veya: `Agent.predict` / `Agent.predictBatch` over the BPE tokenizer, the sequence
 builder, ONNX Runtime and typed answers. JDK 17+. One dependency — `com.microsoft.onnxruntime`.
 
 Laya is a non-autoregressive "System 1" decision model: a bidirectional encoder plus a typed head

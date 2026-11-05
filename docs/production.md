@@ -1,9 +1,9 @@
 ---
-title: Deploying Laya-Pro
-description: Configure local HTTP and MCP inference, authentication, resource bounds, precision and cache retention for Laya-Pro.
+title: Deploying Veya
+description: Configure local HTTP and MCP inference, authentication, resource bounds, precision and cache retention for Veya.
 ---
 
-# Deploying Laya-Pro
+# Deploying Veya
 
 Pin a reviewed source commit and checkpoint revision, pre-download model files, and validate
 your questions against labelled examples before serving traffic. A confidence threshold

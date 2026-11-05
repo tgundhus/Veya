@@ -2468,7 +2468,7 @@ def test_batch_item_shape_as_documented():
     # examples), while `Path.read_text()` defaults to the locale encoding -- cp1252 on the Windows
     # runner, where the decode raised `UnicodeDecodeError` and this suite failed. It went unseen
     # because the Windows lane ran this file without the `mcp` extra, so it skipped at the top.
-    # Laya-Pro documents the MCP server in docs/guide.md, not README.md.
+    # Veya documents the MCP server in docs/guide.md, not README.md.
     readme = (Path(__file__).resolve().parents[1] / "docs" / "guide.md").read_text(encoding="utf-8")
     marker = "one tool call takes an array of `{"
     ok("docs/readme_names_the_batch_shape", marker in readme, "sentence not found")
@@ -2830,7 +2830,7 @@ def test_shortlist_metadata_keys_are_documented():
     by_name = {t.name: t for t in asyncio.run(mcp_server.list_tools())}
     surfaces = {
         "tool description": by_name["laya_shortlist"].description,
-        "docs/guide.md": (root / "docs" / "guide.md").read_text(encoding="utf-8"),  # Laya-Pro: was README.md
+        "docs/guide.md": (root / "docs" / "guide.md").read_text(encoding="utf-8"),  # Veya: was README.md
         "docs/cli-mcp.md": (root / "docs" / "cli-mcp.md").read_text(encoding="utf-8"),
     }
     for where, text in surfaces.items():

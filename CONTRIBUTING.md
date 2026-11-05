@@ -1,12 +1,12 @@
 # Contributing
 
-Thanks for helping improve Laya. This guide keeps reviews fast and the history clean.
+Thanks for helping improve Veya. This guide keeps reviews fast and the history clean.
 
 By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Scope
 
-Laya is a fast, local, on-device decision engine. Keep additions in that spirit: they should run
+Veya is a fast, local, on-device decision engine. Keep additions in that spirit: they should run
 in the user's own process or on their own hardware, with no dependency on a hosted service or an
 external API. A feature that only works against a hosted backend is out of scope for the core
 package; it belongs in a separate integration or a community project.
@@ -21,7 +21,7 @@ package; it belongs in a separate integration or a community project.
 
 ## Development setup
 
-Laya supports Python 3.10 to 3.13. Use a virtual environment so nothing leaks into your system.
+Veya supports Python 3.10 to 3.13. Use a virtual environment so nothing leaks into your system.
 
 ```bash
 python -m venv .venv
@@ -138,7 +138,7 @@ Use the issue templates and include:
 
 - What you expected and what you got.
 - A minimal reproduction, ideally a short script.
-- Your Laya version (`python -c "import laya; print(laya.__version__)"`), Python version, OS, and
+- Your Veya version (`python -c "import laya; print(laya.__version__)"`), Python version, OS, and
   device or backend (CPU, CUDA, MPS, ONNX).
 
 ## Reviews

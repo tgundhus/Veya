@@ -1,6 +1,6 @@
 """MCP stdio server exposing the Laya typed-decision tools.
 
-Part of the optional ``laya-pro[mcp]`` extra; install from this checkout with
+Part of the optional ``veya[mcp]`` extra; install from this checkout with
 ``pip install -e '.[mcp]'``. Speaks MCP over stdio, so it can be
 wired to any MCP client (OpenClaw, Claude Desktop, cursor, ...):
 
@@ -28,7 +28,7 @@ Environment (same meaning as laya.serve where it exists):
   LAYA_CACHE_RENEW_ON_HIT  local decision retention (same as laya.serve)
   LAYA_BASE_URL  answer from a running laya-serve over HTTP; unset keeps models local
   LAYA_REMOTE_TIMEOUT  HTTP timeout in seconds for remote mode (default 300)
-  LAYA_USER_AGENT  remote HTTP client identity (default laya-pro/<version>)
+  LAYA_USER_AGENT  remote HTTP client identity (default veya/<version>)
 """
 
 from __future__ import annotations
@@ -46,8 +46,8 @@ try:
     from pydantic import StrictBool
 except ImportError as exc:  # mcp extra not installed
     raise ImportError(
-        "the laya-pro[mcp] extra (mcp>=2.2.0) is required to run the MCP server; "
-        "from the Laya-Pro checkout, run: pip install -e '.[mcp]'"
+        "the veya[mcp] extra (mcp>=2.2.0) is required to run the MCP server; "
+        "from the Veya checkout, run: pip install -e '.[mcp]'"
     ) from exc
 
 # laya.serve only imports os/typing at module level, so reusing its helpers
@@ -77,11 +77,11 @@ from .tools import (
 )
 
 try:
-    _LAYA_VERSION = _metadata.version("laya-pro")
+    _LAYA_VERSION = _metadata.version("veya")
 except Exception:  # running from a source checkout without install metadata
     from .. import __version__ as _LAYA_VERSION
 
-server = MCPServer("laya-pro", version=_LAYA_VERSION)
+server = MCPServer("veya", version=_LAYA_VERSION)
 
 _ROUTER: Any = None
 _ROUTER_LOCK = threading.Lock()

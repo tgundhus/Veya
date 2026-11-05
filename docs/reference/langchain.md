@@ -1,6 +1,6 @@
 # LangChain components
 
-Install with `pip install "laya-pro[langchain] @ git+https://github.com/tgundhus/laya-pro.git"`. The [LangChain & LangGraph guide](../langchain.md)
+Install with `pip install "veya[langchain] @ git+https://github.com/tgundhus/Veya.git"`. The [LangChain & LangGraph guide](../langchain.md)
 shows these components in chains and graphs.
 
 ::: laya.integrations.langchain.LayaRouter

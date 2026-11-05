@@ -3,7 +3,7 @@ name: Release
 # Tag a commit v0.2.1 and push it; this builds, verifies the version matches the tag and opens a
 # GitHub Release.
 #
-# Laya-Pro does not publish to PyPI: the `laya` name there is the original project's, and Laya-Pro
+# Veya does not publish to PyPI: the `laya` name there is the original project's, and Veya
 # installs from this repository. The `pypi` job runs only when the repository variable
 # PUBLISH_TO_PYPI is "true", after a Trusted Publisher for this repository (workflow release.yml,
 # environment pypi) exists on a PyPI project of its own. Then no API token lives in GitHub secrets.

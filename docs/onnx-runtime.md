@@ -5,10 +5,12 @@ description: Run exported Laya graphs locally without installing PyTorch or Tran
 
 # Lightweight ONNX runtime
 
-`laya-pro-onnx` is a separate inference distribution with the `laya_onnx` import.
+`veya-onnx` is a separate inference distribution with the `laya_onnx` import.
 It loads an exported ONNX graph, its checkpoint configuration and a local tokenizer.
-PyTorch and Transformers are not runtime dependencies. The full `laya-pro` package
+PyTorch and Transformers are not runtime dependencies. The full `veya` package
 continues to provide PyTorch inference, export tools, routing, training and integrations.
+Uninstall a former `laya-pro-onnx` installation before upgrading to `veya-onnx`:
+their `laya_onnx` files overlap even though pip treats them as separate distributions.
 
 The lightweight distribution is available from this checkout; it has not been published
 to a package registry:
@@ -126,7 +128,7 @@ For an MCP client, put the same configuration in its server environment:
 ```json
 {
   "mcpServers": {
-    "laya-pro": {
+    "veya": {
       "command": "laya-onnx-mcp",
       "env": {
         "LAYA_EXTRA_MODELS": "{\"english\":\"C:/models/english\"}",
@@ -180,7 +182,7 @@ readiness and first inference; memory peaks include batch, parity and cache chec
 The full package's ONNX backend gave similar results. Independently installed
 wheel and rebuilt source-package checks confirmed that the lightweight services
 run without Torch, Transformers or the full engine.
-[Batch timings, cache hits and full methodology](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#lightweight-http-and-mcp-1-november-2026).
+[Batch timings, cache hits and full methodology](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#lightweight-http-and-mcp-1-november-2026).
 
 ## Loading and memory measurements
 
@@ -198,9 +200,9 @@ Warm inference was unchanged; the benefit was startup and memory used by importe
 libraries. Separately, the PyTorch loading path reduced peak working set from 2735.1
 to 1970.8 MiB while keeping private commit, steady memory and startup time unchanged.
 The independently resolved lightweight installation had 134.4 MiB of dependency files,
-against 879.7 MiB in the existing full `laya-pro[onnx]` environment. These are installed
+against 879.7 MiB in the existing full `veya[onnx]` environment. These are installed
 file bytes, excluding project code, rather than download sizes or model RAM.
-[Full measurements and limits](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#loading-memory-and-standalone-onnx-31-october-2026).
+[Full measurements and limits](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#loading-memory-and-standalone-onnx-31-october-2026).
 
 `research/scripts/bench_loading_memory.py` compares an unchanged baseline checkout with
 the current runtime in fresh processes, using the same pinned local checkpoint and graph.

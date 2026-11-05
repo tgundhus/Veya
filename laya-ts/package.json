@@ -1,7 +1,7 @@
 {
   "name": "laya-ts",
   "version": "0.1.0",
-  "description": "Laya-Pro local decision engine with an ONNX TypeScript runtime",
+  "description": "Veya local decision engine with an ONNX TypeScript runtime",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -17,7 +17,7 @@
   "files": ["dist", "scripts/export_onnx.py"],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tgundhus/laya-pro.git",
+    "url": "git+https://github.com/tgundhus/Veya.git",
     "directory": "laya-ts"
   },
   "keywords": [
@@ -32,9 +32,9 @@
   "author": "Convai Innovations",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/tgundhus/laya-pro/issues"
+    "url": "https://github.com/tgundhus/Veya/issues"
   },
-  "homepage": "https://github.com/tgundhus/laya-pro#readme",
+  "homepage": "https://github.com/tgundhus/Veya#readme",
   "devDependencies": { "@types/node": "^26.6.3", "typescript": "^7.0.2", "vitest": "^5.0.1" },
   "optionalDependencies": { "onnxruntime-node": "^1.20.0", "onnxruntime-web": "^1.20.0" }
 }

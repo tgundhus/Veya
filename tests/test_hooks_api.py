@@ -162,10 +162,12 @@ check_param("ONNXAgent.__init__", ONNXAgent.__init__, "token", None)
 
 # --------------------------------------------------------------- predict surfaces
 from laya.mcp.remote import RemoteRouter  # noqa: E402
+from laya.mcp.remote import _resolve_user_agent  # noqa: E402
 from laya.mcp.tools import laya_status as _mcp_status  # noqa: E402
 
 check_param("mcp.laya_status", _mcp_status, "performance_mode", None, inspect.Parameter.KEYWORD_ONLY)
 check_true("RemoteRouter/is a Router", issubclass(RemoteRouter, Router))
+check("Veya/default wire identity", _resolve_user_agent(""), "veya/" + laya.__version__)
 check_param("RemoteRouter.__init__", RemoteRouter.__init__, "base_url", inspect.Parameter.empty)
 check_param("RemoteRouter.__init__", RemoteRouter.__init__, "api_key", None)
 check_param("RemoteRouter.__init__", RemoteRouter.__init__, "timeout", None)
@@ -1594,7 +1596,7 @@ finally:
 # route_batch fires only on_route and has no predict events to bind convenience callables
 # to, so its signature carries neither on_predict_start nor on_predict_end. Both take
 # hooks_timeout, which the pre-fix bullet did not mention.
-# Laya-Pro keeps the original project's release notes in docs/laya-releases.md, not README.md.
+# Veya keeps the original project's release notes in docs/laya-releases.md, not README.md.
 _readme_md = os.path.join(REPO, "docs", "laya-releases.md")
 with open(_readme_md, encoding="utf-8") as _rmf:
     _readme_text = _rmf.read()

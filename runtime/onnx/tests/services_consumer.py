@@ -224,7 +224,7 @@ async def mcp_contract(cache):
 
 
 def main():
-    for name in ("torch", "transformers", "laya-pro", "onnx", "onnxscript", "safetensors"):
+    for name in ("torch", "transformers", "veya", "onnx", "onnxscript", "safetensors"):
         try:
             importlib.metadata.distribution(name)
         except importlib.metadata.PackageNotFoundError:

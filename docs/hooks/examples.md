@@ -65,7 +65,7 @@ agent = laya.load("convaiinnovations/laya", on_predict_end=audit)
 One hook call covers the whole call, so the loop writes one record per decision; see
 [Batch](#batch) for the same shape on `predict_batch`.
 
-A full runnable version is in [`examples/hooks/audit.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/audit.py).
+A full runnable version is in [`examples/hooks/audit.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/audit.py).
 
 ## Redact PII
 
@@ -91,7 +91,7 @@ def redact(ctx):
 agent = laya.load("convaiinnovations/laya", on_predict_start=redact)
 ```
 
-See [`examples/hooks/redact.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/redact.py).
+See [`examples/hooks/redact.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/redact.py).
 
 ## Cache
 
@@ -122,7 +122,7 @@ first = agent.system_one("state", QUESTIONS)    # runs the model
 second = agent.system_one("state", QUESTIONS)   # served from CACHE
 ```
 
-See [`examples/hooks/cache.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/cache.py).
+See [`examples/hooks/cache.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/cache.py).
 
 ## Metrics
 
@@ -139,7 +139,7 @@ def metrics(ctx):
 agent = laya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_raise=False)
 ```
 
-See [`examples/hooks/otel.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/otel.py).
+See [`examples/hooks/otel.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/otel.py).
 
 ## Guardrail
 
@@ -420,7 +420,7 @@ in the background, so also give network calls their own timeout. See
 ## Testing hooks
 
 Assert what a hook saw without a model: drive `predict_batch` with the encode/forward/decode
-helpers stubbed, as [`tests/test_hooks.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks.py) does.
+helpers stubbed, as [`tests/test_hooks.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks.py) does.
 
 ```python
 seen = []
@@ -428,7 +428,7 @@ agent.predict_batch(["s0"], questions, on_predict_end=lambda ctx: seen.append(ct
 assert len(seen) == 1
 ```
 
-The API surface is pinned by [`tests/test_hooks_api.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks_api.py).
+The API surface is pinned by [`tests/test_hooks_api.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks_api.py).
 
 ## See also
 

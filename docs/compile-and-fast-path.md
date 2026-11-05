@@ -104,7 +104,7 @@ compiled code, not live CUDA graph recordings or their device memory, across pro
 
 Reproduce cold/restart timings, memory, and cache counters with
 `benchmarks/bench_compile_defaults.py`; see
-[the recorded measurements](https://github.com/tgundhus/laya-pro/blob/main/benchmarks/results/compile-defaults/README.md).
+[the recorded measurements](https://github.com/tgundhus/Veya/blob/main/benchmarks/results/compile-defaults/README.md).
 
 ## AOTInductor: not yet
 

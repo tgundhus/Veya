@@ -1,4 +1,4 @@
-import { Laya, triageQuestions } from 'laya-pro-client';
+import { Laya, triageQuestions } from 'veya-client';
 
 const laya = new Laya({
   baseURL: process.env.LAYA_BASE_URL ?? 'http://127.0.0.1:8000',

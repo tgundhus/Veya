@@ -804,7 +804,7 @@ def main():
 
     # The section of the README that teaches this server has to say the field exists and where its
     # spellings come from, or the only way to learn it is to get a 422.
-    # Laya-Pro teaches this server in docs/guide.md ("Web playground"), not README.md.
+    # Veya teaches this server in docs/guide.md ("Web playground"), not README.md.
     with open(os.path.join(ROOT, "docs", "guide.md"), encoding="utf-8") as handle:
         readme = handle.read()
     demo_page = readme.split("## Web playground", 1)[1].split("\n## ", 1)[0]

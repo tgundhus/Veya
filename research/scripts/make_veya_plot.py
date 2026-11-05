@@ -1,12 +1,12 @@
-"""Render the Laya-Pro against Laya against TypeSafe Jev figure used in the README.
+"""Render the Veya against Laya against TypeSafe Jev figure used in the README.
 
-    python research/scripts/make_laya_pro_plot.py
+    python research/scripts/make_veya_plot.py
 
-Laya and Laya-Pro figures are read from the committed results in research/results/ (Apple M4 Max
+Laya and Veya figures are read from the committed results in research/results/ (Apple M4 Max
 runs on the published checkpoints, *_m4max_20260928.json). Jev figures are third-party published
 (AbdelStark/jev-benchmarks, nibzard/decision-model-benchmark), except the repeat test, which reads
 the archived raw responses in research/benchmarks/feishu_zh; they are constants below, as in
-make_plots.py. Writes assets/laya_pro_vs_laya_vs_jev.png.
+make_plots.py. Writes assets/veya_vs_laya_vs_jev.png.
 """
 import json
 import os
@@ -21,7 +21,7 @@ REPO = os.path.dirname(RESEARCH)
 RESULTS = os.path.join(RESEARCH, "results")
 ASSETS = os.path.join(REPO, "assets")
 
-# Validated categorical slots 1 and 3 (light mode) for Laya and Laya-Pro; Jev is the de-emphasised
+# Validated categorical slots 1 and 3 (light mode) for Laya and Veya; Jev is the de-emphasised
 # comparator in neutral gray, as in laya_vs_jev_full.png. Aqua and gray sit below 3:1 on the
 # surface, so every mark carries a visible value label.
 BLUE, AQUA, GRAY = "#2a78d6", "#1baf7a", "#9a9a92"
@@ -41,7 +41,7 @@ plt.rcParams.update({
 # from the archived Feishu responses (29 of 128 identical across three runs).
 JEV_REPEAT = (29, 128)
 JEV_P50_MS = (236, 276)
-ACCURACY = [  # (task, Jev 1.13.0 published, Laya routed; Laya-Pro gives Laya's answers)
+ACCURACY = [  # (task, Jev 1.13.0 published, Laya routed; Veya gives Laya's answers)
     ("typed-decisions\n2,000 decisions", 0.727, 0.766),
     ("AG News\n4 labels", 0.910, 0.950),
     ("DAIR Emotion\n6 labels", 0.480, 0.595),
@@ -103,16 +103,16 @@ def main():
     gs = GridSpec(3, 3, figure=fig, left=0.095, right=0.975, top=0.80, bottom=0.05,
                   hspace=0.72, wspace=0.34, width_ratios=[1, 1, 1.08])
 
-    fig.text(0.012, 0.975, "Laya-Pro   vs   Laya   vs   TypeSafe Jev", fontsize=26, fontweight="bold", color=INK,
+    fig.text(0.012, 0.975, "Veya   vs   Laya   vs   TypeSafe Jev", fontsize=26, fontweight="bold", color=INK,
              va="top")
-    fig.text(0.012, 0.935, "Laya-Pro is Laya with a memory for its decisions: until a decision is replayed, its "
-             "answers are Laya's, byte for byte. Laya and Laya-Pro are measured here on the published checkpoints "
+    fig.text(0.012, 0.935, "Veya is Laya with a memory for its decisions: until a decision is replayed, its "
+             "answers are Laya's, byte for byte. Laya and Veya are measured here on the published checkpoints "
              "(Apple M4 Max).", fontsize=10.5, color=INK2, va="top")
     fig.text(0.012, 0.915, "Jev figures are third-party published (AbdelStark/jev-benchmarks, "
              "nibzard/decision-model-benchmark), except the repeat test, which reads archived raw responses; Jev "
              "was never run in this project.", fontsize=10.5, color=INK2, va="top")
     handles = [plt.Rectangle((0, 0), 1, 1, color=c) for c in (GRAY, BLUE, AQUA)]
-    fig.legend(handles, ["TypeSafe Jev 1.13.0", "Laya", "Laya-Pro"], loc="upper left", ncol=3, frameon=False,
+    fig.legend(handles, ["TypeSafe Jev 1.13.0", "Laya", "Veya"], loc="upper left", ncol=3, frameon=False,
                bbox_to_anchor=(0.008, 0.905), fontsize=11, labelcolor=INK2, handlelength=1.2, columnspacing=1.8)
 
     # A. Same request, same answer
@@ -143,14 +143,14 @@ def main():
     strip(ax)
     title(ax, "Same request, same answer",
           "First: responses identical across three runs of 64 requests (128 responses).\nThen: decisions unchanged "
-          "when the precision changes (%s answers on 841 requests).\nLaya-Pro replays the first decision: %s of %s "
+          "when the precision changes (%s answers on 841 requests).\nVeya replays the first decision: %s of %s "
           "replays identical across CPU, Apple GPU, ONNX and int8." % (format(fp16[1], ","),
                                                                       *(format(n, ",") for n in f["replayed"])))
 
-    # B. Where Laya-Pro leads
+    # B. Where Veya leads
     ax = fig.add_subplot(gs[0, 2])
     ax.axis("off")
-    title(ax, "Where Laya-Pro leads", lines=3)  # level with the panel beside it
+    title(ax, "Where Veya leads", lines=3)  # level with the panel beside it
     hit_lo, hit_hi = min(f["hit_ms"].values()), max(f["hit_ms"].values())
     low = min(f["computed_ms"]["mps"] / f["hit_ms"]["mps"], f["computed_ms"]["cpu"] / f["hit_ms"]["cpu"])
     renew7 = f["retention"]["memory, ttl 7 days, renew_on_hit"]["repeats_given_earlier_decision_share"]
@@ -170,15 +170,15 @@ def main():
         ax.text(0.0, y, big, fontsize=25, fontweight="bold", color=AQUA, va="center", transform=ax.transAxes)
         ax.text(0.37, y + 0.04, head, fontsize=10.5, fontweight="bold", color=INK, va="center", transform=ax.transAxes)
         ax.text(0.37, y - 0.045, small, fontsize=8.5, color=INK3, va="center", transform=ax.transAxes)
-    ax.text(0.0, 0.0, "Over Jev, Laya and Laya-Pro alike: 7.8× faster,\n3× better calibrated, 45 of 51 languages "
+    ax.text(0.0, 0.0, "Over Jev, Laya and Veya alike: 7.8× faster,\n3× better calibrated, 45 of 51 languages "
             "usable,\n$0 self-hosted under Apache 2.0.", fontsize=9, color=INK2, transform=ax.transAxes, va="top",
             linespacing=1.4)
 
     # C. A repeated request, log scale
     ax = fig.add_subplot(gs[1, 0])
     rows = [("Jev, hosted API", None, GRAY), ("Laya, CPU", f["computed_ms"]["cpu"], BLUE),
-            ("Laya, Apple GPU", f["computed_ms"]["mps"], BLUE), ("Laya-Pro, CPU", f["hit_ms"]["cpu"], AQUA),
-            ("Laya-Pro, Apple GPU", f["hit_ms"]["mps"], AQUA)]
+            ("Laya, Apple GPU", f["computed_ms"]["mps"], BLUE), ("Veya, CPU", f["hit_ms"]["cpu"], AQUA),
+            ("Veya, Apple GPU", f["hit_ms"]["mps"], AQUA)]
     for y, (name, v, col) in enumerate(reversed(rows)):
         if v is None:
             ax.plot(JEV_P50_MS, [y, y], color=col, linewidth=2, solid_capstyle="round")
@@ -198,7 +198,7 @@ def main():
     ax.grid(axis="x", color=GRID, linewidth=0.8)
     ax.set_axisbelow(True)
     strip(ax)
-    title(ax, "A repeated request", "log scale · Laya and Laya-Pro: a 3-question ticket,\nApple M4 Max · Jev: "
+    title(ax, "A repeated request", "log scale · Laya and Veya: a 3-question ticket,\nApple M4 Max · Jev: "
           "published p50 for one question")
 
     # D. Accuracy where Jev numbers exist
@@ -209,7 +209,7 @@ def main():
         bars = ax.bar(xs, vals, w - 0.03, color=col)
         if k == 0:
             bar_labels(ax, bars, lambda h: "%.3f" % h, 0.015)
-    for i, (_, _, v) in enumerate(ACCURACY):  # Laya and Laya-Pro answer alike: one label over both
+    for i, (_, _, v) in enumerate(ACCURACY):  # Laya and Veya answer alike: one label over both
         ax.text(i + w / 2, v + 0.015, "%.3f" % v, ha="center", va="bottom", fontsize=8.5, color=INK2)
     ax.set_xticks(range(len(ACCURACY)))
     ax.set_xticklabels([a[0] for a in ACCURACY], fontsize=9)
@@ -219,7 +219,7 @@ def main():
     ax.grid(axis="y", color=GRID, linewidth=0.8)
     ax.set_axisbelow(True)
     strip(ax)
-    title(ax, "Accuracy where Jev numbers exist", "Laya-Pro gives Laya's answers, so its accuracy is Laya's\n"
+    title(ax, "Accuracy where Jev numbers exist", "Veya gives Laya's answers, so its accuracy is Laya's\n"
           "Jev: third-party published")
 
     # E. Serving with repeats
@@ -229,7 +229,7 @@ def main():
     ax.text(0.5, rps_pro * 0.62, "%.1f×" % (rps_pro / rps_base), ha="center", va="center", fontsize=16,
             fontweight="bold", color=INK)
     ax.set_xticks([0, 1])
-    ax.set_xticklabels(["Laya", "Laya-Pro"], fontsize=10)
+    ax.set_xticklabels(["Laya", "Veya"], fontsize=10)
     ax.set_xlim(-0.6, 1.6)
     ax.set_ylim(0, rps_pro * 1.18)
     ax.set_ylabel("requests a second", fontsize=9.5)
@@ -262,7 +262,7 @@ def main():
     ax.set_axisbelow(True)
     strip(ax)
     tr = load("retention_m4max_20260928.json")["simulate"]["trace"]
-    title(ax, "Decision memory by retention period", "Laya-Pro: repeats served their earlier decision · a simulated "
+    title(ax, "Decision memory by retention period", "Veya: repeats served their earlier decision · a simulated "
           "month,\n%s requests, %s distinct" % (format(tr["requests"], ","), format(tr["distinct"], ",")))
 
     # G. Decisions changed by the setup
@@ -279,7 +279,7 @@ def main():
         ax.text(max(pct, 0.08) + 0.4, y + 0.16, "Laya %.1f%%  (%d of %s)" % (pct, changed, format(total, ",")),
                 va="center", fontsize=9, color=INK2)
         ax.barh(y - 0.14, 0.08, 0.26, color=AQUA)
-        ax.text(0.5, y - 0.14, "Laya-Pro 0", va="center", fontsize=9, color=INK2)
+        ax.text(0.5, y - 0.14, "Veya 0", va="center", fontsize=9, color=INK2)
     ax.set_yticks([])
     ax.set_ylim(-0.45, len(rows) - 0.2)
     ax.set_xlim(0, 36)
@@ -290,9 +290,9 @@ def main():
     ax.set_axisbelow(True)
     strip(ax, keep=())
     title(ax, "Decisions changed when the setup changes", "Against fp32 on the CPU, each request answered on its "
-          "own · Laya-Pro: one DecisionCache in front of\nevery setup replays the first decision, so none change")
+          "own · Veya: one DecisionCache in front of\nevery setup replays the first decision, so none change")
 
-    out = os.path.join(ASSETS, "laya_pro_vs_laya_vs_jev.png")
+    out = os.path.join(ASSETS, "veya_vs_laya_vs_jev.png")
     fig.savefig(out, dpi=125)
     print("wrote", out)
 

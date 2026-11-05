@@ -12,11 +12,11 @@ experimental and opt-in; they do not demonstrate useful model-driven compaction.
 
 ## Method
 
-The [benchmark harness](https://github.com/tgundhus/laya-pro/blob/main/research/scripts/bench_compaction.py)
+The [benchmark harness](https://github.com/tgundhus/Veya/blob/main/research/scripts/bench_compaction.py)
 uses twelve synthetic annotated coding transcripts and existing local weights.
-The [raw results](https://github.com/tgundhus/laya-pro/blob/main/research/results/compaction_windows_20261105.json)
+The [raw results](https://github.com/tgundhus/Veya/blob/main/research/results/compaction_windows_20261105.json)
 record every retention probability, action, fallback, repetition time and artifact hash.
-The [original run before review fixes](https://github.com/tgundhus/laya-pro/blob/main/research/results/compaction_windows_20261105_before_review_fixes.json)
+The [original run before review fixes](https://github.com/tgundhus/Veya/blob/main/research/results/compaction_windows_20261105_before_review_fixes.json)
 is retained separately for comparison.
 
 Two local Hugging Face snapshot directories were available:

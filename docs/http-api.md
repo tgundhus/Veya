@@ -11,7 +11,7 @@ that maps a class of enums and attributes onto questions and returns an instance
 for a deploy check, and ships a test fake so callers can unit-test without a running server.
 
 ```bash
-pip install "laya-pro[serve] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[serve] @ git+https://github.com/tgundhus/Veya.git"
 laya-serve            # http://0.0.0.0:8000
 ```
 

@@ -40,13 +40,13 @@ def version_tuple(text):
 pyproject = read("pyproject.toml")
 setup_py = read("setup.py")
 
-check_true("fork/distribution has its own name", re.search(r'^name\s*=\s*"laya-pro"$', pyproject, re.M) is not None)
-check_true("fork/metadata points to this repository", 'Repository = "https://github.com/tgundhus/laya-pro"' in pyproject)
-check_true("fork/metadata points to its documentation", 'Documentation = "https://tgundhus.github.io/laya-pro/"' in pyproject)
+check_true("fork/distribution has its own name", re.search(r'^name\s*=\s*"veya"$', pyproject, re.M) is not None)
+check_true("fork/metadata points to this repository", 'Repository = "https://github.com/tgundhus/Veya"' in pyproject)
+check_true("fork/metadata points to its documentation", 'Documentation = "https://tgundhus.github.io/Veya/"' in pyproject)
 site_config = read("zensical.toml")
-check_true("fork/site has its own canonical URL", 'site_url = "https://tgundhus.github.io/laya-pro/"' in site_config)
+check_true("fork/site has its own canonical URL", 'site_url = "https://tgundhus.github.io/Veya/"' in site_config)
 check_true("fork/docs workflow deploys this repository",
-           "github.repository == 'tgundhus/laya-pro'" in read(".github/workflows/docs.yml"))
+           "github.repository == 'tgundhus/Veya'" in read(".github/workflows/docs.yml"))
 
 # An explicit package list keeps setuptools from treating assets/, research/ and notebooks/ as
 # top-level packages, but it also means a new importable subpackage can disappear from wheels

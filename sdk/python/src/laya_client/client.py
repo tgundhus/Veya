@@ -31,7 +31,7 @@ def _finite_float(value):
 
 
 class LayaClient:
-    """Call a self-hosted Laya-Pro server without installing the inference engine.
+    """Call a self-hosted Veya server without installing the inference engine.
 
     timeout is a blocking I/O timeout in seconds, not a total request deadline.
     Calls are synchronous. No inference request is retried automatically.

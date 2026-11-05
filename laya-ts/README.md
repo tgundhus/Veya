@@ -1,6 +1,6 @@
-# laya-ts
+# Veya native TypeScript runtime (`laya-ts`)
 
-TypeScript inference for Laya-Pro (`Agent.predict`, `Router`, `lang`, `email`, `presets`, `shortlist`, `hooks`) on Node and the browser via split ONNX (`encoder.onnx` + `head.onnx`). ESM-only (`"type": "module"`); import from ESM or bundle.
+TypeScript inference for Veya (`Agent.predict`, `Router`, `lang`, `email`, `presets`, `shortlist`, `hooks`) on Node and the browser via split ONNX (`encoder.onnx` + `head.onnx`). ESM-only (`"type": "module"`); import from ESM or bundle.
 
 Build and install this checkout in another project:
 
@@ -9,11 +9,11 @@ cd laya-ts
 npm ci
 npm pack
 # In the consuming application:
-npm install /path/to/laya-pro/laya-ts/laya-ts-0.1.0.tgz
+npm install /path/to/veya/laya-ts/laya-ts-0.1.0.tgz
 ```
 
 The package retains the `laya-ts` import name. For HTTP calls to a shared Python process, use
-the [Laya-Pro HTTP SDK](https://github.com/tgundhus/laya-pro/blob/main/sdk/typescript/README.md) instead.
+the [Veya HTTP SDK](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) instead.
 
 ## Export weights (once per checkpoint)
 
@@ -256,11 +256,11 @@ node laya-ts/examples/tournament.mjs --model-dir SPLIT_EXPORT --fixture tourname
 node laya-ts/examples/cached-embedder.mjs --model-dir SPLIT_EXPORT --report cached-embedder.json
 ```
 
-The [local English parity result](https://github.com/tgundhus/laya-pro/blob/main/laya-ts/examples/results/tournament-parity-windows-20261012.json)
+The [local English parity result](https://github.com/tgundhus/Veya/blob/main/laya-ts/examples/results/tournament-parity-windows-20261012.json)
 records four scenarios with matching winners, finalists and usage, and at most one
 four-decimal output unit of numeric difference. Both runtimes clamped the checkpoint's
 out-of-range `choice:11+` temperature to 0.5; this check does not validate calibration.
-The [cache measurement](https://github.com/tgundhus/laya-pro/blob/main/laya-ts/examples/results/cached-embedder-windows-20261012.json)
+The [cache measurement](https://github.com/tgundhus/Veya/blob/main/laya-ts/examples/results/cached-embedder-windows-20261012.json)
 preserved shortlisted labels while reducing embedded rows from 126 to 6 over six requests.
 Its three alternating CPU repeats measured a median 294.5 → 33.7 ms per request for a fixed
 20-label catalog. The artifacts record settings and limits; these small panels do not

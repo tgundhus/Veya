@@ -1,8 +1,11 @@
-# Laya-Pro Python HTTP client
+# Veya Python HTTP client
 
-A synchronous, standard-library client for a self-hosted Laya-Pro server. The
+A synchronous, standard-library client for a self-hosted Veya server. The
 application environment needs no core `laya`, Torch, Transformers, or NumPy.
-Python 3.10–3.13 is supported. Distribution: `laya-pro-client`; import: `laya_client`.
+Python 3.10–3.13 is supported. Distribution: `veya-client`; import: `laya_client`.
+Before upgrading an existing environment, run `python -m pip uninstall laya-pro-client`,
+then install `veya-client`. The old and new distributions share `laya_client` files;
+uninstalling the old distribution after installing the new one can remove them.
 
 Install from this checkout (the package has not been published):
 
@@ -11,7 +14,7 @@ python -m pip install ./sdk/python
 ```
 
 Run the server in a separate environment using the
-[Laya-Pro HTTP guide](https://github.com/tgundhus/laya-pro/blob/main/docs/http-api.md).
+[Veya HTTP guide](https://github.com/tgundhus/Veya/blob/main/docs/http-api.md).
 
 ```python
 from laya_client import LayaClient, LayaAPIError

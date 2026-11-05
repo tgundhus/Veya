@@ -1,6 +1,6 @@
 # Security Policy
 
-Laya-Pro, like the Laya engine it is built on, runs in the user's own process or on self-hosted
+Veya, like the Laya engine it is built on, runs in the user's own process or on self-hosted
 infrastructure, so its security centres on supply-chain integrity, runtime resource containment,
 safe deserialization and network isolation.
 
@@ -8,19 +8,19 @@ safe deserialization and network isolation.
 
 ## Supported Versions
 
-Laya-Pro is maintained on its `main` branch, which currently includes Laya 0.3.29. Security fixes
+Veya is maintained on its `main` branch, which currently includes Laya 0.3.29. Security fixes
 land on `main`; install from it as the README shows.
 
 ---
 
 ## Reporting a Vulnerability
 
-If you believe you have found a security vulnerability in Laya-Pro, `laya-serve`, the TypeScript
+If you believe you have found a security vulnerability in Veya, `laya-serve`, the TypeScript
 packages or the Docker image built from this repository, **please do not disclose it in a public
 issue, pull request or discussion.** Report it privately to the maintainer, Tobias Gundhus
 ([@tgundhus](https://github.com/tgundhus) on GitHub).
 
-A vulnerability in code Laya-Pro has not changed (the models, the training method or the engine)
+A vulnerability in code Veya has not changed (the models, the training method or the engine)
 affects the original Laya as well, so it is worth reporting to the original project's maintainers
 too.
 
@@ -73,12 +73,12 @@ When deploying Laya in production environments (especially when self-hosting `la
 
 ## Automated Security Audits in CI/CD
 
-Laya-Pro runs automated quality and security gates on every commit and pull request:
+Veya runs automated quality and security gates on every commit and pull request:
 - **Secret Leak Detection**: [`gitleaks`](.github/workflows/security.yml) scans git commit history and the checked-out working tree to prevent credentials, API tokens, and secrets from entering the repository.
 - **Dependency Vulnerability Scanning**: [`pip-audit`](.github/workflows/security.yml) audits every
   declared dependency, the core and every extra, as the installs that can exist. Any advisory fails
   the check unless it has been reviewed and listed in
   [`.github/accepted-advisories.toml`](.github/accepted-advisories.toml) as unfixed and unreachable
-  through Laya-Pro; a listed one fails again once a fix is released. What the package and its image
+  through Veya; a listed one fails again once a fix is released. What the package and its image
   ship (the core and `[serve]`) is audited on its own, and nothing in it is ever accepted.
 - **Static Analysis**: CodeQL runs automated semantic and security static analysis on every push.

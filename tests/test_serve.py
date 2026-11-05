@@ -1283,7 +1283,7 @@ def test_default_model_reaches_the_router_the_server_builds(monkeypatch):
     english, _ = _server_router(monkeypatch, LAYA_DEFAULT_MODEL="english")
     portuguese, _ = _server_router(monkeypatch, LAYA_DEFAULT_MODEL="multilingual")
     for state in ambiguous:
-        # Laya-Pro keeps its English fallback; multilingual deployments can opt in.
+        # Veya keeps its English fallback; multilingual deployments can opt in.
         assert stock.route(state).model == "english", state
         assert "using default (english)" in stock.route(state).reason, state
         assert english.route(state).model == "english", state

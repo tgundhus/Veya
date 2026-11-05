@@ -150,7 +150,7 @@ machines, pass `store=` any object that follows `laya.DecisionStore`: `get`, `ad
 seconds. The one rule a store must keep is in `add`: when a key already holds an unexpired
 value, keep it and return it; that is what makes the first decision stored the one every machine
 replays. Laya ships no network store itself, so it keeps depending on nothing hosted.
-[`examples/hooks/decision_store_redis.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/decision_store_redis.py)
+[`examples/hooks/decision_store_redis.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/decision_store_redis.py)
 is one over Redis, using `SET ... NX` for that rule and Redis's own expiry:
 
 ```python

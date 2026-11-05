@@ -9,7 +9,7 @@ on `sys.path` automatically, so `from _common import ...` just works.
 
 Checkpoints come from `models/` when a local copy is there, and from the Hub bundle
 (`convaiinnovations/laya`, with a subfolder per checkpoint) otherwise, so the examples run after a
-source installation of Laya-Pro. Loading one takes a few seconds -- plus the first download when there is
+source installation of Veya. Loading one takes a few seconds -- plus the first download when there is
 no local copy -- and the first MPS call pays Metal kernel compilation, so anything that reports
 latency warms up first.
 

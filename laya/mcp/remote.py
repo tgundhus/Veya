@@ -73,7 +73,7 @@ def _resolve_user_agent(value: Optional[str]) -> str:
     # behind a default. Check before trimming so trailing CR/LF cannot disappear.
     if any((ord(char) < 32 and char != "\t") or ord(char) == 127 or ord(char) > 255 for char in raw):
         raise ValueError("LAYA_USER_AGENT / user_agent must be a single Latin-1 header value without control characters")
-    return raw.strip(" \t") or "laya-pro/" + __version__
+    return raw.strip(" \t") or "veya/" + __version__
 
 
 class RemoteRouter(Router):
@@ -84,7 +84,7 @@ class RemoteRouter(Router):
     server's ``LAYA_API_KEY``.
 
     ``user_agent`` overrides ``LAYA_USER_AGENT``; ``None`` reads the environment. A selected
-    empty or space/tab-only value uses ``laya-pro/<version>``. Header values must be Latin-1 and
+    empty or space/tab-only value uses ``veya/<version>``. Header values must be Latin-1 and
     contain no ASCII controls other than tab. The value is resolved once at construction.
     """
 

@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    url: https://github.com/tgundhus/laya-pro/tree/main/docs
+    url: https://github.com/tgundhus/Veya/tree/main/docs
     about: Installation, routing, serving, fine-tuning and prediction hooks.
   - name: README and examples
-    url: https://github.com/tgundhus/laya-pro#readme
+    url: https://github.com/tgundhus/Veya#readme
     about: Quickstart, benchmarks and usage examples.

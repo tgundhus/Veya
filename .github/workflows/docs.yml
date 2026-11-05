@@ -60,7 +60,7 @@ jobs:
     needs: build
     # Select Settings -> Pages -> Source: GitHub Actions before deploying this fork's docs.
     # Other repositories still run the strict build above.
-    if: github.event_name != 'pull_request' && github.repository == 'tgundhus/laya-pro'
+    if: github.event_name != 'pull_request' && github.repository == 'tgundhus/Veya'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

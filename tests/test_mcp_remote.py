@@ -129,7 +129,7 @@ def test_bearer_token_is_sent_when_configured(serve):
 
 @pytest.mark.parametrize("source", ["default", "environment", "argument"])
 def test_user_agent_identifies_every_remote_request(monkeypatch, serve, source):
-    expected = "laya-pro/" + __version__
+    expected = "veya/" + __version__
     kwargs = {}
     if source != "default":
         monkeypatch.setenv("LAYA_USER_AGENT", "deployment/1.0")
@@ -162,7 +162,7 @@ def test_user_agent_trims_only_outer_spaces_and_tabs(monkeypatch, serve, raw, ex
     monkeypatch.setenv("LAYA_USER_AGENT", raw if source == "environment" else "environment/1.0")
     kwargs = {"user_agent": raw} if source == "argument" else {}
     RemoteRouter(serve, **kwargs).health()
-    assert FakeServe.user_agents == [[expected or "laya-pro/" + __version__]]
+    assert FakeServe.user_agents == [[expected or "veya/" + __version__]]
 
 
 @pytest.mark.parametrize("raw", ["x\r", "x\n", "x\r\n folded", "\nx", "x\x01", "x\x7f", "x\u0100"])

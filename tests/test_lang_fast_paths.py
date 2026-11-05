@@ -52,7 +52,7 @@ def ref_script_counts(text):
     return counts
 
 
-# The references are the per-character code of the original project's release that Laya-Pro merged
+# The references are the per-character code of the original project's release that Veya merged
 # (0.3.29): the same rules (Nordic overlap, short Swedish phrases, collision words counted once,
 # shouted lines), without the shortcuts. The shortcuts must give exactly what these give.
 def ref_latin_profile(text):

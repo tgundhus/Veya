@@ -207,7 +207,7 @@ The shipped checkpoints are over-confident as shipped and `laya-multilingual` sh
 temperatures at all — see
 [Calibration](limits.md#calibration) and
 [Known limits](limits.md#known-limits), and the
-[fine-tuning notebook](https://github.com/tgundhus/laya-pro/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb)
+[fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb)
 for the fitting loop. Fit before you rely on the level; report it because it is the quantity the
 gate and the eval harness both use.
 

@@ -1,5 +1,5 @@
 import { Laya, defineQuestions, emailQuestions, triageQuestions, type Questions, type Answer,
-  type Usage, type LanguageDetection, type ChoiceAnswer, type MinConfidenceMap } from 'laya-pro-client';
+  type Usage, type LanguageDetection, type ChoiceAnswer, type MinConfidenceMap } from 'veya-client';
 
 const client = new Laya();
 client.predictBatch(['first', { message: 'second' }], { q: { type: 'noul', instructions: '?',

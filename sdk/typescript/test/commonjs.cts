@@ -1,4 +1,4 @@
-import sdk = require('laya-pro-client');
+import sdk = require('veya-client');
 const client = new sdk.Laya();
 const questions = sdk.defineQuestions({ q: { type: 'noul', instructions: 'Does it work?' } });
 async function run() {

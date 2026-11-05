@@ -1,8 +1,8 @@
-# Laya releases in Laya-Pro
+# Laya releases in Veya
 
-The original project's release notes for the versions merged into Laya-Pro, from its README. Laya-Pro
+The original project's release notes for the versions merged into Veya, from its README. Veya
 0.3.29 contains everything below, except the Java and .NET SDKs, which it does not carry, and with
-Laya-Pro's own additions on top: see the [README](https://github.com/tgundhus/laya-pro#readme). Issue
+Veya's own additions on top: see the [README](https://github.com/tgundhus/Veya#readme). Issue
 and pull request numbers refer to the original project.
 
 ## What's new in 0.3.29
@@ -130,7 +130,7 @@ A small release: one new SDK, one TypeScript port, and the dependency bumps.
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tgundhus/laya-pro/main/assets/laya_vs_jev_full.png" alt="Laya versus TypeSafe Jev: accuracy on shared public datasets, every application workflow, all 51 languages, speed, calibration, and the cost of not preloading" width="100%" />
+  <img src="https://raw.githubusercontent.com/tgundhus/Veya/main/assets/laya_vs_jev_full.png" alt="Laya versus TypeSafe Jev: accuracy on shared public datasets, every application workflow, all 51 languages, speed, calibration, and the cost of not preloading" width="100%" />
 </p>
 
 Laya evaluates typed questions (`choice`, `score`, `noul`) over text, email, tickets or JSON

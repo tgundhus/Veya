@@ -1,6 +1,6 @@
 # TypeScript SDK design
 
-`laya-pro-client` is a dependency-free HTTP client for a self-hosted `laya-serve`
+`veya-client` is a dependency-free HTTP client for a self-hosted `laya-serve`
 server. It uses `POST /v1/systemone` and `POST /v1/systemone/batch` and adds no Python production
 code or server dependencies.
 The npm package starts at version `0.1.0`, independently of Python releases.
@@ -17,14 +17,14 @@ The npm package starts at version `0.1.0`, independently of Python releases.
 
 ```mermaid
 flowchart LR
-    A[JavaScript or TypeScript application] --> B[laya-pro-client]
+    A[JavaScript or TypeScript application] --> B[veya-client]
     B -->|POST /v1/systemone| C[Existing Laya server]
     C --> E[Router and local checkpoint]
 ```
 
 The SDK exports `predict`, `predictBatch` and a Laya-only `health` probe. It ships ESM,
 CommonJS and declarations, retaining inferred question IDs and choice labels.
-Use `laya-pro-client` when a JavaScript or TypeScript application talks over HTTP to
+Use `veya-client` when a JavaScript or TypeScript application talks over HTTP to
 self-hosted Python `laya-serve`. Use `laya-ts` when inference must run directly
 inside JavaScript through its local ONNX runtime, without a Python server.
 
@@ -36,12 +36,12 @@ order while answers retain the original choice keys, score levels or noul indice
 it must be an exact integer permutation. Native Router batch prediction awaits start,
 error and end hooks, ending contexts in reverse start order. Detected English selects
 an English calibration override just like other detected languages. See the
-[native runtime guide](https://github.com/tgundhus/laya-pro/blob/main/laya-ts/README.md).
+[native runtime guide](https://github.com/tgundhus/Veya/blob/main/laya-ts/README.md).
 
 ## Shared contract
 
 Requests contain `state` and `questions`. Unless configured or supplied for a
-prediction, `laya-pro-client` omits `model`, letting `laya-serve` select a local
+prediction, `veya-client` omits `model`, letting `laya-serve` select a local
 checkpoint automatically. A client-wide or per-call `model` can select a local
 checkpoint, as can the other per-request controls in the table below. Choice label
 arrays are normalized to maps with null descriptions before transport.
@@ -57,7 +57,7 @@ threshold set, none of those three keys are sent, and that absence is the report
 Optional extensions are validated when present.
 
 `/v1/systemone` and `/v1/systemone/batch` handle predictions, and it has no standalone routing method:
-`laya-pro-client` exposes `predict`, `predictBatch` and `health`, and the live integration test asserts the
+`veya-client` exposes `predict`, `predictBatch` and `health`, and the live integration test asserts the
 server answers `404` for `/v1/route`. The controls the endpoint does honour are per-request, and each is
 sent only when the caller supplied the option -- an absent option leaves the deployment's own
 `Router(...)` settings in charge instead of overriding them with a client-side default:
@@ -107,5 +107,5 @@ authentication and request limits. CI runs the SDK checks on Node.js 22 and 24.
 Tiny random weights verify transport and numerical parity, not pretrained
 quality or performance.
 
-See the [SDK guide](https://github.com/tgundhus/laya-pro/blob/main/sdk/typescript/README.md) for setup, examples, and npm
-publishing. Build `laya-pro-client` from this checkout until a fork release is published. See [integration](integration.md) for source installation.
+See the [SDK guide](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) for setup, examples, and npm
+publishing. Build `veya-client` from this checkout until a fork release is published. See [integration](integration.md) for source installation.
