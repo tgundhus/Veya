@@ -213,32 +213,65 @@ function scriptOf(ch: string): string | null {
   return null;
 }
 
+/** Count characters the way Python does: an astral code point occupies one position. */
+function codePointLength(text: string): number {
+  let count = 0;
+  for (const _ch of text) count += 1;
+  return count;
+}
+
+/** A bounded prefix scan; unlike Array.from(text), this does not copy the unread tail. */
+function codePointPrefix(text: string, count: number): string {
+  count = Math.trunc(count);
+  if (!(count > 0)) return "";
+  if (text.length <= count) return text;
+  let end = 0;
+  for (const ch of text) {
+    if (count-- <= 0) break;
+    end += ch.length;
+  }
+  return text.slice(0, end);
+}
+
 /** String leaves of a state. Keys are ignored: they are usually English field names. */
-function iterText(state: unknown, depth = 0): string[] {
-  if (depth > 6 || state == null) return [];
-  if (typeof state === "string") return [state];
+function* iterText(state: unknown, depth = 0): Generator<string> {
+  if (depth > 6 || state == null) return;
+  if (typeof state === "string") {
+    yield state;
+    return;
+  }
   if (state instanceof Uint8Array) {
     try {
-      return [new TextDecoder("utf-8", { fatal: true }).decode(state)];
+      yield new TextDecoder("utf-8", { fatal: true }).decode(state);
+      return;
     } catch {
-      return [];
+      return;
     }
   }
   if (Array.isArray(state)) {
-    const out: string[] = [];
-    for (const v of state) out.push(...iterText(v, depth + 1));
-    return out;
+    for (const v of state) yield* iterText(v, depth + 1);
+    return;
   }
   if (typeof state === "object") {
-    const out: string[] = [];
-    for (const v of Object.values(state as object)) out.push(...iterText(v, depth + 1));
-    return out;
+    for (const key of Object.keys(state)) {
+      yield* iterText((state as Record<string, unknown>)[key], depth + 1);
+    }
   }
-  return [];
 }
 
 export function stateText(state: unknown, maxChars = 4000): string {
-  return iterText(state).join(" ").slice(0, maxChars);
+  let budget = Math.trunc(maxChars);
+  if (!(budget > 0)) return "";
+  const parts: string[] = [];
+  for (const leaf of iterText(state)) {
+    if (budget <= 0) break;
+    const capped = codePointPrefix(leaf, budget);
+    parts.push(capped);
+    if (capped.length < leaf.length) break;
+    budget -= codePointLength(capped) + 1;
+    if (budget <= 0) break;
+  }
+  return parts.join(" ");
 }
 
 export function detectScript(text: string): string {
@@ -331,7 +364,7 @@ function nonLatinWords(text: string): string[] {
     }
   }
   if (cur) runs.push(cur);
-  return runs.filter((w) => [...w].length >= 2 && !/^[\p{Lu}\p{Lt}]/u.test(w));
+  return runs.filter((w) => codePointLength(w) >= 2 && !/^[\p{Lu}\p{Lt}]/u.test(w));
 }
 
 export interface LatinProfile {
@@ -347,10 +380,12 @@ export function latinProfile(text: string): LatinProfile {
   const words = rawWords.map((w) => w.toLowerCase());
   const lowered = text.toLowerCase();
   let diac = 0;
+  let characters = 0;
   for (const ch of lowered) {
+    characters += 1;
     if (NON_EN_DIACRITICS.has(ch)) diac += 1;
   }
-  const diacRate = diac / Math.max(1, lowered.length);
+  const diacRate = diac / Math.max(1, characters);
   const nonEnglish = diacRate >= NON_EN_DIACRITIC_RATE;
   const nordicOverlap = words.some((w) => NORDIC_OVERLAP_WORDS.has(w)) &&
     !words.some((w) => EN_ONLY_WORDS.has(w));
@@ -443,12 +478,12 @@ function shouted(text: string): boolean {
 
 /** Whether an all-caps line's evidence for `lang` is more than acronym-shaped tokens. */
 function shoutedEvidence(tokens: string[], lang: string, diacriticRate: number): boolean {
-  if (!tokens.some((t) => t.length >= SHOUTED_MIN_WORD)) return false;
+  if (!tokens.some((t) => codePointLength(t) >= SHOUTED_MIN_WORD)) return false;
   if (diacriticRate >= NON_EN_DIACRITIC_RATE) return true;
   const stopSet = STOP[lang];
   if (!stopSet) return false;
   const matched = new Set(tokens.map((t) => t.toLowerCase()).filter((t) => stopSet.has(t)));
-  return [...matched].some((w) => w.length >= SHOUTED_MIN_STOPWORD);
+  return [...matched].some((w) => codePointLength(w) >= SHOUTED_MIN_STOPWORD);
 }
 
 /** Language code for one non-code line, or null when it does not name a foreign language.
@@ -493,8 +528,8 @@ function nonEnglishSegment(state: unknown, maxChars = 4000): [string, string] | 
   for (const leaf of iterText(state)) {
     for (const seg of leaf.split("\n")) {
       if (seen >= maxChars) return null;
-      const capped = seg.slice(0, maxChars - seen);
-      seen += capped.length;
+      const capped = codePointPrefix(seg, maxChars - seen);
+      seen += codePointLength(capped);
       const lang = namedProseLanguage(capped);
       if (lang) return [lang, capped.trim()];
     }
@@ -586,7 +621,7 @@ function analyseText(text: string): AnalyseResult {
       // `sag mir das HEUTIGE DATUM` lost its verdict). Diacritic evidence stays measured on the
       // original text, so a shouted foreign word cannot be blanked out of the safety net.
       const caps = (text.match(LETTER_RUN_RE) ?? []).filter((m) => m === m.toUpperCase());
-      if (caps.length > 0 && !caps.some((c) => c.length >= SHOUTED_MIN_WORD)) {
+      if (caps.length > 0 && !caps.some((c) => codePointLength(c) >= SHOUTED_MIN_WORD)) {
         const blanked = text.replace(LETTER_RUN_RE, (m) => (m === m.toUpperCase() ? " " : m));
         if (blanked !== text) lang = latinProfile(blanked).language;
       }
@@ -610,7 +645,7 @@ function alphaCount(text: string): number {
 
 /** A string value that is itself not safe for the English checkpoint, else null. */
 function leafNonEnglish(leaf: string): AnalyseResult | null {
-  const sample = leaf.slice(0, 4000);
+  const sample = codePointPrefix(leaf, 4000);
   if (!sample.trim()) return null;
   const det = analyseText(sample);
   if (det.isEnglish) return null;
@@ -637,9 +672,17 @@ export function analyse(state: unknown): AnalyseResult {
     // English as a whole, because the English part is longer -- yet the part a question is about
     // is the customer's, and the English checkpoint cannot read it. So a state that would go to
     // English is checked line by line and field by field.
-    const leaves = iterText(state);
+    let count = 0;
+    let multipleParts = false;
+    for (const leaf of iterText(state)) {
+      count += 1;
+      if (count > 1 || leaf.includes("\n")) {
+        multipleParts = true;
+        break;
+      }
+    }
     // a single line has no other part to be outvoted by, and was just read whole
-    if (leaves.length > 1 || leaves.some((leaf) => leaf.includes("\n"))) {
+    if (multipleParts) {
       const found = nonEnglishSegment(state);
       if (found) {
         const [lang, mixed] = found;
@@ -663,7 +706,7 @@ export function analyse(state: unknown): AnalyseResult {
   for (const leaf of iterText(state)) {
     const det = leafNonEnglish(leaf);
     if (!det) continue;
-    const n = alphaCount(leaf.slice(0, 4000));
+    const n = alphaCount(codePointPrefix(leaf, 4000));
     if (n > bestN) {
       bestN = n;
       best = det;
