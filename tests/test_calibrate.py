@@ -879,9 +879,10 @@ check_true("decode/uses _option_logits", "_option_logits" in inspect.getsource(A
 sys_one = inspect.getsource(Agent.system_one)
 check_true("system_one/uses predict_batch", "predict_batch" in sys_one)
 check_true("system_one/does not fit", "fit_temperature" not in sys_one)
-batch_src = inspect.getsource(Agent.predict_batch)
-check_true("predict_batch/_encode_state", "_encode_state" in batch_src)
-check_true("predict_batch/_decode_answers", "_decode_answers" in batch_src)
+batch_src = inspect.getsource(Agent._infer_batch)
+check_true("predict_batch/uses the batch core", "self._infer_batch(" in inspect.getsource(Agent.predict_batch))
+check_true("batch core/_encode_state", "_encode_state" in batch_src)
+check_true("batch core/_decode_answers", "_decode_answers" in batch_src)
 
 
 # --------------------------------------------------------------- labeled records use raw logits

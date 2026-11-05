@@ -152,7 +152,7 @@ import inspect  # noqa: E402
 
 from laya import agent as _agent  # noqa: E402
 
-_src = inspect.getsource(_agent.Agent._encode_state) + inspect.getsource(_agent.Agent.predict_batch)
+_src = inspect.getsource(_agent.Agent._encode_state) + inspect.getsource(_agent.Agent._infer_batch)
 check_true("usage/asks build_sequence for the stats", "return_truncation_stats=True" in _src)
 check_true("usage/publishes the flag", '"truncated": dropped > 0' in _src)
 check_true("usage/publishes the dropped count", '"state_tokens_dropped": dropped' in _src)

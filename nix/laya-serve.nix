@@ -410,9 +410,9 @@ in
     };
 
     decisionPolicy = lib.mkOption {
-      type = lib.types.nullOr (lib.types.enum [ "canonical" "context-balanced-v1" ]);
+      type = lib.types.nullOr lib.types.str;
       default = null;
-      description = "Optional inference-policy override (LAYA_DECISION_POLICY); null keeps the checkpoint's policy.";
+      description = "Inference-policy override (LAYA_DECISION_POLICY), validated by Veya; null keeps the checkpoint's policy.";
     };
 
     replayManifest = lib.mkOption {
