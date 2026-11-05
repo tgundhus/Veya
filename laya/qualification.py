@@ -18,6 +18,7 @@ import threading
 import time
 
 from . import evals
+from .decision_policy import DECISION_POLICIES, resolve_decision_policy
 from .evals import EvalError
 
 CORPUS_SCHEMA = "veya-qualification-corpus/1"
@@ -247,6 +248,10 @@ def _answers(result, questions):
             if not isinstance(answer["abstention"], str):
                 raise EvalError("abstention must be a string")
             flags["abstention"] = answer["abstention"]
+        if "confidence_calibrated" in answer:
+            if type(answer["confidence_calibrated"]) is not bool:
+                raise EvalError("confidence_calibrated must be a boolean")
+            flags["confidence_calibrated"] = answer["confidence_calibrated"]
         clean[qid] = {"answer": deepcopy(answer), "probabilities": vector,
                       "label": label, "score": score,
                       "operational": operational, "flags": flags,
@@ -467,6 +472,10 @@ def _validate_saved_report(report, *, diagnostic=False):
             continue
         if not isinstance(cell.get("identity"), dict) or not isinstance(cell.get("runs"), list) or not cell["runs"]:
             raise EvalError("saved qualification cell has no identity or completed runs")
+        if "decision_policy" in cell["identity"]:
+            policy = cell["identity"]["decision_policy"]
+            if not isinstance(policy, str) or policy not in DECISION_POLICIES:
+                raise EvalError("saved qualification cell has an unknown decision policy")
         if not diagnostic:
             identity = cell["identity"]
             if identity.get("verification") != "local artifacts and runtime":
@@ -572,7 +581,7 @@ def compare_reports(candidate, baseline, *, limits=None, allow_unverified_identi
         current_cell, old_cell = candidate["cells"][name], baseline["cells"][name]
         old_identity, identity = old_cell["identity"], current_cell["identity"]
         for key in ("verification", "backend", "device", "precision", "artifacts", "providers", "math_settings",
-                    "threads", "intra_op_threads", "inter_op_threads"):
+                    "threads", "intra_op_threads", "inter_op_threads", "decision_policy"):
             if old_identity.get(key) != identity.get(key):
                 report["failures"].append("%s: incomparable %s" % (name, key))
         old_fingerprint, fingerprint = old_identity.get("model_fingerprint"), identity.get("model_fingerprint")
@@ -786,6 +795,10 @@ class _LocalRunner:
         from .hooks import compose_hooks
         if self.agent is None:
             raise EvalError("qualification cell is closed")
+        policy = getattr(self.agent, "decision_policy", "canonical")
+        if (not isinstance(policy, str) or policy not in DECISION_POLICIES
+                or policy != self.identity.get("decision_policy", "canonical")):
+            raise EvalError("decision policy changed during qualification")
         if compose_hooks(getattr(self.agent, "hooks", ())):
             raise EvalError("qualification requires an unhooked, uncached Agent")
         if "model_fingerprint" in self.identity:
@@ -885,6 +898,12 @@ def _torch_math_settings(device):
 
 
 def _build_cell(spec):
+    policy_args = {}
+    if "decision_policy" in spec:
+        policy = spec["decision_policy"]
+        if not isinstance(policy, str) or policy not in DECISION_POLICIES:
+            raise EvalError("cell.decision_policy must be canonical or context-balanced-v1")
+        policy_args["decision_policy"] = policy
     graph = spec.get("onnx_path")
     artifacts = _artifact_identity(spec["checkpoint"], graph)
     checkpoint = str(Path(spec["checkpoint"]).resolve())
@@ -893,7 +912,8 @@ def _build_cell(spec):
         from .onnx_agent import _NativeONNXAgent
         try:
             import onnxruntime
-            agent = _NativeONNXAgent(checkpoint, onnx_path=str(Path(graph).resolve()), performance_mode="default")
+            agent = _NativeONNXAgent(checkpoint, onnx_path=str(Path(graph).resolve()),
+                                     performance_mode="default", **policy_args)
         except ImportError as exc:
             raise _Unavailable("ONNX runtime dependencies are unavailable: %s" % exc) from exc
         identity = {"verification": "local artifacts and runtime", "artifacts": artifacts,
@@ -919,7 +939,7 @@ def _build_cell(spec):
         try:
             os.environ.update(LAYA_CPU_AMP="bf16" if precision == "bf16" else "fp32",
                               LAYA_CUDA_AMP=precision, HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1")
-            agent = Agent(checkpoint, device=device, backend="eager", performance_mode="default")
+            agent = Agent(checkpoint, device=device, backend="eager", performance_mode="default", **policy_args)
             if device.startswith("mps"):
                 agent.amp_enabled, agent.dtype = precision == "fp16", torch.float16 if precision == "fp16" else torch.float32
                 agent.mps_amp_min_rows = 1
@@ -946,6 +966,9 @@ def _build_cell(spec):
                     "torch": torch.__version__, "threads": torch.get_num_threads(),
                     "math_settings": _torch_math_settings(device)}
     runner = _LocalRunner(agent, identity)
+    effective_policy = getattr(agent, "decision_policy", "canonical")
+    if effective_policy != "canonical":
+        identity["decision_policy"] = effective_policy
     from .consistency import _fingerprint
     identity["model_fingerprint"] = deepcopy(_fingerprint(agent))
     if backend != "onnx":
@@ -971,6 +994,9 @@ def _build_cell(spec):
                                      "question_rows": int(tokens.shape[0])})
         runner._witness = agent.model.register_forward_pre_hook(witness, with_kwargs=True)
     try:
+        expected_policy = resolve_decision_policy(policy_args.get("decision_policy"), getattr(agent, "cfg", None))
+        if effective_policy != expected_policy:
+            raise EvalError("runtime did not activate the requested decision policy")
         runner._check()
         if _artifact_identity(spec["checkpoint"], graph) != artifacts:
             raise EvalError("checkpoint changed while the qualification cell loaded")
@@ -995,7 +1021,7 @@ def validate_matrix(document):
         raise EvalError("matrix.cells must be a nonempty list")
     names = set()
     for spec in cells:
-        if not isinstance(spec, dict) or set(spec) - {"name", "checkpoint", "backend", "device", "precision", "onnx_path", "required"}:
+        if not isinstance(spec, dict) or set(spec) - {"name", "checkpoint", "backend", "device", "precision", "onnx_path", "required", "decision_policy"}:
             raise EvalError("invalid qualification matrix cell")
         name = _name(spec.get("name"), "cell.name")
         if name in names:
@@ -1010,6 +1036,9 @@ def validate_matrix(document):
             raise EvalError("cell.device must explicitly name cpu, mps or a CUDA device")
         if type(spec.get("required", True)) is not bool:
             raise EvalError("cell.required must be a boolean")
+        if "decision_policy" in spec and (not isinstance(spec["decision_policy"], str)
+                                           or spec["decision_policy"] not in DECISION_POLICIES):
+            raise EvalError("cell.decision_policy must be canonical or context-balanced-v1")
         if backend == "onnx":
             if device != "cpu" or precision != "graph" or not isinstance(spec.get("onnx_path"), str):
                 raise EvalError("ONNX cells require cpu, precision='graph' and onnx_path")

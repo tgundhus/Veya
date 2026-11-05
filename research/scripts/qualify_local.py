@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT))
 
 
 def main():
+    from laya.decision_policy import DECISION_POLICIES
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--onnx", type=Path)
@@ -27,6 +28,8 @@ def main():
     parser.add_argument("--repeats", type=int, default=2)
     parser.add_argument("--batch-sizes", type=int, nargs="+", default=[1, 4])
     parser.add_argument("--concurrencies", type=int, nargs="+", default=[1, 4])
+    parser.add_argument("--decision-policy", choices=DECISION_POLICIES, default=None,
+                        help="explicit local decision policy; omitted uses the checkpoint's default")
     parser.add_argument("--diagnostic", action="store_true",
                         help="run agreement diagnostics without claiming fixture quality qualification")
     args = parser.parse_args()
@@ -43,6 +46,9 @@ def main():
     if args.onnx:
         cells.append({"name": "onnx-cpu-graph", "checkpoint": checkpoint, "backend": "onnx",
                       "device": "cpu", "precision": "graph", "onnx_path": str(args.onnx.resolve()), "required": True})
+    if args.decision_policy is not None:
+        for cell in cells:
+            cell["decision_policy"] = args.decision_policy
     limits = {"max_label_flip_rate": 0, "max_probability_drift": 0.001, "max_score_drift": 0.001,
               "max_accuracy_drop": 0, "boundary_margin": 0.05, "min_boundary_cases": 0 if args.diagnostic else 1}
     if not args.diagnostic:
