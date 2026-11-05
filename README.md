@@ -9,9 +9,10 @@ retention, replay across devices and precision modes, and optimizations around i
 The pretrained models remain upstream Laya checkpoints; the fork maintains its own code,
 SDKs, documentation and measurements.
 
-Selected upstream changes are reviewed through Laya 0.4.6. The
-[12 October review](https://tgundhus.github.io/Veya/reports/upstream-review-2026-10-12/)
-records the adopted fixes, measured costs and deferred features.
+Selected upstream changes are reviewed through Laya 0.4.18, with a
+[5 November comparison](https://github.com/tgundhus/Veya/blob/main/docs/reports/decision-engines-2026-11-05.md)
+covering newer Laya changes and four related decision engines. Review coverage
+does not mean every upstream change has been adopted.
 
 [Documentation](https://tgundhus.github.io/Veya/) · [Integration](https://github.com/tgundhus/Veya/blob/main/docs/integration.md) ·
 [Benchmarks](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md) · [Deployment](https://github.com/tgundhus/Veya/blob/main/docs/production.md)
