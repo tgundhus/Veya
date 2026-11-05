@@ -9,6 +9,7 @@ nav:
       - compaction.md
       - routing-parity.md
       - release-qualification.md
+      - mcp-code-mode.md
       - hooks
       - langchain.md
       - llamaindex.md

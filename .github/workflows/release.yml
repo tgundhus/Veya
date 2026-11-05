@@ -46,7 +46,7 @@ jobs:
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           # The same extras the CI `test` job installs, so the shared suite list below runs its
           # mcp/serve/langchain suites for real instead of letting them skip.
-          pip install -e ".[mcp,replay,serve,langchain]" httpx pytest
+          pip install -e ".[mcp,codemode,replay,serve,langchain]" httpx pytest
 
       # The canonical list CI runs (`scripts/test_suites.py`). This gate used to keep a hand-synced
       # copy that had drifted to 33 fewer suites than CI, so a regression in an omitted suite could

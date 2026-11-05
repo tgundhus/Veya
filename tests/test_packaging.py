@@ -550,8 +550,8 @@ def env_reads(excluded_paths=()):
 
 
 read_names = env_reads(("laya/mcp/server.py", "laya/mcp/remote.py"))
-check("nix/only MCP transport variables are excluded from the HTTP process",
-      sorted(env_reads() - read_names), ["LAYA_BASE_URL", "LAYA_REMOTE_TIMEOUT", "LAYA_USER_AGENT"])
+check("nix/only MCP-specific variables are excluded from the HTTP process",
+      sorted(env_reads() - read_names), ["LAYA_BASE_URL", "LAYA_MCP_MODE", "LAYA_REMOTE_TIMEOUT", "LAYA_USER_AGENT"])
 # An assignment only. The `models` description names `LAYA_MODELS` in prose, and prose that
 # mentions a variable sets nothing.
 assigned = sorted(set(re.findall(r'\b(LAYA_[A-Z0-9_]+)\s*=', nix_module))

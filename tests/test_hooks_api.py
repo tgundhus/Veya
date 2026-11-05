@@ -1909,6 +1909,16 @@ check_param("Router.export_replay_manifest", Router.export_replay_manifest, "pat
 for _param in ("model", "task", "lang", "lang_guess", "max_len", "head_max_len", "min_confidence"):
     check_param("Router.try_replay", Router.try_replay, _param, None)
 
+from laya.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner  # noqa: E402
+from laya.mcp.tools import ToolError as _McpToolError  # noqa: E402
+check_true("CodeModeError follows the MCP error contract", issubclass(CodeModeError, _McpToolError))
+check_true("CodeModeLimits is immutable", dataclasses.is_dataclass(CodeModeLimits)
+           and CodeModeLimits.__dataclass_params__.frozen)
+check_param("CodeModeRunner", CodeModeRunner.__init__, "limits", None)
+check_param("CodeModeRunner.execute", CodeModeRunner.execute, "code", inspect.Parameter.empty)
+check_param("CodeModeRunner.execute", CodeModeRunner.execute, "input", None)
+check_param("CodeModeRunner.execute", CodeModeRunner.execute, "router", None, inspect.Parameter.KEYWORD_ONLY)
+
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
     print("  FAIL", f)

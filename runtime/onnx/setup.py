@@ -11,7 +11,8 @@ MODULES = (
     "onnx_agent", "inference_common", "inference", "checkpoint", "calibration",
     "hooks", "revisions", "confidence", "performance", "structured", "consistency", "errors",
     "router", "serve", "shortlist", "lang", "presets", "_microbatch", "replay", "_routing_unicode",
-    "mcp/__init__", "mcp/device", "mcp/remote", "mcp/server", "mcp/tools",
+    "mcp/__init__", "mcp/device", "mcp/remote", "mcp/server", "mcp/tools", "mcp/code_mode", "mcp/_code_worker",
+    "mcp/_code_budget",
 )
 
 

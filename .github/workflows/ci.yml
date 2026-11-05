@@ -100,7 +100,7 @@ jobs:
           # `langchain` for the same reason: without langchain-core the runnables fall back
           # to their plain-object path, so tests/test_langchain.py never checks the real
           # Runnable behaviour (batch delegation, pydantic field validation) it is there for.
-          pip install -e ".[mcp,replay,serve,langchain,agno]" httpx
+          pip install -e ".[mcp,codemode,replay,serve,langchain,agno]" httpx
           # The pytest-style suites need the runner; nothing else in this job uses it.
           pip install pytest
 
@@ -240,7 +240,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install torch
-          pip install -e ".[mcp,replay,serve,langchain]" httpx
+          pip install -e ".[mcp,codemode,replay,serve,langchain]" httpx
           pip install pytest
         shell: bash
 

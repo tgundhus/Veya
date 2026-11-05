@@ -50,6 +50,9 @@ fast = ["tilelang>=0.1.14"]
 # `pip install veya[mcp]` adds the MCP stdio server (laya.mcp / the laya-mcp-server CLI).
 mcp = ["mcp>=2.2.0"]
 
+# Local JavaScript sandbox for the opt-in MCP code interface.
+codemode = ["mcp>=2.2.0", "quickjs-ng>=0.18.0.1,<0.19", "psutil>=5.9.8"]
+
 # ONNX manifest preparation reads graph metadata with the official parser.
 # Consuming a prepared replay manifest does not import ONNX.
 replay = ["onnx>=1.20.0"]

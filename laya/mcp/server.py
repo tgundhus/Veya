@@ -28,6 +28,7 @@ Environment (same meaning as laya.serve where it exists):
   LAYA_CACHE_FINGERPRINT / LAYA_CACHE_REQUIRED / LAYA_CACHE_RENEW_ON_HIT
                 local decision retention (same as laya.serve)
   LAYA_REPLAY_MANIFEST  verified replay metadata for model-free local cache hits
+  LAYA_MCP_MODE  classic (default) or code (bounded local JavaScript composition)
   LAYA_BASE_URL  answer from a running laya-serve over HTTP; unset keeps models local
   LAYA_REMOTE_TIMEOUT  HTTP timeout in seconds for remote mode (default 300)
   LAYA_USER_AGENT  remote HTTP client identity (default veya/<version>)
@@ -663,6 +664,40 @@ def laya_predict_long_tool(state: dict, questions: dict, model: str | None = Non
                  window=window, stride=stride, task=task, lang=lang, router=router)
 
 
+def create_code_server(runner=None):
+    """Build the opt-in single-tool interface without changing the classic catalog."""
+    try:
+        import quickjs  # noqa: F401 -- code mode refuses startup without its optional runtime
+        import psutil  # noqa: F401 -- independent guest-process CPU monitor
+    except ImportError as exc:
+        raise ImportError("the local veya[codemode] extra is required for MCP code mode") from exc
+    from .code_mode import CodeModeRunner, code_mode_description
+    from contextlib import asynccontextmanager
+    import asyncio
+
+    owned = runner is None
+    runner = runner if runner is not None else CodeModeRunner()
+
+    @asynccontextmanager
+    async def lifespan(_):
+        nonlocal runner
+        if owned and runner._closed:
+            runner = CodeModeRunner()
+        try:
+            yield {}
+        finally:
+            if owned:
+                await asyncio.to_thread(runner.close)
+
+    application = MCPServer("veya", version=_LAYA_VERSION, lifespan=lifespan)
+
+    @application.tool(name="veya_execute", description=code_mode_description())
+    def execute_tool(code: str, input: Any = None) -> str:
+        return _wrap(runner.execute, code=code, input=input, router=_router_or_error())
+
+    return application
+
+
 def main(argv=None) -> None:
     import argparse
 
@@ -672,9 +707,35 @@ def main(argv=None) -> None:
                         help="local inference runtime; overrides LAYA_BACKEND (remote mode uses the server's backend)")
     parser.add_argument("--performance-mode", choices=("1", "2", "3", "4", "5", "default"),
                         help="local resource preset; default disables the environment preset")
+    parser.add_argument("--mode", choices=("classic", "code"),
+                        help="MCP catalog; overrides LAYA_MCP_MODE (default classic)")
+    parser.add_argument("--code-wall-seconds", type=float, help="total code-workflow deadline, including host inference (default 120)")
+    parser.add_argument("--code-cpu-seconds", type=float, help="cumulative JavaScript CPU limit (default 2)")
+    parser.add_argument("--code-memory-mib", type=int, help="JavaScript heap limit in MiB (default 64)")
+    parser.add_argument("--code-max-calls", type=int, help="maximum validated operations per workflow (default 32)")
     args = parser.parse_args(argv)
     _PERFORMANCE_MODE = args.performance_mode
     _BACKEND = args.backend
+    mode = args.mode if args.mode is not None else os.environ.get("LAYA_MCP_MODE", "classic").strip().lower()
+    if mode not in ("classic", "code"):
+        parser.error("LAYA_MCP_MODE must be classic or code")
+    code_options = {name: value for name, value in (
+        ("wall_seconds", args.code_wall_seconds), ("cpu_seconds", args.code_cpu_seconds),
+        ("memory_bytes", None if args.code_memory_mib is None else args.code_memory_mib * 1024 * 1024),
+        ("max_calls", args.code_max_calls)) if value is not None}
+    if mode == "classic" and code_options:
+        parser.error("--code-* options require --mode code")
+    code_runner = None
+    application = server
+    if mode == "code":
+        from .code_mode import CodeModeLimits, CodeModeRunner
+        try:
+            code_runner = CodeModeRunner(CodeModeLimits(**code_options))
+            application = create_code_server(code_runner)
+        except (ImportError, ValueError) as exc:
+            if code_runner is not None:
+                code_runner.close()
+            parser.error(str(exc))
     # Windows without Developer Mode cannot create HF cache symlinks (WinError
     # 1314). On POSIX the cache uses symlinks by default and disabling them
     # would copy the files and double disk use, so the override is Windows-only.
@@ -694,8 +755,10 @@ def main(argv=None) -> None:
             except Exception as exc:
                 print(f"[laya-mcp] preload failed (will retry on demand): {exc}", file=sys.stderr)
     try:
-        server.run()
+        application.run()
     finally:
+        if code_runner is not None:
+            code_runner.close()
         _close_decision_cache(_ROUTER)
 
 

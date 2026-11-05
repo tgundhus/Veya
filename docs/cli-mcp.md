@@ -297,6 +297,7 @@ the server is ready.
 | `LAYA_CACHE_REQUIRE_EXISTING` | `0` | Refuse to create a missing SQLite decision database. |
 | `LAYA_CACHE_EXPECTED_STORE_ID` | unset | Require an existing decision store with the approved UUID. |
 | `LAYA_REPLAY_MANIFEST` | unset | Verified local metadata for replay without loading model weights. |
+| `LAYA_MCP_MODE` | `classic` | Select the existing tool catalog or the opt-in local JavaScript `code` interface; `--mode` takes precedence. |
 | `LAYA_BASE_URL` | unset | Send predictions to a `laya-serve` on your own hardware instead of loading checkpoints in each MCP process. A bare `host:port` is read as HTTP. |
 | `LAYA_REMOTE_TIMEOUT` | `300` | HTTP timeout in seconds when `LAYA_BASE_URL` is set, including the server's cold load. Invalid or non-positive values use the default. |
 | `LAYA_USER_AGENT` | `veya/<version>` | HTTP client identity in remote mode. Empty values use the default; invalid header characters are refused. Custom `RemoteRouter(user_agent=...)` overrides the environment. |
@@ -315,7 +316,9 @@ local tools return `decision_cache_unavailable`. Optional mode still permits rec
 Neither mode can recover decisions from a lost database.
 
 Use [verified replay](replay.md) to approve the store identity and policy metadata before
-serving retained hits without loading model weights.
+serving retained hits without loading model weights. The optional
+[MCP Code Mode](mcp-code-mode.md) composes validated decisions in bounded local JavaScript;
+install `veya[codemode]` and select `laya-mcp-server --mode code` to use it.
 
 ### Share one model server across MCP sessions
 
