@@ -27,6 +27,7 @@ Environment (same meaning as laya.serve where it exists):
   LAYA_CACHE / LAYA_CACHE_PATH / LAYA_CACHE_TTL / LAYA_CACHE_MAXSIZE /
   LAYA_CACHE_FINGERPRINT / LAYA_CACHE_REQUIRED / LAYA_CACHE_RENEW_ON_HIT
                 local decision retention (same as laya.serve)
+  LAYA_REPLAY_MANIFEST  verified replay metadata for model-free local cache hits
   LAYA_BASE_URL  answer from a running laya-serve over HTTP; unset keeps models local
   LAYA_REMOTE_TIMEOUT  HTTP timeout in seconds for remote mode (default 300)
   LAYA_USER_AGENT  remote HTTP client identity (default veya/<version>)
@@ -54,13 +55,13 @@ except ImportError as exc:  # mcp extra not installed
 # laya.serve only imports os/typing at module level, so reusing its helpers
 # keeps one meaning for LAYA_PRELOAD / LAYA_THREADS / LAYA_DEFAULT_MODEL across the package.
 from ..serve import (
-    _apply_thread_limit, _close_decision_cache, _configure_decision_cache,
+    _apply_thread_limit as _apply_thread_limit, _close_decision_cache, _configure_decision_cache,
     _default_model_option, _env_bool, _extra_models_option, _resolve_max_loaded,
     _record_server_performance, _server_performance_config, _server_preload_names,
     _inference_backend, _onnx_paths_option,
+    _replay_manifest_option, _router_runtime_setup,
 )
 
-from .device import env_device
 from .tools import (
     ToolError,
     batch_item_key_doc,
@@ -205,11 +206,11 @@ def _ensure_router() -> Any:
             backend = _inference_backend(_BACKEND)
             config = _server_performance_config(_PERFORMANCE_MODE)
             preload = config["preload"] if config is not None else _env_bool("LAYA_PRELOAD", True)
-            if config is None and backend == "torch":
-                _apply_thread_limit()
+            device, runtime_setup = _router_runtime_setup(backend, config)
             extra_models = _extra_models_option()
-            options = {"device": env_device(backend=backend) if backend == "onnx" else env_device(),
+            options = {"device": device,
                        "auto_task_detection": _env_bool("LAYA_AUTO_TASK", False),
+                       **_replay_manifest_option(),
                        **_onnx_paths_option(backend),
                        **_default_model_option(extra_models)}
             if backend == "onnx":
@@ -224,7 +225,11 @@ def _ensure_router() -> Any:
             if extra_models:
                 options["models"] = extra_models
             router = Router(**options)
+            router._replay_runtime_setup = runtime_setup
             _configure_decision_cache(router)
+            validate_manifest = getattr(router, "validate_replay_manifest", None)
+            if callable(validate_manifest):
+                validate_manifest()
             if preload:
                 names = list(router.onnx_paths) if backend == "onnx" else list(_DEFAULT_MODELS)
                 router.preload(_server_preload_names(config, names))

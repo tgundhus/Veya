@@ -42,6 +42,10 @@ env var                    meaning                                        defaul
 ``LAYA_CACHE_MAXSIZE``     maximum decisions, or "none" for no bound      10000
 ``LAYA_CACHE_FINGERPRINT`` explicit policy identity across model upgrades (auto)
 ``LAYA_CACHE_REQUIRED``    require successful replay or commit            0 (off)
+``LAYA_CACHE_REQUIRE_EXISTING`` refuse a missing SQLite decision store     0 (off)
+``LAYA_CACHE_EXPECTED_STORE_ID`` require this initialized SQLite store ID (none)
+``LAYA_REPLAY_MANIFEST``   verified local metadata for model-free replay  (none)
+``LAYA_HTTP_REPLAY_FAST_PATH`` bypass model scheduling for verified hits  1 with manifest
 ``LAYA_CACHE_RENEW_ON_HIT`` renew retention when a decision is replayed    0
 ``LAYA_API_KEY``           if set, require ``Authorization: Bearer <it>``  (none)
                            on every route, and do not serve the
@@ -1371,22 +1375,68 @@ def _onnx_paths_option(backend):
     return {"onnx_paths": paths}
 
 
+def _replay_manifest_option():
+    """One local replay configuration meaning for the HTTP and MCP builders."""
+    path = os.environ.get("LAYA_REPLAY_MANIFEST", "").strip()
+    return {"replay_manifest": path} if path else {}
+
+
+def _resolve_http_replay_fast_path():
+    name = "LAYA_HTTP_REPLAY_FAST_PATH"
+    raw = os.environ.get("LAYA_HTTP_REPLAY_FAST_PATH", "").strip().lower()
+    if not raw:
+        return True
+    if raw not in ("0", "false", "no", "off", "1", "true", "yes", "on"):
+        raise ValueError("%s must be a boolean (0/1, false/true, no/yes or off/on)" % name)
+    return raw in ("1", "true", "yes", "on")
+
+
+def _router_runtime_setup(backend, config):
+    """Capture deferred Torch setup for approved replay; preserve ordinary builder setup."""
+    from .mcp.device import env_device
+
+    if backend != "torch" or not _replay_manifest_option():
+        if backend == "torch" and config is None:
+            _apply_thread_limit()
+        return env_device(backend=backend) if backend == "onnx" else env_device(), None
+    raw_threads = os.environ.get("LAYA_THREADS", "").strip()
+    threads = None
+    if raw_threads:
+        try:
+            threads = int(raw_threads)
+            if threads <= 0:
+                raise ValueError
+        except ValueError:
+            raise ValueError("LAYA_THREADS must be a positive integer") from None
+    device = env_device(validate=False)
+
+    def prepare():
+        from .mcp.device import _check_torch_device
+
+        if device is not None:
+            _check_torch_device(device)
+        if threads is not None and config is None:
+            import torch
+
+            torch.set_num_threads(threads)
+
+    return device, prepare if device is not None or threads is not None else None
+
+
 def build_router(performance_mode=None, *, backend=None):
     """Build a Router from the environment, preloading unless told otherwise."""
-    from .mcp.device import env_device
     from .router import Router
 
     backend = _inference_backend(backend)
     config = _server_performance_config(performance_mode)
     preload = config["preload"] if config is not None else _env_bool("LAYA_PRELOAD", True)
-    if config is None and backend == "torch":
-        _apply_thread_limit()
     # `env_device` rather than a raw read: it strips, the way `LAYA_MODELS` two lines
     # below is stripped. A value copied out of a Dockerfile or a `.env` file carries a
     # trailing newline, and torch refuses that as an invalid device string.
-    device = env_device(backend=backend) if backend == "onnx" else env_device()
+    device, runtime_setup = _router_runtime_setup(backend, config)
     preload_names = _server_preload_names(config, None)
     options = {"device": device, "auto_task_detection": _env_bool("LAYA_AUTO_TASK", False),
+               **_replay_manifest_option(),
                **_onnx_paths_option(backend)}
     if backend == "onnx":
         options["backend"] = backend
@@ -1411,6 +1461,7 @@ def build_router(performance_mode=None, *, backend=None):
     except (ValueError, TypeError) as error:
         raise SystemExit(str(error)) from None
     try:
+        router._replay_runtime_setup = runtime_setup
         _configure_decision_cache(router)
         if preload:
             if backend == "onnx":
@@ -1429,11 +1480,20 @@ def _configure_decision_cache(router):
 
     from .consistency import DecisionCache
 
-    raw_required = os.environ.get("LAYA_CACHE_REQUIRED", "0").strip().lower()
-    if raw_required not in ("", "0", "false", "no", "off", "1", "true", "yes", "on"):
-        raise ValueError("LAYA_CACHE_REQUIRED must be a boolean (0/1, false/true, no/yes or off/on)")
-    required = raw_required in ("1", "true", "yes", "on")
+    def boolean(name, raw):
+        raw = raw.strip().lower()
+        if raw not in ("", "0", "false", "no", "off", "1", "true", "yes", "on"):
+            raise ValueError("%s must be a boolean (0/1, false/true, no/yes or off/on)" % name)
+        return raw in ("1", "true", "yes", "on")
+
+    required = boolean("LAYA_CACHE_REQUIRED", os.environ.get("LAYA_CACHE_REQUIRED", "0"))
+    require_existing = boolean("LAYA_CACHE_REQUIRE_EXISTING", os.environ.get("LAYA_CACHE_REQUIRE_EXISTING", "0"))
+    expected_store_id = os.environ.get("LAYA_CACHE_EXPECTED_STORE_ID", "").strip() or None
     path = os.environ.get("LAYA_CACHE_PATH", "").strip() or None
+    if (require_existing or expected_store_id is not None) and not path:
+        raise ValueError("LAYA_CACHE_REQUIRE_EXISTING and LAYA_CACHE_EXPECTED_STORE_ID need LAYA_CACHE_PATH")
+    if not path and (getattr(router, "replay_manifest", None) or _replay_manifest_option()):
+        raise ValueError("LAYA_REPLAY_MANIFEST needs LAYA_CACHE_PATH")
     if not path and not _env_bool("LAYA_CACHE", False):
         if required:
             raise ValueError("LAYA_CACHE_REQUIRED needs LAYA_CACHE_PATH or LAYA_CACHE enabled")
@@ -1455,10 +1515,17 @@ def _configure_decision_cache(router):
     fingerprint = os.environ.get("LAYA_CACHE_FINGERPRINT", "").strip() or None
     cache = DecisionCache(path, ttl=ttl, maxsize=maxsize,
                           fingerprint=fingerprint,
-                          renew_on_hit=_env_bool("LAYA_CACHE_RENEW_ON_HIT", False), required=required)
+                          renew_on_hit=_env_bool("LAYA_CACHE_RENEW_ON_HIT", False), required=required,
+                          require_existing=require_existing, expected_store_id=expected_store_id)
+    installed = False
     try:
         router.add_hook(cache)
+        installed = True
+        if getattr(router, "replay_manifest", None):
+            router.validate_replay_manifest()
     except BaseException:
+        if installed:
+            router.remove_hook(cache)
         cache.close()
         raise
     router._laya_decision_cache = cache
@@ -1480,7 +1547,9 @@ def _decision_cache_report(router):
         info = cache.cache_info()
     except Exception:
         return {"decision_cache": {"enabled": True, "available": False}}
-    return {"decision_cache": {"enabled": True, "required": cache.required, "ttl_seconds": cache.ttl,
+    return {"decision_cache": {"enabled": True, "required": cache.required,
+                               "store_id": getattr(cache, "store_id", None),
+                               "require_existing": getattr(cache, "require_existing", False), "ttl_seconds": cache.ttl,
                                "renew_on_hit": cache.renew_on_hit, **info}}
 
 
@@ -1496,6 +1565,7 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
 
     from .mcp.device import agent_device, resolve_device, router_agent
     from ._microbatch import Microbatcher, MicrobatchUnavailable
+    from .router import Router
 
     owns_router = router is None
     if router is None:
@@ -1521,6 +1591,7 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
             if os.environ.get(name, "").strip():
                 config["overrides"][name] = config[key]
     api_key = os.environ.get("LAYA_API_KEY") or None
+    tournament_group = _resolve_tournament_group()
 
     # Inference is synchronous torch, and a CPU call takes hundreds of milliseconds to
     # seconds, so it must not run on the event loop: one request would stall every
@@ -1531,6 +1602,14 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
     # rely on). `loop.run_in_executor` is the API the issue asked for.
     pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="laya-infer")
     pool_closed = False
+    replay_fast_path = _resolve_http_replay_fast_path()
+    replay_configured = bool(getattr(router, "replay_manifest", None))
+    replay_eligible = router.validate_replay_manifest() if type(router) is Router and replay_configured else False
+    replay_enabled = replay_eligible and replay_fast_path and not tournament_group
+    replay_pool = (ThreadPoolExecutor(max_workers=1, thread_name_prefix="laya-replay")
+                   if replay_enabled else None)
+    replay_queue = None
+    replay_stopping = False
     # Created on first request, not here: an `asyncio.Lock` binds to the loop that is
     # running when it is first awaited, and `create_app` may be called before that loop
     # exists (module scope, TestClient startup, a preload script).
@@ -1548,7 +1627,6 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
     microbatch = None
 
     idle_unload_seconds = _resolve_idle_unload_seconds()
-    tournament_group = _resolve_tournament_group()
     last_request = time.monotonic()
 
     def _mark_request():
@@ -1568,6 +1646,8 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
         if gate is None:
             gate = asyncio.Lock()
         async with gate:
+            if replay_stopping:
+                raise MicrobatchUnavailable("server is stopping")
             live = [job for job in jobs if not job.future.cancelled()]
             run = partial(_run_microbatch, router, [job.payload for job in live], max_batch_tokens)
             outputs = (await asyncio.get_running_loop().run_in_executor(pool, _run_inference, run)) if live else []
@@ -1584,12 +1664,45 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
 
     async def _submit_microbatch(state, questions, model, kwargs):
         nonlocal microbatch
+        if replay_stopping:
+            raise MicrobatchUnavailable("server is stopping")
         if microbatch is None or microbatch.closed:
             microbatch = Microbatcher(_execute_microbatch, capacity=max_concurrent,
                                       max_states=microbatch_max_states, wait_seconds=microbatch_wait)
         key = json.dumps({"questions": questions, "model": model, "controls": kwargs},
                          ensure_ascii=False, separators=(",", ":"))
         return await microbatch.submit(key, (state, questions, model, kwargs))
+
+    async def _execute_replay(jobs):
+        # Drain available lookups without a collection delay. Returning their outcomes
+        # together lets compatible misses reach model collection together as well.
+        # Each lookup still authorizes one request, with its own controls and error.
+        live = [(index, job.payload, job.enqueued) for index, job in enumerate(jobs) if not job.future.cancelled()]
+        count = len(jobs)
+
+        def run():
+            outputs = [(None, None, 0.0, 0.0)] * count
+            for index, payload, enqueued in live:
+                state, questions, model, kwargs = payload
+                begun = time.perf_counter()
+                try:
+                    result, error = router.try_replay(state, questions, model=model, **kwargs), None
+                except Exception as exc:
+                    result, error = None, exc
+                outputs[index] = (result, error, (time.perf_counter() - begun) * 1000.0,
+                                  max(0.0, (begun - enqueued) * 1000.0))
+            return outputs
+
+        return await asyncio.get_running_loop().run_in_executor(replay_pool, run)
+
+    async def _submit_replay(state, questions, model, kwargs):
+        nonlocal replay_queue
+        if replay_stopping:
+            raise MicrobatchUnavailable("server is stopping")
+        if replay_queue is None or replay_queue.closed:
+            replay_queue = Microbatcher(_execute_replay, capacity=max_concurrent,
+                                       max_states=min(max_concurrent, MAX_BATCH_STATES), wait_seconds=0)
+        return await replay_queue.submit("replay", (state, questions, model, kwargs))
 
     def _unload_if_idle():
         # Recheck on the inference worker: a queued unload must see any forward pass that
@@ -1613,7 +1726,7 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
-        nonlocal pool, pool_closed, gate, admission, microbatch
+        nonlocal pool, pool_closed, gate, admission, microbatch, replay_pool, replay_queue, replay_stopping
         # A host can run one app's lifespan more than once (a TestClient per test, an embedding
         # server that restarts it). The previous shutdown closed the pool, and the gate and the
         # admission semaphore bind to the loop they first waited on, which a restart replaces.
@@ -1621,14 +1734,19 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
             if owns_router:
                 _configure_decision_cache(router)
             pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="laya-infer")
+            if replay_enabled:
+                replay_pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="laya-replay")
             pool_closed = False
         gate = None
         admission = None
         microbatch = None
+        replay_queue = None
+        replay_stopping = False
         reaper = asyncio.create_task(_idle_reaper()) if idle_unload_seconds else None
         try:
             yield
         finally:
+            replay_stopping = True
             if reaper is not None:
                 reaper.cancel()
                 try:
@@ -1637,9 +1755,13 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
                     pass
             if microbatch is not None:
                 await microbatch.close()
+            if replay_queue is not None:
+                await replay_queue.close()
             # TestClient, embedded ASGI apps, and process supervisors all need
             # the executor to drain when the app stops.
             pool.shutdown(wait=True, cancel_futures=True)
+            if replay_pool is not None:
+                replay_pool.shutdown(wait=True, cancel_futures=True)
             pool_closed = True
             if owns_router:
                 _close_decision_cache(router)
@@ -1717,16 +1839,34 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
                                "last_reason": getattr(agent, "last_fallback_reason", None)}
         idle = ({"idle_unload_seconds": idle_unload_seconds,
                  "idle_seconds": round(time.monotonic() - last_request, 1)} if idle_unload_seconds else {})
+        replay_active = replay_enabled
+        if replay_active:
+            try:
+                replay_active = router.validate_replay_manifest()
+            except DecisionCacheError:
+                replay_active = False
+        if actual is not None:
+            reported_device = actual
+        elif getattr(router, "backend", "torch") == "onnx":
+            reported_device = resolve_device(backend="onnx")
+        elif getattr(router, "replay_manifest", None):
+            # A cold verified policy does not need Torch availability probing. The actual
+            # device is reported once a miss constructs a checkpoint on the inference worker.
+            configured_device = getattr(router, "device", None)
+            reported_device = str(configured_device) if configured_device is not None else "auto"
+        else:
+            reported_device = resolve_device()
         return {
             "status": "ok",
             "performance_mode": config["mode"] if config is not None else None,
             "performance_config": _performance_report(router, config)["performance_config"],
             **_decision_cache_report(router),
+            "model_free_replay": {"enabled": bool(getattr(router, "replay_manifest", None)),
+                                  "http_fast_path": replay_active},
             "loaded": router.loaded,
             "revisions": getattr(router, "loaded_revisions", {}),
             "backend": getattr(router, "backend", "torch"),
-            "device": actual or (resolve_device(backend="onnx") if getattr(router, "backend", "torch") == "onnx"
-                                 else resolve_device()),
+            "device": reported_device,
             "device_is_preference": actual is None,
             "checkpoint_devices": checkpoint_devices,
             "cpu_fallbacks": fallbacks,
@@ -1736,6 +1876,8 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
     @asynccontextmanager
     async def _admit():
         nonlocal admission
+        if replay_stopping:
+            raise HTTPException(status_code=503, detail="server is stopping", headers={"Retry-After": "1"})
         if admission is None:
             admission = asyncio.Semaphore(max_concurrent)
         if admission.locked():
@@ -1810,10 +1952,21 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
             # Laya's result is already Jev-shaped: {model, answers, usage, routing}.
             # hs-jev decodes `answers` and `usage` and ignores the rest.
             queue_ms = None
-            if microbatch_max_states and not tournament_group:
+            cache_ms = cache_queue_ms = None
+            result = None
+            if replay_enabled and not tournament_group:
+                result, cache_ms, cache_queue_ms = await _submit_replay(state, questions, model, predict_kwargs)
+                if replay_stopping:
+                    raise MicrobatchUnavailable("server is stopping")
+            replay_hit = result is not None
+            if replay_hit:
+                infer_ms = 0.0
+            elif microbatch_max_states and not tournament_group:
                 result, infer_ms, queue_ms = await _submit_microbatch(state, questions, model, predict_kwargs)
             else:
                 async with gate:
+                    if replay_stopping:
+                        raise MicrobatchUnavailable("server is stopping")
                     loop = asyncio.get_running_loop()
                     t0 = time.perf_counter()
                     if tournament_group:
@@ -1831,8 +1984,12 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
             timing = f"inference;dur={infer_ms:.2f}"
             if queue_ms is not None:
                 timing += f", queue;dur={queue_ms:.2f}"
-            return JSONResponse(content=result, headers={
-                "Server-Timing": timing, "X-Inference-Time-Ms": f"{infer_ms:.2f}"})
+            if cache_ms is not None:
+                timing += f", cache;dur={cache_ms:.2f}, cache_queue;dur={cache_queue_ms:.2f}"
+            headers = {"Server-Timing": timing, "X-Inference-Time-Ms": f"{infer_ms:.2f}"}
+            if replay_hit:
+                headers["X-Decision-Cache"] = "hit"
+            return JSONResponse(content=result, headers=headers)
         except MicrobatchUnavailable as exc:
             raise HTTPException(status_code=503, detail=str(exc), headers={"Retry-After": "1"}) from None
         except HTTPException:
@@ -1954,6 +2111,8 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
             gate = asyncio.Lock()
         try:
             async with gate:
+                if replay_stopping:
+                    raise HTTPException(status_code=503, detail="server is stopping", headers={"Retry-After": "1"})
                 loop = asyncio.get_running_loop()
 
                 def _do_batch():

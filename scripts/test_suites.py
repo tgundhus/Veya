@@ -113,6 +113,8 @@ SCRIPT_SUITES = [
 ]
 
 PYTEST_SUITES = [
+    "tests/test_replay.py",
+    "tests/test_http_cache_replay.py",
     "tests/test_qualification.py",
     "tests/test_qualification_cli.py",
     "tests/test_qualification_baseline.py",

@@ -157,6 +157,7 @@ class BatchPrediction(TypedDict):
 class _HealthExtensions(TypedDict, total=False):
     loaded: List[str]
     device: str
+    model_free_replay: Dict[str, bool]
 
 
 class Health(_HealthExtensions):

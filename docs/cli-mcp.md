@@ -294,6 +294,9 @@ the server is ready.
 | `LAYA_CACHE_MAXSIZE` | `10000` | Decision count target, or `none` for no capacity eviction. |
 | `LAYA_CACHE_FINGERPRINT` | unset | Explicit policy identity across model upgrades; empty uses automatic model/configuration identity. |
 | `LAYA_CACHE_REQUIRED` | `0` | Require successful replay or commit; storage failures become tool errors. |
+| `LAYA_CACHE_REQUIRE_EXISTING` | `0` | Refuse to create a missing SQLite decision database. |
+| `LAYA_CACHE_EXPECTED_STORE_ID` | unset | Require an existing decision store with the approved UUID. |
+| `LAYA_REPLAY_MANIFEST` | unset | Verified local metadata for replay without loading model weights. |
 | `LAYA_BASE_URL` | unset | Send predictions to a `laya-serve` on your own hardware instead of loading checkpoints in each MCP process. A bare `host:port` is read as HTTP. |
 | `LAYA_REMOTE_TIMEOUT` | `300` | HTTP timeout in seconds when `LAYA_BASE_URL` is set, including the server's cold load. Invalid or non-positive values use the default. |
 | `LAYA_USER_AGENT` | `veya/<version>` | HTTP client identity in remote mode. Empty values use the default; invalid header characters are refused. Custom `RemoteRouter(user_agent=...)` overrides the environment. |
@@ -310,6 +313,9 @@ When `LAYA_BASE_URL` is set, configure these values in the HTTP server's environ
 Add `LAYA_CACHE_REQUIRED=1` to refuse successful predictions when storage fails;
 local tools return `decision_cache_unavailable`. Optional mode still permits recomputation.
 Neither mode can recover decisions from a lost database.
+
+Use [verified replay](replay.md) to approve the store identity and policy metadata before
+serving retained hits without loading model weights.
 
 ### Share one model server across MCP sessions
 

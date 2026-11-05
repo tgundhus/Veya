@@ -28,16 +28,18 @@ def check_wheel(path):
             "torch", "transformers", "safetensors", "onnxscript", "veya ")) for req in requirements), requirements
         assert {req.split(">=")[0] for req in requirements if ";" not in req} == {
             "numpy", "onnxruntime", "tokenizers", "huggingface_hub"}, requirements
-        assert set(message.get_all("Provides-Extra")) == {"structured", "serve", "mcp"}
-        for dependency, extra in (("fastapi", "serve"), ("uvicorn", "serve"), ("mcp", "mcp")):
+        assert set(message.get_all("Provides-Extra")) == {"structured", "serve", "mcp", "replay"}
+        for dependency, extra in (("fastapi", "serve"), ("uvicorn", "serve"), ("mcp", "mcp"), ("onnx", "replay")):
             assert any(req.startswith(dependency + ">=") and ('extra == "' + extra + '"') in req
                        for req in requirements), requirements
         entry_points, = [name for name in names if name.endswith(".dist-info/entry_points.txt")]
         scripts = archive.read(entry_points).decode()
         assert "laya-onnx-serve = laya_onnx.serve:main" in scripts, scripts
         assert "laya-onnx-mcp = laya_onnx.mcp.server:main" in scripts, scripts
+        assert "laya-onnx-replay = laya_onnx.replay:main" in scripts, scripts
+        assert "laya_onnx/replay.py" in names
         assert "laya_onnx/py.typed" in names
-        for module in ("router", "serve", "shortlist", "lang", "presets", "mcp/server", "mcp/tools"):
+        for module in ("router", "serve", "shortlist", "lang", "presets", "replay", "_routing_unicode", "mcp/server", "mcp/tools"):
             assert "laya_onnx/_runtime/" + module + ".py" in names, module
         assert any("LICENSE" in name for name in names)
         assert all(name.startswith(("laya_onnx/", "veya_onnx-")) for name in names), names
@@ -70,6 +72,11 @@ def check_service_commands(python, root, env):
         output = subprocess.check_output([str(python), "-I", "-m", module, "--help"],
                                          cwd=root, env=env, text=True)
         assert "--backend {torch,onnx}" in output, output
+    replay = scripts / ("laya-onnx-replay.exe" if os.name == "nt" else "laya-onnx-replay")
+    assert replay.is_file(), replay
+    for args in ([str(replay), "--help"], [str(python), "-I", "-m", "laya_onnx.replay", "--help"]):
+        output = subprocess.check_output(args, cwd=root, env=env, text=True)
+        assert "--output" in output and "--models" in output, output
 
 
 def distributions(python, root, env):

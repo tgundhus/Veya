@@ -50,6 +50,10 @@ fast = ["tilelang>=0.1.14"]
 # `pip install veya[mcp]` adds the MCP stdio server (laya.mcp / the laya-mcp-server CLI).
 mcp = ["mcp>=2.2.0"]
 
+# ONNX manifest preparation reads graph metadata with the official parser.
+# Consuming a prepared replay manifest does not import ONNX.
+replay = ["onnx>=1.20.0"]
+
 # `pip install veya[structured]` adds pydantic for the typed-model helpers (laya/structured.py).
 structured = ["pydantic>=2.0.0"]
 
@@ -100,6 +104,7 @@ agno = ["agno>=3.1.12,<4"]
 laya = "laya.cli:main"
 laya-serve = "laya.serve:main"
 laya-evals = "laya.evals_cli:main"
+laya-replay = "laya.replay:main"
 laya-mcp-server = "laya.mcp.server:main"
 laya-train = "laya.train_cli:main"
 

@@ -65,6 +65,10 @@ services:
       LAYA_CACHE_MAXSIZE: "${LAYA_CACHE_MAXSIZE:-10000}"
       LAYA_CACHE_FINGERPRINT: "${LAYA_CACHE_FINGERPRINT:-}"
       LAYA_CACHE_REQUIRED: "${LAYA_CACHE_REQUIRED:-0}"
+      LAYA_CACHE_REQUIRE_EXISTING: "${LAYA_CACHE_REQUIRE_EXISTING:-0}"
+      LAYA_CACHE_EXPECTED_STORE_ID: "${LAYA_CACHE_EXPECTED_STORE_ID:-}"
+      LAYA_REPLAY_MANIFEST: "${LAYA_REPLAY_MANIFEST:-}"
+      LAYA_HTTP_REPLAY_FAST_PATH: "${LAYA_HTTP_REPLAY_FAST_PATH:-1}"
       LAYA_CACHE_RENEW_ON_HIT: "${LAYA_CACHE_RENEW_ON_HIT:-0}"
       # Requests admitted at once; one that arrives with every slot taken is refused with 503
       # instead of queued, which is what bounds the bodies a burst holds in memory. Empty keeps

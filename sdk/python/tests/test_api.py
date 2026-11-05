@@ -84,7 +84,7 @@ class APITests(unittest.TestCase):
         self.assertEqual(Tournament.__required_keys__, {"finalists", "rounds"})
         self.assertNotIn("x_tournament", NoulAnswer.__annotations__)
         self.assertEqual(Usage.__required_keys__, {"input_tokens", "output_tokens"})
-        self.assertEqual(Health.__optional_keys__, {"loaded", "device"})
+        self.assertEqual(Health.__optional_keys__, {"loaded", "device", "model_free_replay"})
 
 
 if __name__ == "__main__":

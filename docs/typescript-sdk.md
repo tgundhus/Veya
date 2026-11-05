@@ -83,7 +83,7 @@ An option that cannot mean anything is refused locally, before the request goes 
 budget that is not a positive integer, a threshold outside `[0, 1]`, or a threshold map that is empty
 or holds a value outside `[0, 1]`. Nothing is silently ignored. Laya's
 public `/health` returns `status`, `loaded`, `revisions`, `backend`, `device`, `device_is_preference`,
-`checkpoint_devices`, `cpu_fallbacks`, `performance_mode`, and `performance_config`.
+`checkpoint_devices`, `cpu_fallbacks`, `performance_mode`, `performance_config`, and `model_free_replay`.
 With `LAYA_IDLE_UNLOAD_SECONDS` enabled it also returns `idle_unload_seconds` and `idle_seconds`.
 A server with `LAYA_API_KEY` exposes only `status` to an
 unauthenticated health request; see [HTTP API](http-api.md). Prediction never probes health first.

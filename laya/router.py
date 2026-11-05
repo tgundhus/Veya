@@ -34,6 +34,7 @@ import inspect
 import json
 import os
 import re
+import sys
 import threading
 import time
 import warnings
@@ -56,6 +57,13 @@ from .errors import DecisionCacheError
 def _reject_nested_required_cache(agent):
     if any(getattr(hook, "_required_cache", False) for hook in (getattr(agent, "hooks", ()) or ())):
         raise DecisionCacheError("install the required decision cache on the Router when routing predictions")
+
+
+def _record_calibration_language(ctx, lang):
+    # Explicit model/task/workflow routes can hide lang= while still forwarding it to
+    # language calibration. Preserve existing keys when the route already encodes it.
+    if lang is not None and not str((ctx.decision or {}).get("reason", "")).startswith("explicit lang="):
+        ctx._calibration_language = lang
 
 # The hub repo bundles all three checkpoints; only the requested subfolder is downloaded.
 BUNDLE_REPO = "convaiinnovations/laya"
@@ -810,11 +818,19 @@ class Router(HookRegistry):
         performance_mode=None,
         backend=None,
         onnx_paths: Optional[Dict[str, str]] = None,
+        replay_manifest: Optional[str] = None,
     ):
         self.backend = normalise_backend(backend)
+        self._replay_path = None
+        self._replay_metadata = None
+        if replay_manifest is not None:
+            from .replay import load_manifest
+            self._replay_metadata = load_manifest(replay_manifest)
+            self._replay_path = os.path.abspath(os.fspath(replay_manifest))
         self.performance_config = resolve_performance_mode(performance_mode)
         self.performance_mode = self.performance_config["mode"] if self.performance_config else None
-        automatic_preload = preload is None and bool(self.performance_config and self.performance_config["preload"])
+        automatic_preload = (preload is None and self.replay_manifest is None
+                             and bool(self.performance_config and self.performance_config["preload"]))
         if max_loaded is None:
             max_loaded = self.performance_config["max_loaded"] if self.performance_config else 2
         self.hooks = normalise_hooks(hooks, on_predict_start, on_predict_end)
@@ -870,7 +886,11 @@ class Router(HookRegistry):
         # this line rather than the first request that happens to load a checkpoint.
         self.agent_kwargs: Dict[str, Any] = dict(agent_kwargs or {})
         if self.agent_kwargs:
-            check_agent_kwargs(self.agent_kwargs, backend=self.backend)
+            if self.replay_manifest is None:
+                check_agent_kwargs(self.agent_kwargs, backend=self.backend)
+            else:
+                from .replay import validate_constructor_options
+                validate_constructor_options(self._replay_metadata, self.agent_kwargs)
         # Per checkpoint SHA-256 map: seeded from a model-named `LAYA_SHA256_DIGESTS`, then
         # overridden checkpoint by checkpoint by the argument. Keyed and normalised exactly like
         # `revisions`, so a misspelled model name fails here rather than leaving that checkpoint
@@ -903,7 +923,10 @@ class Router(HookRegistry):
         self._lock = threading.RLock()
         self._build_lock = threading.Lock()
         self._loading: Dict[str, _InFlightBuild] = {}
-        if self.backend == "torch":
+        self._replay_setup_lock = threading.Lock()
+        self._replay_deferred_threads = (self.backend == "torch" and self.replay_manifest is not None
+                                         and self.performance_config is not None)
+        if self.backend == "torch" and not self._replay_deferred_threads:
             _apply_torch_threads(self.performance_config)
         if preload:
             self.preload()
@@ -916,6 +939,45 @@ class Router(HookRegistry):
             self.performance_config.update(max_loaded=self.max_loaded, preload=bool(preload or automatic_preload))
 
     # ------------------------------------------------------------------ registry
+    @property
+    def replay_manifest(self) -> Optional[str]:
+        """Approved replay metadata path, or None when model-free replay is disabled."""
+        return getattr(self, "_replay_path", None)
+
+    def export_replay_manifest(self, path: str) -> Dict[str, Any]:
+        """Approve resident checkpoint metadata for exact replay without loading weights.
+
+        Requires one SQLite DecisionCache and built-in agents without custom hooks. The
+        checksummed manifest is trusted local deployment configuration; preserve it with
+        the database and re-export after deliberate configuration changes.
+        """
+        from .replay import export_manifest
+        return export_manifest(self, path)
+
+    def validate_replay_manifest(self) -> bool:
+        """Check all approved replay metadata without loading weights or reading decisions.
+
+        Returns False when disabled or custom hooks make the optimized path unsupported.
+        A configured invalid policy/store/source identity raises DecisionCacheError.
+        """
+        from .replay import validate_manifest
+        return validate_manifest(self)
+
+    def try_replay(self, state, questions, model=None, task=None, lang=None, lang_guess=None,
+                   max_len=None, head_max_len=None, min_confidence=None) -> Optional[Dict[str, Any]]:
+        """Return a verified exact cache hit without loading models, otherwise None.
+
+        Misses do not claim in-flight work or increment miss counters. Unsupported custom
+        hooks take the ordinary prediction path. Metadata failures and required-store failures
+        raise DecisionCacheError; optional-store failures retain fail-open behavior.
+        """
+        if _SCAN.get() is not None:
+            return None
+        from .replay import try_replay
+        return try_replay(self, state, questions, model=model, task=task, lang=lang,
+                          lang_guess=lang_guess, max_len=max_len, head_max_len=head_max_len,
+                          min_confidence=min_confidence)
+
     def resolve(self, name: Any) -> str:
         """Canonical key of a checkpoint this Router knows: built-in, aliased, or registered.
 
@@ -1070,6 +1132,18 @@ class Router(HookRegistry):
         Concurrent callers share a single Agent instead of building duplicates.
         """
         key = self.resolve(name)
+        if (getattr(self, "_replay_deferred_threads", False)
+                or getattr(self, "_replay_runtime_setup", None) is not None):
+            # Pure replay needs neither Torch nor its thread pool. Apply an opted-in profile
+            # once inference actually needs a model, outside the Router/cache metadata lock.
+            with self._replay_setup_lock:
+                setup = getattr(self, "_replay_runtime_setup", None)
+                if setup is not None:
+                    setup()
+                    self._replay_runtime_setup = None
+                if self._replay_deferred_threads:
+                    _apply_torch_threads(self.performance_config)
+                    self._replay_deferred_threads = False
         while True:
             with self._lock:
                 if key in self._agents:
@@ -1277,7 +1351,7 @@ class Router(HookRegistry):
                     del agent
                     gc.collect()
                     try:
-                        if self.backend == "onnx":
+                        if self.backend == "onnx" or (not freed and "torch" not in sys.modules):
                             break
                         import torch
                         if torch.cuda.is_available():
@@ -1310,7 +1384,7 @@ class Router(HookRegistry):
                         self._order.clear()
                         gc.collect()
                         try:
-                            if self.backend == "onnx":
+                            if self.backend == "onnx" or (not freed and "torch" not in sys.modules):
                                 break
                             import torch
                             if torch.cuda.is_available():
@@ -1522,6 +1596,13 @@ class Router(HookRegistry):
         scan = _SCAN.get()
         if scan is not None:
             _SCAN.set(None)
+        if scan is None and timeout is None and self.replay_manifest is not None:
+            from .replay import try_replay
+            replay = try_replay(self, state, questions, model=model, task=task, lang=lang,
+                                lang_guess=lang_guess, max_len=max_len, head_max_len=head_max_len,
+                                min_confidence=mc, active=active)
+            if replay is not None:
+                return replay
         # A hook that runs before the scan (a decision cache) has to know it is answering a scan of
         # every window, not the first window alone, so the scan's settings travel on the context.
         ctx = PredictContext(
@@ -1543,11 +1624,15 @@ class Router(HookRegistry):
             ctx.decision = dict(decision)
             ctx.model = decision["model"]
             agent = self.load(decision["model"])
+            if self.replay_manifest is not None:
+                from .replay import validate_loaded_agent
+                validate_loaded_agent(self, decision["model"], agent, active)
             _reject_nested_required_cache(agent)
             ctx.agent = agent
             effective_lang = lang
             if effective_lang is None and decision.get("detection") and decision["detection"].get("language"):
                 effective_lang = decision["detection"]["language"]
+            _record_calibration_language(ctx, lang)
 
             # Keep the existing success-path timing contract: elapsed_ms starts here, after
             # route/load and immediately before the prediction start hook.
@@ -1860,11 +1945,28 @@ class Router(HookRegistry):
         if not decisions:
             return []
 
+        active = compose_hooks(self.hooks, hooks, on_predict_start, on_predict_end)
+        raise_errors = self.hooks_raise if hooks_raise is None else bool(hooks_raise)
+        timeout = self.hooks_timeout if hooks_timeout is None else validate_timeout(hooks_timeout)
+        results: List[Any] = [None] * len(requests)
+        answered = 0
+
         # Dict insertion order preserves the order in which model groups first appear. This
         # keeps cache effects deterministic while collapsing an arbitrarily interleaved
         # workload to at most one load per routed checkpoint for this call.
         groups: Dict[str, List[int]] = {}
         for i, decision in enumerate(decisions):
+            if timeout is None and self.replay_manifest is not None:
+                from .replay import try_replay
+                replay = try_replay(self, requests[i]["state"], requests[i]["questions"],
+                                    lang=requests[i].get("lang"),
+                                    max_len=requests[i].get("max_len"),
+                                    head_max_len=requests[i].get("head_max_len"),
+                                    min_confidence=mc, active=active, decision=decision)
+                if replay is not None:
+                    results[i] = replay
+                    answered += 1
+                    continue
             # Indexed, not `.model`: an on_route hook may replace the decision with a plain dict,
             # which `predict` accepts too. Normalised, because such a hook may name the checkpoint
             # by an alias ("ml"), and that request must share its checkpoint's forward pass.
@@ -1872,8 +1974,6 @@ class Router(HookRegistry):
 
         # Counted rather than marked with None: an end hook may leave a None result, which
         # `predict` returns as it is.
-        results: List[Any] = [None] * len(requests)
-        answered = 0
         sort_report = ({"groups": 0, "reordered": 0, "smallest": None, "largest": None}
                        if sort_by_length and diagnostics is not None else None)
         # `compose_hooks`, not `list(self.hooks)`: the composition `predict` uses. It merges
@@ -1882,12 +1982,11 @@ class Router(HookRegistry):
         # dropped every `set_default_hooks` default from the batched path while `predict`
         # kept them, which was the bug behind #909: a default audit or metrics hook saw no
         # Router-level event for a request that arrived through `predict_batch`.
-        active = compose_hooks(self.hooks, hooks, on_predict_start, on_predict_end)
-        raise_errors = self.hooks_raise if hooks_raise is None else bool(hooks_raise)
-        timeout = self.hooks_timeout if hooks_timeout is None else validate_timeout(hooks_timeout)
-
         for model_name, indices in groups.items():
             agent = self.load(model_name)
+            if self.replay_manifest is not None:
+                from .replay import validate_loaded_agent
+                validate_loaded_agent(self, model_name, agent, active)
             _reject_nested_required_cache(agent)
             started: List[PredictContext] = []
             try:
@@ -1902,6 +2001,7 @@ class Router(HookRegistry):
                                          router=self,
                                          max_len=requests[i].get("max_len"),
                                          head_max_len=requests[i].get("head_max_len"))
+                    _record_calibration_language(ctx, requests[i].get("lang"))
                     started.append(ctx)
                     dispatch(active, "on_predict_start", ctx, raise_errors=raise_errors,
                              lock=self._hooks_lock, timeout=timeout)

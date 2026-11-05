@@ -1891,6 +1891,24 @@ check_param("qualification.compare_reports", _compare_qualification_reports, "li
 check_param("qualification.compare_reports", _compare_qualification_reports, "allow_unverified_identity", False,
             inspect.Parameter.KEYWORD_ONLY)
 
+for _param, _default in (("require_existing", False), ("expected_store_id", None)):
+    check_param("DecisionCache", laya.DecisionCache.__init__, _param, _default, inspect.Parameter.KEYWORD_ONLY)
+check_true("DecisionCache.store_id is read-only", isinstance(laya.DecisionCache.store_id, property)
+           and laya.DecisionCache.store_id.fset is None)
+for _method in ("__enter__", "__exit__"):
+    check_true("DecisionCache context-manager " + _method, callable(getattr(laya.DecisionCache, _method)))
+check_param("Router", Router.__init__, "replay_manifest", None, inspect.Parameter.KEYWORD_ONLY)
+check_true("Router.replay_manifest is read-only", isinstance(Router.replay_manifest, property)
+           and Router.replay_manifest.fset is None)
+check("Router replay is opt-in", Router().replay_manifest, None)
+check("Router manifest validation is opt-in", Router().validate_replay_manifest(), False)
+check_true("Router.validate_replay_manifest is public", callable(Router.validate_replay_manifest))
+from laya.mcp.device import env_device as _env_device  # noqa: E402
+check_param("mcp.env_device", _env_device, "validate", True, inspect.Parameter.KEYWORD_ONLY)
+check_param("Router.export_replay_manifest", Router.export_replay_manifest, "path", inspect.Parameter.empty)
+for _param in ("model", "task", "lang", "lang_guess", "max_len", "head_max_len", "min_confidence"):
+    check_param("Router.try_replay", Router.try_replay, _param, None)
+
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
     print("  FAIL", f)

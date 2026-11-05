@@ -17,6 +17,8 @@ nav:
         ignore_no_matches: true
   - Deployment:
       - performance-modes.md
+      - replay.md
+      - cache-fast-path.md
       - microbatch.md
       - onnx-runtime.md
       - production.md

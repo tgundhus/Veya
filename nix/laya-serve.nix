@@ -397,6 +397,30 @@ in
       description = "Require successful decision replay or commit (LAYA_CACHE_REQUIRED); requires caching enabled.";
     };
 
+    cacheRequireExisting = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Refuse to create a missing decision database (LAYA_CACHE_REQUIRE_EXISTING).";
+    };
+
+    cacheExpectedStoreId = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Expected identity of an existing decision database (LAYA_CACHE_EXPECTED_STORE_ID).";
+    };
+
+    replayManifest = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Path to verified local replay policy metadata (LAYA_REPLAY_MANIFEST).";
+    };
+
+    httpReplayFastPath = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Allow verified HTTP hits to bypass inference queues (LAYA_HTTP_REPLAY_FAST_PATH); requires a replay manifest.";
+    };
+
     microbatchMaxStates = lib.mkOption {
       type = lib.types.nullOr lib.types.ints.unsigned;
       default = null;
@@ -502,6 +526,14 @@ in
         LAYA_CACHE_RENEW_ON_HIT = if cfg.cacheRenewOnHit then "1" else "0";
       } // lib.optionalAttrs (cfg.cacheRequired != null) {
         LAYA_CACHE_REQUIRED = if cfg.cacheRequired then "1" else "0";
+      } // lib.optionalAttrs (cfg.cacheRequireExisting != null) {
+        LAYA_CACHE_REQUIRE_EXISTING = if cfg.cacheRequireExisting then "1" else "0";
+      } // lib.optionalAttrs (cfg.cacheExpectedStoreId != null) {
+        LAYA_CACHE_EXPECTED_STORE_ID = cfg.cacheExpectedStoreId;
+      } // lib.optionalAttrs (cfg.replayManifest != null) {
+        LAYA_REPLAY_MANIFEST = cfg.replayManifest;
+      } // lib.optionalAttrs (cfg.httpReplayFastPath != null) {
+        LAYA_HTTP_REPLAY_FAST_PATH = if cfg.httpReplayFastPath then "1" else "0";
       } // lib.optionalAttrs (cfg.microbatchMaxStates != null) {
         LAYA_MICROBATCH_MAX_STATES = toString cfg.microbatchMaxStates;
       } // lib.optionalAttrs (cfg.microbatchWaitMs != null) {

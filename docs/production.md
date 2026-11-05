@@ -42,6 +42,10 @@ Caching is opt-in. Both the HTTP and local MCP builders read:
 | `LAYA_CACHE_MAXSIZE` | Target bound for stored decisions; `none` disables capacity eviction | `10000` |
 | `LAYA_CACHE_FINGERPRINT` | Explicit policy identity; empty uses automatic model/configuration identity | unset |
 | `LAYA_CACHE_REQUIRED` | Refuse predictions unless replayed or committed; cache must be enabled | `0` |
+| `LAYA_CACHE_REQUIRE_EXISTING` | Refuse to create a missing SQLite decision database | `0` |
+| `LAYA_CACHE_EXPECTED_STORE_ID` | Require an existing database with this store identity | unset |
+| `LAYA_REPLAY_MANIFEST` | Verified policy metadata for replay without loading model weights | unset |
+| `LAYA_HTTP_REPLAY_FAST_PATH` | Let verified HTTP hits bypass inference queues; requires a manifest | `1` |
 | `LAYA_CACHE_RENEW_ON_HIT` | Renew retention on use | disabled |
 
 Fixed retention checks age from the stored decision. Renewal extends a frequently replayed
@@ -83,9 +87,11 @@ a prediction. Required cache failures return a sanitized HTTP 503 or MCP
 `decision_cache_unavailable` error, including when other hooks use `hooks_raise=False`.
 Required SQLite stores use FULL synchronization; default optional stores remain
 fail-open with NORMAL synchronization. Runtime status reports `decision_cache.required`.
-The flag does not disable configured expiry/eviction, make memory storage persistent,
-or detect a database deleted before startup. Preserve the database and policy identity
-for durable replay. Exact replay does not prove the original decision was correct.
+The flag does not disable configured expiry/eviction or make memory storage persistent.
+To detect a missing or replaced database before serving, initialize it deliberately, then
+pin its UUID with `LAYA_CACHE_EXPECTED_STORE_ID` and enable `LAYA_CACHE_REQUIRE_EXISTING`.
+The [verified replay guide](replay.md) explains approval and recovery. Preserve the database
+and policy identity for durable replay. Exact replay does not prove the original decision was correct.
 
 ## Retention and deletion
 

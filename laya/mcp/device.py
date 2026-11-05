@@ -29,12 +29,13 @@ reflects the fallback.
 from __future__ import annotations
 
 import os
+import re
 from typing import Any
 
 _ENV_KEY = "LAYA_DEVICE"
 
 
-def env_device(*, backend="torch") -> str | None:
+def env_device(*, backend="torch", validate=True) -> str | None:
     """LAYA_DEVICE (empty or unset = None), ready for Router(device=...).
 
     Lower-cased, not verbatim. torch's device parser is case-sensitive -- it accepts ``cuda``
@@ -54,7 +55,13 @@ def env_device(*, backend="torch") -> str | None:
     one, because it is normalised first. ``cuda:258`` is a second shape of the same failure:
     torch reads it, and reads it as ``cuda:2``, so a value whose parsed device is not the
     device it names raises the same way.
+
+    With ``validate=False`` only the spelling is checked without importing Torch. Verified
+    replay builders use this while weights are unnecessary, then run the Torch parser on
+    the captured value before the first model load. The default remains immediate validation.
     """
+    if not isinstance(validate, bool):
+        raise TypeError("validate must be a boolean")
     value = os.environ.get(_ENV_KEY)
     if value is None:
         return None
@@ -68,7 +75,10 @@ def env_device(*, backend="torch") -> str | None:
         if normalised != "cpu":
             raise ValueError("LAYA_DEVICE must be 'cpu' or unset for the CPU ONNX service backend")
         return "cpu"
-    _check_torch_device(normalised)
+    if validate:
+        _check_torch_device(normalised)
+    elif not re.fullmatch(r"[a-z][a-z0-9_]*(?::[0-9]+)?", normalised):
+        raise ValueError("LAYA_DEVICE=%r is not a device spelling such as 'cpu', 'cuda:0' or 'mps'" % value)
     return normalised
 
 

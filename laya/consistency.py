@@ -47,6 +47,7 @@ _RENEW_FRACTION = 1 / 16
 # Longest a request waits for another thread already computing the same one before computing it
 # itself. It only bounds a stuck owner: a normal owner releases its waiters as soon as it stores.
 _COALESCE_WAIT = 300.0
+_CURRENT_FINGERPRINT = object()
 
 
 def _number(value: Any) -> Optional[float]:
@@ -381,15 +382,55 @@ class _MemoryStore:
 class _SQLiteStore:
     """Decisions in a SQLite file, shared by every process that opens it."""
 
-    def __init__(self, path: Any, maxsize: Optional[int], required: bool = False):
+    def __init__(self, path: Any, maxsize: Optional[int], required: bool = False,
+                 require_existing: bool = False, expected_store_id: Optional[str] = None):
         import sqlite3  # here rather than at import time: some Python builds ship without it
+        import uuid
+        from pathlib import Path
 
         self.maxsize = maxsize
         # COUNT(*) walks the table, so the size bound and expiry are enforced every so many stores.
         self._every = 1000 if maxsize is None else max(1, min(1000, maxsize // 10))
         self._adds = 0
         self._lock = threading.Lock()
-        self._db = sqlite3.connect(path, timeout=30.0, isolation_level=None, check_same_thread=False)
+        guarded = require_existing or expected_store_id is not None
+        target = Path(path).resolve().as_uri() + "?mode=rw" if guarded else path
+        try:
+            self._db = sqlite3.connect(target, uri=guarded, timeout=30.0, isolation_level=None,
+                                       check_same_thread=False)
+            # A pinned store is checked before a PRAGMA or schema statement can change it.
+            if guarded:
+                columns = {row[1]: row for row in self._db.execute("PRAGMA table_info(laya_decisions)")}
+                if (set(columns) != {"key", "touched_at", "expires_at", "value"}
+                        or columns["key"][5] != 1
+                        or any(columns[key][2].upper() != kind for key, kind in
+                               (("key", "BLOB"), ("touched_at", "REAL"), ("expires_at", "REAL"), ("value", "BLOB")))):
+                    raise DecisionCacheError("the existing file does not contain a compatible decision store")
+            metadata = {row[1]: row for row in self._db.execute("PRAGMA table_info(laya_cache_metadata)")}
+            if metadata:
+                if (set(metadata) != {"name", "value"} or metadata["name"][5] != 1
+                        or any(metadata[key][2].upper() != "TEXT" for key in ("name", "value"))):
+                    raise DecisionCacheError("decision store metadata layout is corrupt")
+                identities = self._db.execute("SELECT value FROM laya_cache_metadata WHERE name = 'store_id'").fetchall()
+                if not identities:
+                    raise DecisionCacheError("decision store identity is missing")
+                if identities:
+                    identity = identities[0][0]
+                    try:
+                        if len(identities) != 1 or str(uuid.UUID(identity)) != identity:
+                            raise ValueError()
+                    except (ValueError, TypeError, AttributeError) as exc:
+                        raise DecisionCacheError("decision store identity is corrupt") from exc
+            if expected_store_id is not None:
+                row = self._db.execute("SELECT value FROM laya_cache_metadata WHERE name = 'store_id'").fetchone()
+                if row is None or row[0] != expected_store_id:
+                    raise DecisionCacheError("decision store identity does not match the expected store")
+        except Exception as exc:
+            if hasattr(self, "_db"):
+                self._db.close()
+            if guarded:
+                raise DecisionCacheError("the required existing decision store is unavailable or has a different identity") from exc
+            raise
         self._db.execute("PRAGMA journal_mode=WAL")
         self._db.execute("PRAGMA synchronous=FULL" if required else "PRAGMA synchronous=NORMAL")
         columns = {row[1] for row in self._db.execute("PRAGMA table_info(laya_decisions)")}
@@ -400,6 +441,18 @@ class _SQLiteStore:
                          "touched_at REAL NOT NULL, expires_at REAL NOT NULL, value BLOB NOT NULL) WITHOUT ROWID")
         self._db.execute("CREATE INDEX IF NOT EXISTS laya_decisions_expires_at ON laya_decisions (expires_at)")
         self._db.execute("CREATE INDEX IF NOT EXISTS laya_decisions_touched_at ON laya_decisions (touched_at)")
+        try:
+            def initialize_identity():
+                self._db.execute("CREATE TABLE IF NOT EXISTS laya_cache_metadata (name TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID")
+                self._db.execute("INSERT OR IGNORE INTO laya_cache_metadata (name, value) VALUES ('store_id', ?)",
+                                 (str(uuid.uuid4()),))
+                return self._db.execute("SELECT value FROM laya_cache_metadata WHERE name = 'store_id'").fetchone()[0]
+            self.store_id = self._transaction(initialize_identity)
+            if str(uuid.UUID(self.store_id)) != self.store_id:
+                raise ValueError()
+        except Exception as exc:
+            self._db.close()
+            raise DecisionCacheError("decision store identity is corrupt") from exc
 
     def _get(self, key: bytes, now: float) -> Optional[Tuple[bytes, float]]:
         row = self._db.execute("SELECT value, expires_at FROM laya_decisions WHERE key = ?", (key,)).fetchone()
@@ -559,14 +612,30 @@ class DecisionCache:
             Failures raise DecisionCacheError even with hooks_raise=False or a hook timeout.
             SQLite uses FULL synchronization. Retention settings remain explicit; required
             does not disable expiry or eviction and does not make an in-memory store persistent.
+        require_existing: Require a compatible existing SQLite decision table before writes.
+            A legacy store without identity metadata is explicitly adopted and assigned a UUID.
+        expected_store_id: Require the existing SQLite store to have this UUID before any
+            schema/journal writes. Missing, recreated or corrupt identities raise DecisionCacheError.
     """
 
     def __init__(self, path: Optional[str] = None, *, ttl: Union[None, float, Callable[..., Any]] = None,
                  maxsize: Optional[int] = DEFAULT_MAXSIZE, fingerprint: Optional[str] = None,
                  renew_on_hit: bool = False, store: Optional[DecisionStore] = None, coalesce: bool = True,
-                 required: bool = False):
+                 required: bool = False, require_existing: bool = False,
+                 expected_store_id: Optional[str] = None):
         if not isinstance(required, bool):
             raise TypeError("required must be a boolean")
+        if not isinstance(require_existing, bool):
+            raise TypeError("require_existing must be a boolean")
+        if expected_store_id is not None:
+            import uuid
+            try:
+                if not isinstance(expected_store_id, str) or str(uuid.UUID(expected_store_id)) != expected_store_id:
+                    raise ValueError()
+            except (ValueError, AttributeError):
+                raise ValueError("expected_store_id must be a canonical UUID string") from None
+        if (require_existing or expected_store_id is not None) and (path is None or store is not None):
+            raise ValueError("existing-store guards require a SQLite path and cannot be used with a custom store")
         if ttl is not None and not callable(ttl):
             if isinstance(ttl, bool) or not isinstance(ttl, (int, float)) or not ttl > 0:
                 raise ValueError("ttl must be a positive number of seconds, a function or None, got %r" % (ttl,))
@@ -586,7 +655,9 @@ class DecisionCache:
             self._store = store
             self.maxsize = None
         else:
-            self._store = _MemoryStore(maxsize) if path is None else _SQLiteStore(path, maxsize, required=required)
+            self._store = (_MemoryStore(maxsize) if path is None else
+                           _SQLiteStore(path, maxsize, required=required, require_existing=require_existing,
+                                        expected_store_id=expected_store_id))
             self.maxsize = maxsize
         self.path = path
         self.ttl = ttl
@@ -595,6 +666,8 @@ class DecisionCache:
         self.coalesce = bool(coalesce)
         self.required = required
         self._required_cache = required
+        self.require_existing = require_existing
+        self.expected_store_id = expected_store_id
         # Keys a thread of this process is computing right now: key -> (thread id, event set when
         # the decision is stored or the attempt is over).
         self._inflight: Dict[bytes, Tuple[int, threading.Event]] = {}
@@ -643,13 +716,19 @@ class DecisionCache:
             raise DecisionCacheError("required decision cache policy must retain the decision")
         return lifetime
 
-    def _keys(self, ctx: PredictContext, states: Sequence[Any], lang_sensitive: bool) -> List[bytes]:
-        model = self.fingerprint if self.fingerprint is not None else _fingerprint(ctx.agent)
+    def _keys(self, ctx: PredictContext, states: Sequence[Any], lang_sensitive: bool,
+              *, fingerprint=_CURRENT_FINGERPRINT) -> List[bytes]:
+        identity = self.fingerprint if fingerprint is _CURRENT_FINGERPRINT else fingerprint
+        model = identity if identity is not None else _fingerprint(ctx.agent)
         # The language only reaches the answer through per-language temperatures. When the agent
         # has them, key on the whole routing decision: its reason records an explicit `lang` and
         # its detection the detected one. Otherwise requests routed to the same checkpoint by
         # different means get the same answer, so they share an entry.
         route = ctx.decision if lang_sensitive else None
+        if lang_sensitive and getattr(ctx, "_calibration_language", None) is not None:
+            # Pinned-model routes omit language evidence, even though the Agent still receives
+            # lang=. Old entries for this ambiguous case cannot safely identify a language.
+            route = {"decision": route, "calibration_language": ctx._calibration_language}
         prefix = [_KEY_VERSION, model, ctx.model, route, ctx.max_len, ctx.head_max_len, ctx.questions]
         scan = getattr(ctx, "scan", None)
         if scan is not None:
@@ -664,6 +743,35 @@ class DecisionCache:
             key.update(_canonical(state))
             keys.append(key.digest())
         return keys
+
+    @property
+    def store_id(self) -> Optional[str]:
+        """Persistent SQLite store UUID, or None for in-memory and custom stores."""
+        return getattr(self._store, "store_id", None)
+
+    def _lookup_replay(self, ctx: PredictContext, *, key: Optional[bytes] = None) -> Optional[Dict[str, Any]]:
+        """Read one verified request without claiming misses or creating pending hook work."""
+        if key is None:
+            key, = self._keys(ctx, ctx.states, bool(getattr(ctx.agent, "lang_temperatures", None)))
+        now = _now()
+        try:
+            held = self._store.get(key, now)
+        except Exception as exc:
+            self._failed(exc, "read the decision store")
+            return None
+        if held is None:
+            return None
+        replay = self._replay(held)
+        if replay is None:
+            return None
+        if self.renew_on_hit:
+            self._renew(ctx, [key], [held], [replay], now)
+        # A callable retention policy can inspect/mutate its argument. Restore the authoritative
+        # bytes before returning just as required prediction-end authorization does.
+        replay = self._replay(held)
+        with self._lock:
+            self._counts["hits"] += 1
+        return replay
 
     def _encode(self, payload: Dict[str, Any]) -> Optional[bytes]:
         try:
@@ -991,3 +1099,10 @@ class DecisionCache:
     def close(self) -> None:
         """Close the store, if it holds anything open. Do not use the cache afterwards."""
         self._store.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False

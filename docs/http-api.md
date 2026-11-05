@@ -53,6 +53,10 @@ Configure the server through environment variables. The `--backend` and
 | `LAYA_CACHE_TTL` | retention seconds, or `none` for indefinite retention | `86400` |
 | `LAYA_CACHE_MAXSIZE` | maximum stored decisions | `10000` |
 | `LAYA_CACHE_REQUIRED` | require successful replay or commit; failure returns sanitized 503 | `0` |
+| `LAYA_CACHE_REQUIRE_EXISTING` | refuse to create a missing SQLite decision database | `0` |
+| `LAYA_CACHE_EXPECTED_STORE_ID` | require an existing database with this store identity | none |
+| `LAYA_REPLAY_MANIFEST` | verified policy metadata for model-free replay and the cache fast path | none |
+| `LAYA_HTTP_REPLAY_FAST_PATH` | let verified hits bypass inference queues when a manifest is configured | `1` |
 | `LAYA_CACHE_RENEW_ON_HIT` | renew expiry on use | `0` |
 | `LAYA_LOG_LEVEL` | uvicorn log level | `info` |
 | `LAYA_MAX_CONCURRENT` | requests admitted past auth at once; excess gets `503` | `16` |
@@ -101,6 +105,7 @@ no `LAYA_API_KEY` set, every caller gets the full payload shown here.
 {"status": "ok", "loaded": ["english", "multilingual"], "revisions": {"english": "...", "multilingual": "..."},
  "backend": "torch", "device": "cuda", "device_is_preference": false,
  "performance_mode": null, "performance_config": null,
+ "model_free_replay": {"enabled": false, "http_fast_path": false},
  "checkpoint_devices": {"english": "cuda", "multilingual": "cuda"},
  "cpu_fallbacks": {"english": {"count": 0, "last_reason": null}, "multilingual": {"count": 0, "last_reason": null}}}
 ```
@@ -118,6 +123,8 @@ Health probes do not reset that clock. An empty `loaded` list is normal after an
 - `performance_mode` is the selected profile number, or null with existing defaults.
 - `performance_config` reports the profile's effective budgets and explicit overrides, or null
   without a profile. It describes configuration, not measured free memory or throughput.
+- `model_free_replay` reports whether a replay manifest is configured and whether verified
+  HTTP hits can bypass inference queues. It does not expose the manifest path.
 - `loaded` lists the checkpoints resident in memory. It is empty until a request builds one, which is
   what `LAYA_PRELOAD=0` leaves the process doing.
 - `revisions` is the artifact revision each resident checkpoint was loaded from, keyed by the same

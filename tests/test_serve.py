@@ -3401,11 +3401,12 @@ def test_http_api_page_documents_exactly_the_health_fields():
             "%s is in the sample with no bullet defining it, so the field is listed and not "
             "explained" % key)
 
-    # The per-checkpoint blocks all key on the same resident checkpoints. A fourth dict-valued key
-    # means the handler grew one and this list has to grow with it, deliberately.
+    # Per-checkpoint blocks key on the same resident checkpoints. Replay configuration is
+    # an independent block with its own contract, so it is checked separately.
     resident = set(sample["loaded"])
     assert resident, "the sample shows no resident checkpoint, so the blocks below prove nothing"
-    blocks = [k for k, v in sample.items() if isinstance(v, dict) and v]
+    assert sample["model_free_replay"] == {"enabled": False, "http_fast_path": False}
+    blocks = [k for k, v in sample.items() if isinstance(v, dict) and v and k != "model_free_replay"]
     assert len(blocks) == 3, "dict-valued blocks are %s; retarget this if the payload grew" % blocks
     for block in blocks:
         assert set(sample[block]) == resident, "%s is keyed %r, loaded says %r" % (

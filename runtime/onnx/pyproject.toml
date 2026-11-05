@@ -17,10 +17,12 @@ dependencies = ["numpy>=1.24.2", "onnxruntime>=1.20.0", "tokenizers>=0.20.0", "h
 structured = ["pydantic>=2.0.0"]
 serve = ["fastapi>=0.110.0", "uvicorn>=0.27.0"]
 mcp = ["mcp>=2.2.0"]
+replay = ["onnx>=1.20.0"]
 
 [project.scripts]
 laya-onnx-serve = "laya_onnx.serve:main"
 laya-onnx-mcp = "laya_onnx.mcp.server:main"
+laya-onnx-replay = "laya_onnx.replay:main"
 
 [project.urls]
 Homepage = "https://tgundhus.github.io/Veya/"

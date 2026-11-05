@@ -205,6 +205,7 @@ export interface Health {
   status: 'ok';
   loaded?: string[];
   device?: string;
+  model_free_replay?: { enabled: boolean; http_fast_path: boolean };
 }
 
 /** Preserve question IDs, primitive types, and literal choice labels when declaring a schema. */
