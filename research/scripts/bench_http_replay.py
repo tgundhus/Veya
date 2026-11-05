@@ -65,10 +65,13 @@ async def drive(rows, warm, enabled, concurrency, agent, checkpoint, graph, dire
     for field in ("calls", "rows", "forward_calls", "forward_rows"):
         if hasattr(agent, field):
             setattr(agent, field, 0)
+    if hasattr(agent, "forward_shapes"):
+        agent.forward_shapes = []
     before = cache.cache_info()
     app = create_app(router)
     limit = asyncio.Semaphore(concurrency)
-    latencies, canonical, cache_headers = [], [None] * len(rows), []
+    latencies, canonical = [], [None] * len(rows)
+    request_latencies, cache_headers = [None] * len(rows), [False] * len(rows)
     try:
         async with app.router.lifespan_context(app):
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://local") as client:
@@ -76,11 +79,13 @@ async def drive(rows, warm, enabled, concurrency, agent, checkpoint, graph, dire
                     async with limit:
                         begun = time.perf_counter()
                         response = await client.post("/v1/systemone", json=row)
-                        latencies.append((time.perf_counter() - begun) * 1000)
+                        elapsed_ms = (time.perf_counter() - begun) * 1000
+                        latencies.append(elapsed_ms)
+                        request_latencies[index] = elapsed_ms
                     if response.status_code != 200:
                         raise RuntimeError("benchmark request failed: %s" % response.status_code)
                     canonical[index] = response.json()
-                    cache_headers.append(response.headers.get("X-Decision-Cache") == "hit")
+                    cache_headers[index] = response.headers.get("X-Decision-Cache") == "hit"
                 begun = time.perf_counter()
                 await asyncio.gather(*(one(i, row) for i, row in enumerate(rows)))
                 elapsed = time.perf_counter() - begun
@@ -90,10 +95,19 @@ async def drive(rows, warm, enabled, concurrency, agent, checkpoint, graph, dire
                  "p50_ms": percentile(latencies, .50), "p95_ms": percentile(latencies, .95),
                  "p99_ms": percentile(latencies, .99), "agent_calls": agent.calls,
                  "agent_requested_states": agent.rows, "fast_path_hits": sum(cache_headers),
+                 "request_latencies_ms": request_latencies, "fast_path_hits_by_request": cache_headers,
                  "cache_request_counters": {key: after[key] - before[key]
                                             for key in ("hits", "misses", "conflicts", "coalesced", "errors")}}
+        for label, selected in (("prewarmed", True), ("new", False)):
+            samples = [latency for row, latency in zip(rows, request_latencies) if (row["state"] in warm) == selected]
+            stats[label + "_latencies_ms"] = samples
+            if samples:
+                stats.update({label + "_p50_ms": percentile(samples, .50), label + "_p95_ms": percentile(samples, .95)})
         if hasattr(agent, "forward_calls"):
-            stats.update(model_forward_calls=agent.forward_calls, model_forward_rows=agent.forward_rows)
+            stats.update(model_forward_calls=agent.forward_calls, model_forward_rows=agent.forward_rows,
+                         model_forward_shapes=[list(shape) for shape in agent.forward_shapes])
+            assert len(agent.forward_shapes) == agent.forward_calls
+            assert sum(shape[0] for shape in agent.forward_shapes) == agent.forward_rows
         return stats, canonical
     finally:
         cache.close()
@@ -118,7 +132,8 @@ def main():
     for name in ("LAYA_API_KEY", "LAYA_TOURNAMENT_GROUP", "LAYA_JEV_STRICT", "LAYA_IDLE_UNLOAD_SECONDS",
                  "LAYA_REPLAY_MANIFEST", "LAYA_SHA256_DIGESTS", "LAYA_REVISION"):
         os.environ.pop(name, None)
-    runtime = {"processor": platform.processor(), "logical_cpus": os.cpu_count()}
+    runtime = {"processor": platform.processor(), "logical_cpus": os.cpu_count(),
+               "omp_num_threads": os.environ.get("OMP_NUM_THREADS"), "mkl_num_threads": os.environ.get("MKL_NUM_THREADS")}
     actual, identity, graph = None, {}, None
     if args.checkpoint:
         os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32")
@@ -132,6 +147,12 @@ def main():
         actual = Agent(str(checkpoint), device="cpu", backend="eager", performance_mode="default")
         actual.system_one("Please review the refund request urgently.", QUESTIONS)
         actual = count_agent(actual)
+        actual.forward_shapes = []
+
+        def record_shapes(_module, inputs):
+            actual.forward_shapes.append([int(size) for size in inputs[0].shape])
+
+        actual.model.register_forward_pre_hook(record_shapes)
         runtime.update(torch=torch.__version__, cpu_threads=torch.get_num_threads(),
                        cpu_interop_threads=torch.get_num_interop_threads(), amp="fp32", backend="eager")
         files = {checkpoint / "model.safetensors", *checkpoint.rglob("*.json")}
@@ -150,6 +171,8 @@ def main():
                         "Alternating run order. Client latency includes server queues/JSON; client concurrency "
                         "semaphore wait excluded. Nearest-rank percentiles. Source hashes checked before/after. "
                         "Paired payload equality, probability drift and label flips are recorded. "
+                        "Request latencies and cache-hit flags preserve input order; prewarmed/new slices are separate. "
+                        "Actual Torch input tensor shapes are recorded for every forward attempt. "
                         "Prewarmed hits must match exactly. No TCP or model-load timing. "
                         "Small tail sample and uncontrolled machine load limit interpretation. "
                         "Synthetic timings measure orchestration, not neural inference.", "scenarios": []}
@@ -170,6 +193,7 @@ def main():
         for scenario in ("all_hits", "mixed75", "all_misses"):
             rows, warm = requests(scenario, args.requests)
             result = {"name": scenario, "prewarmed_request_fraction": sum(row["state"] in warm for row in rows) / len(rows),
+                      "prewarmed_by_request": [row["state"] in warm for row in rows],
                       "runs": []}
             for repeat in range(args.repeats):
                 paired, outputs = {}, {}
@@ -193,6 +217,9 @@ def main():
             metrics = ["requests_per_second", "p50_ms", "p95_ms", "p99_ms", "agent_calls", "agent_requested_states"]
             if hasattr(actual, "forward_calls"):
                 metrics += ["model_forward_calls", "model_forward_rows"]
+            for label in ("prewarmed", "new"):
+                metrics += [label + suffix for suffix in ("_p50_ms", "_p95_ms")
+                            if label + suffix in result["runs"][0]["queued"]]
             result["summary"] = {mode: {metric: statistics.median(run[mode][metric] for run in result["runs"])
                                         for metric in metrics} for mode in ("queued", "fast_path")}
             result["all_outputs_equal"] = all(run["outputs_equal"] for run in result["runs"])

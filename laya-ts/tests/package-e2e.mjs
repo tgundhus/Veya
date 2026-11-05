@@ -57,14 +57,16 @@ test("the packed module installs and works in an external ESM TypeScript project
     ["pack", "--json", "--silent", "--pack-destination", packDir],
     packageRoot,
   );
-  const packs = JSON.parse(stdout);
+  const decoded = JSON.parse(stdout);
+  const packs = Array.isArray(decoded) ? decoded : Object.values(decoded);
   assert.equal(packs.length, 1);
 
   const packed = packs[0];
   const paths = new Set(packed.files.map((file) => file.path));
   assert(!paths.has("dist/stale.js"));
   assert(!paths.has("dist/stale.d.ts"));
-  for (const required of ["README.md", "LICENSE", "package.json", "dist/index.js", "dist/index.d.ts"]) {
+  for (const required of ["README.md", "LICENSE", "package.json", "dist/index.js", "dist/index.d.ts",
+    "dist/routing-unicode.js", "dist/routing-unicode.d.ts"]) {
     assert(paths.has(required), `packed artifact is missing ${required}`);
   }
   for (const path of paths) {
@@ -107,7 +109,7 @@ test("the packed module installs and works in an external ESM TypeScript project
   await writeFile(
     join(consumerDir, "runtime.mjs"),
     `import assert from "node:assert/strict";
-import { Agent, Router, VERSION, predictTournament, DEFAULT_TOURNAMENT_GROUP, cached, cachedEmbedFn,
+import { Agent, Router, VERSION, ROUTING_CONTRACT_VERSION, analyse, predictTournament, DEFAULT_TOURNAMENT_GROUP, cached, cachedEmbedFn,
   DEFAULT_SHORTLIST_MAXSIZE, decideBatch } from "laya-ts";
 
 let encoderCalls = 0;
@@ -132,6 +134,16 @@ const result = await agent.predict("charged twice", {
 });
 
 assert.equal(VERSION, ${JSON.stringify(packed.version)});
+assert.equal(ROUTING_CONTRACT_VERSION, "veya-routing-v1-unicode15");
+const explainedState = { note: "Please review this invoice and tell me what happened" };
+assert.equal(analyse(explainedState, { explain: true }).diagnostic.stage, "whole_state");
+const explanationRouter = new Router();
+const explainedRoute = explanationRouter.route(explainedState, {}, { explain: true });
+assert.equal(explainedRoute.model, "english");
+assert.equal(explainedRoute.detection.diagnostic.stage, "whole_state");
+assert.deepEqual(explanationRouter.routeBatch([{ state: explainedState, questions: {} }], { explain: true }),
+  [explainedRoute]);
+assert.deepEqual(explanationRouter.loaded, []);
 assert.equal(result.answers.intent.choice, "refund");
 assert.equal(result.answers.intent.probabilities.refund > 0.5, true);
 assert.equal(result.usage.output_tokens, 0);
@@ -193,6 +205,10 @@ assert.equal(workflowResult.routing.workflow, "customer_service");
   type DecideBatchOptions,
   type DecisionResult,
   VERSION,
+  ROUTING_CONTRACT_VERSION,
+  analyse,
+  type AnalyseOptions,
+  type AnalyseDiagnostic,
   predictTournament,
   DEFAULT_TOURNAMENT_GROUP,
   cached,
@@ -228,6 +244,12 @@ const prediction: Promise<SystemOneResult> = new Agent({ provider }).predict(
 );
 
 void VERSION;
+void ROUTING_CONTRACT_VERSION;
+const analyseOptions: AnalyseOptions = { explain: true };
+const diagnostic: AnalyseDiagnostic | undefined = analyse("Please review this invoice", analyseOptions).diagnostic;
+const explainedRoute = new Router().route("Please review this invoice", {}, { explain: true });
+const explainedBatch = new Router().routeBatch([{ state: "Please review this invoice", questions: {} }], { explain: true });
+void diagnostic; void explainedRoute; void explainedBatch;
 void prediction;
 const tournament: Promise<SystemOneResult & { tournament: Record<string, TournamentMeta> }> =
   predictTournament(new Agent({ provider }), "charged twice", questions, DEFAULT_TOURNAMENT_GROUP);

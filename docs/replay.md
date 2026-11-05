@@ -86,6 +86,9 @@ first, then run:
 python -m laya.replay --output /persistent/support.replay.json --models english
 ```
 
+The full distribution also installs `laya-replay`. The standalone ONNX distribution
+installs `laya-onnx-replay` with the same arguments and its ONNX backend default.
+
 Preparation temporarily disables preload and ignores an older replay manifest while
 approving its replacement. Existing-store and expected-identity guards remain active.
 Choose `LAYA_MAX_LOADED` large enough for the explicitly selected preparation models.
@@ -173,3 +176,25 @@ policy and store identities, TTL/renewal, confidence presentation, metadata tamp
 checkpoint changes, concurrent namespace changes, relative paths, ONNX sidecars and
 an independent process that refuses inference-library imports. Actual checkpoint
 startup measurements are reported separately from the controlled unit fixtures.
+
+## Recorded checkpoint comparison
+
+The [benchmark harness](https://github.com/tgundhus/Veya/blob/main/research/scripts/bench_verified_replay.py)
+compares the same retained decision using an existing English checkpoint on this
+Windows workstation, CPU/eager/fp32 and four threads. Five alternating fresh-process
+pairs produced identical answers and zero model forwards in both modes. Ordinary
+cold replay still loads weights to reach its cache hook; verified replay attempted
+no Torch, Transformers, ONNX Runtime, Tokenizers or ONNX imports.
+
+| Metric, median | Ordinary durable hit | Verified replay |
+|---|---:|---:|
+| Fresh process wall time, including startup and cleanup | 6,765.27 ms | 227.22 ms |
+| Cache/Router operation after required imports | 4,480.66 ms | 8.82 ms |
+| Peak child working set | 1,939.8 MiB | 37.4 MiB |
+| Warm hit, 500 requests | 59.5 microseconds | 375.8 microseconds |
+
+The cold process comparison improved about 29.8 times in this run. Strict metadata
+verification adds warm-hit work, so this feature is not a warm-lookup speed claim.
+The small cold tail sample, filesystem caches and uncontrolled workstation load
+limit generalization. This measures cached decisions rather than uncached inference
+or model accuracy. [Raw samples, source hashes and checkpoint identities](https://github.com/tgundhus/Veya/blob/main/research/results/verified_replay_windows_20261105.json).

@@ -8,6 +8,10 @@ credibility: "Every number links to a script and a raw result in research/, or t
 
 # Consistency and speed work, September 2026
 
+The [production capabilities report](production-capabilities-2026-11-05.md) records
+verified replay, cache-aware HTTP scheduling, cross-SDK routing, release qualification
+and the fully local MCP code interface.
+
 The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
 required decision storage, experimental HTTP microbatching and selected upstream fixes.
 

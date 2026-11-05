@@ -201,3 +201,42 @@ The benchmark harness compares equivalent classic and code workflows against an
 existing local checkpoint; it reports sandbox overhead, outer-call counts, actual
 forward calls and compact response bytes. Reducing agent round trips does not imply
 faster encoder inference, and no hosted-LLM latency or token saving is assumed.
+
+## Recorded local checkpoint comparison
+
+```bash
+python research/scripts/bench_code_mode.py --checkpoint /models/laya \
+  --requests 8 --repeats 3 --out research/results/code_mode_cpu.json
+```
+
+The [recorded Windows CPU run](https://github.com/tgundhus/Veya/blob/main/research/results/code_mode_cpu_windows_20261105.json)
+uses the existing English checkpoint, fp32/eager, four Torch threads, eight initial
+records and three rotating mode-order repetitions. Models are resident; each sample
+has a new required in-memory cache. Code time includes fresh sandbox-process startup,
+JSON transfer, validation and the same host inference. Values below are medians:
+
+| Workflow | Classic singles | Classic batch | Code Mode | Classic batch / code outer calls |
+|---|---:|---:|---:|---:|
+| One question per unique state | 938.01 ms | 636.86 ms | 838.98 ms | 1 / 1 |
+| Two dependent decision stages | 2,289.21 ms | 1,553.02 ms | 1,677.30 ms | 2 / 1 |
+| Prewarmed exact replay | 0.619 ms | 0.527 ms | 192.70 ms | 1 / 1 |
+
+Code Mode is slower than the existing best batch path in these local timings.
+Fresh-process isolation has a particularly visible cost for cache-only work.
+The classic interface remains the low-overhead choice for those calls. Code Mode's
+measured benefits here are composition and compact data: the two-stage workflow uses
+one outer call instead of two, and its JSON responses total 272 bytes instead of
+4,666 bytes. The advertised catalog has one tool and 4,332 JSON bytes, versus ten
+tools and 26,214 bytes for classic mode. These are bytes, not measured model tokens.
+
+Code Mode and classic batch outputs matched exactly in all nine paired runs;
+single/batch probability drift was zero in this fixture. Their actual Torch forward
+counts were respectively 1, 2 and 0 for the three workflows, with the same 8, 16
+and 0 forward rows. The checkpoint loader reports a pre-existing temperature clamp
+for an unused 11-or-more-option choice head; these cases use `noul` questions only.
+
+The artifact contains p50/p95/p99, raw runs, dependencies, checkpoint/tokenizer
+identities and 62 runtime/harness source hashes. With three samples p95 and p99 are
+both maxima. Peak memory, TCP transport and LLM reasoning/round-trip latency were
+not measured; workstation load remains uncontrolled. Use a representative agent
+workflow to decide whether the saved outer calls outweigh local sandbox overhead.

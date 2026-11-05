@@ -167,3 +167,30 @@ For programmatic diagnostics, `qualify()` accepts caller-owned runners with
 `predict` and positional `predict_batch` methods only after explicit
 `allow_unverified_identity=True`. Such runners cannot claim production
 qualification. `run_matrix()` constructs verified local adapters.
+
+## Recorded local qualification
+
+The [5 November CPU artifact](https://github.com/tgundhus/Veya/blob/main/research/results/qualification_cpu_windows_20261105.json)
+uses the existing English checkpoint and its existing ONNX export on Windows,
+with four threads, two repetitions, batch sizes 1/4 and concurrency 1/4. Both
+backends completed all 16 profiles over 18 evaluation cases. Source and artifact
+identities remained unchanged. There were no label/operational-flag flips and no
+observed drift in returned probabilities, scores, confidence or action probabilities. One case had
+a measured top-two gap of 0.0442.
+
+**The strict quality gate failed.** Choice agreement with the five explicit
+fixture labels was 0.60 against a minimum of 0.80 in every profile. Noul agreement
+was 0.80, score-within-0.25 was 0.80, and score MAE was 0.08264. Both cells are
+therefore marked failed and `production_qualified` is false. These results expose
+a checkpoint weakness on the fixture; thresholds and gold labels were not changed
+to manufacture a passing release. This small synthetic corpus is not a business
+quality certificate or a production latency SLO.
+
+```bash
+python research/scripts/qualify_local.py --checkpoint /models/laya \
+  --onnx /models/english.onnx --out qualification.json
+```
+
+The harness records raw observations, per-call latency and forward evidence,
+checkpoint/tokenizer/graph digests, numerical policy and source identities. Its
+nonzero exit for a failed gate is expected and should stop a release pipeline.

@@ -179,8 +179,14 @@ def main():
                                                "wheel_bytes": wheels[0].stat().st_size,
                                                "sdist_bytes": sdists[0].stat().st_size,
                                                "model_free_replay_verified": True,
+                                               "http_replay_fast_path_verified": True,
                                                "code_mode_verified": True,
-                                               "runtime_sha256": original_runtime}, indent=2) + "\n", encoding="utf-8")
+                                               "public_agent_code_verified": True,
+                                               "runtime_sha256": original_runtime,
+                                               "verification_sha256": {name: hashlib.sha256((tests / name).read_bytes()).hexdigest()
+                                                   for name in ("verify_package.py", "consumer.py", "services_consumer.py",
+                                                                "production_consumer.py", "fixture.py")}},
+                                   indent=2) + "\n", encoding="utf-8")
     print("PASS isolated base/HTTP/MCP/code wheel, model-free replay and outside-checkout sdist rebuild")
 
 

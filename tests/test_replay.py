@@ -11,6 +11,7 @@ import tempfile
 import threading
 import time
 import unittest
+import warnings
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -213,38 +214,41 @@ class ReplayTests(unittest.TestCase):
     def test_custom_retention_keeps_ordinary_suppression_and_serialization(self):
         with tempfile.TemporaryDirectory() as directory:
             router, cache, agent = fixture(directory, required=False, ttl=16, renew_on_hit=True)
-            router.hooks_raise = False
-            with patch("laya.consistency._now", return_value=100):
-                router.predict("hello", QUESTIONS, model="english")
-            manifest = Path(directory) / "replay.json"
-            router.export_replay_manifest(manifest)
-            cold = restarted(directory, cache, manifest, hooks_raise=False, hooks_concurrent=False)
-            cold._agents["english"] = agent
-            cache.ttl = lambda *_: (_ for _ in ()).throw(ValueError("custom policy failed"))
-            self.assertFalse(cold.validate_replay_manifest())
-            with patch("laya.consistency._now", return_value=108), self.assertWarns(RuntimeWarning):
-                self.assertEqual(cold.predict("hello", QUESTIONS, model="english")["answers"]["keep"]["noul"], 0.51)
-            active = maximum = 0
-            mutex = threading.Lock()
-            def policy(*_):
-                nonlocal active, maximum
-                with mutex:
-                    active += 1
-                    maximum = max(active, maximum)
-                time.sleep(0.02)
-                with mutex:
-                    active -= 1
-                return 16
-            cache.ttl = policy
-            with patch("laya.consistency._now", return_value=108):
-                workers = [threading.Thread(target=lambda: cold.predict("hello", QUESTIONS, model="english")) for _ in range(2)]
-                for worker in workers:
-                    worker.start()
-                for worker in workers:
-                    worker.join(2)
-                    self.assertFalse(worker.is_alive())
-            self.assertEqual(maximum, 1)
-            cache.close()
+            with cache:
+                router.hooks_raise = False
+                with patch("laya.consistency._now", return_value=100):
+                    router.predict("hello", QUESTIONS, model="english")
+                manifest = Path(directory) / "replay.json"
+                router.export_replay_manifest(manifest)
+                cold = restarted(directory, cache, manifest, hooks_raise=False, hooks_concurrent=False)
+                cold._agents["english"] = agent
+                cache.ttl = lambda *_: (_ for _ in ()).throw(ValueError("custom policy failed"))
+                self.assertFalse(cold.validate_replay_manifest())
+                with patch("laya.consistency._now", return_value=108), warnings.catch_warnings(record=True) as caught:
+                    warnings.simplefilter("always", RuntimeWarning)
+                    self.assertEqual(cold.predict("hello", QUESTIONS, model="english")["answers"]["keep"]["noul"], 0.51)
+                self.assertTrue(any(issubclass(item.category, RuntimeWarning)
+                                    and "custom policy failed" in str(item.message) for item in caught))
+                active = maximum = 0
+                mutex = threading.Lock()
+                def policy(*_):
+                    nonlocal active, maximum
+                    with mutex:
+                        active += 1
+                        maximum = max(active, maximum)
+                    time.sleep(0.02)
+                    with mutex:
+                        active -= 1
+                    return 16
+                cache.ttl = policy
+                with patch("laya.consistency._now", return_value=108):
+                    workers = [threading.Thread(target=lambda: cold.predict("hello", QUESTIONS, model="english")) for _ in range(2)]
+                    for worker in workers:
+                        worker.start()
+                    for worker in workers:
+                        worker.join(2)
+                        self.assertFalse(worker.is_alive())
+                self.assertEqual(maximum, 1)
 
     def test_changed_configuration_files_or_resident_metadata_refuse_replay(self):
         for change in ("configuration", "file", "resident"):

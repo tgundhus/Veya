@@ -1,0 +1,1414 @@
+{
+  "created_utc": "2026-11-05T20:07:28.328105+00:00",
+  "python": "3.12.14",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "logical_cpus": 32,
+  "torch": "2.14.1+cpu",
+  "quickjs_ng": "0.18.0.1",
+  "psutil": "7.2.2",
+  "threads": 4,
+  "interop_threads": 1,
+  "backend": "English CPU fp32 eager",
+  "requests": 8,
+  "repeats": 3,
+  "artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+    "rl_agent_config.json": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+  },
+  "source_sha256": {
+    "laya/__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "laya/_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "laya/_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "laya/_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "laya/_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "laya/_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "laya/_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "laya/agent.py": "3db3a067528e651b519a674673a74822997f8a25e22e6ef920253a1bb1fa70ec",
+    "laya/backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "laya/backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "laya/backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "laya/backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "laya/backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "laya/calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "laya/calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "laya/checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "laya/cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "laya/common.py": "bab0075c2374d825bc889b982503eb70d7fa63ae76c88c0252e96cda8a54d3f2",
+    "laya/compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "laya/confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "laya/consistency.py": "5c2af0b99720bb6f37a17c877128d4ff2ef120a6b3cc9d68b8ded84a90c63638",
+    "laya/email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "laya/errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "laya/evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "laya/evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "laya/evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "laya/evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "laya/fast.py": "e2feef1705f08f8b1d6e8a8d126dd726128ec7849edde92b8f4b1d17ef7ab5dd",
+    "laya/hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "laya/inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "laya/inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "laya/integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "laya/integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "laya/integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "laya/integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "laya/integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "laya/integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "laya/integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "laya/integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "laya/lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "laya/mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "laya/mcp/_code_budget.py": "f985bf4ebe84d5aa2bcbd79f3ad49c132a93a56ee63e3f448738c4b97e78cba9",
+    "laya/mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "laya/mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "laya/mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "laya/mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "laya/mcp/server.py": "a05b4191ea2b1cb945330c784ed261deeda0e8bc9beafe08b689df0cd39150c0",
+    "laya/mcp/tools.py": "64f1f96266931fc1054b664de8eeeeb6975d22dbb072ce91afc0c2b53dad83ef",
+    "laya/onnx_agent.py": "ff6c6e0fd8b24b08932327839040530ad3f2b08bf44d53cb851032f328905c47",
+    "laya/performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "laya/presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "laya/qualification.py": "f2e495ec2fddd00ce093c9d30971381c7b17877d4b313e701602da435c8b346d",
+    "laya/replay.py": "1c1397da28573bb31ba88ff6153b7cb6abca476fb608fa7f5538d38ad2b44db3",
+    "laya/revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "laya/router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "laya/serve.py": "7e6b942cc52da73c9cc263c13f69dbc17ae65609fc9f6bb90838e0ed4454ef21",
+    "laya/shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "laya/structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "laya/tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "laya/train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "laya/train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05",
+    "research/scripts/bench_code_mode.py": "6b40bd9fc9ddf805205199be68cd157e6c2fb26c3cc4434d10ebc81f79c45298"
+  },
+  "cases": [
+    {
+      "scenario": "unique_batch",
+      "runs": [
+        {
+          "repeat": 0,
+          "classic_singles": {
+            "elapsed_ms": 875.6672,
+            "input_requests_per_second": 9.13589089553657,
+            "outer_operation_calls": 8,
+            "response_json_bytes": 2392,
+            "forward_calls": 8,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_batch": {
+            "elapsed_ms": 596.427,
+            "input_requests_per_second": 13.413208992885968,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 2334,
+            "forward_calls": 1,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code": {
+            "elapsed_ms": 1033.6585,
+            "input_requests_per_second": 7.739500037971922,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 145,
+            "forward_calls": 1,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        },
+        {
+          "repeat": 1,
+          "classic_batch": {
+            "elapsed_ms": 947.4328,
+            "input_requests_per_second": 8.4438706365243,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 2335,
+            "forward_calls": 1,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code": {
+            "elapsed_ms": 745.0875,
+            "input_requests_per_second": 10.736993977217441,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 145,
+            "forward_calls": 1,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_singles": {
+            "elapsed_ms": 1184.6363,
+            "input_requests_per_second": 6.753127521079677,
+            "outer_operation_calls": 8,
+            "response_json_bytes": 2390,
+            "forward_calls": 8,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        },
+        {
+          "repeat": 2,
+          "code": {
+            "elapsed_ms": 838.9756,
+            "input_requests_per_second": 9.535438217750313,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 145,
+            "forward_calls": 1,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_singles": {
+            "elapsed_ms": 938.0134,
+            "input_requests_per_second": 8.528662810147488,
+            "outer_operation_calls": 8,
+            "response_json_bytes": 2391,
+            "forward_calls": 8,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_batch": {
+            "elapsed_ms": 636.8592,
+            "input_requests_per_second": 12.561646279114756,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 2333,
+            "forward_calls": 1,
+            "forward_rows": 8,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 8,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        }
+      ],
+      "summary": {
+        "classic_singles": {
+          "elapsed_ms": 938.0134,
+          "input_requests_per_second": 8.528662810147488,
+          "outer_operation_calls": 8,
+          "response_json_bytes": 2391,
+          "forward_calls": 8,
+          "forward_rows": 8,
+          "p50_ms": 938.0134,
+          "p95_ms": 1184.6363,
+          "p99_ms": 1184.6363
+        },
+        "classic_batch": {
+          "elapsed_ms": 636.8592,
+          "input_requests_per_second": 12.561646279114756,
+          "outer_operation_calls": 1,
+          "response_json_bytes": 2334,
+          "forward_calls": 1,
+          "forward_rows": 8,
+          "p50_ms": 636.8592,
+          "p95_ms": 947.4328,
+          "p99_ms": 947.4328
+        },
+        "code": {
+          "elapsed_ms": 838.9756,
+          "input_requests_per_second": 9.535438217750313,
+          "outer_operation_calls": 1,
+          "response_json_bytes": 145,
+          "forward_calls": 1,
+          "forward_rows": 8,
+          "p50_ms": 838.9756,
+          "p95_ms": 1033.6585,
+          "p99_ms": 1033.6585
+        }
+      }
+    },
+    {
+      "scenario": "two_stage",
+      "runs": [
+        {
+          "repeat": 0,
+          "classic_singles": {
+            "elapsed_ms": 2289.2061,
+            "input_requests_per_second": 3.494661315117062,
+            "outer_operation_calls": 16,
+            "response_json_bytes": 4779,
+            "forward_calls": 16,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_batch": {
+            "elapsed_ms": 1482.7125,
+            "input_requests_per_second": 5.395516662872944,
+            "outer_operation_calls": 2,
+            "response_json_bytes": 4665,
+            "forward_calls": 2,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code": {
+            "elapsed_ms": 1677.0329,
+            "input_requests_per_second": 4.770329788998176,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 272,
+            "forward_calls": 2,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        },
+        {
+          "repeat": 1,
+          "classic_batch": {
+            "elapsed_ms": 2002.5663,
+            "input_requests_per_second": 3.9948739774558275,
+            "outer_operation_calls": 2,
+            "response_json_bytes": 4667,
+            "forward_calls": 2,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code": {
+            "elapsed_ms": 1677.2994,
+            "input_requests_per_second": 4.769571848651469,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 272,
+            "forward_calls": 2,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_singles": {
+            "elapsed_ms": 2462.0052,
+            "input_requests_per_second": 3.249383876199774,
+            "outer_operation_calls": 16,
+            "response_json_bytes": 4779,
+            "forward_calls": 16,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        },
+        {
+          "repeat": 2,
+          "code": {
+            "elapsed_ms": 1799.5832,
+            "input_requests_per_second": 4.445473818604219,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 272,
+            "forward_calls": 2,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_singles": {
+            "elapsed_ms": 2046.9286,
+            "input_requests_per_second": 3.9082946029480463,
+            "outer_operation_calls": 16,
+            "response_json_bytes": 4780,
+            "forward_calls": 16,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_batch": {
+            "elapsed_ms": 1553.018,
+            "input_requests_per_second": 5.151260320228098,
+            "outer_operation_calls": 2,
+            "response_json_bytes": 4666,
+            "forward_calls": 2,
+            "forward_rows": 16,
+            "output": [
+              {
+                "urgent": 0.4875,
+                "review": 0.806
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8335
+              },
+              {
+                "urgent": 0.4739,
+                "review": 0.8339
+              },
+              {
+                "urgent": 0.4932,
+                "review": 0.8292
+              },
+              {
+                "urgent": 0.5153,
+                "review": 0.8053
+              },
+              {
+                "urgent": 0.5313,
+                "review": 0.8207
+              },
+              {
+                "urgent": 0.5028,
+                "review": 0.7711
+              },
+              {
+                "urgent": 0.5149,
+                "review": 0.8005
+              }
+            ],
+            "cache": {
+              "hits": 0,
+              "misses": 16,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        }
+      ],
+      "summary": {
+        "classic_singles": {
+          "elapsed_ms": 2289.2061,
+          "input_requests_per_second": 3.494661315117062,
+          "outer_operation_calls": 16,
+          "response_json_bytes": 4779,
+          "forward_calls": 16,
+          "forward_rows": 16,
+          "p50_ms": 2289.2061,
+          "p95_ms": 2462.0052,
+          "p99_ms": 2462.0052
+        },
+        "classic_batch": {
+          "elapsed_ms": 1553.018,
+          "input_requests_per_second": 5.151260320228098,
+          "outer_operation_calls": 2,
+          "response_json_bytes": 4666,
+          "forward_calls": 2,
+          "forward_rows": 16,
+          "p50_ms": 1553.018,
+          "p95_ms": 2002.5663,
+          "p99_ms": 2002.5663
+        },
+        "code": {
+          "elapsed_ms": 1677.2994,
+          "input_requests_per_second": 4.769571848651469,
+          "outer_operation_calls": 1,
+          "response_json_bytes": 272,
+          "forward_calls": 2,
+          "forward_rows": 16,
+          "p50_ms": 1677.2994,
+          "p95_ms": 1799.5832,
+          "p99_ms": 1799.5832
+        }
+      }
+    },
+    {
+      "scenario": "prewarmed_replay",
+      "runs": [
+        {
+          "repeat": 0,
+          "classic_singles": {
+            "elapsed_ms": 0.6156,
+            "input_requests_per_second": 12995.45159194282,
+            "outer_operation_calls": 8,
+            "response_json_bytes": 2376,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_batch": {
+            "elapsed_ms": 0.5274,
+            "input_requests_per_second": 15168.752370117558,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 2331,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code": {
+            "elapsed_ms": 192.6953,
+            "input_requests_per_second": 41.51632136331296,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 145,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        },
+        {
+          "repeat": 1,
+          "classic_batch": {
+            "elapsed_ms": 0.5114,
+            "input_requests_per_second": 15643.332029722333,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 2331,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code": {
+            "elapsed_ms": 191.6267,
+            "input_requests_per_second": 41.74783576610149,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 145,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_singles": {
+            "elapsed_ms": 0.6185,
+            "input_requests_per_second": 12934.518997574776,
+            "outer_operation_calls": 8,
+            "response_json_bytes": 2375,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        },
+        {
+          "repeat": 2,
+          "code": {
+            "elapsed_ms": 204.0991,
+            "input_requests_per_second": 39.19664515914083,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 145,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_singles": {
+            "elapsed_ms": 0.6254,
+            "input_requests_per_second": 12791.813239526704,
+            "outer_operation_calls": 8,
+            "response_json_bytes": 2374,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "classic_batch": {
+            "elapsed_ms": 0.5813,
+            "input_requests_per_second": 13762.257010149664,
+            "outer_operation_calls": 1,
+            "response_json_bytes": 2331,
+            "forward_calls": 0,
+            "forward_rows": 0,
+            "output": [
+              {
+                "urgent": 0.4875
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4739
+              },
+              {
+                "urgent": 0.4932
+              },
+              {
+                "urgent": 0.5153
+              },
+              {
+                "urgent": 0.5313
+              },
+              {
+                "urgent": 0.5028
+              },
+              {
+                "urgent": 0.5149
+              }
+            ],
+            "cache": {
+              "hits": 8,
+              "misses": 0,
+              "conflicts": 0,
+              "errors": 0
+            }
+          },
+          "code_exact_output_match": true,
+          "single_vs_batch_max_probability_delta": 0.0
+        }
+      ],
+      "summary": {
+        "classic_singles": {
+          "elapsed_ms": 0.6185,
+          "input_requests_per_second": 12934.518997574776,
+          "outer_operation_calls": 8,
+          "response_json_bytes": 2375,
+          "forward_calls": 0,
+          "forward_rows": 0,
+          "p50_ms": 0.6185,
+          "p95_ms": 0.6254,
+          "p99_ms": 0.6254
+        },
+        "classic_batch": {
+          "elapsed_ms": 0.5274,
+          "input_requests_per_second": 15168.752370117558,
+          "outer_operation_calls": 1,
+          "response_json_bytes": 2331,
+          "forward_calls": 0,
+          "forward_rows": 0,
+          "p50_ms": 0.5274,
+          "p95_ms": 0.5813,
+          "p99_ms": 0.5813
+        },
+        "code": {
+          "elapsed_ms": 192.6953,
+          "input_requests_per_second": 41.51632136331296,
+          "outer_operation_calls": 1,
+          "response_json_bytes": 145,
+          "forward_calls": 0,
+          "forward_rows": 0,
+          "p50_ms": 192.6953,
+          "p95_ms": 204.0991,
+          "p99_ms": 204.0991
+        }
+      }
+    }
+  ],
+  "code_description_utf8_bytes": 3871,
+  "catalog": {
+    "classic_tools": 10,
+    "code_tools": 1,
+    "classic_catalog_json_bytes": 26214,
+    "code_catalog_json_bytes": 4332
+  },
+  "method": "One warmed resident checkpoint. Each sample uses a fresh required in-memory cache. Order rotates across modes; CPU thread count is four. Every code sample creates a fresh sandbox process, so timing includes its startup, JSON IPC, validation and host work. Classic samples call the same validated functions directly. JSON response bytes exclude MCP envelopes and are not token counts. No LLM or remote-network round trips are simulated. Two-stage uses dependent awaiting and returns a compact result; classic batching already needs only two calls. Nearest-rank latency percentiles; at three samples p95/p99 are maxima. Input throughput counts initial records, not follow-up questions. Peak memory is not measured. Small sample, uncontrolled workstation load; no general speed claim."
+}

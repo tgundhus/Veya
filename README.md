@@ -16,6 +16,12 @@ does not mean every upstream change has been adopted. The
 [runtime adoption report](https://github.com/tgundhus/Veya/blob/main/docs/reports/runtime-adoption-2026-11-05.md)
 records the resulting changes, measurements and qualification limits.
 
+The [production capabilities report](https://github.com/tgundhus/Veya/blob/main/docs/reports/production-capabilities-2026-11-05.md)
+adds verified model-free replay, cache-aware HTTP scheduling, a shared Python/TypeScript
+routing contract, release qualification against reviewed baselines and optional local
+JavaScript MCP composition. The current checkpoint fails the illustrative qualification
+fixture's quality gate; the report preserves that failure alongside performance results.
+
 [Documentation](https://tgundhus.github.io/Veya/) · [Integration](https://github.com/tgundhus/Veya/blob/main/docs/integration.md) ·
 [Benchmarks](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md) · [Deployment](https://github.com/tgundhus/Veya/blob/main/docs/production.md)
 
@@ -149,6 +155,18 @@ LAYA_CACHE_REQUIRED=1
 
 The same cache variables apply to `laya-mcp-server`. Authentication, request bounds,
 concurrency and offline setup are covered in the [deployment guide](https://github.com/tgundhus/Veya/blob/main/docs/production.md).
+
+For retained answers without loading models after restart, prepare a
+[replay manifest and pin the SQLite store identity](https://github.com/tgundhus/Veya/blob/main/docs/replay.md).
+Approved HTTP hits can then use the [separate cache worker](https://github.com/tgundhus/Veya/blob/main/docs/cache-fast-path.md).
+To compose several operations in one local MCP call, install the `codemode` extra
+and start `laya-mcp-server --mode code`; see the
+[Code Mode guide](https://github.com/tgundhus/Veya/blob/main/docs/mcp-code-mode.md) for its limits.
+Before changing a model, precision or batching policy, run
+[release qualification](https://github.com/tgundhus/Veya/blob/main/docs/release-qualification.md)
+on reviewed deployment cases. The
+[routing contract](https://github.com/tgundhus/Veya/blob/main/docs/routing-parity.md)
+documents supported Python/TypeScript parity and migration costs.
 
 Use `Router(performance_mode=2)`, `laya --performance-mode 2`, or
 `LAYA_PERFORMANCE_MODE=2` in the engine's environment to choose a resource budget.

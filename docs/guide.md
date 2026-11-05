@@ -22,9 +22,10 @@ python -m pip install "veya[serve,onnx] @ git+https://github.com/tgundhus/Veya.g
 python -m pip install -e .                                                           # a source checkout
 ```
 
-Extras: `serve` (HTTP server), `mcp` (MCP server), `onnx` (ONNX Runtime), `langchain` (LangChain and
-LangGraph), `llamaindex`, `crewai`, `structured` (pydantic models for `decide`) and `fast` (the
-TileLang GPU fast path).
+Extras: `serve` (HTTP), `mcp` (classic MCP), `codemode` (local JavaScript MCP),
+`replay` (ONNX manifest preparation), `onnx` (ONNX Runtime), `langchain` / `langgraph`,
+`llamaindex`, `crewai`, `agno`, `structured` (pydantic models for `decide`) and `fast`
+(TileLang GPU kernels). Prepared replay manifests do not require the ONNX parser at runtime.
 
 **In a new virtual environment.** On macOS or Linux:
 
