@@ -263,6 +263,21 @@ def _build_parser() -> argparse.ArgumentParser:
     evidence_cmd.add_argument("--report", default=None,
                               help="an existing laya-evals report JSON")
 
+    qualification = sub.add_parser("qualify", help="qualify local backend/precision cells against fixed decision fixtures")
+    qualification.add_argument("corpus", help="versioned qualification corpus JSON")
+    qualification.add_argument("--matrix", required=True, help="local checkpoint/backend matrix JSON")
+    qualification.add_argument("--json", required=True, dest="json_out", help="write the complete qualification report")
+    qualification.add_argument("--baseline", help="reviewed qualification report from the prior release")
+    qualification.add_argument("--diagnostic", action="store_true",
+                               help="allow agreement-only diagnostics without explicit accuracy/boundary release gates")
+    qualification_validate = sub.add_parser("qualify-validate", help="validate qualification cases and split leakage without models")
+    qualification_validate.add_argument("corpus", help="versioned qualification corpus JSON")
+    qualification_compare = sub.add_parser("qualify-compare", help="compare saved qualification observations with a reviewed release")
+    qualification_compare.add_argument("report", help="candidate qualification report JSON")
+    qualification_compare.add_argument("--baseline", required=True, help="reviewed prior qualification report JSON")
+    qualification_compare.add_argument("--json", required=True, dest="json_out", help="write the comparison verdict JSON")
+    qualification_compare.add_argument("--diagnostic", action="store_true", help="allow diagnostic reports without a release certification")
+
     return parser
 
 
@@ -495,6 +510,62 @@ def _cmd_evidence(args) -> int:
     return 0
 
 
+def _cmd_qualify(args) -> int:
+    from pathlib import Path
+    from . import qualification
+
+    if args.command == "qualify-compare":
+        report = qualification.compare_reports(qualification.load_document(args.report),
+                                               qualification.load_document(args.baseline),
+                                               allow_unverified_identity=args.diagnostic)
+        try:
+            with open(args.json_out, "w", encoding="utf-8", newline="\n") as handle:
+                json.dump(report, handle, ensure_ascii=False, indent=2, allow_nan=False)
+                handle.write("\n")
+        except (OSError, ValueError) as exc:
+            raise EvalError("cannot write qualification comparison %r: %s" % (args.json_out, exc)) from exc
+        for failure in report["failures"]:
+            print("FAIL: " + failure, file=sys.stderr)
+        return 0 if report["passed"] else 1
+    corpus = qualification.validate_corpus(qualification.load_document(args.corpus))
+    if args.command == "qualify-validate":
+        families = {case["family"] for case in corpus["cases"]}
+        print("%d cases, %d source families; split leakage checks passed" % (len(corpus["cases"]), len(families)))
+        return 0
+    matrix = qualification.validate_matrix(qualification.load_document(args.matrix))
+    limits = qualification._limits(matrix.get("limits"))
+    if not args.diagnostic and (limits["min_accuracy"] is None or limits["min_boundary_cases"] < 1):
+        raise EvalError("release qualification requires explicit min_accuracy and min_boundary_cases >= 1; "
+                        "use --diagnostic for agreement-only measurements")
+    baseline = qualification.load_document(args.baseline) if args.baseline else None
+    if baseline is not None:
+        qualification._validate_saved_report(baseline, diagnostic=args.diagnostic)
+    base = Path(args.matrix).resolve().parent
+    for cell in matrix["cells"]:
+        for key in ("checkpoint", "onnx_path"):
+            if key in cell:
+                cell[key] = str((base / cell[key]).resolve())
+    report = qualification.run_matrix(corpus, matrix)
+    if baseline is not None and report["passed"]:
+        comparison = qualification.compare_reports(report, baseline,
+                                                    allow_unverified_identity=args.diagnostic)
+        report["baseline_comparison"] = comparison
+        if not comparison["passed"]:
+            report["passed"] = report["production_qualified"] = False
+            report["failures"].extend("saved release baseline: " + failure for failure in comparison["failures"])
+    try:
+        with open(args.json_out, "w", encoding="utf-8", newline="\n") as handle:
+            json.dump(report, handle, ensure_ascii=False, indent=2, allow_nan=False)
+            handle.write("\n")
+    except (OSError, ValueError) as exc:
+        raise EvalError("cannot write qualification report %r: %s" % (args.json_out, exc)) from exc
+    for name, cell in report["cells"].items():
+        print("%s: %s" % (name, cell["status"]))
+    for failure in report["failures"]:
+        print("FAIL: " + failure, file=sys.stderr)
+    return 0 if report["passed"] and (args.diagnostic or report["production_qualified"]) else 1
+
+
 def _cmd_compare(args) -> int:
     # `_identity_of` rather than a bare `config` slice, because a report may carry its identity
     # at the top level -- `research/evals/act_head_eval.py` puts `schema` there -- and
@@ -564,6 +635,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     try:
+        if args.command in ("qualify", "qualify-validate", "qualify-compare"):
+            return _cmd_qualify(args)
         if args.command == "agreement":
             return _cmd_agreement(args)
         if args.command == "validate":

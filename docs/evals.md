@@ -1,5 +1,8 @@
 # Evaluation harness
 
+For a versioned local backend/precision matrix, measured boundary coverage and reviewed
+baseline comparisons, use [release qualification](release-qualification.md).
+
 `laya.evals` turns a labelled dataset into a repeatable score, and a baseline into a
 pass/fail gate, so a quality change is a reviewable diff instead of a hand-check.
 

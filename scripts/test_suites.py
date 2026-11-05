@@ -113,6 +113,9 @@ SCRIPT_SUITES = [
 ]
 
 PYTEST_SUITES = [
+    "tests/test_qualification.py",
+    "tests/test_qualification_cli.py",
+    "tests/test_qualification_baseline.py",
     "tests/test_routing_parity.py",
     "tests/test_required_cache_transport.py",
     "tests/test_microbatch.py",

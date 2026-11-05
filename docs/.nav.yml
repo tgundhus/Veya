@@ -8,6 +8,7 @@ nav:
       - structured.md
       - compaction.md
       - routing-parity.md
+      - release-qualification.md
       - hooks
       - langchain.md
       - llamaindex.md

@@ -1860,6 +1860,37 @@ check_true("DecisionCacheError is a runtime error", issubclass(DecisionCacheErro
 check("Shared routing contract version", _lang_module.ROUTING_CONTRACT_VERSION,
       "veya-routing-v1-unicode15")
 
+from laya.qualification import (  # noqa: E402
+    compare_reports as _compare_qualification_reports,
+    load_document as _load_qualification_document, qualify as _qualify,
+    run_matrix as _run_qualification_matrix, split_families as _split_qualification_families,
+    validate_corpus as _validate_qualification_corpus, validate_matrix as _validate_qualification_matrix,
+)
+for _label, _function, _required in (
+    ("qualification.load_document", _load_qualification_document, ("path",)),
+    ("qualification.validate_corpus", _validate_qualification_corpus, ("document",)),
+    ("qualification.validate_matrix", _validate_qualification_matrix, ("document",)),
+    ("qualification.run_matrix", _run_qualification_matrix, ("corpus", "matrix")),
+    ("qualification.split_families", _split_qualification_families, ("document",)),
+    ("qualification.qualify", _qualify, ("corpus", "runners")),
+):
+    for _param in _required:
+        check_param(_label, _function, _param, inspect.Parameter.empty)
+check_param("qualification.qualify", _qualify, "reference", inspect.Parameter.empty, inspect.Parameter.KEYWORD_ONLY)
+check_param("qualification.qualify", _qualify, "allow_unverified_identity", False, inspect.Parameter.KEYWORD_ONLY)
+for _param, _default in (("batch_sizes", (1, 2, 4)), ("repeats", 2), ("limits", None),
+                         ("concurrencies", (1,))):
+    check_param("qualification.qualify", _qualify, _param, _default, inspect.Parameter.KEYWORD_ONLY)
+for _param, _default in (("evaluation_fraction", 0.2), ("calibration_fraction", 0.2), ("seed", 0)):
+    check_param("qualification.split_families", _split_qualification_families, _param, _default,
+                inspect.Parameter.KEYWORD_ONLY)
+for _param in ("candidate", "baseline"):
+    check_param("qualification.compare_reports", _compare_qualification_reports, _param, inspect.Parameter.empty)
+check_param("qualification.compare_reports", _compare_qualification_reports, "limits", None,
+            inspect.Parameter.KEYWORD_ONLY)
+check_param("qualification.compare_reports", _compare_qualification_reports, "allow_unverified_identity", False,
+            inspect.Parameter.KEYWORD_ONLY)
+
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
     print("  FAIL", f)

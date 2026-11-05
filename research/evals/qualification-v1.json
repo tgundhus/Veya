@@ -1,0 +1,408 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "local-decisions-v1",
+  "description": "Hand-authored synthetic contrast fixtures for local release qualification. These are engineering scenarios, not a representative accuracy benchmark. Boundary candidates are unlabelled and are not claimed to produce probabilities near 0.5 until measured on a pinned checkpoint.",
+  "label_policy": "Expected values follow the explicit question rubric. Choice labels are category names, noul labels are booleans and score labels are zero-based ordinal levels. Empty expected maps intentionally exclude ambiguous boundary candidates from labelled quality metrics. Related variants always share one source family and one split.",
+  "cases": [
+    {
+      "id": "billing-base",
+      "family": "billing-refund",
+      "split": "evaluation",
+      "variant": "base",
+      "state": "I was charged twice for one order. Please refund the duplicate charge.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Choose the department for the customer's main request. Use other when there is no billing or technical request.",
+          "criteria": {
+            "billing": "Charges, payments, invoices or refunds.",
+            "technical": "Broken software, errors, outages or access problems.",
+            "other": "All other requests, or insufficient information to identify a billing or technical issue."
+          }
+        }
+      },
+      "expected": {"department": "billing"},
+      "tags": ["synthetic", "contrast", "choice"]
+    },
+    {
+      "id": "billing-paraphrase",
+      "family": "billing-refund",
+      "split": "evaluation",
+      "variant": "paraphrase",
+      "state": "The same purchase appears on my card statement twice. Return the extra payment, please.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Choose the department for the customer's main request. Use other when there is no billing or technical request.",
+          "criteria": {
+            "billing": "Charges, payments, invoices or refunds.",
+            "technical": "Broken software, errors, outages or access problems.",
+            "other": "All other requests, or insufficient information to identify a billing or technical issue."
+          }
+        }
+      },
+      "expected": {"department": "billing"},
+      "tags": ["synthetic", "contrast", "choice"]
+    },
+    {
+      "id": "billing-distractor",
+      "family": "billing-refund",
+      "split": "evaluation",
+      "variant": "distractor",
+      "state": "I like the blue theme in the account portal and the new logo. My actual request is a refund: I was charged twice for the same order.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Choose the department for the customer's main request. Use other when there is no billing or technical request.",
+          "criteria": {
+            "billing": "Charges, payments, invoices or refunds.",
+            "technical": "Broken software, errors, outages or access problems.",
+            "other": "All other requests, or insufficient information to identify a billing or technical issue."
+          }
+        }
+      },
+      "expected": {"department": "billing"},
+      "tags": ["synthetic", "contrast", "choice"]
+    },
+    {
+      "id": "billing-evidence-removed",
+      "family": "billing-refund",
+      "split": "evaluation",
+      "variant": "evidence_removed",
+      "state": "Hello, I have a request about my account. I have not described the problem yet.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Choose the department for the customer's main request. Use other when there is no billing or technical request.",
+          "criteria": {
+            "billing": "Charges, payments, invoices or refunds.",
+            "technical": "Broken software, errors, outages or access problems.",
+            "other": "All other requests, or insufficient information to identify a billing or technical issue."
+          }
+        }
+      },
+      "expected": {"department": "other"},
+      "tags": ["synthetic", "contrast", "choice"]
+    },
+    {
+      "id": "billing-counterfactual",
+      "family": "billing-refund",
+      "split": "evaluation",
+      "variant": "counterfactual",
+      "state": "My payments are correct and I do not need a refund. The application crashes every time I sign in; please fix that error.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Choose the department for the customer's main request. Use other when there is no billing or technical request.",
+          "criteria": {
+            "billing": "Charges, payments, invoices or refunds.",
+            "technical": "Broken software, errors, outages or access problems.",
+            "other": "All other requests, or insufficient information to identify a billing or technical issue."
+          }
+        }
+      },
+      "expected": {"department": "technical"},
+      "tags": ["synthetic", "contrast", "choice"]
+    },
+    {
+      "id": "billing-boundary-candidate",
+      "family": "billing-refund",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The invoice page crashes before I can check whether the amount charged is correct. I need help with both the page and the bill.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Choose the department for the customer's main request. Use other when there is no billing or technical request.",
+          "criteria": {
+            "billing": "Charges, payments, invoices or refunds.",
+            "technical": "Broken software, errors, outages or access problems.",
+            "other": "All other requests, or insufficient information to identify a billing or technical issue."
+          }
+        }
+      },
+      "expected": {},
+      "tags": ["synthetic", "contrast", "choice", "boundary-candidate", "unlabelled"]
+    },
+    {
+      "id": "authorization-base",
+      "family": "refund-authorization",
+      "split": "evaluation",
+      "variant": "base",
+      "state": "The customer wrote: I approve the proposed refund. Please issue it now.",
+      "questions": {
+        "authorized": {
+          "type": "noul",
+          "instructions": "Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false."
+        }
+      },
+      "expected": {"authorized": true},
+      "tags": ["synthetic", "contrast", "noul"]
+    },
+    {
+      "id": "authorization-paraphrase",
+      "family": "refund-authorization",
+      "split": "evaluation",
+      "variant": "paraphrase",
+      "state": "Customer reply: Yes, you have my permission to send the refund you proposed.",
+      "questions": {
+        "authorized": {
+          "type": "noul",
+          "instructions": "Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false."
+        }
+      },
+      "expected": {"authorized": true},
+      "tags": ["synthetic", "contrast", "noul"]
+    },
+    {
+      "id": "authorization-distractor",
+      "family": "refund-authorization",
+      "split": "evaluation",
+      "variant": "distractor",
+      "state": "The customer said the package arrived on Tuesday and the weather was rainy. They then wrote: I approve the proposed refund; please issue it.",
+      "questions": {
+        "authorized": {
+          "type": "noul",
+          "instructions": "Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false."
+        }
+      },
+      "expected": {"authorized": true},
+      "tags": ["synthetic", "contrast", "noul"]
+    },
+    {
+      "id": "authorization-evidence-removed",
+      "family": "refund-authorization",
+      "split": "evaluation",
+      "variant": "evidence_removed",
+      "state": "The refund proposal was sent to the customer. No customer reply has been received.",
+      "questions": {
+        "authorized": {
+          "type": "noul",
+          "instructions": "Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false."
+        }
+      },
+      "expected": {"authorized": false},
+      "tags": ["synthetic", "contrast", "noul"]
+    },
+    {
+      "id": "authorization-counterfactual",
+      "family": "refund-authorization",
+      "split": "evaluation",
+      "variant": "counterfactual",
+      "state": "The customer wrote: I reject the refund proposal. Do not issue a refund.",
+      "questions": {
+        "authorized": {
+          "type": "noul",
+          "instructions": "Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false."
+        }
+      },
+      "expected": {"authorized": false},
+      "tags": ["synthetic", "contrast", "noul"]
+    },
+    {
+      "id": "authorization-boundary-candidate",
+      "family": "refund-authorization",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The customer wrote: The refund sounds reasonable, though I want to check one detail before we go ahead.",
+      "questions": {
+        "authorized": {
+          "type": "noul",
+          "instructions": "Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false."
+        }
+      },
+      "expected": {},
+      "tags": ["synthetic", "contrast", "noul", "boundary-candidate", "unlabelled"]
+    },
+    {
+      "id": "priority-base",
+      "family": "outage-priority",
+      "split": "evaluation",
+      "variant": "base",
+      "state": "The production service is down for every customer. All transactions are blocked and no workaround exists. We need help immediately.",
+      "questions": {
+        "priority": {
+          "type": "score",
+          "instructions": "Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.",
+          "criteria": [
+            "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+            "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+            "High: active production outage blocking all customers with no workaround; immediate action is needed."
+          ]
+        }
+      },
+      "expected": {"priority": 2},
+      "tags": ["synthetic", "contrast", "score"]
+    },
+    {
+      "id": "priority-paraphrase",
+      "family": "outage-priority",
+      "split": "evaluation",
+      "variant": "paraphrase",
+      "state": "Every customer is unable to complete a transaction because production is unavailable. There is no alternative path. Restore service now.",
+      "questions": {
+        "priority": {
+          "type": "score",
+          "instructions": "Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.",
+          "criteria": [
+            "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+            "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+            "High: active production outage blocking all customers with no workaround; immediate action is needed."
+          ]
+        }
+      },
+      "expected": {"priority": 2},
+      "tags": ["synthetic", "contrast", "score"]
+    },
+    {
+      "id": "priority-distractor",
+      "family": "outage-priority",
+      "split": "evaluation",
+      "variant": "distractor",
+      "state": "The team changed its meeting room last week and ordered new mugs. Right now production is down, all customer transactions are blocked, and no workaround exists. Immediate restoration is required.",
+      "questions": {
+        "priority": {
+          "type": "score",
+          "instructions": "Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.",
+          "criteria": [
+            "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+            "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+            "High: active production outage blocking all customers with no workaround; immediate action is needed."
+          ]
+        }
+      },
+      "expected": {"priority": 2},
+      "tags": ["synthetic", "contrast", "score"]
+    },
+    {
+      "id": "priority-evidence-removed",
+      "family": "outage-priority",
+      "split": "evaluation",
+      "variant": "evidence_removed",
+      "state": "Please add this routine question to the support backlog. No operational impact or deadline has been reported.",
+      "questions": {
+        "priority": {
+          "type": "score",
+          "instructions": "Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.",
+          "criteria": [
+            "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+            "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+            "High: active production outage blocking all customers with no workaround; immediate action is needed."
+          ]
+        }
+      },
+      "expected": {"priority": 0},
+      "tags": ["synthetic", "contrast", "score"]
+    },
+    {
+      "id": "priority-counterfactual",
+      "family": "outage-priority",
+      "split": "evaluation",
+      "variant": "counterfactual",
+      "state": "One employee sees an intermittent report delay. The manual export works, all customer transactions succeed, and the report is needed next week rather than today.",
+      "questions": {
+        "priority": {
+          "type": "score",
+          "instructions": "Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.",
+          "criteria": [
+            "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+            "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+            "High: active production outage blocking all customers with no workaround; immediate action is needed."
+          ]
+        }
+      },
+      "expected": {"priority": 1},
+      "tags": ["synthetic", "contrast", "score"]
+    },
+    {
+      "id": "priority-boundary-candidate",
+      "family": "outage-priority",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Some customers report intermittent checkout delays. Retrying sometimes works, but we do not yet know how many payments are affected or whether the workaround is reliable.",
+      "questions": {
+        "priority": {
+          "type": "score",
+          "instructions": "Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.",
+          "criteria": [
+            "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+            "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+            "High: active production outage blocking all customers with no workaround; immediate action is needed."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": ["synthetic", "contrast", "score", "boundary-candidate", "unlabelled"]
+    },
+    {
+      "id": "training-sales-base",
+      "family": "training-sales-enquiry",
+      "split": "training",
+      "variant": "base",
+      "state": "I am considering buying a team subscription. Can you send pricing for twenty seats?",
+      "questions": {
+        "intent": {
+          "type": "choice",
+          "instructions": "Classify the prospective customer's main intent.",
+          "criteria": {
+            "sales": "Buying, pricing or starting a subscription.",
+            "technical": "Solving a software error or outage.",
+            "other": "Other requests."
+          }
+        }
+      },
+      "expected": {"intent": "sales"},
+      "tags": ["synthetic", "split-reference", "choice"]
+    },
+    {
+      "id": "training-sales-paraphrase",
+      "family": "training-sales-enquiry",
+      "split": "training",
+      "variant": "paraphrase",
+      "state": "What would a new subscription for a group of twenty people cost? We have not purchased it yet.",
+      "questions": {
+        "intent": {
+          "type": "choice",
+          "instructions": "Classify the prospective customer's main intent.",
+          "criteria": {
+            "sales": "Buying, pricing or starting a subscription.",
+            "technical": "Solving a software error or outage.",
+            "other": "Other requests."
+          }
+        }
+      },
+      "expected": {"intent": "sales"},
+      "tags": ["synthetic", "split-reference", "choice"]
+    },
+    {
+      "id": "calibration-meeting-base",
+      "family": "calibration-meeting-confirmation",
+      "split": "calibration",
+      "variant": "base",
+      "state": "The attendee replied: I confirm that I will attend the meeting on Friday.",
+      "questions": {
+        "confirmed": {
+          "type": "noul",
+          "instructions": "Has the attendee explicitly confirmed attendance at the Friday meeting?"
+        }
+      },
+      "expected": {"confirmed": true},
+      "tags": ["synthetic", "split-reference", "noul"]
+    },
+    {
+      "id": "calibration-meeting-counterfactual",
+      "family": "calibration-meeting-confirmation",
+      "split": "calibration",
+      "variant": "counterfactual",
+      "state": "The attendee replied: I cannot attend the Friday meeting; please record my absence.",
+      "questions": {
+        "confirmed": {
+          "type": "noul",
+          "instructions": "Has the attendee explicitly confirmed attendance at the Friday meeting?"
+        }
+      },
+      "expected": {"confirmed": false},
+      "tags": ["synthetic", "split-reference", "noul"]
+    }
+  ]
+}
