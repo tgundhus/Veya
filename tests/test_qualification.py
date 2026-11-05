@@ -17,6 +17,45 @@ import laya.qualification as qualification
 from laya.qualification import qualify, run_matrix, split_families, validate_corpus, validate_matrix
 
 
+def test_artifact_identity_detects_changed_sparse_external_data(tmp_path):
+    onnx = pytest.importorskip("onnx")
+    from onnx import TensorProto, helper
+
+    (tmp_path / "rl_agent_config.json").write_text("{}", encoding="utf-8")
+    sidecar = tmp_path / "values.data"
+    sidecar.write_bytes(b"\x00\x00\x80\x3f")
+    values = helper.make_tensor("sparse", TensorProto.FLOAT, [1], [1.0])
+    values.ClearField("float_data")
+    values.data_location = TensorProto.EXTERNAL
+    values.external_data.add(key="location", value=sidecar.name)
+    indices = helper.make_tensor("indices", TensorProto.INT64, [1], [0])
+    graph = helper.make_graph([], "sparse", [], [])
+    graph.sparse_initializer.append(helper.make_sparse_tensor(values, indices, [2]))
+    path = tmp_path / "model.onnx"
+    onnx.save_model(helper.make_model(graph), path)
+    before = qualification._artifact_identity(tmp_path, path)
+    sidecar.write_bytes(b"\x00\x00\x00\x40")
+    after = qualification._artifact_identity(tmp_path, path)
+    assert after["onnx/model.onnx"] == before["onnx/model.onnx"]
+    assert after["onnx-external/values.data"] != before["onnx-external/values.data"]
+
+
+def test_onnx_artifact_scan_accepts_legacy_repeated_descriptors(tmp_path, monkeypatch):
+    (tmp_path / "rl_agent_config.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "weights.data").write_bytes(b"weights")
+    graph = tmp_path / "model.onnx"
+    graph.write_bytes(b"graph")
+    tensor = SimpleNamespace(DESCRIPTOR=SimpleNamespace(full_name="onnx.TensorProto"),
+                             external_data=[SimpleNamespace(key="location", value="weights.data")],
+                             ListFields=lambda: [])
+    legacy = SimpleNamespace(message_type=object(), label=3, LABEL_REPEATED=3)
+    model = SimpleNamespace(DESCRIPTOR=SimpleNamespace(full_name="onnx.ModelProto"),
+                            ListFields=lambda: [(legacy, [tensor])])
+    monkeypatch.setitem(sys.modules, "onnx", SimpleNamespace(load=lambda *a, **k: model))
+    identity = qualification._artifact_identity(tmp_path, graph)
+    assert "onnx-external/weights.data" in identity
+
+
 QUESTIONS = {
     "route": {"type": "choice", "instructions": "Allow or deny?",
               "criteria": {"allow": "Authorized requests", "deny": "Unauthorized requests"}},

@@ -182,7 +182,11 @@ def _onnx_artifacts(path):
         # initializers, function attributes and arbitrarily nested graph attributes.
         for descriptor, value in message.ListFields():
             if descriptor.message_type is not None:
-                pending.extend(value if descriptor.is_repeated else [value])
+                try:
+                    repeated = descriptor.is_repeated
+                except AttributeError:
+                    repeated = descriptor.label == descriptor.LABEL_REPEATED
+                pending.extend(value if repeated else [value])
     return files
 
 

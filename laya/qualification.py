@@ -762,24 +762,17 @@ def _artifact_identity(checkpoint, graph=None):
         graph = Path(graph).resolve()
         if not graph.is_file():
             raise EvalError("ONNX graph must be an existing local file")
-        # External tensor data can change a graph without changing its protobuf.
+        # Use the same schema walk as replay, including sparse and nested tensors.
+        from .replay import _onnx_artifacts
         try:
-            import onnx
+            files = _onnx_artifacts(graph)
         except ImportError as exc:
             raise _Unavailable("ONNX artifact verification requires the onnx extra") from exc
-        model = onnx.load(str(graph), load_external_data=False)
-        external = set()
-        # Include tensors in subgraphs/attributes, not only top-level weights.
-        for tensor in onnx.external_data_helper._get_all_tensors(model):
-            for pair in tensor.external_data:
-                if pair.key == "location":
-                    external.add(pair.value)
-        result["onnx/" + graph.name] = _file_sha(graph)
-        for name in sorted(external):
-            location = (graph.parent / name).resolve()
-            if not location.is_relative_to(graph.parent) or not location.is_file():
-                raise EvalError("ONNX external tensor data must exist beside the graph")
-            result["onnx-external/" + name] = _file_sha(location)
+        except (OSError, ValueError) as exc:
+            raise EvalError("cannot verify ONNX artifacts: %s" % exc) from exc
+        for path in sorted(map(Path, files)):
+            key = "onnx/" + graph.name if path == graph else "onnx-external/" + path.relative_to(graph.parent).as_posix()
+            result[key] = _file_sha(path)
     return result
 
 
