@@ -78,6 +78,10 @@ Questions in a request share a forward pass. `predict_batch` handles multiple st
 `predict_long` handles documents beyond the context window. Routing selects an English,
 multilingual or task-specific checkpoint. Explicit `model` and `lang` overrides are available.
 
+The experimental, opt-in [`ContextCompactor`](https://github.com/tgundhus/laya-pro/blob/main/docs/compaction.md) uses local decisions
+to prune explicitly replayable tool history. Conservative defaults retain uncertain,
+protected or incompletely scored content; evaluate retention before using it in an agent loop.
+
 ## What the fork adds
 
 - **Decision retention:** fixed or per-decision TTL, optional renewal on use, bounded storage,

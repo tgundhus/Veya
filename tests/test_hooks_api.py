@@ -1815,6 +1815,41 @@ for order in (None, [0, 1], [1, 0]):
     _fingerprints.append(questions_fingerprint(Dataset([Example("hello", {"q": definition}, {"q": "a"})])))
 check("evaluation identity preserves option order", len(set(_fingerprints)), 3)
 
+from laya import ContextCompactor  # noqa: E402
+check_true("ContextCompactor exported", "ContextCompactor" in laya.__all__)
+for _param, _default in (("drop_threshold", 0.1), ("preserve_recent_messages", 6),
+                         ("batch_size", 8), ("truncate_head_chars", 300),
+                         ("min_reduction_ratio", 0.1), ("model", None), ("max_len", None)):
+    check_param("ContextCompactor", ContextCompactor.__init__, _param, _default,
+                inspect.Parameter.KEYWORD_ONLY)
+for _param, _default in (("goal", inspect.Parameter.empty), ("constraints", ""), ("token_counter", None)):
+    check_param("ContextCompactor.compact", ContextCompactor.compact, _param, _default,
+                inspect.Parameter.KEYWORD_ONLY)
+_empty_compaction = ContextCompactor(Router()).compact([], goal="No work")
+check("ContextCompactor result keys", set(_empty_compaction), {"messages", "decisions", "stats"})
+check("ContextCompactor stats keys", set(_empty_compaction["stats"]), {
+    "chars_before", "chars_after", "messages_before", "messages_after", "pairs_dropped",
+    "results_shortened", "pairs_kept", "tokens_before", "tokens_after", "reduction_ratio",
+    "reduction_unit", "candidates", "batches", "fallback", "elapsed_seconds",
+})
+
+class _AbstainingCompactorPredictor:
+    def predict_batch(self, states, questions, **kwargs):
+        return [{"answers": {key: {"noul": 0.01, "abstention": "abstained"} for key in questions},
+                 "usage": {"truncated": False, "state_tokens_dropped": 0}} for _ in states]
+
+_abstention_transcript = [
+    {"role": "system", "text": "Keep required evidence."},
+    {"role": "assistant", "toolUses": [{"tool_use_id": "read", "tool": "Read", "input": {},
+                                          "replayable": True}]},
+    {"role": "user", "toolResults": [{"tool_use_id": "read", "text": "evidence " * 100}]},
+]
+_abstained_compaction = ContextCompactor(
+    _AbstainingCompactorPredictor(), preserve_recent_messages=0,
+).compact(_abstention_transcript, goal="Keep required evidence")
+check("ContextCompactor respects predictor abstention", _abstained_compaction["messages"], _abstention_transcript)
+check("ContextCompactor abstention reason", _abstained_compaction["decisions"][0]["reason"], "unverified_confidence")
+
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
     print("  FAIL", f)
