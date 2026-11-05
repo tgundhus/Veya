@@ -39,7 +39,8 @@ env var                    meaning                                        defaul
 ``LAYA_CACHE``             enable an in-memory decision cache             0 (off)
 ``LAYA_CACHE_PATH``        SQLite decision file; also enables caching      (none)
 ``LAYA_CACHE_TTL``         retention in seconds, or "none" for no expiry   86400
-``LAYA_CACHE_MAXSIZE``     maximum decisions in the built-in store        10000
+``LAYA_CACHE_MAXSIZE``     maximum decisions, or "none" for no bound      10000
+``LAYA_CACHE_FINGERPRINT`` explicit policy identity across model upgrades (auto)
 ``LAYA_CACHE_RENEW_ON_HIT`` renew retention when a decision is replayed    0
 ``LAYA_API_KEY``           if set, require ``Authorization: Bearer <it>``  (none)
                            on every route, and do not serve the
@@ -1326,13 +1327,16 @@ def _configure_decision_cache(router):
             raise ValueError
     except ValueError:
         raise ValueError("LAYA_CACHE_TTL must be finite positive seconds or 'none'") from None
+    raw_maxsize = os.environ.get("LAYA_CACHE_MAXSIZE", "10000").strip()
     try:
-        maxsize = int(os.environ.get("LAYA_CACHE_MAXSIZE", "10000"))
-        if maxsize < 1:
+        maxsize = None if raw_maxsize.lower() == "none" else int(raw_maxsize)
+        if maxsize is not None and maxsize < 1:
             raise ValueError
     except ValueError:
-        raise ValueError("LAYA_CACHE_MAXSIZE must be a positive integer") from None
+        raise ValueError("LAYA_CACHE_MAXSIZE must be a positive integer or 'none'") from None
+    fingerprint = os.environ.get("LAYA_CACHE_FINGERPRINT", "").strip() or None
     cache = DecisionCache(path, ttl=ttl, maxsize=maxsize,
+                          fingerprint=fingerprint,
                           renew_on_hit=_env_bool("LAYA_CACHE_RENEW_ON_HIT", False))
     try:
         router.add_hook(cache)

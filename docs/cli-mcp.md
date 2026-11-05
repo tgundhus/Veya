@@ -289,6 +289,10 @@ the server is ready.
 | `LAYA_THREADS` | PyTorch default | Caps Torch intra-op threads for CPU inference; keep it at or below the physical core count. |
 | `LAYA_AUTO_TASK` | `0` | Set to `1` to let a request auto-route to the `typed-decisions` checkpoint. Same meaning as in `laya.serve`; it does not preload that checkpoint, so `LAYA_MODELS` still decides what is built at startup. |
 | `LAYA_DEFAULT_MODEL` | `english` | The checkpoint a state with no language evidence falls back to, same meaning as in `laya.serve`. Unlike `laya.serve`, an unresolvable name does not stop the server: it comes back as a `router construction failed` tool error on the next call, because a stdio server has no startup to refuse. |
+| `LAYA_CACHE_PATH` | unset | Local SQLite decision file; a nonempty path enables persistent replay. |
+| `LAYA_CACHE_TTL` | `86400` | Retention in seconds, or `none` for no expiry. |
+| `LAYA_CACHE_MAXSIZE` | `10000` | Decision count target, or `none` for no capacity eviction. |
+| `LAYA_CACHE_FINGERPRINT` | unset | Explicit policy identity across model upgrades; empty uses automatic model/configuration identity. |
 | `LAYA_BASE_URL` | unset | Send predictions to a `laya-serve` on your own hardware instead of loading checkpoints in each MCP process. A bare `host:port` is read as HTTP. |
 | `LAYA_REMOTE_TIMEOUT` | `300` | HTTP timeout in seconds when `LAYA_BASE_URL` is set, including the server's cold load. Invalid or non-positive values use the default. |
 | `LAYA_USER_AGENT` | `veya/<version>` | HTTP client identity in remote mode. Empty values use the default; invalid header characters are refused. Custom `RemoteRouter(user_agent=...)` overrides the environment. |
@@ -297,6 +301,13 @@ the server is ready.
 The configuration reports effective budgets and overrides. Torch thread changes affect the
 whole process; choose the mode at startup. The [mode guide](performance-modes.md) lists all five
 budgets, Python examples and the limits of the measurements.
+
+The local MCP builder uses the same [decision retention settings](production.md#cache-configuration)
+as HTTP. For durable replay, combine a persistent `LAYA_CACHE_PATH`, `LAYA_CACHE_TTL=none`,
+`LAYA_CACHE_MAXSIZE=none` and an explicit policy identity such as `policy-v1`.
+When `LAYA_BASE_URL` is set, configure these values in the HTTP server's environment.
+Store failures still recompute, so these settings do not guarantee the same answer
+when the authoritative store is unavailable or lost.
 
 ### Share one model server across MCP sessions
 

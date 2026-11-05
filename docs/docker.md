@@ -356,7 +356,8 @@ These apply to the `laya-serve` service only.
 | `LAYA_CACHE` | `0` | Enable process-local memory decision caching |
 | `LAYA_CACHE_PATH` | (none) | SQLite decision file; a nonempty path enables caching |
 | `LAYA_CACHE_TTL` | `86400` | Fixed retention in seconds, or `none` |
-| `LAYA_CACHE_MAXSIZE` | `10000` | Decision count target; SQLite enforces it during periodic pruning |
+| `LAYA_CACHE_MAXSIZE` | `10000` | Decision count target, or `none` for no capacity eviction; SQLite enforces numerical bounds during periodic pruning |
+| `LAYA_CACHE_FINGERPRINT` | (none) | Explicit policy identity across model upgrades; empty uses automatic model/configuration identity |
 | `LAYA_CACHE_RENEW_ON_HIT` | `0` | Extend retention on replay |
 
 For example, set `LAYA_ROOT_PATH=/laya` when publishing the API under `/laya`. The proxy must
@@ -384,6 +385,12 @@ LAYA_CACHE_PATH=/home/laya/decisions/cache.sqlite LAYA_CACHE_TTL=604800 \
 The `decision-cache` volume is separate from downloaded models. Removing that volume removes
 its database files; TTL alone does not physically erase rows or backups. See
 [retention and deletion](production.md#retention-and-deletion).
+
+For decisions retained without expiry or capacity eviction, set `LAYA_CACHE_TTL=none`,
+`LAYA_CACHE_MAXSIZE=none` and `LAYA_CACHE_FINGERPRINT=policy-v1` with that persistent
+SQLite path. Increment the policy identity when earlier decisions should be
+reevaluated. Store failures still recompute, and removing the volume loses its
+decisions; see [the durable replay limits](production.md#cache-configuration).
 
 ### Bearer token from a file
 

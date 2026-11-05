@@ -375,9 +375,15 @@ in
     };
 
     cacheMaxsize = lib.mkOption {
-      type = lib.types.nullOr lib.types.ints.positive;
+      type = lib.types.nullOr (lib.types.either lib.types.ints.positive lib.types.str);
       default = null;
-      description = "Maximum decisions stored (LAYA_CACHE_MAXSIZE).";
+      description = "Maximum decisions stored, or none to disable eviction (LAYA_CACHE_MAXSIZE).";
+    };
+
+    cacheFingerprint = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Explicit decision-policy identity (LAYA_CACHE_FINGERPRINT); null uses model identity.";
     };
 
     cacheRenewOnHit = lib.mkOption {
@@ -473,6 +479,8 @@ in
         LAYA_CACHE_TTL = cfg.cacheTtl;
       } // lib.optionalAttrs (cfg.cacheMaxsize != null) {
         LAYA_CACHE_MAXSIZE = toString cfg.cacheMaxsize;
+      } // lib.optionalAttrs (cfg.cacheFingerprint != null) {
+        LAYA_CACHE_FINGERPRINT = cfg.cacheFingerprint;
       } // lib.optionalAttrs (cfg.cacheRenewOnHit != null) {
         LAYA_CACHE_RENEW_ON_HIT = if cfg.cacheRenewOnHit then "1" else "0";
       } // {

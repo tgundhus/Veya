@@ -17,12 +17,13 @@ class CountingAgent:
     model_id_or_path = "test-checkpoint"
     revision = "test-revision"
 
-    def __init__(self):
+    def __init__(self, answer=0.9):
         self.calls = 0
+        self.answer = answer
 
     def system_one(self, state, questions, **kwargs):
         self.calls += 1
-        return {"model": "test", "answers": {"q": {"type": "noul", "noul": 0.9}},
+        return {"model": "test", "answers": {"q": {"type": "noul", "noul": self.answer}},
                 "usage": {"input_tokens": 8, "output_tokens": 0}}
 
     def predict_batch(self, states, questions, **kwargs):
@@ -32,13 +33,14 @@ class CountingAgent:
 @pytest.fixture(autouse=True)
 def local_environment(monkeypatch):
     for name in ("LAYA_CACHE", "LAYA_CACHE_PATH", "LAYA_CACHE_TTL", "LAYA_CACHE_MAXSIZE",
-                 "LAYA_CACHE_RENEW_ON_HIT", "LAYA_API_KEY", "LAYA_EXTRA_MODELS", "LAYA_DEFAULT_MODEL"):
+                 "LAYA_CACHE_FINGERPRINT", "LAYA_CACHE_RENEW_ON_HIT", "LAYA_API_KEY",
+                 "LAYA_EXTRA_MODELS", "LAYA_DEFAULT_MODEL"):
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("LAYA_PRELOAD", "0")
 
 
-def attached_router():
-    agent = CountingAgent()
+def attached_router(answer=0.9):
+    agent = CountingAgent(answer)
     router = Router()
     router.attach("english", agent)
     return router, agent
@@ -55,6 +57,7 @@ def test_cache_is_opt_in_and_retention_settings_are_validated(monkeypatch):
         assert report["ttl_seconds"] == 86400
         assert report["maxsize"] == 10000
         assert report["renew_on_hit"] is False
+        assert router._laya_decision_cache.fingerprint is None
     finally:
         serve._close_decision_cache(router)
 
@@ -62,12 +65,83 @@ def test_cache_is_opt_in_and_retention_settings_are_validated(monkeypatch):
 @pytest.mark.parametrize("name,value", [
     ("LAYA_CACHE_TTL", "0"), ("LAYA_CACHE_TTL", "nan"), ("LAYA_CACHE_TTL", "inf"),
     ("LAYA_CACHE_TTL", "-1"), ("LAYA_CACHE_MAXSIZE", "0"), ("LAYA_CACHE_MAXSIZE", "2.5"),
+    ("LAYA_CACHE_MAXSIZE", ""), ("LAYA_CACHE_MAXSIZE", "null"), ("LAYA_CACHE_MAXSIZE", "-1"),
 ])
 def test_invalid_retention_refuses_configuration(monkeypatch, name, value):
     monkeypatch.setenv("LAYA_CACHE", "1")
     monkeypatch.setenv(name, value)
     with pytest.raises(ValueError, match=name):
         serve.build_router()
+
+
+@pytest.mark.parametrize("maxsize,expected", [("32", 32), ("none", None), (" NONE ", None)])
+def test_capacity_and_policy_identity_are_forwarded(monkeypatch, maxsize, expected):
+    monkeypatch.setenv("LAYA_CACHE", "1")
+    monkeypatch.setenv("LAYA_CACHE_MAXSIZE", maxsize)
+    monkeypatch.setenv("LAYA_CACHE_FINGERPRINT", " policy-v1 ")
+    router, _ = attached_router()
+    serve._configure_decision_cache(router)
+    try:
+        assert router._laya_decision_cache.maxsize == expected
+        assert router._laya_decision_cache.fingerprint == "policy-v1"
+    finally:
+        serve._close_decision_cache(router)
+
+
+def test_empty_policy_identity_keeps_automatic_fingerprinting(monkeypatch):
+    monkeypatch.setenv("LAYA_CACHE", "1")
+    monkeypatch.setenv("LAYA_CACHE_FINGERPRINT", " \t ")
+    router, _ = attached_router()
+    serve._configure_decision_cache(router)
+    try:
+        assert router._laya_decision_cache.fingerprint is None
+    finally:
+        serve._close_decision_cache(router)
+
+
+def test_durable_policy_replays_borderline_decision_after_restart(monkeypatch, tmp_path):
+    import laya.consistency as consistency
+
+    clock = [100.0]
+    monkeypatch.setattr(consistency, "_now", lambda: clock[0])
+    monkeypatch.setenv("LAYA_CACHE_PATH", str(tmp_path / "durable.sqlite"))
+    monkeypatch.setenv("LAYA_CACHE_TTL", "none")
+    monkeypatch.setenv("LAYA_CACHE_MAXSIZE", "none")
+    monkeypatch.setenv("LAYA_CACHE_FINGERPRINT", "policy-v1")
+    first_router, first_agent = attached_router(0.51)
+    serve._configure_decision_cache(first_router)
+    try:
+        with TestClient(serve.create_app(first_router)) as client:
+            first = client.post("/v1/systemone", json=REQUEST)
+            assert first.status_code == 200
+            assert first.json()["answers"]["q"]["noul"] == 0.51
+            assert first_agent.calls == 1
+    finally:
+        serve._close_decision_cache(first_router)
+
+    clock[0] += 10 * 365 * 86400
+    second_router, second_agent = attached_router(0.49)
+    second_agent.revision = "replacement-revision"
+    serve._configure_decision_cache(second_router)
+    try:
+        with TestClient(serve.create_app(second_router)) as client:
+            repeat = client.post("/v1/systemone", json=REQUEST)
+            assert repeat.status_code == 200
+            assert repeat.json()["answers"]["q"]["noul"] == 0.51
+            assert second_agent.calls == 0
+            report = client.get("/health").json()["decision_cache"]
+            assert report["ttl_seconds"] is None and report["maxsize"] is None
+    finally:
+        serve._close_decision_cache(second_router)
+
+    # A deliberate policy-version change permits a fresh decision.
+    monkeypatch.setenv("LAYA_CACHE_FINGERPRINT", "policy-v2")
+    serve._configure_decision_cache(second_router)
+    try:
+        assert second_router.predict(**REQUEST)["answers"]["q"]["noul"] == 0.49
+        assert second_agent.calls == 1
+    finally:
+        serve._close_decision_cache(second_router)
 
 
 def test_http_replays_then_expires_and_hides_cache_details_from_anonymous_probe(monkeypatch):
@@ -114,7 +188,8 @@ def test_sqlite_cache_survives_http_lifespan_restart(monkeypatch, tmp_path):
     assert router._laya_decision_cache is None
 
 
-def test_mcp_uses_the_same_retention_and_loaded_limit(monkeypatch):
+@pytest.mark.parametrize("maxsize,expected", [("32", 32), ("none", None)])
+def test_mcp_uses_the_same_retention_and_loaded_limit(monkeypatch, maxsize, expected):
     pytest.importorskip("mcp")
     from laya.mcp import server
     from laya.mcp.tools import laya_status
@@ -122,7 +197,8 @@ def test_mcp_uses_the_same_retention_and_loaded_limit(monkeypatch):
     monkeypatch.setattr(server, "_ROUTER", None)
     monkeypatch.setenv("LAYA_CACHE", "1")
     monkeypatch.setenv("LAYA_CACHE_TTL", "none")
-    monkeypatch.setenv("LAYA_CACHE_MAXSIZE", "32")
+    monkeypatch.setenv("LAYA_CACHE_MAXSIZE", maxsize)
+    monkeypatch.setenv("LAYA_CACHE_FINGERPRINT", "policy-v1")
     monkeypatch.setenv("LAYA_CACHE_RENEW_ON_HIT", "1")
     monkeypatch.setenv("LAYA_MAX_LOADED", "3")
     router = server._ensure_router()
@@ -130,7 +206,8 @@ def test_mcp_uses_the_same_retention_and_loaded_limit(monkeypatch):
         assert router.max_loaded == 3
         report = laya_status(router=router)["decision_cache"]
         assert report["ttl_seconds"] is None
-        assert report["maxsize"] == 32
+        assert report["maxsize"] == expected
+        assert router._laya_decision_cache.fingerprint == "policy-v1"
         assert report["renew_on_hit"] is True
     finally:
         serve._close_decision_cache(router)

@@ -39,7 +39,8 @@ Caching is opt-in. Both the HTTP and local MCP builders read:
 | `LAYA_CACHE` | Enable an in-memory cache | disabled |
 | `LAYA_CACHE_PATH` | SQLite file; a nonempty path enables caching | unset |
 | `LAYA_CACHE_TTL` | Retention in seconds; `none` keeps entries indefinitely | `86400` |
-| `LAYA_CACHE_MAXSIZE` | Target bound for stored decisions | `10000` |
+| `LAYA_CACHE_MAXSIZE` | Target bound for stored decisions; `none` disables capacity eviction | `10000` |
+| `LAYA_CACHE_FINGERPRINT` | Explicit policy identity; empty uses automatic model/configuration identity | unset |
 | `LAYA_CACHE_RENEW_ON_HIT` | Renew retention on use | disabled |
 
 Fixed retention checks age from the stored decision. Renewal extends a frequently replayed
@@ -56,6 +57,31 @@ Inspect `cache_info()` or authenticated runtime status for hits, misses, conflic
 If the store fails, the engine computes the request again, which may produce a different answer.
 The memory bound is enforced on each write. SQLite checks it periodically to amortize database
 maintenance and can temporarily exceed it; call `prune()` for immediate enforcement.
+
+For retained decisions without scheduled expiry or capacity eviction, configure:
+
+```text
+LAYA_CACHE_PATH=/absolute/path/decisions.sqlite
+LAYA_CACHE_TTL=none
+LAYA_CACHE_MAXSIZE=none
+LAYA_CACHE_FINGERPRINT=policy-v1
+```
+
+The first stored decision for an exact request is replayed after ordinary process
+restarts, including a borderline 0.51 answer that a replacement model would score
+at 0.49. A fixed fingerprint deliberately keeps that model's earlier decisions
+across model/configuration upgrades; change the policy identity to permit fresh
+decisions. The routed checkpoint name, ordered questions, state and per-call token
+budgets remain part of the key. Use the same routed checkpoint name across upgrades.
+With no capacity bound, monitor database growth and maintain backups.
+
+This is a retention policy, not an unconditional same-answer guarantee: missing,
+deleted, corrupt or unavailable storage can still cause recomputation. Existing
+fail-open behavior is unchanged; a future required-cache/fail-closed policy would
+be needed to refuse a new answer when an authoritative decision cannot be replayed.
+SQLite's current synchronization setting also does not guarantee preservation of
+every acknowledged decision after machine power loss. Exact replay does not prove
+the original decision was correct.
 
 ## Retention and deletion
 

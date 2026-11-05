@@ -69,7 +69,8 @@ questions = {
     "urgent": {"type": "noul", "instructions": "Does this need attention today?"},
 }
 
-with DecisionCache("decisions.sqlite", ttl=7 * 86400, maxsize=100_000) as cache:
+with DecisionCache("decisions.sqlite", ttl=None, maxsize=None,
+                   fingerprint="support-policy-v1") as cache:
     with Router(hooks=[cache]) as router:
         state = "We were billed twice. Please refund the duplicate today."
         result = router.predict(state, questions)
@@ -106,6 +107,9 @@ protected or incompletely scored content; evaluate retention before using it in 
   Python, CLI, HTTP and local MCP. Existing defaults remain when no mode is selected.
 
 The cache stores request hashes and result payloads, including option labels and probabilities.
+The example keeps decisions without expiry or capacity eviction under an explicit policy
+identity; change that identity deliberately when reevaluation is required. A missing or
+unavailable store can still cause recomputation under the current fail-open policy.
 It does not store the original request text. Expiry prevents replay; physical deletion requires
 pruning and a policy for database files, journals and backups. A cached answer can still be
 wrong. [Cache behavior and retention](https://github.com/tgundhus/Veya/blob/main/docs/consistency.md).
@@ -127,12 +131,14 @@ HTTP clients and MCP can use that engine's cache. Native SDKs do not implement t
 persistence policy. [Capability table and examples](https://github.com/tgundhus/Veya/blob/main/docs/integration.md).
 
 Start a local HTTP server with `laya-serve`, then call `POST /v1/systemone` or
-`POST /v1/systemone/batch`. Set these variables in the server's environment for a seven-day cache:
+`POST /v1/systemone/batch`. Set these variables in the server's environment for a
+persistent decision policy without expiry or capacity eviction:
 
 ```text
 LAYA_CACHE_PATH=decisions.sqlite
-LAYA_CACHE_TTL=604800
-LAYA_CACHE_MAXSIZE=100000
+LAYA_CACHE_TTL=none
+LAYA_CACHE_MAXSIZE=none
+LAYA_CACHE_FINGERPRINT=support-policy-v1
 ```
 
 The same cache variables apply to `laya-mcp-server`. Authentication, request bounds,
