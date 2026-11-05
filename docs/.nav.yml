@@ -26,6 +26,7 @@ nav:
       - finetune_browser_agent.md
   - Reports:
       - reports/index.md
+      - reports/runtime-adoption-2026-11-05.md
       - reports/decision-engines-2026-11-05.md
       - reports/compaction-2026-11-05.md
       - reports/production-review.md

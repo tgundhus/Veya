@@ -19,6 +19,8 @@ the numbers quoted in the main README — nothing here is imported by the `laya`
 
 | file | what it does |
 |---|---|
+| `scripts/bench_required_cache.py` | optional versus required memory/SQLite cache latency and retained borderline decisions; controlled predictor, no neural inference |
+| `scripts/bench_microbatch.py` | queue-inclusive HTTP single-request batching comparison, synthetic by default or using an existing local English CPU checkpoint |
 | `scripts/bench_compaction.py` | offline experimental tool-history pruning on 12 synthetic annotated transcripts; reports tokens, evidence retention and timings for existing local checkpoints |
 | `scripts/laya_benchmark_colab.ipynb` | the full head-to-head on a Colab T4: typed-decisions, MASSIVE intent + scenario (14 languages), XNLI (15), English suites, latency, option-order robustness, calibration repair. Writes one JSON. |
 | `scripts/build_benchmark_nb.py` | generator for that notebook (edit here, not the `.ipynb`) |

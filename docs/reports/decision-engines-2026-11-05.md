@@ -5,6 +5,10 @@ description: Source-based comparison of Laya, Kev, Laya-MLX, NanoJev and Nimble,
 
 # Veya: speed and stable decisions
 
+This comparison records the pre-adoption state at `c4a4027c`. The later
+[runtime adoption report](runtime-adoption-2026-11-05.md) records implemented
+correctness fixes, required storage, microbatching and their measurements.
+
 Veya is the new project and distribution name. The repository is
 [tgundhus/Veya](https://github.com/tgundhus/Veya), with Python distributions `veya`,
 `veya-client` and `veya-onnx`. Existing `laya`, `laya_client`, `laya_onnx`, command

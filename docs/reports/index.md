@@ -8,6 +8,9 @@ credibility: "Every number links to a script and a raw result in research/, or t
 
 # Consistency and speed work, September 2026
 
+The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
+required decision storage, experimental HTTP microbatching and selected upstream fixes.
+
 This work set out to answer three questions about Laya's decisions:
 
 1. Are they more repeatable than Jev's?

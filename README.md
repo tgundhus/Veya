@@ -12,7 +12,9 @@ SDKs, documentation and measurements.
 Selected upstream changes are reviewed through Laya 0.4.18, with a
 [5 November comparison](https://github.com/tgundhus/Veya/blob/main/docs/reports/decision-engines-2026-11-05.md)
 covering newer Laya changes and four related decision engines. Review coverage
-does not mean every upstream change has been adopted.
+does not mean every upstream change has been adopted. The
+[runtime adoption report](https://github.com/tgundhus/Veya/blob/main/docs/reports/runtime-adoption-2026-11-05.md)
+records the resulting changes, measurements and qualification limits.
 
 [Documentation](https://tgundhus.github.io/Veya/) · [Integration](https://github.com/tgundhus/Veya/blob/main/docs/integration.md) ·
 [Benchmarks](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md) · [Deployment](https://github.com/tgundhus/Veya/blob/main/docs/production.md)
@@ -142,6 +144,7 @@ LAYA_CACHE_PATH=decisions.sqlite
 LAYA_CACHE_TTL=none
 LAYA_CACHE_MAXSIZE=none
 LAYA_CACHE_FINGERPRINT=support-policy-v1
+LAYA_CACHE_REQUIRED=1
 ```
 
 The same cache variables apply to `laya-mcp-server`. Authentication, request bounds,
