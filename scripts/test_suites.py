@@ -114,6 +114,7 @@ SCRIPT_SUITES = [
 
 PYTEST_SUITES = [
     "tests/test_required_cache_transport.py",
+    "tests/test_microbatch.py",
     "tests/test_serve.py",
     "tests/test_server_cache.py",
     "tests/test_mcp_remote.py",

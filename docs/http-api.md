@@ -58,6 +58,8 @@ Configure the server through environment variables. The `--backend` and
 | `LAYA_MAX_CONCURRENT` | requests admitted past auth at once; excess gets `503` | `16` |
 | `LAYA_BODY_READ_TIMEOUT` | maximum seconds to receive a request body; timeout answers `408` and releases admission | `10` |
 | `LAYA_MAX_BATCH_TOKENS` | tokens one `/v1/systemone/batch` FORWARD PASS may collate (`states` x questions x row width); a larger batch is split into several passes, not refused | `131072` |
+| `LAYA_MICROBATCH_MAX_STATES` | Opt-in collection of compatible single HTTP requests; 0 disables, otherwise 2–64 | `0` |
+| `LAYA_MICROBATCH_WAIT_MS` | Finite nonnegative collection window in milliseconds; see [microbatching](microbatch.md) | `1` |
 | `LAYA_JEV_STRICT` | serve the strict Jev wire contract: no root `routing`, no per-answer `action` / `answer_confidence`, no `confidence` on noul answers, and `usage` reduced to `input_tokens` + `output_tokens`. For clients that validate the response against the Jev contract with no extra fields | `0` |
 | `LAYA_TOURNAMENT_GROUP` | Opt-in choice elimination on both decision endpoints; integer group size 2–100, otherwise disabled | `0` |
 

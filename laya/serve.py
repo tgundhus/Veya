@@ -57,6 +57,8 @@ env var                    meaning                                        defaul
                            explicit ``model=`` like a built-in.
 ``LAYA_MAX_TOKEN_BUDGET``  cap on per-request max_len / head_max_len       8192
 ``LAYA_MAX_BATCH_TOKENS``  cap on batch forward tokens (states x q x len)  131072
+``LAYA_MICROBATCH_MAX_STATES`` opt-in cross-request single-call batching   0 (off)
+``LAYA_MICROBATCH_WAIT_MS`` collection window for compatible requests       1
 ``LAYA_BODY_READ_TIMEOUT`` seconds a request may spend delivering its body   10
                            before the server answers 408 and releases its
                            admission slot (see below)
@@ -86,6 +88,7 @@ import logging
 import math
 import os
 import re
+import sys
 import time
 from contextlib import asynccontextmanager
 from typing import Any, Dict, Optional
@@ -546,6 +549,112 @@ def _resolve_max_batch_tokens(default: int = DEFAULT_MAX_BATCH_TOKENS) -> int:
                      default)
         return default
     return n
+
+
+def _resolve_microbatch_config():
+    """Deployment-only, opt-in single-request collection; invalid settings fail startup."""
+    try:
+        maximum = int(os.environ.get("LAYA_MICROBATCH_MAX_STATES", "0"))
+        wait_ms = float(os.environ.get("LAYA_MICROBATCH_WAIT_MS", "1"))
+    except (ValueError, OverflowError):
+        raise ValueError("LAYA_MICROBATCH_MAX_STATES must be 0 or 2..64; LAYA_MICROBATCH_WAIT_MS must be finite >= 0") from None
+    if maximum != 0 and not 2 <= maximum <= MAX_BATCH_STATES:
+        raise ValueError("LAYA_MICROBATCH_MAX_STATES must be 0 or 2..64")
+    if not math.isfinite(wait_ms) or wait_ms < 0:
+        raise ValueError("LAYA_MICROBATCH_WAIT_MS must be finite >= 0")
+    return maximum, wait_ms / 1000.0
+
+
+def _microbatch_plan(router, payloads, max_batch_tokens):
+    """Use actual resident checkpoint widths; unknown/cold or custom-hook paths stay serial."""
+    from .consistency import DecisionCache
+    from .hooks import compose_hooks
+    from .mcp.device import router_agent
+    from .router import Router
+
+    if type(router) is not Router or callable(router.lang_guess):
+        return None
+    router_hooks = compose_hooks(router.hooks)
+    if any(type(hook) is not DecisionCache for hook in router_hooks):
+        return None
+    has_cache = bool(router_hooks)
+    widest = 0
+    for state, questions, model, kwargs in payloads:
+        if not questions:
+            return None
+        # The private selector has no hooks; arbitrary callable hints were excluded above.
+        decision = router._route(state, questions, model=model, **{
+            key: kwargs[key] for key in ("task", "lang", "lang_guess") if key in kwargs})
+        agent = router_agent(router, decision["model"])
+        if agent is None:
+            return None
+        # Resident instances have already loaded their implementation module. Avoid
+        # importing Torch just to test an ONNX deployment's eligibility.
+        builtin_types = (getattr(sys.modules.get(__package__ + ".agent"), "Agent", None),
+                         getattr(sys.modules.get(__package__ + ".onnx_agent"), "ONNXAgent", None),
+                         getattr(sys.modules.get(__package__ + ".onnx_agent"), "_NativeONNXAgent", None))
+        if type(agent) not in builtin_types:
+            return None
+        agent_hooks = compose_hooks(getattr(agent, "hooks", ()))
+        if any(type(hook) is not DecisionCache for hook in agent_hooks):
+            return None
+        has_cache = has_cache or bool(agent_hooks)
+        width = kwargs.get("max_len", getattr(agent, "cfg", {}).get("max_len"))
+        if isinstance(width, bool) or not isinstance(width, int) or width <= 0:
+            return None
+        widest = max(widest, len(questions) * width)
+    # All controls/schema already match. Serial cache lookups let the first exact
+    # state finish before its repeats, avoiding redundant uncached batch rows.
+    if has_cache and len({state for state, _, _, _ in payloads}) < len(payloads):
+        return None
+    return max_batch_tokens // widest if widest else None
+
+
+def _run_microbatch(router, payloads, max_batch_tokens):
+    """Return per-request outcomes. Required-cache errors are terminal, never retried."""
+    from .errors import DecisionCacheError
+
+    def individually():
+        outputs = []
+        for state, questions, model, kwargs in payloads:
+            begun = time.perf_counter()
+            try:
+                result = router.predict(state, questions, model=model, **kwargs)
+                outputs.append((result, None, (time.perf_counter() - begun) * 1000.0, begun))
+            except Exception as exc:
+                outputs.append((None, exc, (time.perf_counter() - begun) * 1000.0, begun))
+        return outputs
+
+    if len(payloads) < 2:
+        return individually()
+    try:
+        size = _microbatch_plan(router, payloads, max_batch_tokens)
+    except DecisionCacheError:
+        raise
+    except Exception:
+        return individually()
+    if size is None or size < 2:
+        return individually()
+    requests = []
+    for state, questions, model, kwargs in payloads:
+        requests.append(dict(state=state, questions=questions, model=model,
+                             **{key: value for key, value in kwargs.items() if key != "min_confidence"}))
+    call_kwargs = {"batch_size": min(size, len(payloads))}
+    if "min_confidence" in payloads[0][3]:
+        call_kwargs["min_confidence"] = payloads[0][3]["min_confidence"]
+    try:
+        begun = time.perf_counter()
+        results = router.predict_batch(requests, **call_kwargs)
+        if len(results) != len(payloads):
+            raise RuntimeError("Router.predict_batch returned the wrong number of results")
+        infer_ms = (time.perf_counter() - begun) * 1000.0
+        return [(result, None, infer_ms, begun) for result in results]
+    except DecisionCacheError:
+        raise
+    except Exception:
+        # Only built-in routing with no arbitrary hooks is combined. Individual execution
+        # isolates malformed requests/model errors and avoids leaking a neighbour's error.
+        return individually()
 
 
 def _validate_budget_param(body: Dict[str, Any], key: str, max_cap: int) -> Optional[int]:
@@ -1386,6 +1495,7 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
     from fastapi import FastAPI, Header, HTTPException, Request
 
     from .mcp.device import agent_device, resolve_device, router_agent
+    from ._microbatch import Microbatcher, MicrobatchUnavailable
 
     owns_router = router is None
     if router is None:
@@ -1434,6 +1544,8 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
     max_batch_tokens = config["max_batch_tokens"] if config is not None else _resolve_max_batch_tokens()
     body_read_timeout = _resolve_body_read_timeout()
     admission: Optional[asyncio.Semaphore] = None
+    microbatch_max_states, microbatch_wait = _resolve_microbatch_config()
+    microbatch = None
 
     idle_unload_seconds = _resolve_idle_unload_seconds()
     tournament_group = _resolve_tournament_group()
@@ -1450,6 +1562,34 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
             # On the worker, including failures and cancelled HTTP requests whose forward
             # pass continues after the event loop releases the gate.
             _mark_request()
+
+    async def _execute_microbatch(jobs):
+        nonlocal gate
+        if gate is None:
+            gate = asyncio.Lock()
+        async with gate:
+            live = [job for job in jobs if not job.future.cancelled()]
+            run = partial(_run_microbatch, router, [job.payload for job in live], max_batch_tokens)
+            outputs = (await asyncio.get_running_loop().run_in_executor(pool, _run_inference, run)) if live else []
+        remaining = iter(outputs)
+        live_futures = {job.future for job in live}
+        outcomes = []
+        for job in jobs:
+            if job.future not in live_futures:
+                outcomes.append((None, None, 0.0, 0.0))
+                continue
+            result, error, infer_ms, begun = next(remaining)
+            outcomes.append((result, error, infer_ms, max(0.0, (begun - job.enqueued) * 1000.0)))
+        return outcomes
+
+    async def _submit_microbatch(state, questions, model, kwargs):
+        nonlocal microbatch
+        if microbatch is None or microbatch.closed:
+            microbatch = Microbatcher(_execute_microbatch, capacity=max_concurrent,
+                                      max_states=microbatch_max_states, wait_seconds=microbatch_wait)
+        key = json.dumps({"questions": questions, "model": model, "controls": kwargs},
+                         ensure_ascii=False, separators=(",", ":"))
+        return await microbatch.submit(key, (state, questions, model, kwargs))
 
     def _unload_if_idle():
         # Recheck on the inference worker: a queued unload must see any forward pass that
@@ -1473,7 +1613,7 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
-        nonlocal pool, pool_closed, gate, admission
+        nonlocal pool, pool_closed, gate, admission, microbatch
         # A host can run one app's lifespan more than once (a TestClient per test, an embedding
         # server that restarts it). The previous shutdown closed the pool, and the gate and the
         # admission semaphore bind to the loop they first waited on, which a restart replaces.
@@ -1484,6 +1624,7 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
             pool_closed = False
         gate = None
         admission = None
+        microbatch = None
         reaper = asyncio.create_task(_idle_reaper()) if idle_unload_seconds else None
         try:
             yield
@@ -1494,6 +1635,8 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
                     await reaper
                 except asyncio.CancelledError:
                     pass
+            if microbatch is not None:
+                await microbatch.close()
             # TestClient, embedded ASGI apps, and process supervisors all need
             # the executor to drain when the app stops.
             pool.shutdown(wait=True, cancel_futures=True)
@@ -1666,28 +1809,32 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
         try:
             # Laya's result is already Jev-shaped: {model, answers, usage, routing}.
             # hs-jev decodes `answers` and `usage` and ignores the rest.
-            async with gate:
-                loop = asyncio.get_running_loop()
-                t0 = time.perf_counter()
-                if tournament_group:
-                    run = partial(_predict_with_tournament, router, state, questions, tournament_group,
-                                  model=model, **predict_kwargs)
-                else:
-                    run = partial(router.predict, state, questions, model=model, **predict_kwargs)
-                result = await loop.run_in_executor(pool, _run_inference, run)
-                infer_ms = (time.perf_counter() - t0) * 1000.0
-                if _env_bool("LAYA_JEV_STRICT", False):
-                    result = _project_jev_strict(result)
-                else:
-                    result = _add_jev_confidence(result)
-                from fastapi.responses import JSONResponse
-                return JSONResponse(
-                    content=result,
-                    headers={
-                        "Server-Timing": f"inference;dur={infer_ms:.2f}",
-                        "X-Inference-Time-Ms": f"{infer_ms:.2f}"
-                    }
-                )
+            queue_ms = None
+            if microbatch_max_states and not tournament_group:
+                result, infer_ms, queue_ms = await _submit_microbatch(state, questions, model, predict_kwargs)
+            else:
+                async with gate:
+                    loop = asyncio.get_running_loop()
+                    t0 = time.perf_counter()
+                    if tournament_group:
+                        run = partial(_predict_with_tournament, router, state, questions, tournament_group,
+                                      model=model, **predict_kwargs)
+                    else:
+                        run = partial(router.predict, state, questions, model=model, **predict_kwargs)
+                    result = await loop.run_in_executor(pool, _run_inference, run)
+                    infer_ms = (time.perf_counter() - t0) * 1000.0
+            if _env_bool("LAYA_JEV_STRICT", False):
+                result = _project_jev_strict(result)
+            else:
+                result = _add_jev_confidence(result)
+            from fastapi.responses import JSONResponse
+            timing = f"inference;dur={infer_ms:.2f}"
+            if queue_ms is not None:
+                timing += f", queue;dur={queue_ms:.2f}"
+            return JSONResponse(content=result, headers={
+                "Server-Timing": timing, "X-Inference-Time-Ms": f"{infer_ms:.2f}"})
+        except MicrobatchUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc), headers={"Retry-After": "1"}) from None
         except HTTPException:
             raise
         except DecisionCacheError:

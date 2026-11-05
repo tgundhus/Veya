@@ -10,7 +10,7 @@ HERE = Path(__file__).resolve().parent
 MODULES = (
     "onnx_agent", "inference_common", "inference", "checkpoint", "calibration",
     "hooks", "revisions", "confidence", "performance", "structured", "consistency", "errors",
-    "router", "serve", "shortlist", "lang", "presets",
+    "router", "serve", "shortlist", "lang", "presets", "_microbatch",
     "mcp/__init__", "mcp/device", "mcp/remote", "mcp/server", "mcp/tools",
 )
 

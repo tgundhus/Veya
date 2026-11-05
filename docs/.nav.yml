@@ -15,6 +15,7 @@ nav:
         ignore_no_matches: true
   - Deployment:
       - performance-modes.md
+      - microbatch.md
       - onnx-runtime.md
       - production.md
       - docker.md

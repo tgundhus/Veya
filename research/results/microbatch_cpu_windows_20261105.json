@@ -1,0 +1,1022 @@
+{
+  "started_utc": "2026-11-05T17:27:09.624538+00:00",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.14",
+  "repeats": 3,
+  "concurrency": 8,
+  "backend": "English CPU fp32",
+  "artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+    "rl_agent_config.json": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+  },
+  "runtime": {
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logical_cpus": 32,
+    "torch": "2.14.1+cpu",
+    "cpu_threads": 4,
+    "cpu_interop_threads": 1,
+    "amp": "fp32",
+    "backend": "eager"
+  },
+  "source_sha256": {
+    "laya/__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "laya/_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "laya/_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "laya/_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "laya/_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "laya/_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "laya/agent.py": "3db3a067528e651b519a674673a74822997f8a25e22e6ef920253a1bb1fa70ec",
+    "laya/calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "laya/calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "laya/checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "laya/cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "laya/common.py": "bab0075c2374d825bc889b982503eb70d7fa63ae76c88c0252e96cda8a54d3f2",
+    "laya/compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "laya/confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "laya/consistency.py": "0746a19f9915d6854ae029a1cf10798078e8424689e24714425ab162ee37e1b4",
+    "laya/email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "laya/errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "laya/evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "laya/evals_cli.py": "aba49904b3e37c19a939a891dae9e9671785f34a99097986e9d0646a28829aa9",
+    "laya/evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "laya/evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "laya/fast.py": "e2feef1705f08f8b1d6e8a8d126dd726128ec7849edde92b8f4b1d17ef7ab5dd",
+    "laya/hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "laya/inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "laya/inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "laya/lang.py": "c6a5b6969a481753b3e8906905dea2d8f53d828e8a9ad02674907c6ed2d8670b",
+    "laya/onnx_agent.py": "ff6c6e0fd8b24b08932327839040530ad3f2b08bf44d53cb851032f328905c47",
+    "laya/performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "laya/presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "laya/revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "laya/router.py": "3bab786d1c90f3d57d0533772844210a281756bfbf72174d1ca0156681343ee9",
+    "laya/serve.py": "fb3fb6d687687bca410e24753380530e01ebe55cedd78165f5398d2a6dfbca13",
+    "laya/shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "laya/structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "laya/tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "laya/train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "laya/train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05",
+    "research/scripts/bench_microbatch.py": "651479ac983576c602ccac31d5011ae687a3aca7459fedb81b5a37a1867925cd"
+  },
+  "limits": "Local ASGI transport, no TCP; warmed resident models; wall time includes server queue, JSON and routing. Client concurrency wait is excluded from per-request latency. Small tail sample; uncontrolled workstation load. Synthetic timing is not model throughput. Nearest-rank percentiles. Real Agent calls count the predict_batch boundary (system_one delegates there); agent_requested_states counts states entering that API, not hardware rows. Real-checkpoint forward calls/rows count the Torch model forward pre-hook, including retry attempts. Synthetic calls count the fixture's controlled cost chunks.",
+  "microbatch_max_states": 8,
+  "microbatch_wait_ms": 1,
+  "scenarios": [
+    {
+      "name": "unique",
+      "runs": [
+        {
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 1.7174173000385053,
+            "requests_per_second": 9.316314677650722,
+            "p50_ms": 846.4054999640211,
+            "p95_ms": 892.1864000149071,
+            "p99_ms": 892.1864000149071,
+            "latencies_ms": [
+              94.34409998357296,
+              205.6876000133343,
+              327.26109999930486,
+              412.0011999621056,
+              520.7786000100896,
+              645.8776000072248,
+              739.2268999828957,
+              849.6460000169463,
+              877.8384000179358,
+              850.4525999887846,
+              846.4054999640211,
+              892.1864000149071,
+              874.3613999686204,
+              860.8930999762379,
+              887.3430999810807,
+              865.075399982743
+            ],
+            "agent_calls": 16,
+            "agent_requested_states": 16,
+            "model_forward_calls": 16,
+            "model_forward_rows": 16
+          },
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 1.3315611999714747,
+            "requests_per_second": 12.015970426550998,
+            "p50_ms": 660.7934000203386,
+            "p95_ms": 669.362300017383,
+            "p99_ms": 669.362300017383,
+            "latencies_ms": [
+              660.7934000203386,
+              660.5226999963634,
+              659.8566999891773,
+              659.7601000103168,
+              659.6834999509156,
+              659.6137000015005,
+              659.5379000063986,
+              659.4545000116341,
+              669.362300017383,
+              669.2090000142343,
+              669.1286999848671,
+              669.0578000270762,
+              668.9892000285909,
+              668.9088999992236,
+              668.8462999882177,
+              668.6994999763556
+            ],
+            "agent_calls": 2,
+            "agent_requested_states": 16,
+            "model_forward_calls": 2,
+            "model_forward_rows": 16
+          },
+          "outputs_equal": true
+        },
+        {
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 1.355316600005608,
+            "requests_per_second": 11.805359721805072,
+            "p50_ms": 672.3599000251852,
+            "p95_ms": 681.6402999684215,
+            "p99_ms": 681.6402999684215,
+            "latencies_ms": [
+              681.6402999684215,
+              681.3641999615356,
+              681.182499974966,
+              681.075599975884,
+              680.9985000290908,
+              680.9227999765426,
+              680.8442000183277,
+              680.7632999843918,
+              672.3599000251852,
+              672.2142999642529,
+              672.1410999889486,
+              672.0607000170276,
+              671.987599984277,
+              671.9179000356235,
+              671.8360999948345,
+              671.684600005392
+            ],
+            "agent_calls": 2,
+            "agent_requested_states": 16,
+            "model_forward_calls": 2,
+            "model_forward_rows": 16
+          },
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 1.7855368999880739,
+            "requests_per_second": 8.960890139042698,
+            "p50_ms": 859.3198000453413,
+            "p95_ms": 939.4790999940597,
+            "p99_ms": 939.4790999940597,
+            "latencies_ms": [
+              108.80500002531335,
+              220.48809996340424,
+              344.2050999728963,
+              430.5983000085689,
+              542.596000013873,
+              667.3539999756031,
+              755.0257000257261,
+              868.7294000410475,
+              894.2772999871522,
+              867.5844999961555,
+              859.3198000453413,
+              916.8719000299461,
+              913.4860999765806,
+              903.3282999880612,
+              939.4790999940597,
+              914.8135000141338
+            ],
+            "agent_calls": 16,
+            "agent_requested_states": 16,
+            "model_forward_calls": 16,
+            "model_forward_rows": 16
+          },
+          "outputs_equal": true
+        },
+        {
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 1.7826536999782547,
+            "requests_per_second": 8.97538316061901,
+            "p50_ms": 848.7907000235282,
+            "p95_ms": 928.5017999936827,
+            "p99_ms": 928.5017999936827,
+            "latencies_ms": [
+              121.05650000739843,
+              239.290900004562,
+              360.37670000223443,
+              446.68009999440983,
+              559.4857000396587,
+              681.2735999701545,
+              768.5199999832548,
+              881.8886000080965,
+              884.1065999586135,
+              854.9482999951579,
+              848.7907000235282,
+              888.5585999814793,
+              903.8842999725603,
+              893.5050999862142,
+              928.5017999936827,
+              898.7661999999546
+            ],
+            "agent_calls": 16,
+            "agent_requested_states": 16,
+            "model_forward_calls": 16,
+            "model_forward_rows": 16
+          },
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 1.3426616999786347,
+            "requests_per_second": 11.916627993674506,
+            "p50_ms": 661.6202000295743,
+            "p95_ms": 679.6526000252925,
+            "p99_ms": 679.6526000252925,
+            "latencies_ms": [
+              679.6526000252925,
+              679.3684000149369,
+              679.1619000141509,
+              679.0873999707401,
+              679.018700029701,
+              678.949199966155,
+              678.8624000037089,
+              678.7796000135131,
+              661.6202000295743,
+              661.464300006628,
+              661.3916999776848,
+              661.3275000127032,
+              661.2431999528781,
+              661.1642999923788,
+              661.0986000159755,
+              660.7471000170335
+            ],
+            "agent_calls": 2,
+            "agent_requested_states": 16,
+            "model_forward_calls": 2,
+            "model_forward_rows": 16
+          },
+          "outputs_equal": true
+        }
+      ],
+      "summary": {
+        "serial": {
+          "requests_per_second": 8.97538316061901,
+          "p50_ms": 848.7907000235282,
+          "p95_ms": 928.5017999936827,
+          "p99_ms": 928.5017999936827,
+          "agent_calls": 16,
+          "agent_requested_states": 16,
+          "model_forward_calls": 16,
+          "model_forward_rows": 16
+        },
+        "microbatch": {
+          "requests_per_second": 11.916627993674506,
+          "p50_ms": 661.6202000295743,
+          "p95_ms": 679.6526000252925,
+          "p99_ms": 679.6526000252925,
+          "agent_calls": 2,
+          "agent_requested_states": 16,
+          "model_forward_calls": 2,
+          "model_forward_rows": 16
+        }
+      },
+      "all_outputs_equal": true
+    },
+    {
+      "name": "repeats70",
+      "runs": [
+        {
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 0.35434879997046664,
+            "requests_per_second": 45.15325013470774,
+            "p50_ms": 132.80289998510852,
+            "p95_ms": 349.63189996778965,
+            "p99_ms": 349.63189996778965,
+            "latencies_ms": [
+              2.452599990647286,
+              2.1522999741137028,
+              2.2009999956935644,
+              2.5926000089384615,
+              3.073900006711483,
+              3.600900003220886,
+              4.032700031530112,
+              132.80289998510852,
+              263.0407999968156,
+              349.63189996778965,
+              349.5370000018738,
+              349.19219999574125,
+              348.7547999829985,
+              348.30949996830896,
+              347.91869996115565,
+              219.34509999118745
+            ],
+            "agent_calls": 3,
+            "agent_requested_states": 3,
+            "model_forward_calls": 3,
+            "model_forward_rows": 3,
+            "cache": {
+              "size": 7,
+              "maxsize": null,
+              "hits": 13,
+              "misses": 7,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 13,
+              "misses": 3,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 0.3996805000351742,
+            "requests_per_second": 40.0319755369399,
+            "p50_ms": 152.6941999909468,
+            "p95_ms": 244.86189999151975,
+            "p99_ms": 244.86189999151975,
+            "latencies_ms": [
+              152.6941999909468,
+              152.46020001359284,
+              152.3183000390418,
+              152.3105999804102,
+              152.31869998387992,
+              152.31769997626543,
+              152.32580003794283,
+              152.34850003616884,
+              244.86189999151975,
+              244.5148000260815,
+              244.3286000052467,
+              244.13870001444593,
+              243.94009995739907,
+              243.7880000215955,
+              243.6378999846056,
+              243.2941000442952
+            ],
+            "agent_calls": 3,
+            "agent_requested_states": 3,
+            "model_forward_calls": 3,
+            "model_forward_rows": 3,
+            "cache": {
+              "size": 7,
+              "maxsize": null,
+              "hits": 13,
+              "misses": 7,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 13,
+              "misses": 3,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "outputs_equal": true
+        },
+        {
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 0.35797899996396154,
+            "requests_per_second": 44.695359229482044,
+            "p50_ms": 132.7243999694474,
+            "p95_ms": 223.34520000731573,
+            "p99_ms": 223.34520000731573,
+            "latencies_ms": [
+              132.7243999694474,
+              132.48460000613704,
+              132.31870002346113,
+              132.30550003936514,
+              132.30110000586137,
+              132.28219997836277,
+              132.26869999198243,
+              132.26549996761605,
+              223.34520000731573,
+              223.01590000279248,
+              222.82980004092678,
+              222.6453999755904,
+              222.45330002624542,
+              222.26599999703467,
+              221.9776000129059,
+              221.62819997174665
+            ],
+            "agent_calls": 3,
+            "agent_requested_states": 3,
+            "model_forward_calls": 3,
+            "model_forward_rows": 3,
+            "cache": {
+              "size": 7,
+              "maxsize": null,
+              "hits": 13,
+              "misses": 7,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 13,
+              "misses": 3,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 0.3386451000114903,
+            "requests_per_second": 47.24710323420335,
+            "p50_ms": 128.18709999555722,
+            "p95_ms": 332.81110000098124,
+            "p99_ms": 332.81110000098124,
+            "latencies_ms": [
+              2.3604999878443778,
+              2.0890000159852207,
+              2.21649999730289,
+              2.7118000434711576,
+              3.126800002064556,
+              3.4773999941535294,
+              3.8206999888643622,
+              128.18709999555722,
+              245.79200003063306,
+              332.67949998844415,
+              332.81110000098124,
+              332.5514000025578,
+              332.43229996878654,
+              332.4191000428982,
+              332.43860001675785,
+              208.33330001914874
+            ],
+            "agent_calls": 3,
+            "agent_requested_states": 3,
+            "model_forward_calls": 3,
+            "model_forward_rows": 3,
+            "cache": {
+              "size": 7,
+              "maxsize": null,
+              "hits": 13,
+              "misses": 7,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 13,
+              "misses": 3,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "outputs_equal": true
+        },
+        {
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 0.3781967000104487,
+            "requests_per_second": 42.30602752366151,
+            "p50_ms": 152.2423999849707,
+            "p95_ms": 372.17709998367354,
+            "p99_ms": 372.17709998367354,
+            "latencies_ms": [
+              2.847899973858148,
+              2.6990000042133033,
+              3.0064000166021287,
+              3.407500043977052,
+              3.7447999930009246,
+              4.043799999635667,
+              4.322200024034828,
+              152.2423999849707,
+              275.4579999600537,
+              372.17709998367354,
+              371.87259999336675,
+              371.5592999942601,
+              371.62370001897216,
+              371.526199975051,
+              371.5299000032246,
+              223.75289996853098
+            ],
+            "agent_calls": 3,
+            "agent_requested_states": 3,
+            "model_forward_calls": 3,
+            "model_forward_rows": 3,
+            "cache": {
+              "size": 7,
+              "maxsize": null,
+              "hits": 13,
+              "misses": 7,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 13,
+              "misses": 3,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 0.33385669998824596,
+            "requests_per_second": 47.92475334646065,
+            "p50_ms": 123.93259996315464,
+            "p95_ms": 207.7852000365965,
+            "p99_ms": 207.7852000365965,
+            "latencies_ms": [
+              123.93259996315464,
+              123.68530000094324,
+              123.53789998451248,
+              123.54439997579902,
+              123.55700001353398,
+              123.59739997191355,
+              123.58399998629466,
+              123.52640001336113,
+              207.7852000365965,
+              207.62369997100905,
+              207.54049997776747,
+              207.4770000181161,
+              207.40059996023774,
+              207.31800002977252,
+              207.3380000074394,
+              207.16059999540448
+            ],
+            "agent_calls": 3,
+            "agent_requested_states": 3,
+            "model_forward_calls": 3,
+            "model_forward_rows": 3,
+            "cache": {
+              "size": 7,
+              "maxsize": null,
+              "hits": 13,
+              "misses": 7,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 13,
+              "misses": 3,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "outputs_equal": true
+        }
+      ],
+      "prewarmed_repeat_fraction": 0.8125,
+      "summary": {
+        "serial": {
+          "requests_per_second": 45.15325013470774,
+          "p50_ms": 132.80289998510852,
+          "p95_ms": 349.63189996778965,
+          "p99_ms": 349.63189996778965,
+          "agent_calls": 3,
+          "agent_requested_states": 3,
+          "model_forward_calls": 3,
+          "model_forward_rows": 3
+        },
+        "microbatch": {
+          "requests_per_second": 44.695359229482044,
+          "p50_ms": 132.7243999694474,
+          "p95_ms": 223.34520000731573,
+          "p99_ms": 223.34520000731573,
+          "agent_calls": 3,
+          "agent_requested_states": 3,
+          "model_forward_calls": 3,
+          "model_forward_rows": 3
+        }
+      },
+      "all_outputs_equal": true
+    },
+    {
+      "name": "identical_burst",
+      "runs": [
+        {
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 0.11208950000582263,
+            "requests_per_second": 142.74307583822625,
+            "p50_ms": 5.090399994514883,
+            "p95_ms": 106.77640000358224,
+            "p99_ms": 106.77640000358224,
+            "latencies_ms": [
+              104.28939998382702,
+              103.9456999860704,
+              104.29909999947995,
+              104.765199997928,
+              105.37639999529347,
+              105.85440002614632,
+              106.45379999186844,
+              106.77640000358224,
+              5.090399994514883,
+              4.78259997908026,
+              4.433599999174476,
+              4.205300007015467,
+              3.7814000388607383,
+              3.4647000138647854,
+              3.2167999888770282,
+              3.076599969062954
+            ],
+            "agent_calls": 1,
+            "agent_requested_states": 1,
+            "model_forward_calls": 1,
+            "model_forward_rows": 1,
+            "cache": {
+              "size": 5,
+              "maxsize": null,
+              "hits": 15,
+              "misses": 5,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 15,
+              "misses": 1,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 0.10144959995523095,
+            "requests_per_second": 157.71378109978448,
+            "p50_ms": 3.1820000149309635,
+            "p95_ms": 96.36610001325607,
+            "p99_ms": 96.36610001325607,
+            "latencies_ms": [
+              96.36610001325607,
+              96.13349998835474,
+              95.95069999340922,
+              95.93300003325567,
+              95.94410000136122,
+              95.93539999332279,
+              95.9337999811396,
+              95.92840005643666,
+              3.1820000149309635,
+              2.854800026398152,
+              2.668200002517551,
+              2.4941000156104565,
+              2.3196000256575644,
+              2.1391999907791615,
+              1.93060003221035,
+              1.5956999850459397
+            ],
+            "agent_calls": 1,
+            "agent_requested_states": 1,
+            "model_forward_calls": 1,
+            "model_forward_rows": 1,
+            "cache": {
+              "size": 5,
+              "maxsize": null,
+              "hits": 15,
+              "misses": 5,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 15,
+              "misses": 1,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "outputs_equal": true
+        },
+        {
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 0.09732090000761673,
+            "requests_per_second": 164.40456262475763,
+            "p50_ms": 2.8635000344365835,
+            "p95_ms": 92.9496000171639,
+            "p99_ms": 92.9496000171639,
+            "latencies_ms": [
+              92.9496000171639,
+              92.69100002711639,
+              92.50490000704303,
+              92.43540000170469,
+              92.36760000931099,
+              92.30139997089282,
+              92.23030001157895,
+              92.15079998830333,
+              2.8635000344365835,
+              2.694699971470982,
+              2.6178999687545,
+              2.5635999627411366,
+              2.5046999799087644,
+              2.439500007312745,
+              2.3607999901287258,
+              2.214200037997216
+            ],
+            "agent_calls": 1,
+            "agent_requested_states": 1,
+            "model_forward_calls": 1,
+            "model_forward_rows": 1,
+            "cache": {
+              "size": 5,
+              "maxsize": null,
+              "hits": 15,
+              "misses": 5,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 15,
+              "misses": 1,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 0.11214639997342601,
+            "requests_per_second": 142.67065196735095,
+            "p50_ms": 4.42860001930967,
+            "p95_ms": 106.22080002212897,
+            "p99_ms": 106.22080002212897,
+            "latencies_ms": [
+              104.67539995443076,
+              104.163600015454,
+              104.45109999272972,
+              104.80660002212971,
+              105.0251999986358,
+              105.32129998318851,
+              105.75550002977252,
+              106.22080002212897,
+              4.42860001930967,
+              4.064599983394146,
+              3.9762999513186514,
+              3.8904999964870512,
+              3.829799999948591,
+              3.7386000039987266,
+              3.4568000119179487,
+              3.3091999939642847
+            ],
+            "agent_calls": 1,
+            "agent_requested_states": 1,
+            "model_forward_calls": 1,
+            "model_forward_rows": 1,
+            "cache": {
+              "size": 5,
+              "maxsize": null,
+              "hits": 15,
+              "misses": 5,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 15,
+              "misses": 1,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "outputs_equal": true
+        },
+        {
+          "serial": {
+            "requests": 16,
+            "elapsed_seconds": 0.10460459999740124,
+            "requests_per_second": 152.95694453587603,
+            "p50_ms": 5.4284000070765615,
+            "p95_ms": 97.98520000185817,
+            "p99_ms": 97.98520000185817,
+            "latencies_ms": [
+              95.6191000295803,
+              95.49269999843091,
+              95.88049998274073,
+              96.45690000616014,
+              96.9399000168778,
+              97.27979998569936,
+              97.57049998734146,
+              97.98520000185817,
+              5.4284000070765615,
+              4.92039998061955,
+              4.517299996223301,
+              4.189800005406141,
+              4.094799980521202,
+              4.1235999669879675,
+              4.142999998293817,
+              4.108199966140091
+            ],
+            "agent_calls": 1,
+            "agent_requested_states": 1,
+            "model_forward_calls": 1,
+            "model_forward_rows": 1,
+            "cache": {
+              "size": 5,
+              "maxsize": null,
+              "hits": 15,
+              "misses": 5,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 15,
+              "misses": 1,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "microbatch": {
+            "requests": 16,
+            "elapsed_seconds": 0.1313293999992311,
+            "requests_per_second": 121.83105991570567,
+            "p50_ms": 2.3948000161908567,
+            "p95_ms": 126.91540003288537,
+            "p99_ms": 126.91540003288537,
+            "latencies_ms": [
+              126.91540003288537,
+              126.64400000358,
+              126.41730002360418,
+              126.34760001674294,
+              126.28020002739504,
+              126.20969995623454,
+              126.1297999881208,
+              126.05279998388141,
+              2.3948000161908567,
+              2.296999969985336,
+              2.2871000110171735,
+              2.2868000087328255,
+              2.291899989359081,
+              2.282499975990504,
+              2.279300009831786,
+              2.204399963375181
+            ],
+            "agent_calls": 1,
+            "agent_requested_states": 1,
+            "model_forward_calls": 1,
+            "model_forward_rows": 1,
+            "cache": {
+              "size": 5,
+              "maxsize": null,
+              "hits": 15,
+              "misses": 5,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_preload": {
+              "size": 4,
+              "maxsize": null,
+              "hits": 0,
+              "misses": 4,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            },
+            "cache_request_counters": {
+              "hits": 15,
+              "misses": 1,
+              "conflicts": 0,
+              "coalesced": 0,
+              "errors": 0
+            }
+          },
+          "outputs_equal": true
+        }
+      ],
+      "summary": {
+        "serial": {
+          "requests_per_second": 142.74307583822625,
+          "p50_ms": 5.090399994514883,
+          "p95_ms": 106.22080002212897,
+          "p99_ms": 106.22080002212897,
+          "agent_calls": 1,
+          "agent_requested_states": 1,
+          "model_forward_calls": 1,
+          "model_forward_rows": 1
+        },
+        "microbatch": {
+          "requests_per_second": 157.71378109978448,
+          "p50_ms": 2.8635000344365835,
+          "p95_ms": 96.36610001325607,
+          "p99_ms": 96.36610001325607,
+          "agent_calls": 1,
+          "agent_requested_states": 1,
+          "model_forward_calls": 1,
+          "model_forward_rows": 1
+        }
+      },
+      "all_outputs_equal": true
+    }
+  ]
+}

@@ -397,6 +397,18 @@ in
       description = "Require successful decision replay or commit (LAYA_CACHE_REQUIRED); requires caching enabled.";
     };
 
+    microbatchMaxStates = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.unsigned;
+      default = null;
+      description = "Opt-in HTTP single-request microbatch size (LAYA_MICROBATCH_MAX_STATES); 0 disables it.";
+    };
+
+    microbatchWaitMs = lib.mkOption {
+      type = lib.types.nullOr (lib.types.either lib.types.ints.unsigned lib.types.str);
+      default = null;
+      description = "Finite nonnegative collection window in milliseconds (LAYA_MICROBATCH_WAIT_MS), validated by the service.";
+    };
+
     apiKeyFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
@@ -490,6 +502,10 @@ in
         LAYA_CACHE_RENEW_ON_HIT = if cfg.cacheRenewOnHit then "1" else "0";
       } // lib.optionalAttrs (cfg.cacheRequired != null) {
         LAYA_CACHE_REQUIRED = if cfg.cacheRequired then "1" else "0";
+      } // lib.optionalAttrs (cfg.microbatchMaxStates != null) {
+        LAYA_MICROBATCH_MAX_STATES = toString cfg.microbatchMaxStates;
+      } // lib.optionalAttrs (cfg.microbatchWaitMs != null) {
+        LAYA_MICROBATCH_WAIT_MS = toString cfg.microbatchWaitMs;
       } // {
         HF_HOME = "/var/lib/${cfg.stateDirectory}/huggingface";
         # torch-bin bundles its own CUDA runtime but still needs the host
