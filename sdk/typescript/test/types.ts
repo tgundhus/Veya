@@ -20,6 +20,11 @@ const score: number = result.answers.priority.score;
 const noul: number = result.answers.refund.noul;
 const routingModel: string | undefined = result.routing?.model;
 const actionProbability: number | undefined = result.answers.team.action?.act_probability;
+const decisionPolicy: 'context-balanced-v1' | undefined = result.answers.team.decision_policy;
+const calibrated: false | undefined = result.answers.refund.confidence_calibrated;
+const probeTokens: number | undefined = result.usage.policy_probe_tokens;
+// @ts-expect-error The bias-correction policy does not claim calibrated confidence.
+const correctedAsCalibrated: true | undefined = result.answers.team.confidence_calibrated;
 const noulConfidence: number | undefined = result.answers.refund.confidence;
 const finalists: ('billing' | 'support')[] | undefined = result.answers.team.x_tournament?.finalists;
 const rounds: number | undefined = result.answers.team.x_tournament?.rounds;

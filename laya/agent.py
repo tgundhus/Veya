@@ -54,6 +54,7 @@ from .inference import (  # noqa: F401 -- compatibility aliases
     _start_evidence, _replayed_from_memory, _check_scan_budget, _with_start_probe,
 )
 from .confidence import apply_confidence_gate, check_min_confidence
+from .decision_policy import infer_balanced, resolve_decision_policy
 from .hooks import (
     HookRegistry, PredictContext, aggregate_usage, compose_hooks, dispatch,
     normalise_hooks, validate_timeout,
@@ -341,6 +342,7 @@ class Agent(HookRegistry):
     _gate = _InferenceGate()
     performance_config = None
     performance_mode = None
+    decision_policy = "canonical"
 
     def __init__(
         self,
@@ -366,6 +368,7 @@ class Agent(HookRegistry):
         compile_mode: str = "default",
         *,
         performance_mode=None,
+        decision_policy=None,
     ):
         """Load a Laya checkpoint.
 
@@ -412,7 +415,13 @@ class Agent(HookRegistry):
         `performance_mode` selects an opt-in resource budget (1..5), or reads
         `LAYA_PERFORMANCE_MODE` when omitted. Explicit "default" keeps legacy behavior.
         Its Torch thread setting is process-global: choose it at process startup.
+
+        `decision_policy` selects canonical inference or opt-in "context-balanced-v1".
+        None reads the checkpoint default, which is "canonical" when absent. The
+        balanced policy uses more model rows and reports uncalibrated confidence.
         """
+        if decision_policy is not None:
+            resolve_decision_policy(decision_policy)
         self.performance_config = resolve_performance_mode(performance_mode)
         self.performance_mode = self.performance_config["mode"] if self.performance_config else None
         _apply_torch_threads(self.performance_config)
@@ -487,6 +496,7 @@ class Agent(HookRegistry):
 
         with open(cfg_path) as f:
             self.cfg = json.load(f)
+        self.decision_policy = resolve_decision_policy(decision_policy, self.cfg)
         self.parallel_options = uses_parallel_layout(self.cfg)
 
         weights_path = os.path.join(model_dir, "model.safetensors")
@@ -1046,9 +1056,12 @@ class Agent(HookRegistry):
         return logits.float().cpu().numpy(), torch.softmax(act.float(), -1).cpu().numpy()
 
     def _decode_answers(self, logits, act, items: List[Dict], ids: List[str],
-                        internal: Dict[str, Dict], offset: int, lang: Optional[str] = None) -> Dict[str, Any]:
+                        internal: Dict[str, Dict], offset: int, lang: Optional[str] = None,
+                        full_precision: bool = False) -> Dict[str, Any]:
         """Turn one state's logit rows (starting at `offset`) into typed answers."""
         answers = {}
+        def finish(value, digits=4):
+            return float(value) if full_precision else round(value, digits)
         raw_rows = _option_logits(logits, items, offset)
         for j, qid in enumerate(ids):
             r = offset + j
@@ -1059,7 +1072,7 @@ class Agent(HookRegistry):
             if lang and lang.split("-")[0].lower() in self.lang_temperatures:
                 l_cfg = self.lang_temperatures[lang.split("-")[0].lower()]
                 t_scale = l_cfg["temperature_by_options"].get(temp_bucket(qt, k), l_cfg["temperature"][qt])
-            z = raw_rows[j] / t_scale
+            z = (raw_rows[j].astype(np.float64) if full_precision else raw_rows[j]) / t_scale
             p = np.exp(z - z.max())
             p /= p.sum()
 
@@ -1073,21 +1086,21 @@ class Agent(HookRegistry):
             # question type, so a caller can gate across types on a single number.
             ans_raw = answer_confidence(p, k)
             lang_override = bool(lang and lang.split("-")[0].lower() in self.lang_temperatures)
-            if getattr(self, "binning_map", None) and not lang_override:
-                ans_conf = round(
+            if getattr(self, "binning_map", None) and not lang_override and not full_precision:
+                ans_conf = finish(
                     apply_binning_map(ans_raw, temp_bucket(qt, k), self.binning_map), 4
                 )
             else:
-                ans_conf = round(ans_raw, 4)
-            ext = {"act_probability": round(float(act[r, 0]), 4)}
+                ans_conf = finish(ans_raw, 4)
+            ext = {"act_probability": finish(float(act[r, 0]), 4)}
 
             if q["t"] == "choice":
                 keys = list(q["crit"].keys())
                 answers[qid] = {
                     "type": "choice",
                     "choice": keys[int(p.argmax())],
-                    "probabilities": {kk: round(float(v), 4) for kk, v in zip(keys, p)},
-                    "confidence": round(confidence_from_probs(p, k), 4),
+                    "probabilities": {kk: finish(float(v), 4) for kk, v in zip(keys, p)},
+                    "confidence": finish(confidence_from_probs(p, k), 4),
                     "answer_confidence": ans_conf,
                     "action": ext,
                 }
@@ -1095,7 +1108,7 @@ class Agent(HookRegistry):
                 exp_score = float((np.arange(k) * p).sum())
                 answers[qid] = {
                     "type": "score",
-                    "score": round(exp_score, 4),
+                    "score": finish(exp_score, 4),
                     # A legend maps an index to the text of a level, and the keys are already
                     # strings. `render_criterion` rather than `str`: a dict or list level then
                     # comes back as the same JSON text the model was shown, where `str` produced
@@ -1105,20 +1118,22 @@ class Agent(HookRegistry):
                     # and `probabilities` stringifies its keys right below, so this was the one
                     # path that did not.
                     "legend": {str(i): render_criterion(c) for i, c in enumerate(q["crit"])},
-                    "probabilities": {str(i): round(float(v), 4) for i, v in enumerate(p)},
-                    "confidence": round(confidence_from_probs(p, k), 4),
+                    "probabilities": {str(i): finish(float(v), 4) for i, v in enumerate(p)},
+                    "confidence": finish(confidence_from_probs(p, k), 4),
                     "answer_confidence": ans_conf,
                     "action": ext,
                 }
             else:
                 answers[qid] = {
                     "type": "noul",
-                    "noul": round(float(p[1]), 4),
-                    "confidence": round(max(float(p[1]), 1.0 - float(p[1])), 4),
+                    "noul": finish(float(p[1]), 4),
+                    "confidence": finish(max(float(p[1]), 1.0 - float(p[1])), 4),
                     # identical here: over two options max(p_true, 1 - p_true) is max(p)
                     "answer_confidence": ans_conf,
                     "action": ext,
                 }
+            if full_precision:
+                answers[qid]["_decision_probabilities"] = [float(value) for value in p]
         return answers
 
     @torch.no_grad()
@@ -1175,7 +1190,6 @@ class Agent(HookRegistry):
         timeout = self.hooks_timeout if hooks_timeout is None else validate_timeout(hooks_timeout)
         ctx = PredictContext(states=states, questions=questions, model=self.model_id, agent=self,
                              max_len=max_len, head_max_len=head_max_len)
-        amp_stack = ExitStack()
         try:
             dispatch(active, "on_predict_start", ctx, raise_errors=raise_errors, lock=self._hooks_lock, timeout=timeout)
             states, questions = ctx.states, ctx.questions
@@ -1201,98 +1215,15 @@ class Agent(HookRegistry):
                 if not states:
                     ctx.results = []
                 else:
-                    ids = list(questions.keys())
-                    # Empty questions: empty answers, zero usage, no tokenization or forward.
-                    if not ids:
-                        ctx.results = [
-                            {"model": "laya-rl-agent", "answers": {},
-                             "usage": {"input_tokens": 0, "output_tokens": 0}} for _ in states
-                        ]
+                    overrides = {"max_len": ctx.max_len, "head_max_len": ctx.head_max_len}
+                    policy = resolve_decision_policy(getattr(self, "decision_policy", "canonical"))
+                    if policy == "canonical":
+                        ctx.results = self._infer_batch(states, questions, batch_size=batch_size,
+                                                        lang=lang, sort_by_length=sort_by_length, **overrides)
                     else:
-                        # Validate + normalize each question once (state-independent).
-                        for qid in ids:
-                            self._check_question(qid, questions[qid])
-                        internal = {qid: self._to_internal(questions[qid]) for qid in ids}
-                        chunk = batch_size if (batch_size and batch_size > 0) else len(states)
-
-                        # Keep inner _infer weight casts cached across CUDA eager forwards.
-                        # A disabled outer scope leaves encoding/decoding in their usual
-                        # precision and inherits the caller's cache_enabled setting. If the
-                        # caller already owns a CUDA autocast scope, its cache is sufficient.
-                        if (chunk < len(states) and getattr(self, "device", None) is not None
-                                and self.device.type == "cuda" and self.amp_enabled
-                                and self._fast is None and not self._compiled and self.backend != "compile"
-                                and not torch.is_autocast_enabled()):
-                            amp_stack.enter_context(torch.autocast(device_type="cuda", dtype=self.dtype,
-                                                                   enabled=False))
-                            amp_stack.callback(_BATCH_AUTOCAST_CACHE.reset, _BATCH_AUTOCAST_CACHE.set(True))
-
-                        # Per-call token-budget overrides (a start hook may have set them).
-                        overrides: Dict[str, int] = {}
-                        if ctx.max_len is not None:
-                            overrides["max_len"] = ctx.max_len
-                        if ctx.head_max_len is not None:
-                            overrides["head_max_len"] = ctx.head_max_len
-
-                        results: List[Dict[str, Any]] = []
-                        reorder = sort_by_length and 1 < chunk < len(states)
-                        # Bound tokenized lookahead independently of the full input size. Use
-                        # actual post-truncation lengths, with each state's questions kept together.
-                        window = chunk * 8 if reorder else chunk
-                        for start in range(0, len(states), window):
-                            part = states[start:start + window]
-                            encoded = [self._encode_state(st, ids, internal, **overrides) for st in part]
-                            order = list(range(len(encoded)))
-                            if reorder:
-                                order.sort(key=lambda i: max(len(item["ids"]) for item in encoded[i]))
-                            window_results = [None] * len(encoded)
-                            for offset in range(0, len(order), chunk):
-                                indices = order[offset:offset + chunk]
-                                per_state_items = [encoded[i] for i in indices]
-
-                                b = collate_items(per_state_items, self.tok.pad_token_id)
-                                logits, act = self._forward(b)
-                                att = b["attention_mask"]
-
-                                row = 0
-                                for index, items in zip(indices, per_state_items):
-                                    nrows = len(items)
-                                    n_tokens = int(att[row:row + nrows].sum())
-                                    answers = self._decode_answers(logits, act, items, ids, internal, row,
-                                                                  **({"lang": lang} if lang else {}))
-                                    # Truncation is a token budget that moves with max_len, head_max_len
-                                    # and each question's head, so only build_sequence knows it (#174).
-                                    stats = [item["state_stats"] for item in items]
-                                    dropped = max(s["state_tokens_dropped"] for s in stats)
-                                    usage = {
-                                        "input_tokens": n_tokens,
-                                        "output_tokens": 0,
-                                        "state_tokens": stats[0]["state_tokens"],
-                                        # worst case: the questions share one state, not one head budget
-                                        "state_tokens_dropped": dropped,
-                                        "truncated": dropped > 0,
-                                        "truncated_questions": [
-                                            qid for qid, s in zip(ids, stats) if s["truncated"]
-                                        ],
-                                    }
-                                    # Only when a question actually lost options to the head
-                                    # budget: an answer chosen from 42 distinguishable spans of
-                                    # 58 has a ceiling the caller cannot otherwise see, and a
-                                    # key that is always present would be noise on the
-                                    # overwhelming majority of requests that never collapse.
-                                    collapsed = collapsed_options(ids, items)
-                                    if collapsed:
-                                        usage["options"] = collapsed
-                                    window_results[index] = {
-                                        "model": "laya-rl-agent",
-                                        "answers": answers,
-                                        "usage": usage,
-                                    }
-                                    row += nrows
-                            results.extend(window_results)
-                        ctx.results = results
+                        ctx.results = infer_balanced(self, states, questions, batch_size=batch_size,
+                                                     lang=lang, sort_by_length=sort_by_length, **overrides)
         except BaseException as exc:
-            amp_stack.close()
             ctx.error = exc
             try:
                 dispatch(active, "on_error", ctx, raise_errors=raise_errors, lock=self._hooks_lock, timeout=timeout)
@@ -1301,7 +1232,6 @@ class Agent(HookRegistry):
                 exc.__context__ = hook_exc
             raise
         finally:
-            amp_stack.close()
             ctx.elapsed_ms = (time.perf_counter() - ctx.started_at) * 1000.0
             if ctx.results is not None:
                 ctx.usage = aggregate_usage(ctx.results)
@@ -1322,6 +1252,102 @@ class Agent(HookRegistry):
             # decision cache's replays, which it stores without any call's gate state).
             apply_confidence_gate(ctx.results, mc)
         return ctx.results
+
+    def _infer_batch(self, states, questions, batch_size=None, lang=None, max_len=None,
+                     head_max_len=None, sort_by_length=False, full_precision=False):
+        """Canonical unhooked inference shared by the public call and optional decision policy."""
+        with ExitStack() as amp_stack:
+            ids = list(questions.keys())
+            # Empty questions: empty answers, zero usage, no tokenization or forward.
+            if not ids:
+                return [
+                    {"model": "laya-rl-agent", "answers": {},
+                     "usage": {"input_tokens": 0, "output_tokens": 0}} for _ in states
+                ]
+            else:
+                # Validate + normalize each question once (state-independent).
+                for qid in ids:
+                    self._check_question(qid, questions[qid])
+                internal = {qid: self._to_internal(questions[qid]) for qid in ids}
+                chunk = batch_size if (batch_size and batch_size > 0) else len(states)
+
+                # Keep inner _infer weight casts cached across CUDA eager forwards.
+                # A disabled outer scope leaves encoding/decoding in their usual
+                # precision and inherits the caller's cache_enabled setting. If the
+                # caller already owns a CUDA autocast scope, its cache is sufficient.
+                if (chunk < len(states) and getattr(self, "device", None) is not None
+                        and self.device.type == "cuda" and self.amp_enabled
+                        and self._fast is None and not self._compiled and self.backend != "compile"
+                        and not torch.is_autocast_enabled()):
+                    amp_stack.enter_context(torch.autocast(device_type="cuda", dtype=self.dtype,
+                                                           enabled=False))
+                    amp_stack.callback(_BATCH_AUTOCAST_CACHE.reset, _BATCH_AUTOCAST_CACHE.set(True))
+
+                # Per-call token-budget overrides (a start hook may have set them).
+                overrides: Dict[str, int] = {}
+                if max_len is not None:
+                    overrides["max_len"] = max_len
+                if head_max_len is not None:
+                    overrides["head_max_len"] = head_max_len
+
+                results: List[Dict[str, Any]] = []
+                reorder = sort_by_length and 1 < chunk < len(states)
+                # Bound tokenized lookahead independently of the full input size. Use
+                # actual post-truncation lengths, with each state's questions kept together.
+                window = chunk * 8 if reorder else chunk
+                for start in range(0, len(states), window):
+                    part = states[start:start + window]
+                    encoded = [self._encode_state(st, ids, internal, **overrides) for st in part]
+                    order = list(range(len(encoded)))
+                    if reorder:
+                        order.sort(key=lambda i: max(len(item["ids"]) for item in encoded[i]))
+                    window_results = [None] * len(encoded)
+                    for offset in range(0, len(order), chunk):
+                        indices = order[offset:offset + chunk]
+                        per_state_items = [encoded[i] for i in indices]
+
+                        b = collate_items(per_state_items, self.tok.pad_token_id)
+                        logits, act = self._forward(b)
+                        att = b["attention_mask"]
+
+                        row = 0
+                        for index, items in zip(indices, per_state_items):
+                            nrows = len(items)
+                            n_tokens = int(att[row:row + nrows].sum())
+                            answers = self._decode_answers(logits, act, items, ids, internal, row,
+                                                          **({"lang": lang} if lang else {}),
+                                                          **({"full_precision": True} if full_precision else {}))
+                            # Truncation is a token budget that moves with max_len, head_max_len
+                            # and each question's head, so only build_sequence knows it (#174).
+                            stats = [item["state_stats"] for item in items]
+                            dropped = max(s["state_tokens_dropped"] for s in stats)
+                            usage = {
+                                "input_tokens": n_tokens,
+                                "output_tokens": 0,
+                                "state_tokens": stats[0]["state_tokens"],
+                                # worst case: the questions share one state, not one head budget
+                                "state_tokens_dropped": dropped,
+                                "truncated": dropped > 0,
+                                "truncated_questions": [
+                                    qid for qid, s in zip(ids, stats) if s["truncated"]
+                                ],
+                            }
+                            # Only when a question actually lost options to the head
+                            # budget: an answer chosen from 42 distinguishable spans of
+                            # 58 has a ceiling the caller cannot otherwise see, and a
+                            # key that is always present would be noise on the
+                            # overwhelming majority of requests that never collapse.
+                            collapsed = collapsed_options(ids, items)
+                            if collapsed:
+                                usage["options"] = collapsed
+                            window_results[index] = {
+                                "model": "laya-rl-agent",
+                                "answers": answers,
+                                "usage": usage,
+                            }
+                            row += nrows
+                    results.extend(window_results)
+                return results
 
     def predict_long(self, state: Union[str, dict, list], questions: Dict[str, Dict[str, Any]],
                      window: Optional[int] = None, stride: Optional[int] = None,
@@ -1848,7 +1874,7 @@ def load(model_id_or_path: str = "convaiinnovations/laya", device: Optional[str]
          calibration: Optional[str] = None, backend: Optional[str] = None,
          onnx_path: Optional[str] = None, compile_warmup: bool = True,
          compile_cache: bool = False, compile_mode: str = "default", *,
-         performance_mode=None) -> Union[Agent, "ONNXAgent"]:
+         performance_mode=None, decision_policy=None) -> Union[Agent, "ONNXAgent"]:
     """Load a Laya agent.
 
     `subfolder` picks one checkpoint out of a repo that bundles several:
@@ -1874,7 +1900,10 @@ def load(model_id_or_path: str = "convaiinnovations/laya", device: Optional[str]
     `hooks` / `on_predict_start` / `on_predict_end` observe or shape every prediction; see
     `laya.hooks`. `calibration` is the same optional JSON path accepted by `Agent`.
     `performance_mode` selects the same opt-in startup resource budget as `Agent`.
+    `decision_policy` selects the same opt-in inference policy as either agent constructor.
     """
+    if decision_policy is not None:
+        resolve_decision_policy(decision_policy)
     # A registry name or alias resolves to the same (repo, subfolder) the Router would
     # pick, instead of being handed to the Hub as a repo id. A caller who spelled out a
     # subfolder is loading that subfolder of whatever repo they named, so the name is only
@@ -1896,7 +1925,7 @@ def load(model_id_or_path: str = "convaiinnovations/laya", device: Optional[str]
         return ONNXAgent(model_id_or_path, onnx_path=onnx_path or "laya.onnx",
                          token=token, subfolder=subfolder, revision=revision, expected_sha256=expected_sha256,
                          lang_temperatures=lang_temperatures, calibration=calibration,
-                         performance_mode=performance_mode,
+                         performance_mode=performance_mode, decision_policy=decision_policy,
                          hooks=hooks, on_predict_start=on_predict_start, on_predict_end=on_predict_end,
                          hooks_raise=hooks_raise, hooks_concurrent=hooks_concurrent, hooks_timeout=hooks_timeout)
     options = {"backend": backend} if backend is not None else {}
@@ -1908,4 +1937,4 @@ def load(model_id_or_path: str = "convaiinnovations/laya", device: Optional[str]
                  hooks=hooks, on_predict_start=on_predict_start, on_predict_end=on_predict_end,
                  hooks_raise=hooks_raise, hooks_concurrent=hooks_concurrent,
                  hooks_timeout=hooks_timeout, calibration=calibration,
-                 performance_mode=performance_mode, **options)
+                 performance_mode=performance_mode, decision_policy=decision_policy, **options)

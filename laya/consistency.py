@@ -214,6 +214,13 @@ def _storable(result: Dict[str, Any]) -> Dict[str, Any]:
     return payload
 
 
+def _decision_policy(agent: Any) -> str:
+    # Constructors already resolve the checkpoint default. Match inference when
+    # reading the effective value, including a cleared override on a resident agent.
+    policy = getattr(agent, "decision_policy", None)
+    return "canonical" if policy is None else policy
+
+
 def _fingerprint(agent: Any) -> List[Any]:
     """What identifies the answering model: when any of it changes, old decisions must not replay."""
     from . import __version__
@@ -224,7 +231,7 @@ def _fingerprint(agent: Any) -> List[Any]:
         cfg = {}
     # `binning_map` (a fitted calibration) changes `answer_confidence` and so what a gate decides,
     # and `option_layout` changes how options are encoded: neither shows in any other field here.
-    return [__version__, getattr(agent, "model_id", None), getattr(agent, "revision", None),
+    identity = [__version__, getattr(agent, "model_id", None), getattr(agent, "revision", None),
             getattr(agent, "subfolder", None),
             getattr(agent, "_checkpoint_signature", None),
             cfg.get("max_len"), cfg.get("head_max_len"),
@@ -232,6 +239,10 @@ def _fingerprint(agent: Any) -> List[Any]:
             getattr(agent, "lang_temperatures", None), getattr(agent, "binning_map", None),
             cfg.get("option_layout"), cfg.get("act_costs"),
             getattr(lang, "ROUTING_CONTRACT_VERSION", "legacy")]
+    policy = _decision_policy(agent)
+    if policy != "canonical":
+        identity.append({"decision_policy": policy})
+    return identity
 
 
 class DecisionStore(Protocol):
@@ -735,6 +746,11 @@ class DecisionCache:
             # A scan of every window (Router.predict_long) answers differently from the single
             # window `predict` reads of the same state, so the two never share an entry.
             prefix.append(scan)
+        policy = _decision_policy(ctx.agent)
+        if policy != "canonical":
+            # A named fingerprint may bridge model/precision changes, but it cannot
+            # turn a corrected inference policy back into an older retained answer.
+            prefix.append({"decision_policy": policy})
         base = hashlib.blake2b(_canonical(prefix), digest_size=16)
         keys = []
         for state in states:

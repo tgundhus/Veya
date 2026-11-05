@@ -133,6 +133,10 @@ def usage_value(value: Any) -> None:
     if "truncated_questions" in value:
         expect(isinstance(value["truncated_questions"], list)
                and all(isinstance(qid, str) for qid in value["truncated_questions"]), "usage.truncated_questions")
+    if "decision_policy" in value:
+        expect(value["decision_policy"] == "context-balanced-v1", "usage.decision_policy")
+    if "policy_probe_tokens" in value:
+        expect(is_count(value["policy_probe_tokens"]), "usage.policy_probe_tokens")
     if "options" in value:
         expect(isinstance(value["options"], dict), "usage.options")
         for collapse in value["options"].values():
@@ -202,6 +206,10 @@ def prediction(value: Any, questions: dict) -> None:
                 expect(probability(answer.get(key)), field + "." + key)
         if "low_confidence" in answer:
             expect(answer["low_confidence"] is True, field + ".low_confidence")
+        if "decision_policy" in answer:
+            expect(answer["decision_policy"] == "context-balanced-v1", field + ".decision_policy")
+        if "confidence_calibrated" in answer:
+            expect(answer["confidence_calibrated"] is False, field + ".confidence_calibrated")
         if "x_jev_confidence" in answer:
             expect(kind != "noul", field + ".x_jev_confidence")
         if "abstention" in answer or "abstention_threshold" in answer:

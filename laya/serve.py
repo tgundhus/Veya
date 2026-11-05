@@ -135,7 +135,7 @@ DEFAULT_BODY_READ_TIMEOUT = 10.0
 # same 2 097 152 tokens as 4096 rows at 512 and collates the same tensor, so a bound on rows is the
 # wrong bound. The budget below is therefore in tokens.
 #
-# It CHUNKS rather than refuses. A refusal would need this number to be right about hardware serve
+# Canonical inference CHUNKS rather than refuses. A refusal would need this number to be right about hardware serve
 # cannot see: measured here, peak RSS did not move at all between 32, 64 and 128 rows (flat at
 # 1151 MB), so the memory ceiling this would have been protecting was never reached at any size that
 # could be measured, and a 4096-row batch may be entirely reasonable on a larger machine. Splitting
@@ -536,8 +536,8 @@ def _resolve_max_token_budget() -> int:
 def _resolve_max_batch_tokens(default: int = DEFAULT_MAX_BATCH_TOKENS) -> int:
     """Tokens one batch FORWARD PASS may collate, from LAYA_MAX_BATCH_TOKENS.
 
-    Sizes the chunk, it does not refuse: see the constant's own comment for why a refusal would need
-    this number to be right about hardware this process cannot see.
+    Canonical inference uses this to size chunks. The opt-in balanced policy also
+    bounds its individual rotation/probe forwards, refusing an oversized row.
     """
     raw = os.environ.get("LAYA_MAX_BATCH_TOKENS")
     if not raw:
@@ -1381,6 +1381,20 @@ def _replay_manifest_option():
     return {"replay_manifest": path} if path else {}
 
 
+def _decision_policy_option():
+    """Resolve the opt-in local policy before checkpoint or runtime construction."""
+    raw = os.environ.get("LAYA_DECISION_POLICY", "").strip()
+    if not raw:
+        return {}
+    from .decision_policy import resolve_decision_policy
+
+    try:
+        policy = resolve_decision_policy(raw)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("LAYA_DECISION_POLICY: %s" % exc) from exc
+    return {"agent_kwargs": {"decision_policy": policy}}
+
+
 def _resolve_http_replay_fast_path():
     name = "LAYA_HTTP_REPLAY_FAST_PATH"
     raw = os.environ.get("LAYA_HTTP_REPLAY_FAST_PATH", "").strip().lower()
@@ -1428,6 +1442,7 @@ def build_router(performance_mode=None, *, backend=None):
     from .router import Router
 
     backend = _inference_backend(backend)
+    policy = _decision_policy_option()
     config = _server_performance_config(performance_mode)
     preload = config["preload"] if config is not None else _env_bool("LAYA_PRELOAD", True)
     # `env_device` rather than a raw read: it strips, the way `LAYA_MODELS` two lines
@@ -1436,6 +1451,7 @@ def build_router(performance_mode=None, *, backend=None):
     device, runtime_setup = _router_runtime_setup(backend, config)
     preload_names = _server_preload_names(config, None)
     options = {"device": device, "auto_task_detection": _env_bool("LAYA_AUTO_TASK", False),
+               **policy,
                **_replay_manifest_option(),
                **_onnx_paths_option(backend)}
     if backend == "onnx":
@@ -1634,9 +1650,15 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
         last_request = time.monotonic()
 
     def _run_inference(fn):
+        from .decision_policy import _FORWARD_TOKEN_BUDGET
+
+        # Balanced inference splits its own variant rows, including probes. This
+        # cap follows the worker call rather than mutating a shared Agent.
+        token = _FORWARD_TOKEN_BUDGET.set(max_batch_tokens)
         try:
             return fn()
         finally:
+            _FORWARD_TOKEN_BUDGET.reset(token)
             # On the worker, including failures and cancelled HTTP requests whose forward
             # pass continues after the event loop releases the gate.
             _mark_request()

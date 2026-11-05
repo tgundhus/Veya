@@ -90,6 +90,10 @@ for label, fn in (("Agent.__init__", Agent.__init__), ("load", load),
         check_param(label, fn, param, default)
     check_param(label, fn, "performance_mode", None, inspect.Parameter.KEYWORD_ONLY)
 
+for label, fn in (("Agent.__init__", Agent.__init__), ("load", load),
+                  ("ONNXAgent.__init__", ONNXAgent.__init__)):
+    check_param(label, fn, "decision_policy", None, inspect.Parameter.KEYWORD_ONLY)
+
 check_param("Router.__init__", Router.__init__, "max_loaded", None)
 check_param("Router.__init__", Router.__init__, "preload", None)
 check_param("Router.__init__", Router.__init__, "backend", None, inspect.Parameter.KEYWORD_ONLY)

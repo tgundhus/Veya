@@ -54,6 +54,9 @@ class APITests(unittest.TestCase):
         self.assertIn("confidence", NoulAnswer.__optional_keys__)
         self.assertIn("abstention", ChoiceAnswer.__optional_keys__)
         self.assertIn("routing", Prediction.__optional_keys__)
+        for answer in (ChoiceAnswer, NoulAnswer, ScoreAnswer):
+            self.assertIn("decision_policy", answer.__optional_keys__)
+            self.assertIn("confidence_calibrated", answer.__optional_keys__)
 
     def test_installed_package_has_no_runtime_requirements(self):
         distribution = importlib.metadata.distribution("veya-client")
@@ -84,6 +87,7 @@ class APITests(unittest.TestCase):
         self.assertEqual(Tournament.__required_keys__, {"finalists", "rounds"})
         self.assertNotIn("x_tournament", NoulAnswer.__annotations__)
         self.assertEqual(Usage.__required_keys__, {"input_tokens", "output_tokens"})
+        self.assertTrue({"decision_policy", "policy_probe_tokens"} <= Usage.__optional_keys__)
         self.assertEqual(Health.__optional_keys__, {"loaded", "device", "model_free_replay"})
 
 

@@ -60,7 +60,7 @@ from ..serve import (
     _default_model_option, _env_bool, _extra_models_option, _resolve_max_loaded,
     _record_server_performance, _server_performance_config, _server_preload_names,
     _inference_backend, _onnx_paths_option,
-    _replay_manifest_option, _router_runtime_setup,
+    _replay_manifest_option, _router_runtime_setup, _decision_policy_option,
 )
 
 from .tools import (
@@ -205,12 +205,14 @@ def _ensure_router() -> Any:
             raise ToolError("internal_error", f"cannot import laya: {exc}") from exc
         try:
             backend = _inference_backend(_BACKEND)
+            policy = _decision_policy_option()
             config = _server_performance_config(_PERFORMANCE_MODE)
             preload = config["preload"] if config is not None else _env_bool("LAYA_PRELOAD", True)
             device, runtime_setup = _router_runtime_setup(backend, config)
             extra_models = _extra_models_option()
             options = {"device": device,
                        "auto_task_detection": _env_bool("LAYA_AUTO_TASK", False),
+                       **policy,
                        **_replay_manifest_option(),
                        **_onnx_paths_option(backend),
                        **_default_model_option(extra_models)}

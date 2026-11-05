@@ -89,6 +89,39 @@ class ProContractTests(unittest.TestCase):
         with self.assertRaises(LayaResponseError):
             prediction(payload, QUESTIONS)
 
+    def test_bias_corrected_answer_metadata_is_preserved(self):
+        payload = copy.deepcopy(PREDICTION)
+        for answer in payload["answers"].values():
+            answer.update(decision_policy="context-balanced-v1", confidence_calibrated=False)
+        payload["usage"].update(decision_policy="context-balanced-v1", policy_probe_tokens=12)
+        prediction(payload, QUESTIONS)
+        with Server(payload) as server:
+            result = LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+        self.assertEqual(result, payload)
+        prediction(PREDICTION, QUESTIONS)  # Old servers need no new metadata.
+
+    def test_invalid_bias_correction_metadata_is_refused(self):
+        for qid in PREDICTION["answers"]:
+            for key, value in (("decision_policy", "unknown"), ("decision_policy", None),
+                               ("decision_policy", False), ("confidence_calibrated", True),
+                               ("confidence_calibrated", 0), ("confidence_calibrated", "false"),
+                               ("confidence_calibrated", None)):
+                payload = copy.deepcopy(PREDICTION)
+                payload["answers"][qid][key] = value
+                with self.subTest(qid=qid, key=key, value=value), self.assertRaises(LayaResponseError):
+                    prediction(payload, QUESTIONS)
+        for key, value in (("decision_policy", "unknown"), ("decision_policy", None),
+                           ("policy_probe_tokens", True), ("policy_probe_tokens", -1),
+                           ("policy_probe_tokens", 0.5), ("policy_probe_tokens", float("inf")),
+                           ("policy_probe_tokens", None)):
+            payload = copy.deepcopy(PREDICTION)
+            payload["usage"][key] = value
+            with self.subTest(key=key, value=value), self.assertRaises(LayaResponseError):
+                prediction(payload, QUESTIONS)
+        payload = copy.deepcopy(PREDICTION)
+        payload["usage"]["policy_probe_tokens"] = 0
+        prediction(payload, QUESTIONS)
+
     def test_route_and_detection_fields_are_typed(self):
         valid = {"model": "custom", "repo": "local", "reason": "explicit",
                  "workflow": None, "detection": None}

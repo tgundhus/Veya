@@ -33,6 +33,7 @@ from .inference_common import (
     clamp_temperature,
 )
 from .confidence import apply_confidence_gate, check_min_confidence
+from .decision_policy import infer_balanced, resolve_decision_policy
 from .performance import resolve_performance_mode
 
 
@@ -85,6 +86,7 @@ class ONNXAgent(HookRegistry):
     model_id = None
     performance_config = None
     performance_mode = None
+    decision_policy = "canonical"
     _tokenizer_backend = "transformers"
     _cpu_only = False
 
@@ -106,6 +108,7 @@ class ONNXAgent(HookRegistry):
         calibration: Optional[str] = None,
         *,
         performance_mode=None,
+        decision_policy=None,
     ):
         """Load a Laya agent backed by ONNX Runtime.
 
@@ -137,7 +140,12 @@ class ONNXAgent(HookRegistry):
             performance_mode (int | str | None): Opt-in local resource budget (1..5), or the environment's
                               LAYA_PERFORMANCE_MODE when omitted. "default" disables it.
                               Threads are configured on this ONNX session only.
+            decision_policy (str | None): "canonical" or opt-in "context-balanced-v1".
+                              None reads the checkpoint default (canonical when absent).
+                              Balanced inference costs more rows and is not calibrated.
         """
+        if decision_policy is not None:
+            resolve_decision_policy(decision_policy)
         self.performance_config = resolve_performance_mode(performance_mode)
         self.performance_mode = self.performance_config["mode"] if self.performance_config else None
         self.hooks = normalise_hooks(hooks, on_predict_start, on_predict_end)
@@ -191,6 +199,7 @@ class ONNXAgent(HookRegistry):
 
         with open(cfg_path) as f:
             self.cfg = json.load(f)
+        self.decision_policy = resolve_decision_policy(decision_policy, self.cfg)
         if self.cfg.get("option_layout", "sequential") != "sequential":
             # The exported graph takes the five sequential-layout inputs only, so it would run this
             # checkpoint without the masks it was trained with.
@@ -435,9 +444,15 @@ class ONNXAgent(HookRegistry):
                         overrides["max_len"] = ctx.max_len
                     if ctx.head_max_len is not None:
                         overrides["head_max_len"] = ctx.head_max_len
-                    ctx.results = self._infer_batch(states, questions, lang=lang,
-                                                    batch_size=batch_size,
-                                                    sort_by_length=sort_by_length, **overrides)
+                    policy = resolve_decision_policy(getattr(self, "decision_policy", "canonical"))
+                    if policy == "canonical":
+                        ctx.results = self._infer_batch(states, questions, lang=lang,
+                                                        batch_size=batch_size,
+                                                        sort_by_length=sort_by_length, **overrides)
+                    else:
+                        ctx.results = infer_balanced(self, states, questions, lang=lang,
+                                                     batch_size=batch_size,
+                                                     sort_by_length=sort_by_length, **overrides)
         except BaseException as exc:
             ctx.error = exc
             try:
@@ -756,9 +771,11 @@ class ONNXAgent(HookRegistry):
 
     def _decode_answers(self, logits, act, items: List[Dict[str, Any]], ids: List[str],
                         internal: Dict[str, Any], offset: int,
-                        lang: Optional[str] = None) -> Dict[str, Any]:
+                        lang: Optional[str] = None, full_precision: bool = False) -> Dict[str, Any]:
         """Decode the `len(ids)` head rows starting at `offset` into this state's answers."""
         answers = {}
+        def finish(value, digits=4):
+            return float(value) if full_precision else round(value, digits)
         binning_map = getattr(self, "binning_map", None)
         if binning_map:
             from .calibration import apply_binning_map
@@ -770,33 +787,34 @@ class ONNXAgent(HookRegistry):
             if lang and lang.split("-")[0].lower() in self.lang_temperatures:
                 l_cfg = self.lang_temperatures[lang.split("-")[0].lower()]
                 t_scale = l_cfg["temperature_by_options"].get(temp_bucket(qt, k), l_cfg["temperature"][qt])
-            z = logits[offset + r, :k] / t_scale
+            raw = logits[offset + r, :k]
+            z = (raw.astype(np.float64) if full_precision else raw) / t_scale
             p = np.exp(z - z.max())
             p /= p.sum()
 
             # The row comes back in slot order; everything below indexes by option.
             p = unpermute_probs(p, q.get("option_order"))
 
-            conf_score = round(confidence_from_probs(p, k), 4)
+            conf_score = finish(confidence_from_probs(p, k), 4)
             # `answer_confidence` is the calibrated max(p) confidence, reported on every question
             # type so a caller can gate across types on one number -- matching the PyTorch Agent,
             # whose output ONNX callers otherwise cannot read (KeyError on cross-backend swap).
             ans_raw = answer_confidence(p, k)
             lang_override = bool(lang and lang.split("-")[0].lower() in self.lang_temperatures)
-            if binning_map and not lang_override:
-                ans_conf = round(
+            if binning_map and not lang_override and not full_precision:
+                ans_conf = finish(
                     apply_binning_map(ans_raw, temp_bucket(qt, k), binning_map), 4
                 )
             else:
-                ans_conf = round(ans_raw, 4)
-            ext = {"act_probability": round(float(act[offset + r, 0]), 4)}
+                ans_conf = finish(ans_raw, 4)
+            ext = {"act_probability": finish(float(act[offset + r, 0]), 4)}
 
             if q["t"] == "choice":
                 keys = list(q["crit"].keys())
                 answers[qid] = {
                     "type": "choice",
                     "choice": keys[int(p.argmax())],
-                    "probabilities": {kk: round(float(v), 4) for kk, v in zip(keys, p)},
+                    "probabilities": {kk: finish(float(v), 4) for kk, v in zip(keys, p)},
                     "confidence": conf_score,
                     "answer_confidence": ans_conf,
                     "action": ext,
@@ -805,13 +823,13 @@ class ONNXAgent(HookRegistry):
                 exp_score = float((np.arange(k) * p).sum())
                 answers[qid] = {
                     "type": "score",
-                    "score": round(exp_score, 4),
+                    "score": finish(exp_score, 4),
                     # Same as `Agent._decode_answers`, so both backends return the same legend:
                     # `render_criterion` gives a dict or list level back as the JSON text the
                     # model was shown, and a numeric level as a string, rather than a Python repr
                     # or the caller's own type.
                     "legend": {str(i): render_criterion(c) for i, c in enumerate(q["crit"])},
-                    "probabilities": {str(i): round(float(v), 4) for i, v in enumerate(p)},
+                    "probabilities": {str(i): finish(float(v), 4) for i, v in enumerate(p)},
                     "confidence": conf_score,
                     "answer_confidence": ans_conf,
                     "action": ext,
@@ -819,18 +837,20 @@ class ONNXAgent(HookRegistry):
             else:
                 answers[qid] = {
                     "type": "noul",
-                    "noul": round(float(p[1]), 4),
-                    "confidence": round(max(float(p[1]), 1.0 - float(p[1])), 4),
+                    "noul": finish(float(p[1]), 4),
+                    "confidence": finish(max(float(p[1]), 1.0 - float(p[1])), 4),
                     "answer_confidence": ans_conf,
                     "action": ext,
                 }
+            if full_precision:
+                answers[qid]["_decision_probabilities"] = [float(value) for value in p]
         return answers
 
     def _infer_batch(self, states: List[Union[str, dict, list]], questions: Dict[str, Dict[str, Any]],
                      max_len: Optional[int] = None, head_max_len: Optional[int] = None,
                      lang: Optional[str] = None,
                      batch_size: Optional[int] = None,
-                     sort_by_length: bool = False) -> List[Dict[str, Any]]:
+                     sort_by_length: bool = False, full_precision: bool = False) -> List[Dict[str, Any]]:
         """Validate once, then encode, collate, run and decode in chunks of `batch_size` states.
 
         With `sort_by_length`, chunks are formed from length-sorted states inside a lookahead
@@ -900,7 +920,8 @@ class ONNXAgent(HookRegistry):
                         usage["options"] = collapsed
                     window_results[index] = {
                         "model": "laya-rl-agent-onnx",
-                        "answers": self._decode_answers(logits, act, items, ids, internal, row, lang=lang),
+                        "answers": self._decode_answers(logits, act, items, ids, internal, row, lang=lang,
+                                                        **({"full_precision": True} if full_precision else {})),
                         "usage": usage,
                     }
                     row += nrows

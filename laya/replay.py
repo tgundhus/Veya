@@ -187,7 +187,7 @@ def _onnx_artifacts(path):
 
 
 def _model_record(router, name, agent):
-    from .consistency import _fingerprint
+    from .consistency import _decision_policy, _fingerprint
     from .router import _split, _revision_pin
     if not _builtin_agent(agent) or (getattr(agent, "hooks", ()) or ()):
         raise ValueError("replay export requires built-in agents without prediction hooks")
@@ -197,6 +197,9 @@ def _model_record(router, name, agent):
     for field in ("model_id", "revision", "subfolder", "_checkpoint_signature", "temperature",
                   "temperature_by_options", "lang_temperatures", "binning_map"):
         record["attributes"][field] = copy.deepcopy(getattr(agent, field, None))
+    policy = _decision_policy(agent)
+    if policy != "canonical":
+        record["attributes"]["decision_policy"] = policy
     record["attributes"]["cfg"] = {key: copy.deepcopy(agent.cfg.get(key))
                                     for key in ("max_len", "head_max_len", "option_layout", "act_costs")}
     source, subfolder = _split(router.models[name])

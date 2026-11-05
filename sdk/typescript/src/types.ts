@@ -84,6 +84,10 @@ export interface BatchPrediction<Q extends Questions = Questions> {
 }
 
 interface AnswerBase {
+  /** Optional local bias-correction policy; canonical answers omit this field. */
+  decision_policy?: 'context-balanced-v1';
+  /** Bias-corrected probabilities have not been calibrated on deployment data. */
+  confidence_calibrated?: false;
   /** Optional action metadata returned by Laya. */
   action?: { act_probability: number };
   /** The probability mass on the answer actually reported (`max(p)`). Unlike `confidence`, which
@@ -186,6 +190,10 @@ export interface Usage {
   truncated_questions: string[];
   /** Present only when some question's options were collapsed, keyed by question id. */
   options?: Record<string, OptionCollapse>;
+  /** Present when the server uses the opt-in local bias-correction policy. */
+  decision_policy?: 'context-balanced-v1';
+  /** Shared content-free probe work, included once in the first batch result's input tokens. */
+  policy_probe_tokens?: number;
 }
 export interface Prediction<Q extends Questions = Questions> {
   model: string;

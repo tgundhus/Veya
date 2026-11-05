@@ -60,6 +60,12 @@ export function validateUsage(value: unknown): void {
     expect(Array.isArray(value.truncated_questions) &&
       value.truncated_questions.every((qid: unknown) => typeof qid === 'string'), 'usage.truncated_questions');
   }
+  if (value.decision_policy !== undefined) {
+    expect(value.decision_policy === 'context-balanced-v1', 'usage.decision_policy');
+  }
+  if (value.policy_probe_tokens !== undefined) {
+    expect(count(value.policy_probe_tokens) && value.policy_probe_tokens >= 0, 'usage.policy_probe_tokens');
+  }
   if (value.options === undefined) return;
   expect(isRecord(value.options), 'usage.options');
   for (const collapse of Object.values(value.options)) {
@@ -106,6 +112,12 @@ export function validatePrediction(value: unknown, questions: Questions): void {
     }
     if (answer.low_confidence !== undefined) {
       expect(answer.low_confidence === true, `answers.${id}.low_confidence`);
+    }
+    if (answer.decision_policy !== undefined) {
+      expect(answer.decision_policy === 'context-balanced-v1', `answers.${id}.decision_policy`);
+    }
+    if (answer.confidence_calibrated !== undefined) {
+      expect(answer.confidence_calibrated === false, `answers.${id}.confidence_calibrated`);
     }
     if (answer.abstention !== undefined || answer.abstention_threshold !== undefined) {
       // The gate writes both onto the same answer or onto neither, so one without the other is a

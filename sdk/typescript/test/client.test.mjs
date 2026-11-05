@@ -88,6 +88,31 @@ test('HTTP tournament metadata is optional and validated', async () => {
 const prediction = { model: 'laya-rl-agent', routing: route, usage: { input_tokens: 10, output_tokens: 0 },
   answers: { refund: { type: 'noul', noul: 0.9, confidence: 0.9, action: { act_probability: 0.8 } } } };
 
+test('bias-correction metadata remains optional, typed and preserved', async () => {
+  const corrected = structuredClone(prediction);
+  Object.assign(corrected.answers.refund, { decision_policy: 'context-balanced-v1', confidence_calibrated: false });
+  Object.assign(corrected.usage, { decision_policy: 'context-balanced-v1', policy_probe_tokens: 12 });
+  assert.deepEqual(await new Laya({ fetch: async () => json(corrected) }).predict('hello', questions), corrected);
+  assert.deepEqual(await new Laya({ fetch: async () => json(prediction) }).predict('hello', questions), prediction);
+  for (const [key, value] of [['decision_policy', 'unknown'], ['decision_policy', null],
+    ['decision_policy', false], ['confidence_calibrated', true], ['confidence_calibrated', 0],
+    ['confidence_calibrated', 'false'], ['confidence_calibrated', null]]) {
+    const bad = structuredClone(corrected);
+    bad.answers.refund[key] = value;
+    await assert.rejects(new Laya({ fetch: async () => json(bad) }).predict('hello', questions), LayaResponseError);
+  }
+  for (const [key, value] of [['decision_policy', 'unknown'], ['decision_policy', null],
+    ['policy_probe_tokens', true], ['policy_probe_tokens', -1], ['policy_probe_tokens', 0.5],
+    ['policy_probe_tokens', null]]) {
+    const bad = structuredClone(corrected);
+    bad.usage[key] = value;
+    await assert.rejects(new Laya({ fetch: async () => json(bad) }).predict('hello', questions), LayaResponseError);
+  }
+  const noProbes = structuredClone(corrected);
+  noProbes.usage.policy_probe_tokens = 0;
+  assert.deepEqual(await new Laya({ fetch: async () => json(noProbes) }).predict('hello', questions), noProbes);
+});
+
 test('ESM and CommonJS exports can be consumed by ordinary JavaScript', () => {
   const cjs = createRequire(import.meta.url)('veya-client');
   assert.equal(typeof cjs.Laya, 'function');

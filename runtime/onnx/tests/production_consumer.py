@@ -187,6 +187,60 @@ def public_agent_code_contract(expected):
         cache.close()
 
 
+def public_decision_policy_contract():
+    from laya_onnx import ONNXAgent
+    from laya_onnx.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner
+    from laya_onnx._runtime.router import Router
+
+    questions = dict(QUESTIONS, priority={"type": "score", "instructions": "Rate priority",
+                                         "criteria": ["low", "medium", "high"]})
+    agent = ONNXAgent(str(FIXTURE), str(FIXTURE / "model.onnx"), performance_mode=1,
+                      decision_policy="context-balanced-v1")
+    router = Router(backend="onnx", performance_mode=1)
+    router.attach("english", agent)
+    runner = CodeModeRunner(CodeModeLimits(wall_seconds=15, max_batch_tokens=512))
+    try:
+        answer = agent.predict(STATE, questions)
+        assert agent.decision_policy == "context-balanced-v1"
+        # This graph depends only on marker positions, not the state. Removing its
+        # presentation/content-free prior must therefore produce uniform answers.
+        assert all(abs(value - .5) < 1e-4 for value in answer["answers"]["team"]["probabilities"].values()), answer
+        assert answer["answers"]["urgent"]["noul"] == .5, answer
+        assert answer["answers"]["priority"]["score"] == 1.0, answer
+        assert all(row["decision_policy"] == "context-balanced-v1" and row["confidence_calibrated"] is False
+                   and "_decision_probabilities" not in row for row in answer["answers"].values()), answer
+        assert answer["usage"]["policy_variant_rows"] == 7, answer
+        assert answer["usage"]["policy_probe_rows"] == 21, answer
+        assert answer["usage"]["policy_probe_tokens"] > 0, answer
+        batch = agent.predict_batch([STATE, STATE], questions, batch_size=1)
+        assert [row["answers"] for row in batch] == [answer["answers"], answer["answers"]], batch
+        assert sum(row["usage"]["policy_probe_rows"] for row in batch) == 21, batch
+
+        class CountSession:
+            def __init__(self, session):
+                self.session, self.calls = session, 0
+
+            def __getattr__(self, name):
+                return getattr(self.session, name)
+
+            def run(self, *args, **kwargs):
+                self.calls += 1
+                return self.session.run(*args, **kwargs)
+
+        agent.session = CountSession(agent.session)
+        try:
+            runner.execute("async input => await veya.predict(input)",
+                           dict(PAYLOAD, questions=questions), router=router)
+        except CodeModeError as error:
+            assert error.code == "code_resource_limit", error
+        else:
+            raise AssertionError("Code Mode ignored balanced inference/probe work")
+        assert agent.session.calls == 0, "oversized policy work reached an ONNX forward"
+    finally:
+        runner.close()
+        router.unload()
+
+
 def http_replay_contract(cache_path, manifest, store_id, expected):
     env = environment(cache_path, manifest, store_id)
     with socket.socket() as sock:
@@ -294,6 +348,7 @@ def main():
     http_replay_contract(cache_path, manifest, store_id, expected)
     local_code_contract(cache_path, manifest, store_id, expected)
     public_agent_code_contract(expected)
+    public_decision_policy_contract()
     asyncio.run(mcp_code_contract(cache_path, manifest, store_id, expected))
     assert not any(name.split(".")[0] in ("torch", "transformers", "laya") for name in sys.modules)
     print("PASS installed required store identity, model-free replay and sandboxed local MCP code")

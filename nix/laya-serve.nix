@@ -409,6 +409,12 @@ in
       description = "Expected identity of an existing decision database (LAYA_CACHE_EXPECTED_STORE_ID).";
     };
 
+    decisionPolicy = lib.mkOption {
+      type = lib.types.nullOr (lib.types.enum [ "canonical" "context-balanced-v1" ]);
+      default = null;
+      description = "Optional inference-policy override (LAYA_DECISION_POLICY); null keeps the checkpoint's policy.";
+    };
+
     replayManifest = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
@@ -530,6 +536,8 @@ in
         LAYA_CACHE_REQUIRE_EXISTING = if cfg.cacheRequireExisting then "1" else "0";
       } // lib.optionalAttrs (cfg.cacheExpectedStoreId != null) {
         LAYA_CACHE_EXPECTED_STORE_ID = cfg.cacheExpectedStoreId;
+      } // lib.optionalAttrs (cfg.decisionPolicy != null) {
+        LAYA_DECISION_POLICY = cfg.decisionPolicy;
       } // lib.optionalAttrs (cfg.replayManifest != null) {
         LAYA_REPLAY_MANIFEST = cfg.replayManifest;
       } // lib.optionalAttrs (cfg.httpReplayFastPath != null) {

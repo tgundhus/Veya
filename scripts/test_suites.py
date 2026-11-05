@@ -113,6 +113,10 @@ SCRIPT_SUITES = [
 ]
 
 PYTEST_SUITES = [
+    "tests/test_decision_policy.py",
+    "tests/test_decision_policy_identity.py",
+    "tests/test_decision_policy_budget.py",
+    "tests/test_policy_deployment.py",
     "tests/test_mcp_code_mode.py",
     "tests/test_mcp_code_budget.py",
     "tests/test_replay.py",

@@ -62,6 +62,8 @@ class _AnswerExtensions(TypedDict, total=False):
     abstention: Literal["passed", "abstained", "unevaluated"]
     abstention_threshold: float
     action: Action
+    decision_policy: Literal["context-balanced-v1"]
+    confidence_calibrated: Literal[False]
 
 
 class _ConfidenceExtensions(_AnswerExtensions, total=False):
@@ -115,6 +117,8 @@ class Usage(TokenUsage, total=False):
     truncated: bool
     truncated_questions: List[str]
     options: Dict[str, OptionCollapse]
+    decision_policy: Literal["context-balanced-v1"]
+    policy_probe_tokens: int
 
 
 class _DetectionExtensions(TypedDict, total=False):

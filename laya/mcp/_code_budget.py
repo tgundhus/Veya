@@ -162,10 +162,14 @@ def _forward_cost(method, arguments, state, questions, router, limits, preflight
     agent = _resident(arguments, state, questions, router)
     width, head = _width(arguments, agent, limits)
     rows = len(questions)
+    option_counts = [len(question["criteria"]) if question["type"] in ("choice", "score") else 2
+                     for question in questions.values()]
     extra = 0
     if method == "shortlist":
         k = arguments.get("k")
         k = _integer(20 if k is None else k, "k", _limit(limits, "max_choice_options"))
+        option_counts = [min(count, k) if question["type"] == "choice" else count
+                         for count, question in zip(option_counts, questions.values())]
         for question in questions.values():
             if question["type"] == "choice" and len(question["criteria"]) > k:
                 # The existing embedding helper tokenizes one query plus every
@@ -176,6 +180,8 @@ def _forward_cost(method, arguments, state, questions, router, limits, preflight
     elif method == "tournament":
         size = _integer(arguments.get("group_size", 16), "group_size",
                         _limit(limits, "max_choice_options"), minimum=2)
+        option_counts = [min(count, size) if question["type"] == "choice" else count
+                         for count, question in zip(option_counts, questions.values())]
         counts = [len(question["criteria"]) for question in questions.values() if question["type"] == "choice"]
         while any(count > size for count in counts):
             groups = [(count + size - 1) // size if count > size else 0 for count in counts]
@@ -189,7 +195,27 @@ def _forward_cost(method, arguments, state, questions, router, limits, preflight
         rows = _scan_rows(arguments, state, questions, agent, width, head, limits)
     if agent is None and preflight:
         return None
-    return rows * width + extra
+    from ..decision_policy import CONTENT_FREE_PROBES, resolve_decision_policy
+    cfg = getattr(agent, "cfg", None)
+    policy = getattr(agent, "decision_policy", None)
+    if agent is None:
+        from ..router import Router
+        if type(router) is Router:
+            # A later member of a mixed-model batch can evict an earlier agent before
+            # the aggregate check. Its checkpoint default is then unknown until reload.
+            policy = router.agent_kwargs.get("decision_policy")
+            if policy is None:
+                policy = "context-balanced-v1"
+    try:
+        policy = resolve_decision_policy(policy, cfg if isinstance(cfg, dict) else None)
+    except (ValueError, TypeError):
+        raise ToolError("code_invalid_call", "resident decision_policy is unsupported") from None
+    factor = 1
+    if policy == "context-balanced-v1":
+        # Every question rotates through each option and also evaluates all content-free
+        # probes. Charging probes per target state is conservative when a batch shares them.
+        factor = (1 + len(CONTENT_FREE_PROBES)) * max(option_counts, default=1)
+    return rows * width * factor + extra
 
 
 def check_operation_budget(method, arguments, router, limits, *, preflight=False, replayed=()):
