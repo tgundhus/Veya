@@ -1852,6 +1852,11 @@ _abstained_compaction = ContextCompactor(
 check("ContextCompactor respects predictor abstention", _abstained_compaction["messages"], _abstention_transcript)
 check("ContextCompactor abstention reason", _abstained_compaction["decisions"][0]["reason"], "unverified_confidence")
 
+from laya import DecisionCacheError  # noqa: E402
+check_param("DecisionCache", laya.DecisionCache.__init__, "required", False, inspect.Parameter.KEYWORD_ONLY)
+check_true("DecisionCacheError exported", "DecisionCacheError" in laya.__all__)
+check_true("DecisionCacheError is a runtime error", issubclass(DecisionCacheError, RuntimeError))
+
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
     print("  FAIL", f)

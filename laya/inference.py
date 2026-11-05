@@ -71,18 +71,27 @@ def _start_evidence(track_answers=False):
                 remember(recorded, qid, answer, index, _scan_answer_values(answer))
         evidence["answers"] = recorded
 
-    def record_cache_results(results, computed, replayed, dupes):
+    def record_cache_results(results, computed, replayed, dupes, canonical=None):
         # A partial DecisionCache call scores only misses. Its end hook restores full-window
         # order, so translate miss-local origins and record retained answers before later hooks.
         recorded = evidence["answers"]
         if recorded is None:
             return
+        if not computed:
+            recorded.clear()                   # a required full hit restores new canonical objects
         for key, record in list(recorded.items()):
             if record is not None:
                 recorded[key] = (record[0], computed[record[1]], record[2])
         for index in replayed:
             for qid, answer in results[index]["answers"].items():
                 remember(recorded, qid, answer, index, _scan_answer_values(answer))
+        for index, original in (canonical or {}).items():
+            for qid, answer in results[index]["answers"].items():
+                source = original["answers"].get(qid)
+                record = recorded.get((qid, id(source)))
+                if (record is not None and record[0] is source
+                        and record[2] == _scan_answer_values(source) == _scan_answer_values(answer)):
+                    remember(recorded, qid, answer, record[1], record[2])
         for index, source in dupes.items():
             for qid, answer in results[index]["answers"].items():
                 original = results[source]["answers"].get(qid)
@@ -90,6 +99,26 @@ def _start_evidence(track_answers=False):
                 if (record is not None and record[0] is original
                         and record[2] == _scan_answer_values(original) == _scan_answer_values(answer)):
                     remember(recorded, qid, answer, index, record[2])
+
+    def check_cache_results(results):
+        # A required cache commits after user end hooks. Per-state storage cannot bind a
+        # transformed/reordered scan answer to its original window on a later replay.
+        recorded = evidence["answers"]
+        if recorded is None or any(record is None for record in recorded.values()):
+            return False
+        expected = {(qid, record[1]) for (qid, _), record in recorded.items()}
+        actual = set()
+        for index, result in enumerate(results):
+            answers = result.get("answers") if isinstance(result, dict) else None
+            if not isinstance(answers, dict):
+                return False
+            for qid, answer in answers.items():
+                record = recorded.get((qid, id(answer)))
+                if (record is None or record[0] is not answer or record[1] != index
+                        or record[2] != _scan_answer_values(answer)):
+                    return False
+                actual.add((qid, index))
+        return actual == expected
 
     def probe(ctx):
         evidence["answered"] = ctx.results is not None
@@ -115,7 +144,9 @@ def _start_evidence(track_answers=False):
             # hooks. An end observer appended to the hook list would already see reordered rows.
             ctx._record_scan_results = record_results
             ctx._record_scan_cache_results = record_cache_results
+            ctx._check_scan_cache_results = check_cache_results
 
+    probe._prediction_observer = True
     return probe, evidence
 
 

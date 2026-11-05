@@ -52,6 +52,7 @@ Configure the server through environment variables. The `--backend` and
 | `LAYA_CACHE_PATH` | SQLite decision cache file; a path enables the cache | none |
 | `LAYA_CACHE_TTL` | retention seconds, or `none` for indefinite retention | `86400` |
 | `LAYA_CACHE_MAXSIZE` | maximum stored decisions | `10000` |
+| `LAYA_CACHE_REQUIRED` | require successful replay or commit; failure returns sanitized 503 | `0` |
 | `LAYA_CACHE_RENEW_ON_HIT` | renew expiry on use | `0` |
 | `LAYA_LOG_LEVEL` | uvicorn log level | `info` |
 | `LAYA_MAX_CONCURRENT` | requests admitted past auth at once; excess gets `503` | `16` |

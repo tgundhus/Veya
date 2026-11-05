@@ -25,7 +25,8 @@ Environment (same meaning as laya.serve where it exists):
   LAYA_MAX_LOADED  cap on resident local checkpoints (same as laya.serve)
   LAYA_EXTRA_MODELS  JSON checkpoint registrations (same as laya.serve)
   LAYA_CACHE / LAYA_CACHE_PATH / LAYA_CACHE_TTL / LAYA_CACHE_MAXSIZE /
-  LAYA_CACHE_RENEW_ON_HIT  local decision retention (same as laya.serve)
+  LAYA_CACHE_FINGERPRINT / LAYA_CACHE_REQUIRED / LAYA_CACHE_RENEW_ON_HIT
+                local decision retention (same as laya.serve)
   LAYA_BASE_URL  answer from a running laya-serve over HTTP; unset keeps models local
   LAYA_REMOTE_TIMEOUT  HTTP timeout in seconds for remote mode (default 300)
   LAYA_USER_AGENT  remote HTTP client identity (default veya/<version>)

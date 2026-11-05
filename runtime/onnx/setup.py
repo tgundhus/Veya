@@ -9,7 +9,7 @@ from setuptools.command.sdist import sdist
 HERE = Path(__file__).resolve().parent
 MODULES = (
     "onnx_agent", "inference_common", "inference", "checkpoint", "calibration",
-    "hooks", "revisions", "confidence", "performance", "structured", "consistency",
+    "hooks", "revisions", "confidence", "performance", "structured", "consistency", "errors",
     "router", "serve", "shortlist", "lang", "presets",
     "mcp/__init__", "mcp/device", "mcp/remote", "mcp/server", "mcp/tools",
 )

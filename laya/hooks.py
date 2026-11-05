@@ -20,6 +20,8 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol, Sequence, Union
 
+from .errors import DecisionCacheError
+
 
 @dataclass(eq=False)
 class PredictContext:
@@ -138,6 +140,10 @@ class _StartAdapter:
 
     def on_predict_start(self, ctx: PredictContext) -> None:
         return self.fn(ctx)
+
+    @property
+    def _prediction_observer(self):
+        return getattr(self.fn, "_prediction_observer", False)
 
 
 class _EndAdapter:
@@ -355,6 +361,10 @@ class AsyncHook:
         self.hook = hook
         self.loop = loop
 
+    @property
+    def _required_cache(self):
+        return getattr(self.hook, "_required_cache", False)
+
     def _run(self, event: str, ctx: PredictContext) -> None:
         method = getattr(self.hook, event, None)
         if method is None:
@@ -538,7 +548,23 @@ def dispatch(
     warns when `raise_errors` is False. Python threads cannot be interrupted, so an overrunning
     hook keeps running in the background: the timeout protects the request, not the process.
     A hook that returns an awaitable is run to completion before moving on.
+    An opt-in required decision cache runs after prediction transformations. Its errors and
+    all prediction-chain deadlines always propagate as DecisionCacheError.
     """
+    required = []
+    original_error = ctx.error
+    if event in ("on_predict_start", "on_predict_end"):
+        required = [hook for hook in hooks if getattr(hook, "_required_cache", False)]
+        if len(required) > 1:
+            raise DecisionCacheError("only one required decision cache may authorize a prediction")
+        if required:
+            # The internal scan probe only records what inference will receive. It must see
+            # the cache's skipped/reduced states as well as user transformations.
+            observers = ([hook for hook in hooks if getattr(hook, "_prediction_observer", False)]
+                         if event == "on_predict_start" else [])
+            hooks = [hook for hook in hooks if not getattr(hook, "_required_cache", False)
+                     and not (event == "on_predict_start" and getattr(hook, "_prediction_observer", False))]
+            hooks += required + observers
     for hook in hooks:
         method = getattr(hook, event, None)
         if method is None:
@@ -550,7 +576,21 @@ def dispatch(
             else:
                 _call_hook(method, ctx, timeout)
         except Exception as exc:  # noqa: BLE001 -- policy depends on raise_errors
+            if isinstance(exc, DecisionCacheError):
+                if required:
+                    # ctx.error is mutable. A hook must not hide an authorization refusal by
+                    # making a successful runtime call appear to have an earlier error.
+                    ctx.error = original_error
+                raise
+            if required and isinstance(exc, TimeoutError):
+                ctx.error = original_error
+                raise DecisionCacheError("a prediction hook timed out before required cache authorization") from exc
+            if getattr(hook, "_required_cache", False):
+                ctx.error = original_error
+                raise DecisionCacheError("required decision cache failed during %s" % event) from exc
             if raise_errors:
+                if required:
+                    ctx.error = original_error
                 raise
             warnings.warn(
                 "laya: hook %s.%s failed: %s" % (type(hook).__name__, event, exc),

@@ -3,6 +3,7 @@ __version__ = "0.3.29"
 
 from ._runtime.onnx_agent import ONNXAgent as _ONNXAgent
 from ._runtime.consistency import DecisionCache, DecisionStore, decision_margins
+from ._runtime.errors import DecisionCacheError
 from ._runtime.hooks import AsyncHook, BaseHook, Hook, PredictContext, PredictHook
 from ._runtime.performance import parse_performance_mode, resolve_performance_mode
 from ._runtime.structured import DecisionResult, decide, decide_batch
@@ -22,7 +23,7 @@ def load(model_id_or_path, **kwargs):
 
 
 __all__ = [
-    "ONNXAgent", "Agent", "load", "DecisionCache", "DecisionStore", "decision_margins",
+    "ONNXAgent", "Agent", "load", "DecisionCache", "DecisionCacheError", "DecisionStore", "decision_margins",
     "AsyncHook", "BaseHook", "Hook", "PredictContext", "PredictHook", "DecisionResult",
     "decide", "decide_batch", "parse_performance_mode", "resolve_performance_mode",
 ]

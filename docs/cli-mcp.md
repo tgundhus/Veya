@@ -293,6 +293,7 @@ the server is ready.
 | `LAYA_CACHE_TTL` | `86400` | Retention in seconds, or `none` for no expiry. |
 | `LAYA_CACHE_MAXSIZE` | `10000` | Decision count target, or `none` for no capacity eviction. |
 | `LAYA_CACHE_FINGERPRINT` | unset | Explicit policy identity across model upgrades; empty uses automatic model/configuration identity. |
+| `LAYA_CACHE_REQUIRED` | `0` | Require successful replay or commit; storage failures become tool errors. |
 | `LAYA_BASE_URL` | unset | Send predictions to a `laya-serve` on your own hardware instead of loading checkpoints in each MCP process. A bare `host:port` is read as HTTP. |
 | `LAYA_REMOTE_TIMEOUT` | `300` | HTTP timeout in seconds when `LAYA_BASE_URL` is set, including the server's cold load. Invalid or non-positive values use the default. |
 | `LAYA_USER_AGENT` | `veya/<version>` | HTTP client identity in remote mode. Empty values use the default; invalid header characters are refused. Custom `RemoteRouter(user_agent=...)` overrides the environment. |
@@ -306,8 +307,9 @@ The local MCP builder uses the same [decision retention settings](production.md#
 as HTTP. For durable replay, combine a persistent `LAYA_CACHE_PATH`, `LAYA_CACHE_TTL=none`,
 `LAYA_CACHE_MAXSIZE=none` and an explicit policy identity such as `policy-v1`.
 When `LAYA_BASE_URL` is set, configure these values in the HTTP server's environment.
-Store failures still recompute, so these settings do not guarantee the same answer
-when the authoritative store is unavailable or lost.
+Add `LAYA_CACHE_REQUIRED=1` to refuse successful predictions when storage fails;
+local tools return `decision_cache_unavailable`. Optional mode still permits recomputation.
+Neither mode can recover decisions from a lost database.
 
 ### Share one model server across MCP sessions
 

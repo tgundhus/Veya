@@ -49,6 +49,12 @@ from .hooks import (
 )
 from .hooks import _SKIP_DEFAULTS
 from .lang import analyse
+from .errors import DecisionCacheError
+
+
+def _reject_nested_required_cache(agent):
+    if any(getattr(hook, "_required_cache", False) for hook in (getattr(agent, "hooks", ()) or ())):
+        raise DecisionCacheError("install the required decision cache on the Router when routing predictions")
 
 # The hub repo bundles all three checkpoints; only the requested subfolder is downloaded.
 BUNDLE_REPO = "convaiinnovations/laya"
@@ -1536,6 +1542,7 @@ class Router(HookRegistry):
             ctx.decision = dict(decision)
             ctx.model = decision["model"]
             agent = self.load(decision["model"])
+            _reject_nested_required_cache(agent)
             ctx.agent = agent
             effective_lang = lang
             if effective_lang is None and decision.get("detection") and decision["detection"].get("language"):
@@ -1880,6 +1887,7 @@ class Router(HookRegistry):
 
         for model_name, indices in groups.items():
             agent = self.load(model_name)
+            _reject_nested_required_cache(agent)
             started: List[PredictContext] = []
             try:
                 # One context per request, built and started the way `predict` does it, so a

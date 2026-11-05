@@ -94,6 +94,71 @@ router.predict(state, questions)   # runs the model and stores the decision
 router.predict(state, questions)   # the stored decision, no forward pass
 ```
 
+### Required decision storage
+
+The default cache is an accelerator: store errors warn and allow inference to
+continue. For a policy that must not return an uncommitted replacement answer,
+opt into required storage:
+
+```python
+from laya import DecisionCache, DecisionCacheError, Router
+
+cache = DecisionCache(
+    "decisions.sqlite", ttl=None, maxsize=None,
+    fingerprint="review-policy-v1", required=True,
+)
+router = Router(hooks=[cache])
+try:
+    result = router.predict(state, questions)
+except DecisionCacheError:
+    # Return an explicit unavailable/error state; do not silently evaluate again.
+    result = None
+```
+
+Required mode raises `DecisionCacheError` when it cannot read/decode a stored
+answer, serialize/retain/commit a new answer, confirm every written row, renew a
+decision, or finish a coalesced wait. The error remains fatal with
+`hooks_raise=False` and on any prediction-start/end hook deadline in its chain.
+A timed-out Python hook cannot be
+interrupted and may finish a commit later; that request still returns an error.
+Do not retry by bypassing the required cache.
+
+The required cache runs last in the prediction-start and prediction-end chains.
+Other start hooks therefore finish rewriting the request before it is keyed;
+other end hooks finish transforming a new result before it is committed. A hit
+keeps the stored winning decision even if an end hook tries to change it. Fresh
+commits also return decoded authoritative bytes, isolated from the model's mutable
+result objects. An end hook cannot mark the context as failed to bypass storage.
+Policy changes to those transformations need a new explicit fingerprint. Install
+one required cache on the Router when using a Router; an Agent-level required
+cache is supported for direct Agent calls only. Do not use another start hook's
+`ctx.skip()` to answer ahead of it. Direct Agent calls with
+per-language calibration must use a Router so language identity is visible.
+
+For direct Agent/ONNXAgent `predict_long` calls, required storage preserves window
+attribution and counts only windows actually inferred. Its end hooks must preserve
+the scanned answer objects, prediction values and row order; reordering, replacing
+or editing those answers raises `DecisionCacheError` before any new row is committed.
+Annotation-only edits remain supported. This constraint prevents a transformed
+answer from being retained under another window's identity. Existing replayed
+answers always restore their stored winner.
+
+Built-in SQLite uses WAL with `synchronous=FULL` in required mode (`NORMAL` stays
+the default otherwise). Custom stores must implement atomic first-writer-wins
+`add` correctly; successful acknowledgement and read-back cannot prove a remote
+store's power-loss durability. An in-memory required cache still ends with its
+process. Keep storage on a suitable persistent filesystem, with a backup/recovery
+policy appropriate to the application.
+
+`required=True` does not silently change retention. Finite TTLs, capacity limits,
+explicit deletion and policy-version changes still permit reevaluation; use
+`ttl=None` and `maxsize=None` when that is not wanted. A missing/deleted database
+that is recreated empty is indistinguishable from a new policy store: required
+mode cannot reconstruct an answer whose authoritative record has been lost.
+Confidence/abstention flags are regenerated for the current call, and current
+routing metadata is added as before. The retained decision is not a guarantee
+that the original answer was correct.
+
 - **Key.** A 16-byte BLAKE2b hash of the state, the questions in their given order, the per-call
   token budget, the checkpoint, and the model's fingerprint: its id, revision, calibration
   temperatures, configured token budget, subfolder and the Laya version. Unversioned local

@@ -73,6 +73,7 @@ SCRIPT_SUITES = [
     "tests/test_lang_stats.py",
     "tests/test_lang_fast_paths.py",
     "tests/test_consistency.py",
+    "tests/test_required_cache.py",
     "tests/test_route_memo.py",
     "tests/test_calibration_persistence.py",
     "tests/test_calibrate.py",
@@ -112,6 +113,7 @@ SCRIPT_SUITES = [
 ]
 
 PYTEST_SUITES = [
+    "tests/test_required_cache_transport.py",
     "tests/test_serve.py",
     "tests/test_server_cache.py",
     "tests/test_mcp_remote.py",

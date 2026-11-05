@@ -30,6 +30,7 @@ from collections import OrderedDict
 from typing import Any, Callable, Dict, List, Mapping, Optional, Protocol, Sequence, Tuple, Union
 
 from .hooks import PredictContext, aggregate_usage
+from .errors import DecisionCacheError
 
 # Part of every key: bump it when the key layout changes, so no entry stored under an older
 # layout is ever replayed.
@@ -378,7 +379,7 @@ class _MemoryStore:
 class _SQLiteStore:
     """Decisions in a SQLite file, shared by every process that opens it."""
 
-    def __init__(self, path: Any, maxsize: Optional[int]):
+    def __init__(self, path: Any, maxsize: Optional[int], required: bool = False):
         import sqlite3  # here rather than at import time: some Python builds ship without it
 
         self.maxsize = maxsize
@@ -388,7 +389,7 @@ class _SQLiteStore:
         self._lock = threading.Lock()
         self._db = sqlite3.connect(path, timeout=30.0, isolation_level=None, check_same_thread=False)
         self._db.execute("PRAGMA journal_mode=WAL")
-        self._db.execute("PRAGMA synchronous=NORMAL")
+        self._db.execute("PRAGMA synchronous=FULL" if required else "PRAGMA synchronous=NORMAL")
         columns = {row[1] for row in self._db.execute("PRAGMA table_info(laya_decisions)")}
         if columns and "expires_at" not in columns:
             self._db.close()
@@ -503,10 +504,16 @@ class DecisionCache:
     A replay is the stored payload exactly, `usage` included; a `Router` adds the current
     `routing` to it.
 
-    The cache never fails a prediction. When its store raises (a locked or full SQLite file, a
+    By default the cache never fails a prediction. When its store raises (a locked or full SQLite file, a
     shared store that cannot be reached) or holds a value that cannot be decoded, the request
     goes on as if there were no cache: it is computed and, where the store cannot take it, not
     kept. The first failure warns, and `cache_info()["errors"]` counts them all.
+
+    With `required=True`, a store failure, corrupt replay, incomplete commit or a retention
+    policy that declines the result raises `DecisionCacheError` instead. This cannot be
+    suppressed by `hooks_raise=False`. The required cache runs after other prediction start
+    and end hooks so it keys the transformed request and authorizes the final stored winner.
+    Only one required cache may authorize a call; an earlier hook cannot bypass it with `skip`.
 
     The key is a 16-byte BLAKE2b hash of the state, the questions in their given order (option
     order is positional), the per-call token budget, the checkpoint and the model's fingerprint,
@@ -523,8 +530,8 @@ class DecisionCache:
     renewed ones.
 
     An `Agent` call may pass `lang`, which a hook cannot see. On an `Agent` with per-language
-    temperatures the cache therefore stands aside rather than risk replaying an answer scored for
-    another language; install it on the `Router` there.
+    temperatures the default cache therefore stands aside rather than risk replaying an answer
+    scored for another language; required mode refuses that call. Install it on the `Router` there.
 
     Args:
         path: SQLite file that keeps decisions across restarts and shares them between processes.
@@ -546,11 +553,18 @@ class DecisionCache:
         coalesce: Let a request that misses wait for another thread of this process already
             computing it, so concurrent identical requests share one forward pass. False computes
             each one and lets the first decision stored win.
+        required: Refuse predictions that cannot be read from or committed to this cache.
+            Failures raise DecisionCacheError even with hooks_raise=False or a hook timeout.
+            SQLite uses FULL synchronization. Retention settings remain explicit; required
+            does not disable expiry or eviction and does not make an in-memory store persistent.
     """
 
     def __init__(self, path: Optional[str] = None, *, ttl: Union[None, float, Callable[..., Any]] = None,
                  maxsize: Optional[int] = DEFAULT_MAXSIZE, fingerprint: Optional[str] = None,
-                 renew_on_hit: bool = False, store: Optional[DecisionStore] = None, coalesce: bool = True):
+                 renew_on_hit: bool = False, store: Optional[DecisionStore] = None, coalesce: bool = True,
+                 required: bool = False):
+        if not isinstance(required, bool):
+            raise TypeError("required must be a boolean")
         if ttl is not None and not callable(ttl):
             if isinstance(ttl, bool) or not isinstance(ttl, (int, float)) or not ttl > 0:
                 raise ValueError("ttl must be a positive number of seconds, a function or None, got %r" % (ttl,))
@@ -570,13 +584,15 @@ class DecisionCache:
             self._store = store
             self.maxsize = None
         else:
-            self._store = _MemoryStore(maxsize) if path is None else _SQLiteStore(path, maxsize)
+            self._store = _MemoryStore(maxsize) if path is None else _SQLiteStore(path, maxsize, required=required)
             self.maxsize = maxsize
         self.path = path
         self.ttl = ttl
         self.fingerprint = fingerprint
         self.renew_on_hit = bool(renew_on_hit)
         self.coalesce = bool(coalesce)
+        self.required = required
+        self._required_cache = required
         # Keys a thread of this process is computing right now: key -> (thread id, event set when
         # the decision is stored or the attempt is over).
         self._inflight: Dict[bytes, Tuple[int, threading.Event]] = {}
@@ -594,12 +610,14 @@ class DecisionCache:
     def _failed(self, exc: BaseException, what: str) -> None:
         """A store call or a stored value failed: count it, warn once, and go on without the cache.
 
-        The cache is an accelerator. A locked SQLite file, a full disk, an unreachable shared store
-        or a value it cannot decode must not fail the prediction it was only meant to speed up.
+        The default cache is an accelerator. A locked SQLite file, a full disk, an unreachable
+        shared store or an undecodable value warns there; required mode refuses the prediction.
         """
         with self._lock:
             self._counts["errors"] += 1
             first, self._store_warned = not self._store_warned, True
+        if self.required:
+            raise DecisionCacheError("required decision cache could not %s" % what) from exc
         if first:
             warnings.warn("laya: DecisionCache: could not %s (%s: %s); requests go on without the cache "
                           "while this lasts, and cache_info()['errors'] counts it"
@@ -617,9 +635,11 @@ class DecisionCache:
 
     def _lifetime(self, questions: Any, result: Dict[str, Any]) -> Optional[float]:
         """Seconds this decision is kept: None for ever, 0 or less for not at all."""
-        if callable(self.ttl):
-            return _check_ttl(self.ttl(questions, result), "ttl(questions, result)")
-        return self.ttl
+        lifetime = (_check_ttl(self.ttl(questions, result), "ttl(questions, result)")
+                    if callable(self.ttl) else self.ttl)
+        if self.required and lifetime is not None and lifetime <= 0:
+            raise DecisionCacheError("required decision cache policy must retain the decision")
+        return lifetime
 
     def _keys(self, ctx: PredictContext, states: Sequence[Any], lang_sensitive: bool) -> List[bytes]:
         model = self.fingerprint if self.fingerprint is not None else _fingerprint(ctx.agent)
@@ -648,12 +668,20 @@ class DecisionCache:
             typed = _needs_typed_json(payload)
             raw = json.dumps(_typed_json(payload) if typed else payload, ensure_ascii=False, separators=(",", ":"))
         except (TypeError, ValueError) as exc:
+            if self.required:
+                self._failed(exc, "serialize a decision")
             if not self._warned:
                 self._warned = True
                 warnings.warn("laya: DecisionCache: a result is not plain JSON, so it cannot be replayed "
                               "exactly and is not cached (%s)" % exc, RuntimeWarning, stacklevel=3)
             return None
-        return _pack(raw.encode("utf-8", "surrogatepass"), typed=typed)
+        encoded = _pack(raw.encode("utf-8", "surrogatepass"), typed=typed)
+        if self.required:
+            try:
+                _unpack(encoded)
+            except Exception as exc:
+                self._failed(exc, "validate a replayable decision")
+        return encoded
 
     def _renew(self, ctx: PredictContext, keys: List[bytes], held: List[Any], replays: List[Any],
                now: float) -> None:
@@ -697,6 +725,8 @@ class DecisionCache:
                 waits = [(i, self._inflight[key]) for i, key in enumerate(keys)
                          if held[i] is None and key in self._inflight and self._inflight[key][0] != me]
                 if waits and time.monotonic() >= deadline:
+                    if self.required:
+                        raise DecisionCacheError("required decision cache timed out waiting for a decision")
                     # An owner is stuck or never finished: drop its claim so no later request
                     # waits on it either, and compute the state here.
                     for i, entry in waits:
@@ -729,12 +759,24 @@ class DecisionCache:
                 entry[1].set()
 
     def on_predict_start(self, ctx: PredictContext) -> None:
+        if self.required and ctx.error is not None:
+            raise DecisionCacheError("required decision cache cannot authorize a failed prediction")
         states = ctx.states
-        if ctx.results is not None or not ctx.questions or not isinstance(states, (list, tuple)) or not states:
+        if self.required and ctx.results is not None:
+            raise DecisionCacheError("another hook answered before the required decision cache")
+        if self.required and (not isinstance(states, (list, tuple)) or not isinstance(ctx.questions, dict)):
+            raise DecisionCacheError("required decision cache needs a state sequence and question mapping")
+        if (not self.required and (ctx.results is not None or not ctx.questions
+                                  or not isinstance(states, (list, tuple)) or not states)):
             return
         lang_sensitive = bool(getattr(ctx.agent, "lang_temperatures", None))
         if lang_sensitive and ctx.router is None:
+            if self.required:
+                raise DecisionCacheError("required caching of per-language calibration needs a Router")
             return
+        if (self.required and ctx.router is not None
+                and any(getattr(hook, "_required_cache", False) for hook in (getattr(ctx.agent, "hooks", ()) or ()))):
+            raise DecisionCacheError("install the required decision cache on the Router or Agent, not both")
         keys = self._keys(ctx, states, lang_sensitive)
         now = _now()
         try:
@@ -780,8 +822,9 @@ class DecisionCache:
             self._counts["hits"] += hits
             self._counts["misses"] += len(keys) - hits
             self._counts["coalesced"] += coalesced
-            if computed:
-                self._pending[ctx] = (states, keys, replays, computed, dupes, release)
+            if computed or self.required:
+                self._pending[ctx] = (states, keys, replays, computed, dupes, release,
+                                      list(held) if self.required else None)
         if not computed:
             ctx.skip(replays)
             return
@@ -793,9 +836,33 @@ class DecisionCache:
         with self._lock:
             pending = self._pending.pop(ctx, None)
         if pending is None:
+            if self.required and ctx.error is None:
+                raise DecisionCacheError("required decision cache has no lookup to authorize this prediction")
             return
-        states, keys, replays, computed, dupes, release = pending
+        states, keys, replays, computed, dupes, release, held = pending
         try:
+            if self.required and ctx.error is not None:
+                raise DecisionCacheError("required decision cache cannot authorize a failed prediction")
+            if self.required and ctx.error is None:
+                lang_sensitive = bool(getattr(ctx.agent, "lang_temperatures", None))
+                if self._keys(ctx, states, lang_sensitive) != keys:
+                    raise DecisionCacheError("prediction identity changed after required cache lookup")
+                # End hooks may mutate the replay objects. Read the already-validated bytes
+                # again so the stored winner, not a postprocessor's replacement, remains final.
+                replays = [self._replay(entry) for entry in held]
+                if not computed:
+                    if not isinstance(ctx.results, list) or len(ctx.results) != len(keys):
+                        raise DecisionCacheError("required decision cache received an incomplete replay batch")
+                    for result, replay in zip(ctx.results, replays):
+                        if not isinstance(result, dict):
+                            raise DecisionCacheError("required decision cache received a non-object replay")
+                        if "routing" in result:
+                            replay["routing"] = result["routing"]
+                    ctx.results = replays
+                    record_scan = getattr(ctx, "_record_scan_cache_results", None)
+                    if record_scan is not None:
+                        record_scan(replays, [], list(range(len(keys))), {})
+                    return
             self._finish(ctx, states, keys, replays, computed, dupes)
         finally:
             if release is not None:
@@ -807,12 +874,21 @@ class DecisionCache:
         if partial:
             ctx.states = states
         results = ctx.results
-        if ctx.error is not None or not isinstance(results, list) or len(results) != len(computed):
+        if ctx.error is not None:
             return
+        if not isinstance(results, list) or len(results) != len(computed):
+            if self.required:
+                raise DecisionCacheError("required decision cache received an incomplete prediction batch")
+            return
+        check_scan = getattr(ctx, "_check_scan_cache_results", None)
+        if self.required and check_scan is not None and not check_scan(results):
+            raise DecisionCacheError("required scan caching needs end hooks to preserve scanned answers and row order")
         now = _now()
         items, positions = [], []
         for n, (i, result) in enumerate(zip(computed, results)):
             if not isinstance(result, dict):
+                if self.required:
+                    raise DecisionCacheError("required decision cache received a non-object prediction")
                 continue
             payload = _storable(result)
             lifetime = self._lifetime(ctx.questions, payload)
@@ -829,12 +905,25 @@ class DecisionCache:
             # Not stored: every caller keeps the decision it computed, as without a cache.
             self._failed(exc, "store decisions")
             held = [value for _, value, _ in items]
+        if self.required and (not isinstance(held, (list, tuple)) or len(held) != len(items)
+                              or any(not isinstance(value, bytes) for value in held)):
+            raise DecisionCacheError("required decision store returned an incomplete commit response")
+        if self.required:
+            for (key, _, _), first in zip(items, held):
+                try:
+                    confirmed = self._store.get(key, _now())
+                except Exception as exc:
+                    self._failed(exc, "confirm committed decisions")
+                if confirmed is None or confirmed[0] != first:
+                    raise DecisionCacheError("required decision store did not retain every committed decision")
         merged = list(replays)
         for i, result in zip(computed, results):
             merged[i] = result
         conflicts = 0
+        canonical = {}
+        replaced = []
         for n, (_, value, _), first in zip(positions, items, held):
-            if first != value:
+            if first != value or self.required:
                 # Another run stored this request first, possibly on other hardware: replay its
                 # decision, so every caller of this request gets the same one.
                 i = computed[n]
@@ -844,20 +933,27 @@ class DecisionCache:
                 if isinstance(results[n], dict) and "routing" in results[n]:
                     replay["routing"] = results[n]["routing"]
                 merged[i] = replay
-                conflicts += 1
+                conflicts += first != value
+                if first == value:
+                    canonical[i] = results[n]
+                else:
+                    replaced.append(i)
         for i, source in dupes.items():
             merged[i] = copy.deepcopy(merged[source])
         if conflicts:
             with self._lock:
                 self._counts["conflicts"] += conflicts
-        if partial or conflicts:
+        if partial or conflicts or self.required:
             ctx.results = merged
             ctx.usage = aggregate_usage(merged)
             record_scan = getattr(ctx, "_record_scan_cache_results", None)
             if record_scan is not None:
                 replayed = [i for i, replay in enumerate(replays) if replay is not None]
-                replayed += [i for i, result in zip(computed, results) if merged[i] is not result]
-                record_scan(merged, computed, replayed, dupes)
+                if self.required:
+                    record_scan(merged, computed, replayed + replaced, dupes, canonical=canonical)
+                else:
+                    replayed += [i for i, result in zip(computed, results) if merged[i] is not result]
+                    record_scan(merged, computed, replayed, dupes)
 
     def prune(self) -> int:
         """Drop every expired decision now, and those over `maxsize`.
@@ -876,8 +972,8 @@ class DecisionCache:
             another run had already stored differently, which were replaced by the stored one,
             and `coalesced`: hits that waited for another thread of this process computing the
             same request instead of running the model again, and `errors`: store calls that
-            failed, or stored values that could not be decoded, each of which let its request go
-            on without the cache.
+            failed, or stored values that could not be decoded. Default mode goes on without
+            the cache; required mode refuses the prediction.
         """
         size = len(self._store)
         with self._lock:

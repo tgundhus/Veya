@@ -358,6 +358,7 @@ These apply to the `laya-serve` service only.
 | `LAYA_CACHE_TTL` | `86400` | Fixed retention in seconds, or `none` |
 | `LAYA_CACHE_MAXSIZE` | `10000` | Decision count target, or `none` for no capacity eviction; SQLite enforces numerical bounds during periodic pruning |
 | `LAYA_CACHE_FINGERPRINT` | (none) | Explicit policy identity across model upgrades; empty uses automatic model/configuration identity |
+| `LAYA_CACHE_REQUIRED` | `0` | Require successful replay or commit; storage failure returns 503 |
 | `LAYA_CACHE_RENEW_ON_HIT` | `0` | Extend retention on replay |
 
 For example, set `LAYA_ROOT_PATH=/laya` when publishing the API under `/laya`. The proxy must
@@ -389,8 +390,9 @@ its database files; TTL alone does not physically erase rows or backups. See
 For decisions retained without expiry or capacity eviction, set `LAYA_CACHE_TTL=none`,
 `LAYA_CACHE_MAXSIZE=none` and `LAYA_CACHE_FINGERPRINT=policy-v1` with that persistent
 SQLite path. Increment the policy identity when earlier decisions should be
-reevaluated. Store failures still recompute, and removing the volume loses its
-decisions; see [the durable replay limits](production.md#cache-configuration).
+reevaluated. Add `LAYA_CACHE_REQUIRED=1` to refuse successful predictions on storage
+failure; optional mode permits recomputation. Removing the volume loses its decisions;
+see [the durable replay limits](production.md#cache-configuration).
 
 ### Bearer token from a file
 

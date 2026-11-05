@@ -71,7 +71,7 @@ questions = {
 }
 
 with DecisionCache("decisions.sqlite", ttl=None, maxsize=None,
-                   fingerprint="support-policy-v1") as cache:
+                   fingerprint="support-policy-v1", required=True) as cache:
     with Router(hooks=[cache]) as router:
         state = "We were billed twice. Please refund the duplicate today."
         result = router.predict(state, questions)
@@ -99,6 +99,7 @@ protected or incompletely scored content; evaluate retention before using it in 
 - **Decision retention:** fixed or per-decision TTL, optional renewal on use, bounded storage,
   memory or SQLite persistence, and a protocol for your own store.
 - **Consistent replay:** the first stored decision wins for exact repeats sharing a store.
+  Required mode refuses successful predictions when replay or commit fails.
   Identical requests in one process can share an in-flight computation.
 - **Decision margins:** inspect how close an answer is to its decision boundary.
 - **Less inference overhead:** reuse question tokens and recent language detections.
@@ -109,8 +110,9 @@ protected or incompletely scored content; evaluate retention before using it in 
 
 The cache stores request hashes and result payloads, including option labels and probabilities.
 The example keeps decisions without expiry or capacity eviction under an explicit policy
-identity; change that identity deliberately when reevaluation is required. A missing or
-unavailable store can still cause recomputation under the current fail-open policy.
+identity; change that identity deliberately when reevaluation is required. A failed storage
+operation raises `DecisionCacheError` in required mode. Optional mode remains
+fail-open. Preserve the database: required mode cannot detect deletion before startup.
 It does not store the original request text. Expiry prevents replay; physical deletion requires
 pruning and a policy for database files, journals and backups. A cached answer can still be
 wrong. [Cache behavior and retention](https://github.com/tgundhus/Veya/blob/main/docs/consistency.md).
@@ -127,7 +129,7 @@ wrong. [Cache behavior and retention](https://github.com/tgundhus/Veya/blob/main
 | Editor or agent tools | [MCP over stdio](https://github.com/tgundhus/Veya/blob/main/docs/cli-mcp.md), local inference or your own HTTP server |
 | Agent frameworks | [LangChain / LangGraph](https://github.com/tgundhus/Veya/blob/main/docs/langchain.md), [LlamaIndex](https://github.com/tgundhus/Veya/blob/main/docs/llamaindex.md), [CrewAI](https://github.com/tgundhus/Veya/blob/main/docs/crewai.md) |
 
-The SDKs have different capabilities. Pro's persistent decision cache runs in the Python engine;
+The SDKs have different capabilities. Veya's persistent decision cache runs in the Python engine;
 HTTP clients and MCP can use that engine's cache. Native SDKs do not implement the same
 persistence policy. [Capability table and examples](https://github.com/tgundhus/Veya/blob/main/docs/integration.md).
 

@@ -391,6 +391,12 @@ in
       description = "Renew decision retention on cache hits (LAYA_CACHE_RENEW_ON_HIT).";
     };
 
+    cacheRequired = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Require successful decision replay or commit (LAYA_CACHE_REQUIRED); requires caching enabled.";
+    };
+
     apiKeyFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
@@ -482,6 +488,8 @@ in
         LAYA_CACHE_FINGERPRINT = cfg.cacheFingerprint;
       } // lib.optionalAttrs (cfg.cacheRenewOnHit != null) {
         LAYA_CACHE_RENEW_ON_HIT = if cfg.cacheRenewOnHit then "1" else "0";
+      } // lib.optionalAttrs (cfg.cacheRequired != null) {
+        LAYA_CACHE_REQUIRED = if cfg.cacheRequired then "1" else "0";
       } // {
         HF_HOME = "/var/lib/${cfg.stateDirectory}/huggingface";
         # torch-bin bundles its own CUDA runtime but still needs the host

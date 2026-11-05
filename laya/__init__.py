@@ -24,6 +24,7 @@ _os.environ.setdefault("USE_TF", "0")
 DEFAULT_INFERENCE_BACKEND = "torch"
 
 from .consistency import DecisionCache, DecisionStore, decision_margins
+from .errors import DecisionCacheError
 from .email import clean_email_body, email_state
 from .hooks import AsyncHook, BaseHook, Hook, PredictContext, PredictHook
 from .lang import analyse as detect_language
@@ -163,6 +164,7 @@ __all__ = [
     "decide_batch",
     "DecisionResult",
     "DecisionCache",
+    "DecisionCacheError",
     "DecisionStore",
     "decision_margins",
     "PINNED_REVISIONS",

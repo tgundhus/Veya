@@ -41,6 +41,7 @@ env var                    meaning                                        defaul
 ``LAYA_CACHE_TTL``         retention in seconds, or "none" for no expiry   86400
 ``LAYA_CACHE_MAXSIZE``     maximum decisions, or "none" for no bound      10000
 ``LAYA_CACHE_FINGERPRINT`` explicit policy identity across model upgrades (auto)
+``LAYA_CACHE_REQUIRED``    require successful replay or commit            0 (off)
 ``LAYA_CACHE_RENEW_ON_HIT`` renew retention when a decision is replayed    0
 ``LAYA_API_KEY``           if set, require ``Authorization: Bearer <it>``  (none)
                            on every route, and do not serve the
@@ -88,6 +89,8 @@ import re
 import time
 from contextlib import asynccontextmanager
 from typing import Any, Dict, Optional
+
+from .errors import DecisionCacheError
 
 # A failed inference is reported to the client as a fixed 500 so nothing about paths,
 # weights or memory state leaks, which leaves the server log as the only place the
@@ -1317,8 +1320,14 @@ def _configure_decision_cache(router):
 
     from .consistency import DecisionCache
 
+    raw_required = os.environ.get("LAYA_CACHE_REQUIRED", "0").strip().lower()
+    if raw_required not in ("", "0", "false", "no", "off", "1", "true", "yes", "on"):
+        raise ValueError("LAYA_CACHE_REQUIRED must be a boolean (0/1, false/true, no/yes or off/on)")
+    required = raw_required in ("1", "true", "yes", "on")
     path = os.environ.get("LAYA_CACHE_PATH", "").strip() or None
     if not path and not _env_bool("LAYA_CACHE", False):
+        if required:
+            raise ValueError("LAYA_CACHE_REQUIRED needs LAYA_CACHE_PATH or LAYA_CACHE enabled")
         return
     raw_ttl = os.environ.get("LAYA_CACHE_TTL", "86400").strip()
     try:
@@ -1337,7 +1346,7 @@ def _configure_decision_cache(router):
     fingerprint = os.environ.get("LAYA_CACHE_FINGERPRINT", "").strip() or None
     cache = DecisionCache(path, ttl=ttl, maxsize=maxsize,
                           fingerprint=fingerprint,
-                          renew_on_hit=_env_bool("LAYA_CACHE_RENEW_ON_HIT", False))
+                          renew_on_hit=_env_bool("LAYA_CACHE_RENEW_ON_HIT", False), required=required)
     try:
         router.add_hook(cache)
     except BaseException:
@@ -1362,7 +1371,7 @@ def _decision_cache_report(router):
         info = cache.cache_info()
     except Exception:
         return {"decision_cache": {"enabled": True, "available": False}}
-    return {"decision_cache": {"enabled": True, "ttl_seconds": cache.ttl,
+    return {"decision_cache": {"enabled": True, "required": cache.required, "ttl_seconds": cache.ttl,
                                "renew_on_hit": cache.renew_on_hit, **info}}
 
 
@@ -1681,6 +1690,10 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
                 )
         except HTTPException:
             raise
+        except DecisionCacheError:
+            _log.exception("required decision storage is unavailable")
+            raise HTTPException(status_code=503, detail="required decision storage is unavailable",
+                                headers={"Retry-After": "1"}) from None
         except ValueError as e:
             # Question validation errors name the question and what to fix: safe for clients.
             raise HTTPException(status_code=422, detail=str(e))
@@ -1837,6 +1850,10 @@ def create_app(router: Optional[Any] = None, *, performance_mode=None, backend=N
                 )
         except HTTPException:
             raise
+        except DecisionCacheError:
+            _log.exception("required decision storage is unavailable")
+            raise HTTPException(status_code=503, detail="required decision storage is unavailable",
+                                headers={"Retry-After": "1"}) from None
         except ValueError as e:
             raise HTTPException(status_code=422, detail=str(e))
         except Exception:  # noqa: BLE001

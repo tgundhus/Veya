@@ -25,6 +25,7 @@ import laya  # noqa: E402
 import laya.consistency as consistency  # noqa: E402
 from laya import DecisionCache, Router, decision_margins  # noqa: E402
 from laya.agent import Agent, _checkpoint_signature  # noqa: E402
+from laya.errors import DecisionCacheError  # noqa: E402
 from laya.onnx_agent import ONNXAgent  # noqa: E402
 
 PASS, FAIL = [], []
@@ -841,6 +842,64 @@ for backend, factory in (("torch", make_scanner), ("onnx", make_onnx_scanner)):
               {"index": 5, "token_start": 160, "token_end": 224, "count": 7})
         check("%s/cache attribution: %s duplicate inference count" % (backend, phase),
               result["usage"]["windows"], 2 if phase == "coalesced" else 0)
+
+# Required storage runs after user transformations, but its internal scan probe observes the
+# actual cache-reduced inference input. Canonical decoded answers retain only proven origins.
+for backend, factory in (("torch", make_scanner), ("onnx", make_onnx_scanner)):
+    cache = DecisionCache(required=True)
+    scanner = factory([cache])
+    first = scanner.predict_long(DOC, TEAM, window=80, stride=50)
+    rows = sum(scanner.rows)
+    second = scanner.predict_long(DOC, TEAM, window=80, stride=50)
+    check("%s/required scan: fresh canonical answer retains its span" % backend,
+          first["answers"]["team"]["window"]["index"], 0)
+    check("%s/required scan: replay retains its span" % backend, second["answers"], first["answers"])
+    check("%s/required scan: no replay window reached inference" % backend,
+          (sum(scanner.rows), second["usage"]["windows"]), (rows, 0))
+    third = scanner.predict_long(DOC + " and a tail the first document did not have", TEAM, window=80, stride=50)
+    check("%s/required scan: a partial hit has a verified span" % backend, "window" in third["answers"]["team"], True)
+    check_true("%s/required scan: only missed windows are counted" % backend,
+               0 < third["usage"]["windows"] < third["answers"]["team"]["window"]["count"])
+
+    scanner = factory([DecisionCache(required=True)])
+    duplicate = scanner.predict_long("a" * 250, TEAM, window=64, stride=32)
+    repeated = scanner.predict_long("a" * 250, TEAM, window=64, stride=32)
+    check("%s/required scan: duplicate windows retain the deciding origin" % backend,
+          duplicate["answers"]["team"]["window"]["index"], 0)
+    check("%s/required scan: duplicate replay has no inference windows" % backend,
+          (repeated["answers"], repeated["usage"]["windows"]), (duplicate["answers"], 0))
+
+    def reverse_required(ctx):
+        ctx.results.reverse()
+
+    def clone_required(ctx):
+        ctx.results = copy.deepcopy(ctx.results)
+
+    def edit_required(ctx):
+        ctx.results[0]["answers"]["team"]["probabilities"]["billing"] = 0.94
+
+    for transform in (reverse_required, clone_required, edit_required):
+        cache = DecisionCache(required=True)
+        scanner = factory([cache])
+        try:
+            scanner.predict_long(DOC, TEAM, window=80, stride=50, on_predict_end=transform)
+        except DecisionCacheError:
+            refused = True
+        else:
+            refused = False
+        check("%s/required scan: %s refuses unverified bindings" % (backend, transform.__name__), refused, True)
+        check("%s/required scan: %s commits no misbound result" % (backend, transform.__name__),
+              (cache.cache_info()["size"], bool(cache._inflight)), (0, False))
+
+    def annotate_required(ctx):
+        for result in ctx.results:
+            result["answers"]["team"]["review_requested"] = True
+
+    scanner = factory([DecisionCache(required=True)])
+    annotated = scanner.predict_long(DOC, TEAM, window=80, stride=50, on_predict_end=annotate_required)
+    check("%s/required scan: annotations retain a verified origin" % backend,
+          (annotated["answers"]["team"]["review_requested"], "window" in annotated["answers"]["team"]), (True, True))
+
 
 # Router.predict_long scans every window; Router.predict reads one. They must not share an entry.
 cache = DecisionCache()

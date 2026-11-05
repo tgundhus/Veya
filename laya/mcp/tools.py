@@ -384,9 +384,12 @@ def _overrides(task: Any, lang: Any, max_len: Any, head_max_len: Any) -> dict:
 
 
 def _raise_if_remote_error(exc: BaseException) -> None:
-    """Turn transport failures into the ToolError the client can read."""
+    """Turn transport and required-cache failures into safe tool errors."""
+    from ..errors import DecisionCacheError
     from .remote import RemoteError
 
+    if isinstance(exc, DecisionCacheError):
+        raise ToolError("decision_cache_unavailable", "required decision storage is unavailable") from exc
     if isinstance(exc, RemoteError):
         raise ToolError(exc.code, exc.message) from exc
 
