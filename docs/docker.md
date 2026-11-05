@@ -68,7 +68,7 @@ work with `docker run -e`; Compose-only settings are identified below.
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `LAYA_DEVICE` | `cpu` / `cuda` | Device selected by the base / GPU configuration |
-| `LAYA_CUDA_AMP` | unset (checkpoint's `amp_dtype`) | `fp16`/`float16` or `bf16`/`bfloat16` for the CUDA forward; anything else is ignored. Not cosmetic: the [confidence section](guide.md#confidence-and-abstention) measures bf16 flipping 3 of 864 argmaxes on the parity set where fp16 flips none |
+| `LAYA_CUDA_AMP` | unset (checkpoint's `amp_dtype`) | `fp16`/`float16` or `bf16`/`bfloat16` for reduced precision, or `fp32`/`float32` to disable autocast. Values are trimmed; an invalid nonempty value raises `ValueError`. Below compute capability 8 either half-precision request runs fp16. The 16-bit TileLang fast path cannot run an fp32 agent. See the [confidence section](guide.md#confidence-and-abstention) for measured probability changes |
 | `LAYA_CPU_AMP` | unset | `bf16` or `bfloat16` opts the CPU forward into bf16; anything else leaves it fp32. No fp16 spelling turns it on either: CPU autocast has no fp16 fast path that beats fp32, so bf16 is the only reduced precision core offers on this device |
 | `LAYA_MODEL` | `auto` | Router alias: `auto`, `english`, `multilingual`, `typed-decisions` |
 | `LAYA_MODEL_PATH` | unset | Compatible checkpoint path inside the container |

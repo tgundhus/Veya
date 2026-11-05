@@ -96,13 +96,12 @@ in
         `laya.agent`, not here: `tests/test_packaging.py` reads them out of the
         runtime and fails if this text drifts from it, which is why there is no
         `enum` on this option. The recognised spellings are `fp16`, `float16`,
-        `bf16` and `bfloat16` — the first two name one dtype and the last two
-        another. Anything else is ignored rather than an error, and the
-        checkpoint's own choice stays in force.
+        `bf16`, `bfloat16`, `fp32` and `float32` — each pair names one dtype.
+        `fp32`/`float32` turn autocast off. Anything else fails the service load
+        instead of silently serving the checkpoint's own precision.
 
-        The type allows any single token but refuses whitespace, which is not
-        style: the runtime lower-cases the value and then compares it without
-        trimming, so a trailing space keeps full precision and says nothing.
+        The type allows any single token but refuses whitespace. The runtime
+        trims and lower-cases values; the type keeps the transported token literal.
         null leaves every CUDA checkpoint on its own `amp_dtype`.
       '';
     };

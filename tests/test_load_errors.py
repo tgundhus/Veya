@@ -25,6 +25,7 @@ import tempfile
 import warnings
 from contextlib import redirect_stdout
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 os.environ.setdefault("USE_TF", "0")
@@ -40,7 +41,6 @@ from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa:
 
 from laya import Agent, load  # noqa: E402
 from laya.common import DecisionModel  # noqa: E402
-from laya.router import Router  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -488,6 +488,73 @@ check_true("unprobed GPU/warns about the probe",
            any("capability" in str(w.message) for w in caught),
            str([str(w.message) for w in caught]))
 del _no_probe
+
+# Explicit fp32 must survive every capability branch, and must never build the
+# reduced-precision fast path. CUDA placement is stubbed; these are CPU-only tests.
+for _precision in ("fp32", " Float32 "):
+    for _capability in ((7, 0), (8, 0), RuntimeError("no driver")):
+        _probe = {"side_effect": _capability} if isinstance(_capability, Exception) else {"return_value": _capability}
+        with patch.dict(os.environ, {"LAYA_CUDA_AMP": _precision}), \
+                patch("torch.cuda.is_available", return_value=True), \
+                patch("torch.cuda.device_count", return_value=1), \
+                patch("torch.cuda.get_device_capability", **_probe) as _query, \
+                patch.object(torch.nn.Module, "to", lambda self, *a, **k: self):
+            _fp32 = load(str(REPO), device="cuda:0")
+        check("cuda fp32/%r %r dtype" % (_precision, _capability), _fp32.dtype, torch.float32)
+        check("cuda fp32/%r %r disables autocast" % (_precision, _capability), _fp32.amp_enabled, False)
+        check("cuda fp32/%r %r reported forward precision" % (_precision, _capability),
+              _fp32.dtype_for(8), torch.float32)
+        check("cuda fp32/%r %r does not query capability" % (_precision, _capability), _query.call_count, 0)
+        _constructed = []
+        def _fast_ctor(*args, **kwargs):
+            _constructed.append(kwargs)
+            return SimpleNamespace(forward=lambda *args, **kwargs: None)
+        _forward = _fp32.model.forward
+        with patch.dict(sys.modules, {"laya.fast": SimpleNamespace(FastLaya=_fast_ctor)}), \
+                warnings.catch_warnings(record=True) as _fast_warnings:
+            warnings.simplefilter("always")
+            check("cuda fp32/fast path stays off", _fp32.accelerate(), False)
+            try:
+                _fp32.accelerate(strict=True)
+                _strict_error = None
+            except RuntimeError as exc:
+                _strict_error = str(exc)
+        check("cuda fp32/no reduced precision kernels built", _constructed, [])
+        check("cuda fp32/stock forward preserved", _fp32.model.forward, _forward)
+        check_true("cuda fp32/fast warning explains dtype", any("bf16 or fp16" in str(w.message) for w in _fast_warnings))
+        check_true("cuda fp32/strict fast request raises", _strict_error is not None and "bf16 or fp16" in _strict_error)
+        del _fp32
+
+for _precision, _capability, _dtype in (("fp16", (8, 0), torch.float16),
+                                       ("bf16", (8, 0), torch.bfloat16),
+                                       ("bf16", (7, 0), torch.float16),
+                                       ("bf16", RuntimeError("no driver"), torch.float16)):
+    _probe = {"side_effect": _capability} if isinstance(_capability, Exception) else {"return_value": _capability}
+    with patch.dict(os.environ, {"LAYA_CUDA_AMP": _precision}), \
+            patch("torch.cuda.is_available", return_value=True), \
+            patch("torch.cuda.device_count", return_value=1), \
+            patch("torch.cuda.get_device_capability", **_probe), \
+            patch.object(torch.nn.Module, "to", lambda self, *a, **k: self), \
+            warnings.catch_warnings(record=True):
+        _half = load(str(REPO), device="cuda:0")
+    check("cuda half/%s %r dtype" % (_precision, _capability), _half.dtype, _dtype)
+    check("cuda half/%s %r autocast remains enabled" % (_precision, _capability), _half.amp_enabled, True)
+    del _half
+
+for _capability in ((7, 0), (8, 0), RuntimeError("no driver")):
+    _probe = {"side_effect": _capability} if isinstance(_capability, Exception) else {"return_value": _capability}
+    with patch.dict(os.environ, {"LAYA_CUDA_AMP": "int8"}), \
+            patch("torch.cuda.is_available", return_value=True), \
+            patch("torch.cuda.device_count", return_value=1), \
+            patch("torch.cuda.get_device_capability", **_probe), \
+            patch.object(torch.nn.Module, "to", lambda self, *a, **k: self):
+        try:
+            load(str(REPO), device="cuda:0")
+            _invalid_error = None
+        except ValueError as exc:
+            _invalid_error = str(exc)
+    check_true("cuda precision/%r rejects invalid env value" % (_capability,),
+               _invalid_error is not None and "LAYA_CUDA_AMP" in _invalid_error)
 
 
 TMP.cleanup()

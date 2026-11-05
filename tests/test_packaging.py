@@ -660,7 +660,7 @@ for _opt, _var in sorted(AMP_MEANING.items()):
                all("`%s`" % t in described for t in accepted),
                "core compares %s against %s; the option text says: %s"
                % (_var, accepted, described.strip()[:160]))
-    offered = [t for t in ("fp16", "float16", "bf16", "bfloat16")
+    offered = [t for t in ("fp16", "float16", "bf16", "bfloat16", "fp32", "float32")
                if "`%s`" % t in described and t not in accepted]
     check_true("nix/%s offers no dtype core ignores for it" % _opt, not offered,
                "%s is not in the set laya.agent compares %s against" % (offered, _var))

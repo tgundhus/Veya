@@ -263,7 +263,20 @@ check("cuda-amp/env fp16 overrides a bf16 checkpoint", _cuda_amp_dtype("bf16"), 
 os.environ["LAYA_CUDA_AMP"] = "BF16"
 check("cuda-amp/env bf16 overrides an fp16 checkpoint", _cuda_amp_dtype("fp16"), torch.bfloat16)
 os.environ["LAYA_CUDA_AMP"] = "int8"
-check("cuda-amp/env invalid falls back to the checkpoint", _cuda_amp_dtype("bf16"), torch.bfloat16)
+try:
+    _cuda_amp_dtype("bf16")
+    invalid_precision = None
+except ValueError as exc:
+    invalid_precision = str(exc)
+check("cuda-amp/env invalid raises and names the value",
+      invalid_precision is not None and "'int8'" in invalid_precision, True)
+for spelling in ("fp32", "Float32", " fp32\n"):
+    os.environ["LAYA_CUDA_AMP"] = spelling
+    check("cuda-amp/%r disables reduced precision" % spelling, _cuda_amp_dtype("bf16"), torch.float32)
+os.environ["LAYA_CUDA_AMP"] = " bf16\n"
+check("cuda-amp/half precision is trimmed", _cuda_amp_dtype("fp16"), torch.bfloat16)
+os.environ["LAYA_CUDA_AMP"] = " \t"
+check("cuda-amp/whitespace means unset", _cuda_amp_dtype("bf16"), torch.bfloat16)
 # `agent.dtype` reports float16 and bfloat16, so those are the spellings a caller can read off one
 # response and ask for on the next. laya/agent.py has accepted both from the start; both prose
 # sites that listed the vocabulary described them as inert, and tests/test_env_docs.py now holds
@@ -291,8 +304,8 @@ del os.environ["LAYA_CPU_AMP"]
 
 
 # ------------------------------------------------------------------ amp context shape
-# A disabled gate must never construct torch.autocast: on torch builds without an MPS
-# autocast backend, entering it raises even with enabled=False, which broke MPS predict().
+# A disabled gate must not construct torch.autocast for unsupported backends: on torch
+# builds without MPS autocast, entering it raises even with enabled=False.
 mps = torch.device("mps")
 check("amp-context/disabled mps is a no-op", isinstance(_amp_context(mps, torch.float16, False), nullcontext), True)
 with _amp_context(mps, torch.float16, False):  # must not raise
@@ -303,6 +316,18 @@ check("amp-context/disabled cpu is a no-op",
       isinstance(_amp_context(torch.device("cpu"), torch.float32, False), nullcontext), True)
 check("amp-context/enabled cpu is autocast",
       not isinstance(_amp_context(torch.device("cpu"), torch.bfloat16, True), nullcontext), True)
+
+# Only CUDA fp32 overrides caller autocast. Patching availability permits entering the
+# real CUDA autocast scopes on CPU-only builds; these checks do not run any CUDA kernels.
+with patch.object(torch.cuda, "is_available", return_value=True):
+    with torch.autocast(device_type="cuda", dtype=torch.float16, cache_enabled=False):
+        check("amp-context/caller cuda scope active", torch.is_autocast_enabled(), True)
+        with _amp_context(torch.device("cuda"), torch.float32, False):
+            check("amp-context/cuda fp32 masks caller autocast", torch.is_autocast_enabled(), False)
+            check("amp-context/cuda fp32 preserves caller cache policy", torch.is_autocast_cache_enabled(), False)
+        check("amp-context/cuda caller autocast restored", torch.is_autocast_enabled(), True)
+        with _amp_context(torch.device("cuda"), torch.float16, False):
+            check("amp-context/cuda half disabled preserves caller autocast", torch.is_autocast_enabled(), True)
 
 # the disabled path through _infer completes on a plain CPU agent
 cpu_disabled = _bare_agent(FakeModel())  # amp=False
