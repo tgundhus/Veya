@@ -1857,6 +1857,9 @@ check_param("DecisionCache", laya.DecisionCache.__init__, "required", False, ins
 check_true("DecisionCacheError exported", "DecisionCacheError" in laya.__all__)
 check_true("DecisionCacheError is a runtime error", issubclass(DecisionCacheError, RuntimeError))
 
+check("Shared routing contract version", _lang_module.ROUTING_CONTRACT_VERSION,
+      "veya-routing-v1-unicode15")
+
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
     print("  FAIL", f)

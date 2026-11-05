@@ -17,6 +17,33 @@ from collections import Counter
 from collections.abc import Mapping
 from typing import Dict, Iterator, List, Optional, Union
 
+from ._routing_unicode import (
+    ALPHA, ALNUM_SOURCE, COMBINING, LOWER, SPACE, WORD,
+    WORD_SOURCE, VERSION as _UNICODE_VERSION, unicode_isupper, unicode_lower,
+)
+
+ROUTING_CONTRACT_VERSION = "veya-routing-v1-unicode15"
+_NATIVE_UNICODE = unicodedata.unidata_version == _UNICODE_VERSION
+_isalpha = str.isalpha if _NATIVE_UNICODE else lambda ch: ALPHA.fullmatch(ch) is not None
+_isupper = str.isupper if _NATIVE_UNICODE else unicode_isupper
+_islower = str.islower if _NATIVE_UNICODE else lambda ch: LOWER.fullmatch(ch) is not None
+_combining = unicodedata.combining if _NATIVE_UNICODE else lambda ch: COMBINING.fullmatch(ch) is not None
+
+
+def _strip(text):
+    if _NATIVE_UNICODE or text.isascii():
+        return text.strip()
+    start, end = 0, len(text)
+    while start < end and SPACE.fullmatch(text[start]) is not None:
+        start += 1
+    while end > start and SPACE.fullmatch(text[end - 1]) is not None:
+        end -= 1
+    return text[start:end]
+
+
+def _split(text):
+    return text.split() if _NATIVE_UNICODE or text.isascii() else [word for word in SPACE.split(text) if word]
+
 # Deleting these from the ASCII bytes of a text leaves everything but its letters.
 _ASCII_LETTER_BYTES = string.ascii_letters.encode("ascii")
 
@@ -228,7 +255,7 @@ _OWN_WORDS = {lg: words - _SHARED_WORDS for lg, words in _STOP.items()}
 _EN_COLLISION_WORDS = {"come", "son", "do", "care", "todo", "im", "per", "plus"} & {
     w for lg, sw in _STOP.items() if lg != "en" for w in sw}
 
-_WORD = re.compile(r"[^\W\d_]+", re.UNICODE)
+_WORD = re.compile(r"[^\W\d_]+", re.UNICODE) if _NATIVE_UNICODE else WORD
 # A token whose dot or @ joins word characters is an identifier, not prose: `github.com`,
 # `user@acme.com`, `v1.2.3`, `U.S.A.`. `_WORD` splits them into pieces that collide with real
 # function words -- `com` is Portuguese for "with", `o` is its article, `e` is Italian "e" -- so a
@@ -242,7 +269,33 @@ _WORD = re.compile(r"[^\W\d_]+", re.UNICODE)
 # no match: `[\w-]` and `[.@]` are disjoint, so an attempt from inside a run consumes
 # to exactly the same separator as an attempt from the run's start and the two always
 # succeed or fail together -- a leftmost match can only ever begin at a run start.
-_IDENTIFIER = re.compile(r"(?<![\w-])[\w-]*(?:[.@][\w-]+)+", re.UNICODE)
+_IDENTIFIER = (re.compile(r"(?<![\w-])[\w-]*(?:[.@][\w-]+)+", re.UNICODE) if _NATIVE_UNICODE else
+               re.compile(r"(?<![" + ALNUM_SOURCE + r"_-])[" + ALNUM_SOURCE + r"_-]*(?:[.@][" + ALNUM_SOURCE + r"_-]+)+"))
+
+
+def _state_items(state):
+    """ECMAScript object order for JSON states: array-index keys, then other keys.
+
+    JavaScript cannot recover the insertion order of integer-index properties. Canonicalize
+    just those keys here; values are still read lazily and question/criterion order is untouched.
+    Non-string Python mapping keys retain their ordinary insertion order.
+    """
+    indices = []
+    for key in state:
+        if (type(key) is str and key and "0" <= key[0] <= "9" and len(key) <= 10
+                and key.isascii() and key.isdigit() and (key == "0" or key[0] != "0")
+                and int(key) < 4294967295):
+            indices.append(key)
+    if not indices:
+        yield from state.items()
+        return
+    indices.sort(key=int)
+    indexed = set(indices)
+    for key in indices:
+        yield key, state[key]
+    for key, value in state.items():
+        if key not in indexed:
+            yield key, value
 
 
 def _iter_text(state: Union[str, bytes, Mapping, list, None], _depth: int = 0,
@@ -271,10 +324,10 @@ def _iter_text(state: Union[str, bytes, Mapping, list, None], _depth: int = 0,
         return
     if isinstance(state, Mapping):
         if _paths is None:
-            for v in state.values():
+            for _, v in _state_items(state):
                 yield from _iter_text(v, _depth + 1)
         else:
-            for key, v in state.items():
+            for key, v in _state_items(state):
                 # Do not stringify arbitrary keys or copy an unbounded field name into a report.
                 bounded = ((type(key) is str and len(key) <= 128)
                            or (type(key) is int and key.bit_length() <= 63))
@@ -330,7 +383,7 @@ def _script_counts(text: str) -> Dict[str, int]:
     counts: Dict[str, int] = {}
     latin = 0
     for ch in text:
-        if not ch.isalpha():
+        if not _isalpha(ch):
             continue
         cp = ord(ch)
         if cp < 0x02B0 or 0x1E00 <= cp <= 0x1EFF or 0xFF21 <= cp <= 0xFF3A or 0xFF41 <= cp <= 0xFF5A:
@@ -434,7 +487,7 @@ def _non_latin_words(text: str) -> List[str]:
     """
     runs, cur, script = [], "", None
     for ch in text:
-        if unicodedata.combining(ch):
+        if _combining(ch):
             continue
         s = _script_of(ch)
         if s is not None and s == script:
@@ -445,7 +498,7 @@ def _non_latin_words(text: str) -> List[str]:
         cur, script = (ch, s) if s is not None else ("", None)
     if cur:
         runs.append(cur)
-    return [w for w in runs if len(w) >= 2 and not w[0].isupper()]
+    return [w for w in runs if len(w) >= 2 and not _isupper(w[0])]
 
 
 def _english_rescued_by_words(words: List[str], diac_rate: float) -> bool:
@@ -484,8 +537,8 @@ def _latin_profile(text: str, diagnostic=None) -> Dict[str, object]:
     # 'İ'.lower() is 'i' + a combining dot, which matches no word list
     # An identifier needs a `.` or `@`, so without either there is nothing to remove.
     prose = _IDENTIFIER.sub(" ", text) if "." in text or "@" in text else text
-    words = _WORD.findall(prose.replace("İ", "i").lower())
-    lowered = text.lower()
+    words = _WORD.findall(unicode_lower(prose.replace("İ", "i")))
+    lowered = unicode_lower(text)
     # Every diacritic in the set is outside ASCII, so ASCII text has none.
     diac = 0 if lowered.isascii() else sum(1 for ch in lowered if ch in _NON_EN_DIACRITICS)
     diac_rate = diac / max(1, len(lowered))
@@ -555,18 +608,20 @@ def guess_latin_language(text: str) -> Optional[str]:
 # into an English request must not count as a foreign segment, so a line carrying code syntax --
 # `=`, `;`, braces, brackets or a call `name(` -- is skipped, and dotted or underscored identifiers
 # are dropped from the rest. Prose keeps "Deu erro (500)": the parenthesis follows a space.
-_CODE_LINE = re.compile(r"[=;{}\[\]]|\w\(")
+_CODE_LINE = (re.compile(r"[=;{}\[\]]|\w\(") if _NATIVE_UNICODE else
+              re.compile(r"[=;{}\[\]]|[" + ALNUM_SOURCE + r"_]\("))
 # Slash and backslash compounds are names, not sentences: `Nav/Com` and `OS/2` read as Portuguese
 # (`com`, `os`), `C:\DOS\mode` as Portuguese (`dos`), `ESA/UN` as Spanish (`un`). A whitespace token
 # holding a letter or digit, a joiner (`.`, `_`, `/`, `\`) and another letter or digit is an
 # identifier or a compound and is dropped whole. The pattern has a fixed length on purpose: an
 # open-ended `\w+(?:[._]\w+)+` backtracks quadratically on a long run of letters with no joiner,
 # and a state is user input.
-_JOINED = re.compile(r"[^\W_][._/\\][^\W_]")
+_JOINED = (re.compile(r"[^\W_][._/\\][^\W_]") if _NATIVE_UNICODE else
+           re.compile(r"[" + ALNUM_SOURCE + r"][._/\\][" + ALNUM_SOURCE + r"]"))
 # An all-caps token inside mixed-case text is an acronym or a code: `MON`, `LA`, `EST`, `COM`, `DES`
 # are hockey teams, states, time zones and radio bands, not French or Portuguese. A segment written
 # entirely in capitals keeps its words -- a customer shouting in Portuguese is still Portuguese.
-_LETTER_RUN = re.compile(r"[^\W\d_]{2,}")
+_LETTER_RUN = re.compile(r"[^\W\d_]{2,}") if _NATIVE_UNICODE else re.compile(r"[" + WORD_SOURCE + r"]{2,}")
 # ...but a line of nothing but acronyms has no lowercase either, so it skips the blanking above
 # and is read as prose. `MON DES EST LA` -- a hockey team, a state, a time zone and an airport --
 # was named French, and `STORES LOS ANGELES LAS VEGAS EL PASO CLOSED` Spanish. An all-caps line
@@ -647,7 +702,7 @@ def _shouted(text: str) -> bool:
     bars off it, because a bar that works by discarding Latin evidence has nothing to say about
     the half of the state it cannot read.
     """
-    return any(ch.isupper() for ch in text) and not any(ch.islower() for ch in text)
+    return any(_isupper(ch) for ch in text) and not any(_islower(ch) for ch in text)
 
 
 def _shouted_evidence(tokens, lang: str, diacritic_rate: float) -> bool:
@@ -656,7 +711,7 @@ def _shouted_evidence(tokens, lang: str, diacritic_rate: float) -> bool:
         return False
     if diacritic_rate >= NON_EN_DIACRITIC_RATE:
         return True
-    matched = {t.lower() for t in tokens} & _STOP.get(lang, set())
+    matched = {unicode_lower(t) for t in tokens} & _STOP.get(lang, set())
     return any(len(w) >= _SHOUTED_MIN_STOPWORD for w in matched)
 
 
@@ -668,16 +723,16 @@ def _named_prose_language(segment: str):
     segment in all capitals keeps its acronym-shaped tokens -- shouting is not a foreign language
     -- so it must also clear `_shouted_evidence`.
     """
-    if not segment.strip() or _CODE_LINE.search(segment):
+    if not _strip(segment) or _CODE_LINE.search(segment):
         return None
     # A joiner match cannot span whitespace, so a segment with none has no token to drop.
     if _JOINED.search(segment):
-        prose = " ".join(tok for tok in segment.split() if not _JOINED.search(tok))
+        prose = " ".join(tok for tok in _split(segment) if not _JOINED.search(tok))
     else:
-        prose = " ".join(segment.split())
+        prose = " ".join(_split(segment))
     shouted = _shouted(prose)
     if not shouted:
-        prose = _LETTER_RUN.sub(lambda m: " " if m.group().isupper() else m.group(), prose)
+        prose = _LETTER_RUN.sub(lambda m: " " if _isupper(m.group()) else m.group(), prose)
     tokens = _WORD.findall(prose)
     if len(tokens) < 4:
         return None
@@ -687,7 +742,7 @@ def _named_prose_language(segment: str):
         return None
     if shouted and not _shouted_evidence(tokens, lang, float(prof["diacritic_rate"])):
         return None
-    if len({w.lower() for w in tokens} & _STOP.get(lang, set())) < 2:
+    if len({unicode_lower(w) for w in tokens} & _STOP.get(lang, set())) < 2:
         return None
     return lang
 
@@ -716,7 +771,7 @@ def _non_english_segment(state: Union[str, bytes, Mapping, list, None], max_char
                 if diagnostic is not None:
                     diagnostic.update(stage="segment", reason="named_segment",
                                       source=_diagnostic_source(paths, index, line))
-                return lang, seg.strip()
+                return lang, _strip(seg)
     return None
 
 
@@ -800,10 +855,10 @@ def _analyse_text(text: str, diagnostic=None) -> Dict[str, object]:
             # letters is a word, and a word is not blanked out of its own sentence. Measured
             # over the 20,708 Latin-locale MASSIVE test rows, emphasis-capitalised two ways
             # (see the commit message): regressions 1,753 -> 293 and 3,835 -> 752.
-            caps = [m.group() for m in _LETTER_RUN.finditer(text) if m.group().isupper()]
+            caps = [m.group() for m in _LETTER_RUN.finditer(text) if _isupper(m.group())]
             if caps and not any(len(c) >= _SHOUTED_MIN_WORD for c in caps):
                 blanked = _LETTER_RUN.sub(
-                    lambda m: " " if m.group().isupper() else m.group(), text)
+                    lambda m: " " if _isupper(m.group()) else m.group(), text)
                 if blanked != text:
                     lang = latin_profile(blanked)["language"]
                     if diagnostic is not None:
@@ -846,7 +901,7 @@ def _leaf_non_english(leaf: str, diagnostic=None) -> Optional[Dict[str, object]]
         if len(line) < 7:
             continue
         sample = line[:4000]
-        if not sample.strip() or _CODE_LINE.search(sample):
+        if not _strip(sample) or _CODE_LINE.search(sample):
             continue
         det = _analyse_text(sample)
         if det["is_english"]:
@@ -869,12 +924,12 @@ def _leaf_non_english(leaf: str, diagnostic=None) -> Optional[Dict[str, object]]
                  and _named_prose_language(sample) is not None)
         if not named:
             if det["script"] not in ("latin", "unknown"):
-                if not (_non_latin_words(sample) and sum(ch.isalpha() for ch in sample) >= NON_LATIN_MIN_LETTERS):
+                if not (_non_latin_words(sample) and sum(map(_isalpha, sample)) >= NON_LATIN_MIN_LETTERS):
                     continue
             elif not (float(det["diacritic_rate"]) >= NON_EN_DIACRITIC_RATE
                       and len(_WORD.findall(sample)) >= 4):
                 continue
-        n_alpha = sum(ch.isalpha() for ch in sample)
+        n_alpha = sum(map(_isalpha, sample))
         if n_alpha > best_n:
             best_n = n_alpha
             best = det
@@ -942,7 +997,7 @@ def analyse(state: Union[str, bytes, Mapping, list, None], *, explain: bool = Fa
         det = _leaf_non_english(leaf, leaf_diagnostic)
         if det is None:
             continue
-        n_alpha = sum(ch.isalpha() for ch in leaf[:4000])
+        n_alpha = sum(map(_isalpha, leaf[:4000]))
         if n_alpha > best_n:
             best_n = n_alpha
             best = det

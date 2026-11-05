@@ -113,6 +113,7 @@ SCRIPT_SUITES = [
 ]
 
 PYTEST_SUITES = [
+    "tests/test_routing_parity.py",
     "tests/test_required_cache_transport.py",
     "tests/test_microbatch.py",
     "tests/test_serve.py",

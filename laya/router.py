@@ -49,6 +49,7 @@ from .hooks import (
 )
 from .hooks import _SKIP_DEFAULTS
 from .lang import analyse
+from ._routing_unicode import SPACE_SOURCE, unicode_lower, unicode_repr
 from .errors import DecisionCacheError
 
 
@@ -331,7 +332,7 @@ def _english_from_code(value: Any) -> Optional[bool]:
     """
     if value is None:
         return None
-    code = str(value).strip().lower()
+    code = unicode_lower(re.sub(r"^[" + SPACE_SOURCE + r"]+|[" + SPACE_SOURCE + r"]+$", "", str(value)))
     if not code:
         return None
     code = code.split(".", 1)[0]                       # en_US.UTF-8 -> en_US
@@ -1412,18 +1413,18 @@ class Router(HookRegistry):
         # lookup, and the decision then reports no repo rather than raising.
         if model is not None:
             key = self.resolve(model)
-            return RouteDecision(model=key, repo=_repo_str(self.models.get(key)), reason="explicit model=%r" % model,
+            return RouteDecision(model=key, repo=_repo_str(self.models.get(key)), reason="explicit model=%s" % unicode_repr(model),
                                  detection=None, workflow=None)
 
         if task is not None:
             key = self.resolve("typed-decisions" if str(task).lower().replace("-", "_") == "typed_decisions" else task)
-            return RouteDecision(model=key, repo=_repo_str(self.models.get(key)), reason="explicit task=%r" % task,
+            return RouteDecision(model=key, repo=_repo_str(self.models.get(key)), reason="explicit task=%s" % unicode_repr(task),
                                  detection=None, workflow=None)
 
         workflow = match_typed_decisions_workflow(questions or {})
         if workflow and self.auto_task_detection:
             return RouteDecision(model="typed-decisions", repo=_repo_str(self.models["typed-decisions"]),
-                                 reason="question ids match the %r typed-decisions workflow" % workflow,
+                                 reason="question ids match the %s typed-decisions workflow" % unicode_repr(workflow),
                                  detection=None, workflow=workflow)
 
         if lang is not None:
@@ -1433,7 +1434,7 @@ class Router(HookRegistry):
             resolved = _english_from_code(lang)
             if resolved is not None:
                 key = "english" if resolved else "multilingual"
-                return RouteDecision(model=key, repo=_repo_str(self.models[key]), reason="explicit lang=%r" % lang,
+                return RouteDecision(model=key, repo=_repo_str(self.models[key]), reason="explicit lang=%s" % unicode_repr(lang),
                                      detection=None, workflow=workflow)
 
         # Caller-supplied hint, per-call first then the one installed on the Router. Only a hint
@@ -1459,10 +1460,10 @@ class Router(HookRegistry):
         elif not det["is_english"]:
             key = "multilingual"
             if det.get("mixed_segment"):
-                reason = ("Latin script, mostly English, but a line or field reads as %r (%r); "
-                          "the English checkpoint cannot read it" % (det["language"], det["mixed_segment"][:60]))
+                reason = ("Latin script, mostly English, but a line or field reads as %s (%s); "
+                          "the English checkpoint cannot read it" % (unicode_repr(det["language"]), unicode_repr(det["mixed_segment"][:60])))
             elif det["language"]:
-                reason = "Latin script but language looks like %r, not English" % det["language"]
+                reason = "Latin script but language looks like %s, not English" % unicode_repr(det["language"])
             else:
                 # Unidentified Latin-script language: routed on the non-English letters alone,
                 # because no stopword list here covers it.

@@ -1,3 +1,10 @@
+import {
+  ALPHA_RE, ALNUM_SOURCE, COMBINING_RE, LOWER_RE, SPACE_SOURCE, UPPER_RE,
+  WORD_SOURCE, unicodeIsUpper, unicodeLower,
+} from "./routing-unicode.js";
+
+export const ROUTING_CONTRACT_VERSION = "veya-routing-v1-unicode15";
+
 type ScriptRanges = Array<[string, Array<[number, number]>]>;
 
 const SCRIPT_RANGES: ScriptRanges = [
@@ -31,18 +38,7 @@ const SCRIPT_RANGES: ScriptRanges = [
 const STOP: Record<string, Set<string>> = {
   en: new Set(["the", "and", "is", "are", "was", "were", "to", "of", "in", "for", "with", "that",
     "this", "it", "you", "have", "has", "not", "but", "on", "at", "be", "as", "from",
-    "will", "can", "would", "there", "their", "what", "which", "please", "we", "i",
-    // Question words, auxiliaries, pronouns and connectives, so a plain request such as "Why hasn't
-    // my card been delivered?" is not left undecided. See _STOP["en"] in laya/lang.py for how they
-    // were chosen and which words stay out.
-    "how", "why", "when", "where", "who", "whom", "does", "done", "doing", "been", "being",
-    "could", "should", "might", "must", "shall", "doesn", "didn", "isn", "aren", "wasn",
-    "weren", "haven", "hasn", "couldn", "wouldn", "won", "dont", "wont", "didnt", "doesnt",
-    "isnt", "wasnt", "havent", "ive", "youre", "thats", "whats", "any", "some", "many",
-    "much", "every", "each", "these", "those", "both", "few", "they", "them", "she", "him",
-    "his", "our", "your", "yours", "into", "onto", "between", "after", "before", "through",
-    "during", "without", "within", "down", "if", "nor", "than", "then", "because", "while",
-    "until", "here", "only", "very", "too", "ever", "never", "always", "already", "yet"]),
+    "will", "can", "would", "there", "their", "what", "which", "please", "we", "i"]),
   fr: new Set(["le", "la", "les", "des", "une", "est", "pour", "dans", "que", "qui", "avec", "sur",
     "pas", "plus", "nous", "vous", "être", "cette", "mais", "sont", "ont", "aux", "ce",
     "et", "du", "au", "ou", "je", "tu", "il", "elle", "ils", "elles", "mon", "ton",
@@ -130,14 +126,7 @@ const NON_EN_DIACRITICS = new Set(
     "ğı" +                                 // Turkish (text is lowercased before matching)
     "āēģīķļņūž" +                          // Baltic
     "đ" +                                  // Serbo-Croatian / Vietnamese
-    "ə" +                                  // Azerbaijani
-    // Vietnamese: no stopword list of its own, so its letters are the only signal that keeps
-    // it off the English checkpoint, and the tone-marked letters are precomposed codepoints
-    // of their own (see laya/lang.py for the same fix).
-    "ạảấầẩẫậắằẳẵặ" +
-    "ẹẻẽếềểễệỉị" +
-    "ọỏốồổỗộớờởỡợụủứừửữự" +
-    "ỳỵỷỹơư").split(""),
+    "ə").split(""),                          // Azerbaijani
 );
 
 export const NON_EN_DIACRITIC_RATE = 0.02;
@@ -187,13 +176,19 @@ const SHORT_SWEDISH_WORDS = new Set([
 ]);
 
 // JS `\w` is ASCII-only, so Python's `[^\W\d_]` needs the Unicode classes spelled out (Nl/No are in Python's `\w`).
-const WORD_RE = /[\p{L}\p{Nl}\p{No}]+/gu;
+const WORD_RE = new RegExp(`[${WORD_SOURCE}]+`, "gu");
 // Lookbehind for the same reason as the Python side (see laya/lang.py): without it the
 // greedy prefix is retried at every offset inside a run of word characters, which is
 // quadratic in the run's length -- 50 000 characters of one token took 1540 ms here.
 // It removes no match, because a leftmost match can only begin at a run start.
-const IDENTIFIER_RE = /(?<![\p{L}\p{N}_-])[\p{L}\p{N}_-]*(?:[.@][\p{L}\p{N}_-]+)+/gu;
-const IS_ALPHA_RE = /\p{L}/u;
+const IDENTIFIER_RE = new RegExp(`(?<![${ALNUM_SOURCE}_-])[${ALNUM_SOURCE}_-]*(?:[.@][${ALNUM_SOURCE}_-]+)+`, "gu");
+const IS_ALPHA_RE = ALPHA_RE;
+const SPACE_RE = new RegExp(`[${SPACE_SOURCE}]+`, "u");
+const STRIP_RE = new RegExp(`^[${SPACE_SOURCE}]+|[${SPACE_SOURCE}]+$`, "gu");
+
+function strip(text: string): string {
+  return text.replace(STRIP_RE, "");
+}
 
 // Python uses two different boundaries on purpose: detect_script/script_profile count the IPA
 // Extensions block (0x0250-0x02AF) as Latin, while _script_of (used for non-Latin word runs)
@@ -234,27 +229,39 @@ function codePointPrefix(text: string, count: number): string {
 }
 
 /** String leaves of a state. Keys are ignored: they are usually English field names. */
-function* iterText(state: unknown, depth = 0): Generator<string> {
+function* iterText(state: unknown, depth = 0, paths?: Array<Array<string | number> | null>,
+    path: Array<string | number> | null = []): Generator<string> {
   if (depth > 6 || state == null) return;
   if (typeof state === "string") {
+    if (paths) paths.push(path);
     yield state;
     return;
   }
   if (state instanceof Uint8Array) {
     try {
-      yield new TextDecoder("utf-8", { fatal: true }).decode(state);
+      const text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(state);
+      if (paths) paths.push(path);
+      yield text;
       return;
     } catch {
       return;
     }
   }
   if (Array.isArray(state)) {
-    for (const v of state) yield* iterText(v, depth + 1);
+    if (!paths) {
+      for (const value of state) yield* iterText(value, depth + 1);
+      return;
+    }
+    for (const [index, v] of state.entries()) {
+      yield* iterText(v, depth + 1, paths, paths && path ? [...path, index] : path);
+    }
     return;
   }
   if (typeof state === "object") {
     for (const key of Object.keys(state)) {
-      yield* iterText((state as Record<string, unknown>)[key], depth + 1);
+      const bounded = !paths || codePointLength(codePointPrefix(key, 129)) <= 128;
+      yield* iterText((state as Record<string, unknown>)[key], depth + 1, paths,
+        paths ? (path && bounded ? [...path, key] : null) : path);
     }
   }
 }
@@ -348,7 +355,7 @@ function nonLatinWords(text: string): string[] {
   let cur = "";
   let script: string | null = null;
   for (const ch of text) {
-    if (/^\p{M}$/u.test(ch)) continue;
+    if (COMBINING_RE.test(ch)) continue;
     const s = scriptOf(ch);
     if (s !== null && s === script) {
       cur += ch;
@@ -364,7 +371,7 @@ function nonLatinWords(text: string): string[] {
     }
   }
   if (cur) runs.push(cur);
-  return runs.filter((w) => codePointLength(w) >= 2 && !/^[\p{Lu}\p{Lt}]/u.test(w));
+  return runs.filter((w) => codePointLength(w) >= 2 && !UPPER_RE.test(codePointPrefix(w, 1)));
 }
 
 export interface LatinProfile {
@@ -375,10 +382,15 @@ export interface LatinProfile {
 }
 
 export function latinProfile(text: string): LatinProfile {
+  return analyseLatin(text);
+}
+
+function analyseLatin(text: string, diagnostic?: AnalyseDiagnostic): LatinProfile {
   const stripped = text.replace(IDENTIFIER_RE, " ");
-  const rawWords = stripped.match(WORD_RE) ?? [];
-  const words = rawWords.map((w) => w.toLowerCase());
-  const lowered = text.toLowerCase();
+  // Python normalizes the dotted capital I before lowercasing and tokenizing. Lowercasing
+  // words afterwards leaves its combining dot inside a token and changes the English vote.
+  const words: string[] = unicodeLower(stripped.replace(/İ/g, "i")).match(WORD_RE) ?? [];
+  const lowered = unicodeLower(text);
   let diac = 0;
   let characters = 0;
   for (const ch of lowered) {
@@ -390,9 +402,11 @@ export function latinProfile(text: string): LatinProfile {
   const nordicOverlap = words.some((w) => NORDIC_OVERLAP_WORDS.has(w)) &&
     !words.some((w) => EN_ONLY_WORDS.has(w));
   if (words.length > 1 && words.length < 4 && words.some((w) => SHORT_SWEDISH_WORDS.has(w))) {
+    if (diagnostic) diagnostic.reason = "short_swedish";
     return { language: "sv", englishHits: 0, diacriticRate: diacRate, looksNonEnglish: nonEnglish };
   }
   if (words.length < 4) {
+    if (diagnostic) diagnostic.reason = "insufficient_words";
     return { language: null, englishHits: 0, diacriticRate: diacRate, looksNonEnglish: nonEnglish || nordicOverlap };
   }
   // A collision word counts once however often it repeats; every other word counts its hits.
@@ -426,6 +440,7 @@ export function latinProfile(text: string): LatinProfile {
   } else if (en && (!nonEnglish || englishRescuedByWords(wordSet, diacRate))) {
     lang = "en";
   }
+  if (diagnostic) diagnostic.reason = lang ? "language_evidence" : "no_language_evidence";
   return { language: lang, englishHits: en, diacriticRate: diacRate, looksNonEnglish: nonEnglish || (lang === null && nordicOverlap) };
 }
 
@@ -442,6 +457,17 @@ export interface AnalyseResult {
   diacriticRate: number;
   nonLatinFraction: number;
   mixedSegment: string | null;
+  diagnostic?: AnalyseDiagnostic;
+}
+
+export interface AnalyseDiagnostic {
+  stage: "whole_state" | "segment" | "value";
+  reason: string | null;
+  source: { leafIndex: number; path: Array<string | number> | null; line: number } | null;
+}
+
+export interface AnalyseOptions {
+  explain?: boolean;
 }
 
 // Code is not prose in any language, but split into words it reads as one: `os.path` is Portuguese
@@ -449,16 +475,16 @@ export interface AnalyseResult {
 // into an English request must not count as a foreign segment, so a line carrying code syntax --
 // `=`, `;`, braces, brackets or a call `name(` -- is skipped, and dotted or underscored identifiers
 // are dropped from the rest. Prose keeps "Deu erro (500)": the parenthesis follows a space.
-const CODE_LINE_RE = /[=;{}[\]]|\w\(/;
+const CODE_LINE_RE = new RegExp(`[=;{}[\\]]|[${ALNUM_SOURCE}_]\\(`, "u");
 // Slash and backslash compounds are names, not sentences: `Nav/Com` and `OS/2` read as Portuguese
 // (`com`, `os`), `C:\DOS\mode` as Portuguese (`dos`), `ESA/UN` as Spanish (`un`). A whitespace token
 // holding a letter or digit, a joiner (`.`, `_`, `/`, `\`) and another letter or digit is an
 // identifier or a compound and is dropped whole.
-const JOINED_RE = /[^\W_][._/\\][^\W_]/;
+const JOINED_RE = new RegExp(`[${ALNUM_SOURCE}][._/\\\\][${ALNUM_SOURCE}]`, "u");
 // An all-caps token inside mixed-case text is an acronym or a code: `MON`, `LA`, `EST`, `COM`, `DES`
 // are hockey teams, states, time zones and radio bands, not French or Portuguese. A segment written
 // entirely in capitals keeps its words -- a customer shouting in Portuguese is still Portuguese.
-const LETTER_RUN_RE = /[\p{L}]{2,}/gu;
+const LETTER_RUN_RE = new RegExp(`[${WORD_SOURCE}]{2,}`, "gu");
 
 /** True for a CASED segment written entirely in capitals.
  *
@@ -470,8 +496,8 @@ const LETTER_RUN_RE = /[\p{L}]{2,}/gu;
 function shouted(text: string): boolean {
   let upper = false;
   for (const ch of text) {
-    if (/\p{Ll}/u.test(ch)) return false;
-    if (/\p{Lu}|\p{Lt}/u.test(ch)) upper = true;
+    if (LOWER_RE.test(ch)) return false;
+    if (UPPER_RE.test(ch)) upper = true;
   }
   return upper;
 }
@@ -482,7 +508,7 @@ function shoutedEvidence(tokens: string[], lang: string, diacriticRate: number):
   if (diacriticRate >= NON_EN_DIACRITIC_RATE) return true;
   const stopSet = STOP[lang];
   if (!stopSet) return false;
-  const matched = new Set(tokens.map((t) => t.toLowerCase()).filter((t) => stopSet.has(t)));
+  const matched = new Set(tokens.map((t) => unicodeLower(t)).filter((t) => stopSet.has(t)));
   return [...matched].some((w) => codePointLength(w) >= SHOUTED_MIN_STOPWORD);
 }
 
@@ -492,14 +518,14 @@ function shoutedEvidence(tokens: string[], lang: string, diacriticRate: number):
  * and two *different* words of that language. Acronyms and slash compounds are not words.
  */
 function namedProseLanguage(segment: string): string | null {
-  if (!segment.trim() || CODE_LINE_RE.test(segment)) return null;
-  let prose = segment.split(/\s+/).filter((tok) => !JOINED_RE.test(tok)).join(" ");
+  if (!strip(segment) || CODE_LINE_RE.test(segment)) return null;
+  let prose = segment.split(SPACE_RE).filter((tok) => tok && !JOINED_RE.test(tok)).join(" ");
   // A shouted segment keeps its acronym-shaped tokens -- shouting is not a foreign language, so it
   // must also clear `shoutedEvidence` below. Mixed-case text blanks all-caps runs (they are
   // acronyms) before the words are counted, which is Python's `_named_prose_language` split.
   const isShouted = shouted(prose);
   if (!isShouted) {
-    prose = prose.replace(LETTER_RUN_RE, (m) => (m === m.toUpperCase() ? " " : m));
+    prose = prose.replace(LETTER_RUN_RE, (m) => (unicodeIsUpper(m) ? " " : m));
   }
   const tokens = prose.match(WORD_RE) ?? [];
   if (tokens.length < 4) return null;
@@ -509,7 +535,7 @@ function namedProseLanguage(segment: string): string | null {
   if (isShouted && !shoutedEvidence(tokens, lang, prof.diacriticRate)) return null;
   const stopSet = STOP[lang];
   if (!stopSet) return null;
-  const distinctHits = new Set(tokens.map((w) => w.toLowerCase()).filter((w) => stopSet.has(w)));
+  const distinctHits = new Set(tokens.map((w) => unicodeLower(w)).filter((w) => stopSet.has(w)));
   if (distinctHits.size < 2) return null;
   return lang;
 }
@@ -523,16 +549,27 @@ function namedProseLanguage(segment: string): string | null {
  * compounds are not words. This adds no new way to call English text foreign; it only stops a
  * longer English part from outvoting a foreign one. Reads at most `maxChars` characters in all.
  */
-function nonEnglishSegment(state: unknown, maxChars = 4000): [string, string] | null {
+function nonEnglishSegment(state: unknown, maxChars = 4000,
+    diagnostic?: AnalyseDiagnostic): [string, string] | null {
   let seen = 0;
-  for (const leaf of iterText(state)) {
-    for (const seg of leaf.split("\n")) {
+  const paths: Array<Array<string | number> | null> | undefined = diagnostic ? [] : undefined;
+  let index = 0;
+  for (const leaf of iterText(state, 0, paths)) {
+    for (const [line, seg] of leaf.split("\n").entries()) {
       if (seen >= maxChars) return null;
       const capped = codePointPrefix(seg, maxChars - seen);
       seen += codePointLength(capped);
       const lang = namedProseLanguage(capped);
-      if (lang) return [lang, capped.trim()];
+      if (lang) {
+        if (diagnostic) {
+          diagnostic.stage = "segment";
+          diagnostic.reason = "named_segment";
+          diagnostic.source = { leafIndex: index, path: paths![index], line: line + 1 };
+        }
+        return [lang, strip(capped)];
+      }
     }
+    index += 1;
   }
   return null;
 }
@@ -564,7 +601,7 @@ function round4(x: number): number {
   return kept / 10000;
 }
 
-function analyseText(text: string): AnalyseResult {
+function analyseText(text: string, diagnostic?: AnalyseDiagnostic): AnalyseResult {
   const prof = scriptProfile(text);
   let script = detectScript(text);
   const nonLatin = prof && Object.keys(prof).length ? round4(1.0 - (prof["latin"] ?? 0.0)) : 0.0;
@@ -585,6 +622,7 @@ function analyseText(text: string): AnalyseResult {
     script = bestScript;
   }
   if (script === "unknown") {
+    if (diagnostic) diagnostic.reason = "no_letters";
     return {
       script: "unknown", scriptProfile: prof, language: null,
       isEnglish: true, languageUndecided: true, diacriticRate: 0.0,
@@ -592,13 +630,14 @@ function analyseText(text: string): AnalyseResult {
     };
   }
   if (script !== "latin") {
+    if (diagnostic) diagnostic.reason = "non_latin_script";
     return {
       script, scriptProfile: prof, language: null,
       isEnglish: false, languageUndecided: true, diacriticRate: 0.0,
       nonLatinFraction: nonLatin, mixedSegment: null,
     };
   }
-  const profLat = latinProfile(text);
+  const profLat = analyseLatin(text, diagnostic);
   let lang = profLat.language;
   // The acronym bar belongs here too, not only in the segment scan. That scan runs once a state
   // already reads English overall, so a state that is *nothing but* an acronym line -- or one
@@ -613,22 +652,29 @@ function analyseText(text: string): AnalyseResult {
   // English checkpoint on the strength of disbelieving the Latin part.
   if (lang !== null && lang !== "en" && !nonLatinCarries(nonLatin, nNonLatin)) {
     if (shouted(text)) {
-      if (!shoutedEvidence(text.match(WORD_RE) ?? [], lang, profLat.diacriticRate)) lang = null;
+      if (!shoutedEvidence(text.match(WORD_RE) ?? [], lang, profLat.diacriticRate)) {
+        lang = null;
+        if (diagnostic) diagnostic.reason = "caps_veto";
+      }
     } else {
       // Mixed-case text: re-take the verdict without the all-caps runs that voted in it. Only
       // ACRONYM-SHAPED runs are blanked -- a run of SHOUTED_MIN_WORD letters is a word, and a word
       // is not blanked out of its own sentence (blanking every run deleted emphasis capitals, so
       // `sag mir das HEUTIGE DATUM` lost its verdict). Diacritic evidence stays measured on the
       // original text, so a shouted foreign word cannot be blanked out of the safety net.
-      const caps = (text.match(LETTER_RUN_RE) ?? []).filter((m) => m === m.toUpperCase());
+      const caps = (text.match(LETTER_RUN_RE) ?? []).filter((m) => unicodeIsUpper(m));
       if (caps.length > 0 && !caps.some((c) => codePointLength(c) >= SHOUTED_MIN_WORD)) {
-        const blanked = text.replace(LETTER_RUN_RE, (m) => (m === m.toUpperCase() ? " " : m));
-        if (blanked !== text) lang = latinProfile(blanked).language;
+        const blanked = text.replace(LETTER_RUN_RE, (m) => (unicodeIsUpper(m) ? " " : m));
+        if (blanked !== text) {
+          lang = latinProfile(blanked).language;
+          if (diagnostic) diagnostic.reason = "caps_filtered";
+        }
       }
     }
   }
   const undecided = lang === null;
   const english = lang === "en" || (undecided && !profLat.looksNonEnglish);
+  if (diagnostic && undecided && !english) diagnostic.reason = "non_english_markers";
   return {
     script: "latin", scriptProfile: prof, language: lang,
     isEnglish: english, languageUndecided: undecided,
@@ -643,30 +689,48 @@ function alphaCount(text: string): number {
   return n;
 }
 
-/** A string value that is itself not safe for the English checkpoint, else null. */
-function leafNonEnglish(leaf: string): AnalyseResult | null {
-  const sample = codePointPrefix(leaf, 4000);
-  if (!sample.trim()) return null;
-  const det = analyseText(sample);
-  if (det.isEnglish) return null;
-  if (det.language !== null && det.language !== "en") return det;
-  const nAlpha = alphaCount(sample);
-  if (det.script !== "latin" && det.script !== "unknown") {
-    if (nonLatinWords(sample).length > 0 && nAlpha >= NON_LATIN_MIN_LETTERS) return det;
-    return null;
+/** Most informative non-English line of a value, with a fresh budget for each line. */
+function leafNonEnglish(leaf: string,
+    diagnostic?: { line?: number; reason?: string }): AnalyseResult | null {
+  let best: AnalyseResult | null = null;
+  let bestN = -1;
+  for (const [line, raw] of leaf.split("\n").entries()) {
+    if (codePointLength(codePointPrefix(raw, 7)) < 7) continue;
+    const sample = codePointPrefix(raw, 4000);
+    if (!strip(sample) || CODE_LINE_RE.test(sample)) continue;
+    const det = analyseText(sample);
+    if (det.isEnglish) continue;
+    const named = det.language !== null && det.language !== "en" && namedProseLanguage(sample) !== null;
+    const nAlpha = alphaCount(sample);
+    if (!named) {
+      if (det.script !== "latin" && det.script !== "unknown") {
+        if (!nonLatinWords(sample).length || nAlpha < NON_LATIN_MIN_LETTERS) continue;
+      } else if (!(det.diacriticRate >= NON_EN_DIACRITIC_RATE && (sample.match(WORD_RE) ?? []).length >= 4)) {
+        continue;
+      }
+    }
+    if (nAlpha > bestN) {
+      bestN = nAlpha;
+      best = det;
+      if (diagnostic) {
+        diagnostic.line = line + 1;
+        diagnostic.reason = named ? "named_value" :
+          det.script !== "latin" && det.script !== "unknown" ? "non_latin_value" : "diacritic_value";
+      }
+    }
   }
-  const words = sample.match(WORD_RE) ?? [];
-  if (det.languageUndecided && det.diacriticRate >= NON_EN_DIACRITIC_RATE && words.length >= 4) {
-    return det;
-  }
-  return null;
+  return best;
 }
 
-export function analyse(state: unknown): AnalyseResult {
+export function analyse(state: unknown, options: AnalyseOptions = {}): AnalyseResult {
   // One non-English string value is enough. Joining every value let a long English
   // note fill the window, or outvote a short German message, and that message was
   // then sent to the English checkpoint.
-  const result = analyseText(stateText(state));
+  const diagnostic: AnalyseDiagnostic | undefined = options.explain ? {
+    stage: "whole_state", reason: null, source: null,
+  } : undefined;
+  const result = analyseText(stateText(state), diagnostic);
+  if (diagnostic) result.diagnostic = diagnostic;
   if (result.script === "latin" && result.isEnglish) {
     // A Portuguese ticket with an English stack trace, error payload or form template reads as
     // English as a whole, because the English part is longer -- yet the part a question is about
@@ -683,7 +747,7 @@ export function analyse(state: unknown): AnalyseResult {
     }
     // a single line has no other part to be outvoted by, and was just read whole
     if (multipleParts) {
-      const found = nonEnglishSegment(state);
+      const found = nonEnglishSegment(state, 4000, diagnostic);
       if (found) {
         const [lang, mixed] = found;
         return {
@@ -703,14 +767,24 @@ export function analyse(state: unknown): AnalyseResult {
   }
   let best: AnalyseResult | null = null;
   let bestN = -1;
-  for (const leaf of iterText(state)) {
-    const det = leafNonEnglish(leaf);
-    if (!det) continue;
-    const n = alphaCount(codePointPrefix(leaf, 4000));
-    if (n > bestN) {
-      bestN = n;
-      best = det;
+  const paths: Array<Array<string | number> | null> | undefined = diagnostic ? [] : undefined;
+  let index = 0;
+  for (const leaf of iterText(state, 0, paths)) {
+    const leafDiagnostic: { line?: number; reason?: string } | undefined = diagnostic ? {} : undefined;
+    const det = leafNonEnglish(leaf, leafDiagnostic);
+    if (det) {
+      const n = alphaCount(codePointPrefix(leaf, 4000));
+      if (n > bestN) {
+        bestN = n;
+        best = det;
+        if (diagnostic) {
+          diagnostic.stage = "value";
+          diagnostic.reason = leafDiagnostic!.reason!;
+          diagnostic.source = { leafIndex: index, path: paths![index], line: leafDiagnostic!.line! };
+        }
+      }
     }
+    index += 1;
   }
   if (!best) return result;
   // The value pass answers `language` and `isEnglish` for the state, and leaves the script fields

@@ -7,6 +7,7 @@ nav:
       - use-cases.md
       - structured.md
       - compaction.md
+      - routing-parity.md
       - hooks
       - langchain.md
       - llamaindex.md

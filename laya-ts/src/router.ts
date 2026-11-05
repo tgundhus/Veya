@@ -1,4 +1,5 @@
 import { analyse, type AnalyseResult } from "./lang.js";
+import { PRINTABLE_RE, SPACE_SOURCE, unicodeLower } from "./routing-unicode.js";
 import { checkQuestion, type PredictOptions, type QuestionDef, type SystemOneResult } from "./agent.js";
 import { checkMinConfidence, flagLowConfidence } from "./common.js";
 import { decide, decideBatch, type DecideOptions, type DecideBatchOptions, type DecisionResult } from "./structured.js";
@@ -50,8 +51,50 @@ const ALIASES: Record<string, ModelName> = {
   decisions: "typed-decisions",
 };
 
+const CODE_STRIP_RE = new RegExp(`^[${SPACE_SOURCE}]+|[${SPACE_SOURCE}]+$`, "gu");
+
+function normalizeCode(value: string): string {
+  return unicodeLower(value.replace(CODE_STRIP_RE, ""));
+}
+
+/** Match Python's human-readable route evidence, including Unicode/control escaping. */
+function pythonRepr(value: string): string {
+  const quote = value.includes("'") && !value.includes('"') ? '"' : "'";
+  let escaped = "";
+  for (const ch of value) {
+    if (ch === "\\" || ch === quote) escaped += "\\" + ch;
+    else if (ch === "\t") escaped += "\\t";
+    else if (ch === "\n") escaped += "\\n";
+    else if (ch === "\r") escaped += "\\r";
+    else if (PRINTABLE_RE.test(ch)) escaped += ch;
+    else {
+      const cp = ch.codePointAt(0)!;
+      escaped += cp <= 0xff ? "\\x" + cp.toString(16).padStart(2, "0") :
+        cp <= 0xffff ? "\\u" + cp.toString(16).padStart(4, "0") :
+        "\\U" + cp.toString(16).padStart(8, "0");
+    }
+  }
+  return quote + escaped + quote;
+}
+
+function percentage(value: number): number {
+  const scaled = 100 * value;
+  const below = Math.floor(scaled);
+  return scaled - below === 0.5 ? below + below % 2 : Math.round(scaled);
+}
+
+function evidencePreview(value: string): string {
+  let count = 0;
+  let end = 0;
+  for (const ch of value) {
+    if (count++ >= 60) break;
+    end += ch.length;
+  }
+  return value.slice(0, end);
+}
+
 export function normaliseName(name: string): ModelName {
-  const raw = String(name).trim().toLowerCase();
+  const raw = normalizeCode(String(name));
   const key = ALIASES[raw] ?? raw;
   if (!(key in DEFAULT_MODELS)) {
     throw new Error(
@@ -90,7 +133,7 @@ const LANGUAGE_AGNOSTIC_CODES = new Set(["c", "posix", "und", "zxx", "mul"]);
 
 export function englishFromCode(value: unknown): boolean | null {
   if (value === null || value === undefined) return null;
-  let code = String(value).trim().toLowerCase();
+  let code = normalizeCode(String(value));
   if (!code) return null;
   code = code.split(".", 1)[0]; // en_US.UTF-8 -> en_US
   const primary = code.replace(/_/g, "-").split("-", 1)[0]; // en_US -> en
@@ -152,6 +195,8 @@ export interface RouteOptions {
   lang_guess?: LangGuess;
   hooks?: HookArg;
   hooksRaise?: boolean;
+  /** Include bounded language-evidence diagnostics in automatic routing. */
+  explain?: boolean;
 }
 
 /**
@@ -166,6 +211,7 @@ export interface PredictBatchOptions {
   onPredictStart?: PredictHook;
   onPredictEnd?: PredictHook;
   hooksRaise?: boolean;
+  explain?: boolean;
 }
 
 /** One item of a Router.predictBatch/routeBatch batch: state, questions, route overrides. */
@@ -484,7 +530,7 @@ export class Router extends HookRegistry {
       return {
         model: key,
         repo: repoStr(this.models[key]),
-        reason: `explicit model=${JSON.stringify(model)}`,
+        reason: `explicit model=${pythonRepr(model)}`,
         detection: null,
         workflow: null,
       };
@@ -495,7 +541,7 @@ export class Router extends HookRegistry {
       return {
         model: key,
         repo: repoStr(this.models[key]),
-        reason: `explicit task=${JSON.stringify(task)}`,
+        reason: `explicit task=${pythonRepr(task)}`,
         detection: null,
         workflow: null,
       };
@@ -506,7 +552,7 @@ export class Router extends HookRegistry {
       return {
         model: "typed-decisions",
         repo: repoStr(this.models["typed-decisions"]),
-        reason: `question ids match the ${JSON.stringify(workflow)} typed-decisions workflow`,
+        reason: `question ids match the ${pythonRepr(workflow)} typed-decisions workflow`,
         detection: null,
         workflow,
       };
@@ -521,7 +567,7 @@ export class Router extends HookRegistry {
       return {
         model: key,
         repo: repoStr(this.models[key]),
-        reason: `explicit lang=${JSON.stringify(lang)}`,
+        reason: `explicit lang=${pythonRepr(lang!)}`,
         detection: null,
         workflow,
       };
@@ -545,7 +591,7 @@ export class Router extends HookRegistry {
       }
     }
 
-    const det = analyse(state);
+    const det = analyse(state, { explain: opts.explain });
     let key: ModelName;
     let reason: string;
     if (det.script === "unknown") {
@@ -554,19 +600,19 @@ export class Router extends HookRegistry {
     } else if (det.script !== "latin") {
       key = "multilingual";
       reason =
-        `non-Latin script (${det.script}, ${Math.round(100 * det.nonLatinFraction)}% of letters); ` +
+        `non-Latin script (${det.script}, ${percentage(det.nonLatinFraction)}% of letters); ` +
         "the English checkpoint cannot read it";
     } else if (!det.isEnglish) {
       key = "multilingual";
       if (det.mixedSegment) {
         reason =
-          `Latin script, mostly English, but a line or field reads as ${JSON.stringify(det.language)} ` +
-          `(${JSON.stringify(det.mixedSegment.slice(0, 60))}); the English checkpoint cannot read it`;
+          `Latin script, mostly English, but a line or field reads as ${pythonRepr(det.language!)} ` +
+          `(${pythonRepr(evidencePreview(det.mixedSegment))}); the English checkpoint cannot read it`;
       } else if (det.language) {
-        reason = `Latin script but language looks like ${JSON.stringify(det.language)}, not English`;
+        reason = `Latin script but language looks like ${pythonRepr(det.language)}, not English`;
       } else {
         reason =
-          `Latin script, language not identified but ${Math.round(100 * det.diacriticRate)}% ` +
+          `Latin script, language not identified but ${percentage(det.diacriticRate)}% ` +
           "non-English letters; not safe for the English checkpoint";
       }
     } else if (det.languageUndecided) {
@@ -794,6 +840,7 @@ export class Router extends HookRegistry {
           langGuess: request.langGuess ?? request.lang_guess ?? null,
           hooks: opts.hooks,
           hooksRaise: opts.hooksRaise,
+          explain: opts.explain,
         }),
       );
     }

@@ -216,6 +216,7 @@ def _storable(result: Dict[str, Any]) -> Dict[str, Any]:
 def _fingerprint(agent: Any) -> List[Any]:
     """What identifies the answering model: when any of it changes, old decisions must not replay."""
     from . import __version__
+    from . import lang
 
     cfg = getattr(agent, "cfg", None)
     if not isinstance(cfg, Mapping):
@@ -228,7 +229,8 @@ def _fingerprint(agent: Any) -> List[Any]:
             cfg.get("max_len"), cfg.get("head_max_len"),
             getattr(agent, "temperature", None), getattr(agent, "temperature_by_options", None),
             getattr(agent, "lang_temperatures", None), getattr(agent, "binning_map", None),
-            cfg.get("option_layout"), cfg.get("act_costs")]
+            cfg.get("option_layout"), cfg.get("act_costs"),
+            getattr(lang, "ROUTING_CONTRACT_VERSION", "legacy")]
 
 
 class DecisionStore(Protocol):

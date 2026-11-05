@@ -37,17 +37,15 @@ describe("lang", () => {
     expect(a.isEnglish).toBe(false);
     expect(a.language).toBe(null);
   });
-  // Vietnamese: no stopword list of its own, so NON_EN_DIACRITICS is the only signal that keeps
-  // it off the English checkpoint -- and the tone-marked letters are precomposed codepoints the
-  // set did not hold, so everyday sentences carried a diacritic rate of 0.0 and read as English.
-  // Expectations generated with Python's laya.lang.analyse on the same inputs.
-  it("counts Vietnamese tone-marked letters as non-English", () => {
+  // The former port added extra Vietnamese letters absent from the canonical Python contract.
+  // Pin the shared heuristic's actual limits; callers with known Vietnamese should pass lang.
+  it("matches the canonical Vietnamese diacritic vocabulary", () => {
     const a = analyse("Cảm ơn bạn nhiều nhẻ");
-    expect(a.diacriticRate).toBeCloseTo(0.25, 5);
-    expect(a.isEnglish).toBe(false);
+    expect(a.diacriticRate).toBe(0);
+    expect(a.isEnglish).toBe(true);
     expect(a.language).toBe(null);
     const b = analyse("Mình muốn hỏi về đơn hàng đã đặt");
-    expect(b.diacriticRate).toBeCloseTo(0.3438, 4);
+    expect(b.diacriticRate).toBeCloseTo(0.1875, 4);
     expect(b.isEnglish).toBe(false);
   });
   it("keeps English with Vietnamese loanwords and names English", () => {
@@ -97,11 +95,12 @@ describe("lang", () => {
     expect(analyse("What was the reason for the delay").language).toBe("en");
     expect(analyse("Where can I find my invoice in the app").isEnglish).toBe(true);
   });
-  it("names English made of question words and contractions", () => {
+  it("keeps sparse English evidence undecided without changing its English route", () => {
     for (const text of ["Why hasn't my card been delivered?", "How long does a card delivery take?",
       "Where should my refund show up?"]) {
-      expect(guessLatinLanguage(text)).toBe("en");
-      expect(analyse(text).languageUndecided).toBe(false);
+      expect(guessLatinLanguage(text)).toBe(null);
+      expect(analyse(text).languageUndecided).toBe(true);
+      expect(analyse(text).isEnglish).toBe(true);
     }
   });
   // `es` and `du` are German function words, but Spanish and French claim them, and a word two
