@@ -1,0 +1,1249 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "english-repair-acceptance-v1",
+  "description": "Fresh synthetic acceptance cases authored before candidate evaluation. Boundary candidates describe incomplete or competing real-world evidence and carry no forced gold label.",
+  "cases": [
+    {
+      "id": "harbor-service-1",
+      "family": "harbor-service",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "We need a berth for a 9 metre boat on Saturday night. Can you reserve one?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the current request to the harbor team that owns it. Use reception for a general enquiry or when a specific service has yet to be requested.",
+          "criteria": {
+            "moorings": "A request to reserve, move or give up a berth.",
+            "workshop": "A repair or physical fault that needs a technician.",
+            "reception": "General contact or insufficient information to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "moorings"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "harbor-service-2",
+      "family": "harbor-service",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The boat is already tied up and we have no plans to move. The dock outlet sparks when we plug in the charger.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the current request to the harbor team that owns it. Use reception for a general enquiry or when a specific service has yet to be requested.",
+          "criteria": {
+            "moorings": "A request to reserve, move or give up a berth.",
+            "workshop": "A repair or physical fault that needs a technician.",
+            "reception": "General contact or insufficient information to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "workshop"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "harbor-service-3",
+      "family": "harbor-service",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I have our vessel number, but I'd like to explain what we need in a call with your office.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the current request to the harbor team that owns it. Use reception for a general enquiry or when a specific service has yet to be requested.",
+          "criteria": {
+            "moorings": "A request to reserve, move or give up a berth.",
+            "workshop": "A repair or physical fault that needs a technician.",
+            "reception": "General contact or insufficient information to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "reception"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "harbor-service-4",
+      "family": "harbor-service",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "There is no fault to report. We want to release our berth because our trip was cancelled.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the current request to the harbor team that owns it. Use reception for a general enquiry or when a specific service has yet to be requested.",
+          "criteria": {
+            "moorings": "A request to reserve, move or give up a berth.",
+            "workshop": "A repair or physical fault that needs a technician.",
+            "reception": "General contact or insufficient information to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "moorings"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "harbor-service-5",
+      "family": "harbor-service",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Our allotted berth is unusable because its pedestal has failed. We'd like either to move or to have the pedestal repaired.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the current request to the harbor team that owns it. Use reception for a general enquiry or when a specific service has yet to be requested.",
+          "criteria": {
+            "moorings": "A request to reserve, move or give up a berth.",
+            "workshop": "A repair or physical fault that needs a technician.",
+            "reception": "General contact or insufficient information to route."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "harbor-service-6",
+      "family": "harbor-service",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "We need the damaged connection assessed before deciding whether to give up the berth. Who should start the conversation?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the current request to the harbor team that owns it. Use reception for a general enquiry or when a specific service has yet to be requested.",
+          "criteria": {
+            "moorings": "A request to reserve, move or give up a berth.",
+            "workshop": "A repair or physical fault that needs a technician.",
+            "reception": "General contact or insufficient information to route."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "orchard-cooperative-1",
+      "family": "orchard-cooperative",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The pump runs at the set pressure. Several trees are developing mottled leaves and I need someone to identify the cause.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the help that the grower actually asks for. Use intake when the record gives no actionable crop or equipment request.",
+          "criteria": {
+            "crop": "Advice about a plant problem, pest, disease or growing condition.",
+            "equipment": "Service for a mechanical fault in farm equipment.",
+            "intake": "Other enquiry or no specific problem described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "crop"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "orchard-cooperative-2",
+      "family": "orchard-cooperative",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The foliage is fine. The sprayer's coupling snapped, and I need a replacement fitted.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the help that the grower actually asks for. Use intake when the record gives no actionable crop or equipment request.",
+          "criteria": {
+            "crop": "Advice about a plant problem, pest, disease or growing condition.",
+            "equipment": "Service for a mechanical fault in farm equipment.",
+            "intake": "Other enquiry or no specific problem described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "equipment"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "orchard-cooperative-3",
+      "family": "orchard-cooperative",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please have someone call after lunch. I haven't told the cooperative why I need help yet.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the help that the grower actually asks for. Use intake when the record gives no actionable crop or equipment request.",
+          "criteria": {
+            "crop": "Advice about a plant problem, pest, disease or growing condition.",
+            "equipment": "Service for a mechanical fault in farm equipment.",
+            "intake": "Other enquiry or no specific problem described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "intake"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "orchard-cooperative-4",
+      "family": "orchard-cooperative",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "My apples have fresh brown marks after the wet week. Can someone advise how to check for disease?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the help that the grower actually asks for. Use intake when the record gives no actionable crop or equipment request.",
+          "criteria": {
+            "crop": "Advice about a plant problem, pest, disease or growing condition.",
+            "equipment": "Service for a mechanical fault in farm equipment.",
+            "intake": "Other enquiry or no specific problem described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "crop"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "orchard-cooperative-5",
+      "family": "orchard-cooperative",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The trees started wilting after the irrigation motor stopped. We need to know whether to inspect the trees or the motor first.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the help that the grower actually asks for. Use intake when the record gives no actionable crop or equipment request.",
+          "criteria": {
+            "crop": "Advice about a plant problem, pest, disease or growing condition.",
+            "equipment": "Service for a mechanical fault in farm equipment.",
+            "intake": "Other enquiry or no specific problem described."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "orchard-cooperative-6",
+      "family": "orchard-cooperative",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The sprayer pressure seems low and the leaf damage continued. Neither the cause nor the repair has been identified.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the help that the grower actually asks for. Use intake when the record gives no actionable crop or equipment request.",
+          "criteria": {
+            "crop": "Advice about a plant problem, pest, disease or growing condition.",
+            "equipment": "Service for a mechanical fault in farm equipment.",
+            "intake": "Other enquiry or no specific problem described."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "municipal-records-1",
+      "family": "municipal-records",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Where can I obtain last April's signed council minutes? The website is working.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route what the resident is asking the city to do now. Use general if the current request is neither a records request nor a website fault.",
+          "criteria": {
+            "records": "Request a copy of a municipal document or help finding a record.",
+            "web": "Report a problem operating the municipal website.",
+            "general": "Other contact, including no described request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "records"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "municipal-records-2",
+      "family": "municipal-records",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I do not need a copy of the minutes. When I press save on the preferences page, the city website returns a server error.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route what the resident is asking the city to do now. Use general if the current request is neither a records request nor a website fault.",
+          "criteria": {
+            "records": "Request a copy of a municipal document or help finding a record.",
+            "web": "Report a problem operating the municipal website.",
+            "general": "Other contact, including no described request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "web"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "municipal-records-3",
+      "family": "municipal-records",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Here is my case reference. I will explain what I need when you call.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route what the resident is asking the city to do now. Use general if the current request is neither a records request nor a website fault.",
+          "criteria": {
+            "records": "Request a copy of a municipal document or help finding a record.",
+            "web": "Report a problem operating the municipal website.",
+            "general": "Other contact, including no described request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "general"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "municipal-records-4",
+      "family": "municipal-records",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I'm writing to thank the staff member who answered my call. There is nothing else to do.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route what the resident is asking the city to do now. Use general if the current request is neither a records request nor a website fault.",
+          "criteria": {
+            "records": "Request a copy of a municipal document or help finding a record.",
+            "web": "Report a problem operating the municipal website.",
+            "general": "Other contact, including no described request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "general"
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "municipal-records-5",
+      "family": "municipal-records",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The city portal fails when I open the only copy of the zoning plan. Could you get me the plan or restore the page?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route what the resident is asking the city to do now. Use general if the current request is neither a records request nor a website fault.",
+          "criteria": {
+            "records": "Request a copy of a municipal document or help finding a record.",
+            "web": "Report a problem operating the municipal website.",
+            "general": "Other contact, including no described request."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "municipal-records-6",
+      "family": "municipal-records",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The records page is confusing and I don't know whether the form or the record is missing. Can someone check?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route what the resident is asking the city to do now. Use general if the current request is neither a records request nor a website fault.",
+          "criteria": {
+            "records": "Request a copy of a municipal document or help finding a record.",
+            "web": "Report a problem operating the municipal website.",
+            "general": "Other contact, including no described request."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "archive-access-consent-1",
+      "family": "archive-access-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner wrote, 'I authorize Priya to enter the restricted archive this afternoon.'",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the archive owner given explicit permission for the named researcher to enter the restricted room now? Require a current authorization from the owner."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "archive-access-consent-2",
+      "family": "archive-access-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner received Priya's entry request. An assistant has reserved a seat while awaiting a decision.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the archive owner given explicit permission for the named researcher to enter the restricted room now? Require a current authorization from the owner."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "archive-access-consent-3",
+      "family": "archive-access-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Owner: Priya has permission to use the restricted room today. Let her in.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the archive owner given explicit permission for the named researcher to enter the restricted room now? Require a current authorization from the owner."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "archive-access-consent-4",
+      "family": "archive-access-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Priya was cleared to consult the public catalogue. The restricted room request is still awaiting the owner's answer.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the archive owner given explicit permission for the named researcher to enter the restricted room now? Require a current authorization from the owner."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "archive-access-consent-5",
+      "family": "archive-access-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Owner: Priya should be fine to come in after we sort out the escort. An escort is at the desk but has not been assigned.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the archive owner given explicit permission for the named researcher to enter the restricted room now? Require a current authorization from the owner."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "archive-access-consent-6",
+      "family": "archive-access-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The owner said 'go ahead' in response to a thread about both the public catalogue and the restricted room. The reply doesn't identify which.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the archive owner given explicit permission for the named researcher to enter the restricted room now? Require a current authorization from the owner."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "specimen-disposal-consent-1",
+      "family": "specimen-disposal-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Custodian: You may discard the marked specimen today. The retention period has ended.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the lab custodian explicitly authorized disposal of this specimen now? Approval to review or handle it does not authorize disposal."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "specimen-disposal-consent-2",
+      "family": "specimen-disposal-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The specimen is on the disposal list that was emailed to the custodian. No approval has been logged.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the lab custodian explicitly authorized disposal of this specimen now? Approval to review or handle it does not authorize disposal."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "specimen-disposal-consent-3",
+      "family": "specimen-disposal-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The custodian signed a direction saying this specimen may be disposed of immediately.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the lab custodian explicitly authorized disposal of this specimen now? Approval to review or handle it does not authorize disposal."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "specimen-disposal-consent-4",
+      "family": "specimen-disposal-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The custodian wants the specimen examined before making a disposal decision.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the lab custodian explicitly authorized disposal of this specimen now? Approval to review or handle it does not authorize disposal."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "specimen-disposal-consent-5",
+      "family": "specimen-disposal-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The custodian said to clear the old shelf. The specimen has an unexpired retention label and was never named.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the lab custodian explicitly authorized disposal of this specimen now? Approval to review or handle it does not authorize disposal."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "specimen-disposal-consent-6",
+      "family": "specimen-disposal-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The custodian initialled a checklist with separate review and disposal sections. The initials are between both boxes.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the lab custodian explicitly authorized disposal of this specimen now? Approval to review or handle it does not authorize disposal."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "volunteer-shift-consent-1",
+      "family": "volunteer-shift-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Coordinator: Your switch to the Tuesday morning shift is approved. The new assignment starts this week.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the shift coordinator explicitly approve this volunteer's requested shift change as effective now? A proposal, condition or earlier approval for a different change is insufficient."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "volunteer-shift-consent-2",
+      "family": "volunteer-shift-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The coordinator is reviewing the Tuesday switch and will reply before the rota is printed.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the shift coordinator explicitly approve this volunteer's requested shift change as effective now? A proposal, condition or earlier approval for a different change is insufficient."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "volunteer-shift-consent-3",
+      "family": "volunteer-shift-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The coordinator replied, 'Yes, move to Tuesday morning starting this week.'",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the shift coordinator explicitly approve this volunteer's requested shift change as effective now? A proposal, condition or earlier approval for a different change is insufficient."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "volunteer-shift-consent-4",
+      "family": "volunteer-shift-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The previous move to Friday was approved. The new request for Tuesday is unanswered.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the shift coordinator explicitly approve this volunteer's requested shift change as effective now? A proposal, condition or earlier approval for a different change is insufficient."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "volunteer-shift-consent-5",
+      "family": "volunteer-shift-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Coordinator: Tuesday looks all right if Elise can cover. Elise has offered, but the coordinator hasn't seen the offer.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the shift coordinator explicitly approve this volunteer's requested shift change as effective now? A proposal, condition or earlier approval for a different change is insufficient."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "volunteer-shift-consent-6",
+      "family": "volunteer-shift-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The coordinator sent back the updated rota with Tuesday highlighted. The accompanying note says it is the draft under review.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the shift coordinator explicitly approve this volunteer's requested shift change as effective now? A proposal, condition or earlier approval for a different change is insufficient."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "observatory-operations-1",
+      "family": "observatory-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please change the heading on the next observer guide. All telescopes are operating.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the current operational impact. Choose the level supported by the facts in the report.",
+          "criteria": [
+            "Low: routine administration without operational disruption.",
+            "Medium: part of the work is delayed but a usable workaround exists.",
+            "High: all observing is stopped, with no workaround and a need for immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "observatory-operations-2",
+      "family": "observatory-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One telescope cannot change filters. The run can proceed on its twin while the issue is checked.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the current operational impact. Choose the level supported by the facts in the report.",
+          "criteria": [
+            "Low: routine administration without operational disruption.",
+            "Medium: part of the work is delayed but a usable workaround exists.",
+            "High: all observing is stopped, with no workaround and a need for immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "observatory-operations-3",
+      "family": "observatory-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All domes are locked shut, including the backup station. The time-critical observations cannot run by any route tonight.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the current operational impact. Choose the level supported by the facts in the report.",
+          "criteria": [
+            "Low: routine administration without operational disruption.",
+            "Medium: part of the work is delayed but a usable workaround exists.",
+            "High: all observing is stopped, with no workaround and a need for immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "observatory-operations-4",
+      "family": "observatory-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "We need last season's observing log for a retrospective. The request describes no current fault.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the current operational impact. Choose the level supported by the facts in the report.",
+          "criteria": [
+            "Low: routine administration without operational disruption.",
+            "Medium: part of the work is delayed but a usable workaround exists.",
+            "High: all observing is stopped, with no workaround and a need for immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "observatory-operations-5",
+      "family": "observatory-operations",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The main instrument is dark and the portable backup can cover only part of tonight's programme. It is unclear whether the missed observations can be repeated.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the current operational impact. Choose the level supported by the facts in the report.",
+          "criteria": [
+            "Low: routine administration without operational disruption.",
+            "Medium: part of the work is delayed but a usable workaround exists.",
+            "High: all observing is stopped, with no workaround and a need for immediate action."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "observatory-operations-6",
+      "family": "observatory-operations",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Two buildings lost network access. The autonomous schedules may still run, but no one has confirmed that the backup clock is synchronized.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the current operational impact. Choose the level supported by the facts in the report.",
+          "criteria": [
+            "Low: routine administration without operational disruption.",
+            "Medium: part of the work is delayed but a usable workaround exists.",
+            "High: all observing is stopped, with no workaround and a need for immediate action."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "greenhouse-operations-1",
+      "family": "greenhouse-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please order new labels for the spring beds. Nothing has stopped working.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the actual impact on plant operations using the ordered rubric.",
+          "criteria": [
+            "Low: routine request, normal operations or no impact stated.",
+            "Medium: a local interruption with a practical temporary alternative.",
+            "High: a site-wide stoppage with no alternative and an immediate need to act."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "greenhouse-operations-2",
+      "family": "greenhouse-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One section's humidity sensor failed. Staff can use the handheld reader to keep it in range today.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the actual impact on plant operations using the ordered rubric.",
+          "criteria": [
+            "Low: routine request, normal operations or no impact stated.",
+            "Medium: a local interruption with a practical temporary alternative.",
+            "High: a site-wide stoppage with no alternative and an immediate need to act."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "greenhouse-operations-3",
+      "family": "greenhouse-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All environmental controls failed at once. The backup supply cannot restart them and crops across the site are already overheating.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the actual impact on plant operations using the ordered rubric.",
+          "criteria": [
+            "Low: routine request, normal operations or no impact stated.",
+            "Medium: a local interruption with a practical temporary alternative.",
+            "High: a site-wide stoppage with no alternative and an immediate need to act."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "greenhouse-operations-4",
+      "family": "greenhouse-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The west bay's irrigation line is closed for repairs. Water can still be supplied by hose.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the actual impact on plant operations using the ordered rubric.",
+          "criteria": [
+            "Low: routine request, normal operations or no impact stated.",
+            "Medium: a local interruption with a practical temporary alternative.",
+            "High: a site-wide stoppage with no alternative and an immediate need to act."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "greenhouse-operations-5",
+      "family": "greenhouse-operations",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The main controller has stopped. A portable heater can cover one bench and the temperature in the other bays is still unknown.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the actual impact on plant operations using the ordered rubric.",
+          "criteria": [
+            "Low: routine request, normal operations or no impact stated.",
+            "Medium: a local interruption with a practical temporary alternative.",
+            "High: a site-wide stoppage with no alternative and an immediate need to act."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "greenhouse-operations-6",
+      "family": "greenhouse-operations",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Several beds have stopped receiving water. The manual valves may work, but nobody can check them until the next shift.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the actual impact on plant operations using the ordered rubric.",
+          "criteria": [
+            "Low: routine request, normal operations or no impact stated.",
+            "Medium: a local interruption with a practical temporary alternative.",
+            "High: a site-wide stoppage with no alternative and an immediate need to act."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "campus-shuttle-operations-1",
+      "family": "campus-shuttle-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Post the summer timetable to the staff page. All routes are running.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign an impact level for the current shuttle service, based on the scope and alternatives described.",
+          "criteria": [
+            "Low: routine information or work that does not affect service.",
+            "Medium: limited interruption with a usable alternate trip.",
+            "High: the whole service is blocked without alternate transport and needs immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "campus-shuttle-operations-2",
+      "family": "campus-shuttle-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One stop is closed for resurfacing. The same shuttle collects riders from the next street.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign an impact level for the current shuttle service, based on the scope and alternatives described.",
+          "criteria": [
+            "Low: routine information or work that does not affect service.",
+            "Medium: limited interruption with a usable alternate trip.",
+            "High: the whole service is blocked without alternate transport and needs immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "campus-shuttle-operations-3",
+      "family": "campus-shuttle-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All drivers were sent home after the dispatch system failed. No route can run, the substitute fleet is unavailable, and riders are stranded now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign an impact level for the current shuttle service, based on the scope and alternatives described.",
+          "criteria": [
+            "Low: routine information or work that does not affect service.",
+            "Medium: limited interruption with a usable alternate trip.",
+            "High: the whole service is blocked without alternate transport and needs immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "campus-shuttle-operations-4",
+      "family": "campus-shuttle-operations",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "A flood cut off the only exit for the entire fleet. All trips are cancelled and there is no substitute transport for the students waiting.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign an impact level for the current shuttle service, based on the scope and alternatives described.",
+          "criteria": [
+            "Low: routine information or work that does not affect service.",
+            "Medium: limited interruption with a usable alternate trip.",
+            "High: the whole service is blocked without alternate transport and needs immediate action."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic",
+        "rubric"
+      ]
+    },
+    {
+      "id": "campus-shuttle-operations-5",
+      "family": "campus-shuttle-operations",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The two main routes are suspended. Some riders can take a city bus, but it may not have capacity for the next peak.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign an impact level for the current shuttle service, based on the scope and alternatives described.",
+          "criteria": [
+            "Low: routine information or work that does not affect service.",
+            "Medium: limited interruption with a usable alternate trip.",
+            "High: the whole service is blocked without alternate transport and needs immediate action."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "campus-shuttle-operations-6",
+      "family": "campus-shuttle-operations",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Dispatch lost contact with all shuttles. Drivers might still be following printed schedules, but there are conflicting reports from stops.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign an impact level for the current shuttle service, based on the scope and alternatives described.",
+          "criteria": [
+            "Low: routine information or work that does not affect service.",
+            "Medium: limited interruption with a usable alternate trip.",
+            "High: the whole service is blocked without alternate transport and needs immediate action."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    }
+  ]
+}
