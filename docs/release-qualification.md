@@ -91,6 +91,13 @@ its configuration, tokenizer and weights (ONNX cells instead use their graph's
 weights). ONNX external tensor files are hashed too. `precision: "graph"` identifies
 the pinned graph; it does not infer or assert a graph-wide floating-point dtype.
 
+An optional cell `decision_policy` selects `canonical` or `context-balanced-v1`.
+Omit it to use the checkpoint's default. The runner verifies the effective policy,
+records a noncanonical policy in the cell identity and checks returned calibration
+status for drift. Use the same policy across backends in a release matrix. To
+compare saved reports, use a reviewed baseline from that same policy. See
+[context-balanced decisions](decision-policy.md) for execution and cache behavior.
+
 Torch cells accept `eager`, `compile` and `tilelang`, with explicit CPU, CUDA or
 MPS devices and compatible `fp32`, `fp16` or `bf16` precision. Unsupported hardware
 or dependencies cannot substitute another cell. Required cells fail the gate;
@@ -194,3 +201,8 @@ python research/scripts/qualify_local.py --checkpoint /models/laya \
 The harness records raw observations, per-call latency and forward evidence,
 checkpoint/tokenizer/graph digests, numerical policy and source identities. Its
 nonzero exit for a failed gate is expected and should stop a release pipeline.
+
+The [follow-up investigation](reports/checkpoint-qualification-repair-2026-11-05.md)
+reproduces the errors and evaluates an optional correction on the same fixture,
+with unchanged labels and gates. Use `--decision-policy context-balanced-v1`
+to select the corrected path in the local harness.

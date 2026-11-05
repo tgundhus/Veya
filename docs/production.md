@@ -45,6 +45,7 @@ Caching is opt-in. Both the HTTP and local MCP builders read:
 | `LAYA_CACHE_REQUIRE_EXISTING` | Refuse to create a missing SQLite decision database | `0` |
 | `LAYA_CACHE_EXPECTED_STORE_ID` | Require an existing database with this store identity | unset |
 | `LAYA_REPLAY_MANIFEST` | Verified policy metadata for replay without loading model weights | unset |
+| `LAYA_DECISION_POLICY` | Select `canonical` or [context-balanced decisions](decision-policy.md) | checkpoint default |
 | `LAYA_HTTP_REPLAY_FAST_PATH` | Let verified HTTP hits bypass inference queues; requires a manifest | `1` |
 | `LAYA_CACHE_RENEW_ON_HIT` | Renew retention on use | disabled |
 

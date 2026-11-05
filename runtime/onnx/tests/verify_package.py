@@ -45,7 +45,7 @@ def check_wheel(path):
         assert "laya_onnx/py.typed" in names
         assert "laya_onnx/replay.py" in names
         assert "laya_onnx/mcp/code_mode.py" in names
-        for module in ("router", "serve", "shortlist", "lang", "presets", "errors", "replay",
+        for module in ("router", "serve", "shortlist", "lang", "presets", "errors", "replay", "decision_policy",
                        "_routing_unicode", "_microbatch", "mcp/server", "mcp/tools",
                        "mcp/code_mode", "mcp/_code_worker", "mcp/_code_budget"):
             assert "laya_onnx/_runtime/" + module + ".py" in names, module
@@ -157,7 +157,7 @@ def main():
         extract_sdist(sdists[0], unpacked)
         projects = list(unpacked.iterdir())
         assert len(projects) == 1
-        for module in ("onnx_agent", "serve", "router", "replay", "_routing_unicode",
+        for module in ("onnx_agent", "serve", "router", "replay", "decision_policy", "_routing_unicode",
                        "mcp/server", "mcp/tools", "mcp/code_mode", "mcp/_code_worker", "mcp/_code_budget"):
             assert (projects[0] / "_shared" / (module + ".py")).is_file(), module
         rebuilt = root / "rebuilt"
@@ -182,6 +182,7 @@ def main():
                                                "http_replay_fast_path_verified": True,
                                                "code_mode_verified": True,
                                                "public_agent_code_verified": True,
+                                               "context_balanced_policy_verified": True,
                                                "runtime_sha256": original_runtime,
                                                "verification_sha256": {name: hashlib.sha256((tests / name).read_bytes()).hexdigest()
                                                    for name in ("verify_package.py", "consumer.py", "services_consumer.py",

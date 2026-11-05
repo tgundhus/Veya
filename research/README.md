@@ -23,6 +23,7 @@ the numbers quoted in the main README — nothing here is imported by the `laya`
 | `scripts/bench_http_replay.py` | all-hit, mixed and all-miss HTTP scheduling controls, including per-request latency, payload equality and actual forward shapes |
 | `scripts/bench_code_mode.py` | classic individual calls, classic batches and local JavaScript workflows, including worker startup, host work and catalog/result bytes |
 | `scripts/qualify_local.py` | build and run the local eager/ONNX release matrix against the frozen qualification corpus; failed quality gates remain failures |
+| `scripts/diagnose_checkpoint.py` | compare canonical output, cyclic orders, content-free priors and the actual opt-in decision policy; records raw local evidence |
 | `scripts/bench_required_cache.py` | optional versus required memory/SQLite cache latency and retained borderline decisions; controlled predictor, no neural inference |
 | `scripts/bench_microbatch.py` | queue-inclusive HTTP single-request batching comparison, synthetic by default or using an existing local English CPU checkpoint |
 | `scripts/bench_compaction.py` | offline experimental tool-history pruning on 12 synthetic annotated transcripts; reports tokens, evidence retention and timings for existing local checkpoints |
@@ -116,6 +117,9 @@ python research/scripts/bench_length_batching.py MODEL_DIR --count 64 --batch-si
 | `results/http_replay_synthetic_windows_20261105.json` | controlled HTTP scheduling experiment separate from neural checkpoint performance |
 | `results/code_mode_cpu_windows_20261105.json` | exact classic-batch/Code Mode outputs on the existing checkpoint; smaller tool/result envelopes with slower local workflow latency |
 | `results/qualification_cpu_windows_20261105.json` | all 32 eager/ONNX profiles completed; zero cross-profile decision drift, but choice accuracy 0.60 fails the 0.80 gate |
+| `results/checkpoint_diagnosis_windows_20261105.json` | canonical logits, token preservation, all six three-option orders and fixed-prior diagnostic results |
+| `results/qualification_context_balanced_windows_20261105.json` | same 32 profiles and thresholds with the optional policy; all 15 labels within rubric, but missing measured boundary coverage |
+| `results/qualification_controls_canonical_windows_20261105.json`, `results/qualification_controls_balanced_windows_20261105.json` | paired serial checks on independently authored controls; choice improves, binary and score metrics decline, neither passes |
 | `results/routing_contract_windows_20261105.json` | shared routing correctness checks and preprocessing timings, including the cost of canonical numeric-key ordering |
 | `results/t4_colab_benchmark.json` | 17,416 questions on one T4, both checkpoints, identical questions per model |
 | `results/long_context_multilingual.json` | the long-document run behind `assets/long_context_8192.png`: every prediction, with device and library versions |

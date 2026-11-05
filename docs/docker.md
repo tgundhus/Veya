@@ -364,6 +364,7 @@ These apply to the `laya-serve` service only.
 | `LAYA_CACHE_REQUIRE_EXISTING` | `0` | Refuse to create a missing SQLite decision database |
 | `LAYA_CACHE_EXPECTED_STORE_ID` | (none) | Require an existing database with this store identity |
 | `LAYA_REPLAY_MANIFEST` | (none) | Path inside the container to verified local replay metadata |
+| `LAYA_DECISION_POLICY` | (empty) | Override the checkpoint default with `canonical` or `context-balanced-v1` |
 | `LAYA_HTTP_REPLAY_FAST_PATH` | `1` | Let verified hits bypass inference queues when a manifest is configured |
 | `LAYA_CACHE_RENEW_ON_HIT` | `0` | Extend retention on replay |
 

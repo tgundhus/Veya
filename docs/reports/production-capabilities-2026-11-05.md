@@ -9,6 +9,10 @@ This implements the next steps from the [runtime adoption review](runtime-adopti
 Existing deployments retain their defaults. Replay approvals and MCP Code Mode are opt-in;
 the HTTP cache fast path operates only with approved metadata. Execution remains local.
 
+The later [checkpoint qualification investigation](checkpoint-qualification-repair-2026-11-05.md)
+explains the raw checkpoint's 60% choice result and evaluates an optional policy
+on the same fixture. The measurements below describe the original implementation.
+
 ## Implemented interfaces
 
 | Capability | Interface | Contract |

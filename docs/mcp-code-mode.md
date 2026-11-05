@@ -142,12 +142,14 @@ The guest receives only the validated operation capabilities.
 
 Host resource checks cover schema-generated questions, preset questions, shortlist
 embeddings, tournament rounds, actual resident checkpoint widths and exact tokenizer
-scan windows. They run before inference, with raw bounds enforced before cold model
+scan windows. Local budgets include rotations and probes for
+[context-balanced decisions](decision-policy.md). They run before inference, with raw bounds enforced before cold model
 loading. Code Mode accepts the built-in Router and checkpoint implementations with
 cache-only hooks and declarative routing. Arbitrary custom hooks or Agent classes
 can rewrite validated work and therefore require the classic trusted-host interface.
-Remote mode retains the remote server's own inference limits and uses conservative
-work estimates where resident metadata is unavailable.
+In remote mode the client bounds outbound request shape using a conservative token
+width. It cannot verify the peer's checkpoint or policy work; configure actual
+inference and admission limits on the remote server.
 
 QuickJS interrupts CPU work, and an independent parent process monitor also checks
 worker CPU roughly every 10 milliseconds. This covers native exception-conversion

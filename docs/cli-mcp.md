@@ -297,6 +297,7 @@ the server is ready.
 | `LAYA_CACHE_REQUIRE_EXISTING` | `0` | Refuse to create a missing SQLite decision database. |
 | `LAYA_CACHE_EXPECTED_STORE_ID` | unset | Require an existing decision store with the approved UUID. |
 | `LAYA_REPLAY_MANIFEST` | unset | Verified local metadata for replay without loading model weights. |
+| `LAYA_DECISION_POLICY` | checkpoint default | Select `canonical` or [`context-balanced-v1`](decision-policy.md) on the local backend. |
 | `LAYA_MCP_MODE` | `classic` | Select the existing tool catalog or the opt-in local JavaScript `code` interface; `--mode` takes precedence. |
 | `LAYA_BASE_URL` | unset | Send predictions to a `laya-serve` on your own hardware instead of loading checkpoints in each MCP process. A bare `host:port` is read as HTTP. |
 | `LAYA_REMOTE_TIMEOUT` | `300` | HTTP timeout in seconds when `LAYA_BASE_URL` is set, including the server's cold load. Invalid or non-positive values use the default. |

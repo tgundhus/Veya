@@ -19,8 +19,10 @@ records the resulting changes, measurements and qualification limits.
 The [production capabilities report](https://github.com/tgundhus/Veya/blob/main/docs/reports/production-capabilities-2026-11-05.md)
 adds verified model-free replay, cache-aware HTTP scheduling, a shared Python/TypeScript
 routing contract, release qualification against reviewed baselines and optional local
-JavaScript MCP composition. The current checkpoint fails the illustrative qualification
-fixture's quality gate; the report preserves that failure alongside performance results.
+JavaScript MCP composition. The canonical English checkpoint fails the illustrative
+qualification fixture's quality gate. The
+[checkpoint investigation](https://github.com/tgundhus/Veya/blob/main/docs/reports/checkpoint-qualification-repair-2026-11-05.md)
+explains why and evaluates an experimental local correction without changing the gates.
 
 [Documentation](https://tgundhus.github.io/Veya/) · [Integration](https://github.com/tgundhus/Veya/blob/main/docs/integration.md) ·
 [Benchmarks](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md) · [Deployment](https://github.com/tgundhus/Veya/blob/main/docs/production.md)

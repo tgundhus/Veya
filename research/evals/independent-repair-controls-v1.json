@@ -1,0 +1,1254 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "independent-repair-controls-v1",
+  "cases": [
+    {
+      "id": "ctrl-choice-01",
+      "family": "warehouse-parcel-seal-label",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "Dispatch record for parcel R17: the packer sealed the carton at 14:12. The dispatch scanner then verified that the address label matches order R17. No exception is open.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify parcel R17 for dispatch. Both a sealed carton and a verified matching address label are required. Use only this parcel record.",
+          "criteria": {
+            "ready": "Both dispatch requirements are confirmed.",
+            "blocked": "A requirement is explicitly failed or dispatch is forbidden.",
+            "unknown": "A required confirmation is missing without an explicit failure."
+          }
+        }
+      },
+      "expected": {
+        "decision": "ready"
+      },
+      "tags": [
+        "inventory-warehouse",
+        "choice",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-choice-02",
+      "family": "warehouse-crushed-carton",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": {
+        "item": "Ceramic jug set C8",
+        "packing_note": "Carton corner crushed; fragments audible inside.",
+        "supervisor_instruction": "Do not dispatch C8. Replace the damaged set before shipment.",
+        "carrier_slot": "Confirmed for this afternoon"
+      },
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Choose the dispatch status of ceramic jug set C8 now, according to the supervisor instruction.",
+          "criteria": {
+            "ready": "Dispatch is currently permitted.",
+            "blocked": "The supervisor currently forbids dispatch.",
+            "unknown": "The record does not establish dispatch permission."
+          }
+        }
+      },
+      "expected": {
+        "decision": "blocked"
+      },
+      "tags": [
+        "inventory-warehouse",
+        "choice",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-choice-03",
+      "family": "warehouse-bin-acceptance",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": "The relocation plan lists rack J, aisle 6, for the spare motor. The note gives the walking route and the planned move time. It contains no bin inspection result and no statement that any bin was accepted or rejected.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Has a storage bin for the spare motor been accepted as usable? A route or move schedule is not a bin acceptance result.",
+          "criteria": {
+            "ready": "A bin is explicitly accepted as usable.",
+            "blocked": "The proposed bin is explicitly rejected as unusable.",
+            "unknown": "No bin acceptance or rejection is reported."
+          }
+        }
+      },
+      "expected": {
+        "decision": "unknown"
+      },
+      "tags": [
+        "inventory-warehouse",
+        "choice",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-choice-04",
+      "family": "warehouse-current-receipt-release",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "Receipt L42 had a hold note yesterday because its supplier seal was unreadable. Today the inspector replaced that obsolete note with: \"Seal and contents verified; receipt L42 is released for put-away.\" Receipt L43 remains on hold.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Determine the current put-away status of receipt L42 using the latest inspection decision for L42.",
+          "criteria": {
+            "ready": "The latest decision releases L42 for put-away.",
+            "blocked": "The latest decision keeps L42 on hold.",
+            "unknown": "No current decision for L42 is available."
+          }
+        }
+      },
+      "expected": {
+        "decision": "ready"
+      },
+      "tags": [
+        "inventory-warehouse",
+        "choice",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-choice-05",
+      "family": "warehouse-chilled-release-temperature",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "Consignment K9 contains the correct 24 chilled sample boxes, all with readable labels. Its logger recorded 11 C. The handling rule requires at most 5 C for release, and the inspector marked K9 \"temperature limit exceeded; release denied.\"",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify consignment K9 for release under the stated temperature rule. Correct counts and labels do not waive the temperature rule.",
+          "criteria": {
+            "ready": "The temperature rule is met and release is allowed.",
+            "blocked": "The temperature rule failed and release is denied.",
+            "unknown": "No temperature compliance decision can be established."
+          }
+        }
+      },
+      "expected": {
+        "decision": "blocked"
+      },
+      "tags": [
+        "inventory-warehouse",
+        "choice",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-choice-06",
+      "family": "publishing-newsletter-two-approvals",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "The July community newsletter has its final editorial signature. The link checker has also marked every outgoing link approved. The release checklist shows both requirements complete for this edition.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "May the July community newsletter proceed under a rule requiring final editorial approval and approved outgoing links?",
+          "criteria": {
+            "ready": "Both required approvals for this edition are complete.",
+            "blocked": "A required approval is explicitly refused or failed.",
+            "unknown": "At least one required approval is unreported."
+          }
+        }
+      },
+      "expected": {
+        "decision": "ready"
+      },
+      "tags": [
+        "document-publishing",
+        "choice",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-choice-07",
+      "family": "publishing-photo-permission-refused",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "The museum booklet includes a portrait licensed only for exhibition display. The rights owner explicitly refused permission to reproduce it in the booklet. The publishing editor instructed the team to withhold this version until that portrait is removed.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "What is the release status of the current booklet version that still contains the portrait?",
+          "criteria": {
+            "ready": "The current version is approved for release.",
+            "blocked": "Release of the current version is expressly withheld.",
+            "unknown": "No release or withholding decision is reported."
+          }
+        }
+      },
+      "expected": {
+        "decision": "blocked"
+      },
+      "tags": [
+        "document-publishing",
+        "choice",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-choice-08",
+      "family": "publishing-manual-owner-versus-signoff",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": {
+        "document": "Field recorder manual, revision 3",
+        "owner": "Technical writing team",
+        "folder": "Release candidates",
+        "file_name": "manual-final.pdf",
+        "approval_record": "No reviewer decision is included in this handover."
+      },
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify revision 3 under a rule requiring a reviewer decision before publication. A file name and folder do not establish a reviewer decision.",
+          "criteria": {
+            "ready": "The reviewer has approved revision 3.",
+            "blocked": "The reviewer has rejected revision 3.",
+            "unknown": "The reviewer decision for revision 3 is absent."
+          }
+        }
+      },
+      "expected": {
+        "decision": "unknown"
+      },
+      "tags": [
+        "document-publishing",
+        "choice",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-choice-09",
+      "family": "publishing-upload-versus-visibility",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "The annual trail report was uploaded to the content library at 08:20. The editor shared an internal preview link. The activity log in this note stops there; it reports neither public activation nor an instruction to keep the report private.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Does this record establish whether the trail report is publicly visible? Internal upload and preview alone do not establish public visibility.",
+          "criteria": {
+            "ready": "Public visibility is explicitly confirmed.",
+            "blocked": "Public visibility is explicitly disabled or forbidden.",
+            "unknown": "The public visibility state is not reported."
+          }
+        }
+      },
+      "expected": {
+        "decision": "unknown"
+      },
+      "tags": [
+        "document-publishing",
+        "choice",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-choice-10",
+      "family": "publishing-program-latest-accessibility-check",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "The conference program initially failed its reading-order check. The corrected program file has now passed the required accessibility check, and the publishing coordinator approved that corrected file for release. The failed file was archived.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Choose the release status of the corrected conference program file based on its current accessibility result and coordinator decision.",
+          "criteria": {
+            "ready": "The corrected file has passed and is approved.",
+            "blocked": "The corrected file has failed or been refused.",
+            "unknown": "The corrected file has no clear current decision."
+          }
+        }
+      },
+      "expected": {
+        "decision": "ready"
+      },
+      "tags": [
+        "document-publishing",
+        "choice",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-choice-11",
+      "family": "meeting-verified-quorum",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "For the equipment users meeting, quorum requires one laboratory representative and one facilities representative to be present. At roll call, Hana answered for the laboratory and Mo answered for facilities. The chair recorded that quorum is met.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the equipment users meeting against its stated attendance quorum at roll call.",
+          "criteria": {
+            "ready": "The required attendance quorum is confirmed.",
+            "blocked": "The record explicitly establishes that quorum failed.",
+            "unknown": "The required attendance cannot be established."
+          }
+        }
+      },
+      "expected": {
+        "decision": "ready"
+      },
+      "tags": [
+        "meeting-attendance",
+        "choice",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-choice-12",
+      "family": "meeting-garden-required-member-declined",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "The garden committee requires the site steward at its inspection meeting; substitutes are not allowed. The site steward declined and wrote, \"I will not attend in person or online.\" The committee secretary marked the meeting unable to proceed under this rule.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Can this inspection meeting proceed under its attendance rule, using the recorded decision?",
+          "criteria": {
+            "ready": "The required attendance permits the meeting to proceed.",
+            "blocked": "The required attendance fails and the meeting cannot proceed.",
+            "unknown": "The record does not establish whether the requirement is met."
+          }
+        }
+      },
+      "expected": {
+        "decision": "blocked"
+      },
+      "tags": [
+        "meeting-attendance",
+        "choice",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-choice-13",
+      "family": "meeting-trainer-booking-versus-attendance",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": "A trainer is named on the orientation agenda for Tuesday. The calendar invitation lists a room and a start time. No attendance record, trainer response, or cancellation notice has been supplied.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "What does this information establish about the trainer attending Tuesday orientation? Scheduling a trainer is not confirmation of attendance.",
+          "criteria": {
+            "ready": "The trainer attendance is explicitly confirmed.",
+            "blocked": "The trainer explicitly will not attend.",
+            "unknown": "The trainer attendance is unconfirmed."
+          }
+        }
+      },
+      "expected": {
+        "decision": "unknown"
+      },
+      "tags": [
+        "meeting-attendance",
+        "choice",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-choice-14",
+      "family": "meeting-training-checkin-not-supplied",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "The mandatory safety refresher had 38 invitations and a slide deck in the shared folder. The attendance policy says a completed check-in is required. This summary contains no check-in log and no explicit statement that the invited technicians attended or missed the refresher.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Can the invited technicians be marked as having met the attendance requirement from this summary?",
+          "criteria": {
+            "ready": "Their required check-ins are explicitly confirmed.",
+            "blocked": "Their required check-ins are explicitly reported as missing or failed.",
+            "unknown": "There is no evidence of their actual check-in status."
+          }
+        }
+      },
+      "expected": {
+        "decision": "unknown"
+      },
+      "tags": [
+        "meeting-attendance",
+        "choice",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-choice-15",
+      "family": "meeting-rehearsal-entry-denied",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "A guest still has an old invitation to the oral history rehearsal. Before the rehearsal, the organizer revoked the guest badge and sent a direct notice: \"You are not permitted to attend this rehearsal.\" The old invitation remains in the email thread.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Classify the guest permission to attend this rehearsal using the latest organizer instruction.",
+          "criteria": {
+            "ready": "The current instruction permits the guest to attend.",
+            "blocked": "The current instruction denies the guest attendance.",
+            "unknown": "No current attendance permission is established."
+          }
+        }
+      },
+      "expected": {
+        "decision": "blocked"
+      },
+      "tags": [
+        "meeting-attendance",
+        "choice",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-noul-01",
+      "family": "warehouse-count-completed",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "The stocktake sheet for valve lot V3 is signed by the counter: \"All 16 valves physically counted; count complete.\" The recount box is not required for this lot.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Return true only if a completed physical count of every valve in lot V3 is explicitly reported. Otherwise return false.",
+          "criteria": {
+            "true": "Every valve in V3 was physically counted and the count is complete.",
+            "false": "A completed whole-lot physical count of V3 is denied or not reported."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "inventory-warehouse",
+        "noul",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-noul-02",
+      "family": "warehouse-forklift-certificate-denied",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "Forklift F6 returned from repair this morning. The maintenance lead wrote: \"Repairs finished, but F6 has not received its return-to-service safety certificate. Do not mark it certified.\"",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Is forklift F6 currently safety certified for return to service? Return true only for an explicit current certification; return false for denial or missing certification.",
+          "criteria": {
+            "true": "F6 currently has its return-to-service safety certificate.",
+            "false": "F6 lacks that certificate or its certification is unreported."
+          }
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "inventory-warehouse",
+        "noul",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-noul-03",
+      "family": "warehouse-replacement-location-unreported",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": "The replacement barcode reader arrived in a padded envelope. Its serial number and warranty leaflet were recorded. The handover says nothing about where the reader was stored after unpacking.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Return true only if this handover explicitly confirms the replacement barcode reader was stored in cabinet B. An arrival record alone is insufficient.",
+          "criteria": {
+            "true": "Storage of this reader in cabinet B is explicitly confirmed.",
+            "false": "Cabinet B storage is denied or not established."
+          }
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "inventory-warehouse",
+        "noul",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-noul-04",
+      "family": "warehouse-target-pallet-quarantine",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "Warehouse update: pallet P7 remains in the quarantine cage because its identity seal is unresolved. Pallet P9 was cleared and moved to picking stock. The two pallets are separate receipts.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Is pallet P7 currently quarantined? Return true only when quarantine of P7 itself is explicitly established; otherwise false.",
+          "criteria": {
+            "true": "P7 is currently held in quarantine.",
+            "false": "P7 is not quarantined or its status is not established."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "inventory-warehouse",
+        "noul",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-noul-05",
+      "family": "warehouse-current-kit-reservation",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "At 09:00 the six repair kits were unreserved. The 11:30 inventory event supersedes that entry: all six repair kits are now reserved for work order W28. No later event is recorded.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Are all six repair kits currently reserved for W28? Use the latest recorded inventory event and return true only if it confirms that reservation.",
+          "criteria": {
+            "true": "The latest event reserves all six kits for W28.",
+            "false": "That current reservation is denied or unconfirmed."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "inventory-warehouse",
+        "noul",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-noul-06",
+      "family": "publishing-current-page-review-approval",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "Reviewer Nia completed the review of the new public visitor-information page. Her note says: \"I approve this current page for publication.\" The note names the same revision as the release candidate.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has reviewer Nia explicitly approved the current visitor-information page for publication? Return false if the approval is denied, absent, or for a different revision.",
+          "criteria": {
+            "true": "Nia explicitly approved this current revision for publication.",
+            "false": "No such current-revision approval is established."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "document-publishing",
+        "noul",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-noul-07",
+      "family": "publishing-translation-not-approved",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "The Spanish trail guide translation is saved in the archive as a draft. Its review note reads: \"Translation not approved; several directions still need correction.\" Archiving was housekeeping, not a release decision.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Return true only if the Spanish trail guide translation has been approved. A stored draft does not count as approval.",
+          "criteria": {
+            "true": "The translation has explicit approval.",
+            "false": "Approval is explicitly refused or absent."
+          }
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "document-publishing",
+        "noul",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-noul-08",
+      "family": "publishing-image-alt-text-unknown",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": "The exhibit catalogue update changes the cover image and lists its pixel dimensions. The change log has no alt-text field, accessibility result, or description of text alternatives for that image.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does the record explicitly confirm an alt-text description for the new cover image? Return false when the record provides no such evidence.",
+          "criteria": {
+            "true": "Alt text for the new cover image is explicitly confirmed.",
+            "false": "Alt text is denied or no evidence of it is supplied."
+          }
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "document-publishing",
+        "noul",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-noul-09",
+      "family": "publishing-citations-current-version",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "The reviewer found broken citations in revision 2 of the bird survey report. For the current revision 4, the same reviewer checked each citation and recorded: \"All citations verified.\" Revision 2 is retained for history only.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Return true only if all citations in the current revision 4 of the bird survey report have been verified. Historical findings on revision 2 do not decide revision 4.",
+          "criteria": {
+            "true": "All citations in revision 4 are explicitly verified.",
+            "false": "Revision 4 citation verification is denied or incomplete or absent."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "document-publishing",
+        "noul",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-noul-10",
+      "family": "publishing-scheduled-is-not-published",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": {
+        "document": "Volunteer handbook",
+        "release_schedule": "Tomorrow at 09:00",
+        "current_status": "Unpublished draft",
+        "note": "The release timer has been configured."
+      },
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Is the volunteer handbook already published now? Return true only for current publication, not a future schedule.",
+          "criteria": {
+            "true": "The handbook is already published.",
+            "false": "It is currently unpublished or current publication is not established."
+          }
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "document-publishing",
+        "noul",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-noul-11",
+      "family": "meeting-actual-roll-call-response",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "At the start of the materials working group, the chair called Imani. Imani answered from the room, and the secretary entered Imani as present on the actual attendance list.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Was Imani present at the start of the materials working group? Return true only for evidence of actual presence, not merely an invitation.",
+          "criteria": {
+            "true": "Imani was actually present at the start.",
+            "false": "Imani was absent or actual presence is unreported."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "meeting-attendance",
+        "noul",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-noul-12",
+      "family": "meeting-agenda-name-not-attendance",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": "The discussion agenda assigns the opening update to Tomas. The packet includes a biography for Tomas and a slide title. It has no roll call, join record, or statement about whether Tomas came to the discussion.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does this packet confirm that Tomas actually attended the discussion? Return false when it supplies only planned participation.",
+          "criteria": {
+            "true": "Actual attendance by Tomas is explicitly confirmed.",
+            "false": "Actual attendance is denied or not established."
+          }
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "meeting-attendance",
+        "noul",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-noul-13",
+      "family": "meeting-remote-attendance-valid",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "The residents forum accepts online participation as attendance. Leila joined its live audio room, answered roll call, and stayed through the forum. She did not enter the physical meeting room.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did Leila meet the residents forum attendance rule? Online participation counts under the stated rule; return true only for actual qualifying participation.",
+          "criteria": {
+            "true": "Leila actually participated in a form accepted by the rule.",
+            "false": "Leila did not participate as required or qualifying participation is unreported."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "meeting-attendance",
+        "noul",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-noul-14",
+      "family": "meeting-cancellation-overrides-rsvp",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "Ben initially accepted the Monday rehearsal invitation. His later message says: \"I have cancelled; I will not attend Monday.\" The organizer updated the attendance record to absent, and no subsequent change is recorded.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Is Ben currently confirmed to attend the Monday rehearsal? Use the latest message and attendance record; an earlier acceptance does not override a cancellation.",
+          "criteria": {
+            "true": "Ben currently has an uncancelled attendance confirmation.",
+            "false": "Ben has cancelled or no current confirmation is established."
+          }
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "meeting-attendance",
+        "noul",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-noul-15",
+      "family": "meeting-allowed-representative-present",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "The workshop rule allows a department to satisfy attendance through its named representative. The workshop lists Priya as the library representative. Priya attended and signed in; the library head did not attend.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the library satisfy this workshop attendance rule? A named representative may satisfy it without the library head attending.",
+          "criteria": {
+            "true": "The library named representative actually attended.",
+            "false": "No qualifying library representative attended or attendance is unreported."
+          }
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "meeting-attendance",
+        "noul",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-score-01",
+      "family": "warehouse-dispatch-gates-none",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "For parcel T2, the packing checklist says the carton is still open and no dispatch label has been attached. A label printer is available nearby, but neither task has been done.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score completed dispatch preparation for parcel T2. Count only a sealed carton and an attached dispatch label, using the three levels exactly.",
+          "criteria": [
+            "0: Neither the carton seal nor the dispatch label is complete.",
+            "1: Exactly one of the two preparation requirements is complete.",
+            "2: Both preparation requirements are complete."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "inventory-warehouse",
+        "score",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-score-02",
+      "family": "warehouse-target-count-evidence",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": "The shelf note for gasket G4 gives its supplier, reorder interval, and shelf color. It has no physical-count entry. The adjacent G5 compartment has a signed count, but that is a different item.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate physical-count evidence for gasket G4 itself. Counts of another item and planning details do not count.",
+          "criteria": [
+            "0: No physical count of G4 is reported.",
+            "1: One physical count of G4 is reported without an independent confirming count.",
+            "2: Two independent physical counts of G4 agree."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "inventory-warehouse",
+        "score",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-score-03",
+      "family": "warehouse-storage-location-precision",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "The storekeeper assigned the spare impeller to aisle D. The move slip says that a bin within aisle D has not yet been selected. No more precise assigned location appears.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the precision of the assigned storage location for the spare impeller.",
+          "criteria": [
+            "0: No assigned aisle or bin is reported.",
+            "1: An aisle is assigned, but no specific bin is assigned.",
+            "2: Both an aisle and a specific bin are assigned."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "inventory-warehouse",
+        "score",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-score-04",
+      "family": "warehouse-return-inspection-stage",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "Return Q6 was booked for inspection on Thursday. The inspector has not yet examined it, and there is no rejection or release decision. Its return-carrier paperwork is outside this inspection record.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score the current inspection stage of return Q6. An inspection booking is a pending stage, not an inspection outcome.",
+          "criteria": [
+            "0: An inspection has rejected Q6.",
+            "1: Inspection is pending and no outcome is recorded.",
+            "2: An inspection has accepted and released Q6."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "inventory-warehouse",
+        "score",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-score-05",
+      "family": "warehouse-two-independent-counts",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "Dara counted cable reel lot E8 and recorded 12 reels. Without seeing Dara's sheet, Jules independently counted E8 and also recorded 12 reels. The supervisor matched the two signed sheets to the same lot.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate quantity verification for cable reel lot E8.",
+          "criteria": [
+            "0: No physical count of E8 is reported.",
+            "1: Only one count is reported, or independent counts disagree.",
+            "2: Two independent physical counts of E8 agree."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "inventory-warehouse",
+        "score",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-score-06",
+      "family": "publishing-withdrawn-release-stage",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "The walking route leaflet has been withdrawn from publication because it sends visitors through a closed path. The publisher disabled its public page and removed it from the internal preview queue. The current record authorizes no release.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score the current release stage of the walking route leaflet.",
+          "criteria": [
+            "0: The leaflet is withdrawn or release is expressly refused.",
+            "1: The leaflet is approved for internal preview only.",
+            "2: The leaflet is approved and active for public release."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "document-publishing",
+        "score",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-score-07",
+      "family": "publishing-source-traceability-middle",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "The local history note names the books used for its claims, including full book titles. It gives no page numbers, chapter locations, or stable links to the cited passages.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate how precisely the local history note points a reader to the sources of its claims.",
+          "criteria": [
+            "0: No source works are named.",
+            "1: Source works are named, but no exact passage locations are given.",
+            "2: Source works and exact passage locations are both given."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "document-publishing",
+        "score",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-score-08",
+      "family": "publishing-translation-unreviewed-stage",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "The complete French version of the nature centre guide is now saved alongside the English original. Its review field says \"Not yet reviewed.\" A proofreader approved the English original last month, not the French version.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score the current French version of the nature centre guide. Approval of the English original does not count as a French review.",
+          "criteria": [
+            "0: No complete French translation is available.",
+            "1: A complete French translation exists but has not been approved by a reviewer.",
+            "2: A complete French translation has reviewer approval."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "document-publishing",
+        "score",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-score-09",
+      "family": "publishing-accessibility-both-tests-passed",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "For the new exhibit PDF, the audit checks reading order and image descriptions. The auditor marked reading order PASS and image descriptions PASS, signed for this exact PDF revision, and listed no remaining failures.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score completion of the two required accessibility tests on this exact exhibit PDF revision.",
+          "criteria": [
+            "0: Neither required test has a reported passing result.",
+            "1: Exactly one required test has a reported passing result.",
+            "2: Both required tests have reported passing results."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "document-publishing",
+        "score",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-score-10",
+      "family": "publishing-two-role-review-complete",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "The volunteer procedures document has a signed editorial review and a separate signed subject-expert review for revision 5. Revision 4 lacked the subject-expert review, but revision 4 is obsolete.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate review coverage of the current revision 5 of the volunteer procedures document.",
+          "criteria": [
+            "0: Neither an editorial nor a subject-expert review is complete for revision 5.",
+            "1: Exactly one of those two review roles is complete for revision 5.",
+            "2: Both review roles are complete for revision 5."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "document-publishing",
+        "score",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-score-11",
+      "family": "meeting-never-joined-session",
+      "split": "evaluation",
+      "variant": "explicit-denial",
+      "state": "Zora declined the recording workshop and did not enter the room or join online at any point. The attendance officer confirmed that Zora was absent for the whole workshop.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate Zora's actual participation in the recording workshop.",
+          "criteria": [
+            "0: Zora did not attend any part.",
+            "1: Zora attended some but not all of the workshop.",
+            "2: Zora attended the entire workshop."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "meeting-attendance",
+        "score",
+        "explicit-denial"
+      ]
+    },
+    {
+      "id": "ctrl-score-12",
+      "family": "meeting-quorum-plans-only",
+      "split": "evaluation",
+      "variant": "no-evidence",
+      "state": "The planned attendance list for the repair circle includes the required chair and safety observer. The document was prepared before the session and contains no completed check-ins, join events, or actual attendance statements for either role.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate evidence that the required chair and safety observer actually attended the repair circle. Planned attendance alone is not actual attendance evidence.",
+          "criteria": [
+            "0: Actual attendance of neither required role is confirmed.",
+            "1: Actual attendance of exactly one required role is confirmed.",
+            "2: Actual attendance of both required roles is confirmed."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "meeting-attendance",
+        "score",
+        "no-evidence"
+      ]
+    },
+    {
+      "id": "ctrl-score-13",
+      "family": "meeting-tentative-attendance-response",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "Maren replied to the archive volunteers meeting invitation: \"Tentatively yes, but I need my work shift confirmed before I can commit.\" The attendance coordinator lists Maren as tentative. No final acceptance or decline has arrived.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the firmness of Maren's current attendance response to the archive volunteers meeting.",
+          "criteria": [
+            "0: Maren has explicitly declined attendance.",
+            "1: Maren has given only a tentative or conditional attendance response.",
+            "2: Maren has firmly confirmed attendance without a remaining condition."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "meeting-attendance",
+        "score",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-score-14",
+      "family": "meeting-two-required-role-attendance",
+      "split": "evaluation",
+      "variant": "distraction",
+      "state": "The river cleanup briefing requires the group lead and the access steward to attend. At roll call, the secretary confirmed both were present and signed them in under their required roles. The snack delivery was delayed, but snacks do not affect this attendance rule.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score confirmed actual attendance of the two required roles at the river cleanup briefing. Do not count snack delivery.",
+          "criteria": [
+            "0: Actual attendance of neither required role is confirmed.",
+            "1: Actual attendance of exactly one required role is confirmed.",
+            "2: Actual attendance of both required roles is confirmed."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "meeting-attendance",
+        "score",
+        "distraction"
+      ]
+    },
+    {
+      "id": "ctrl-score-15",
+      "family": "meeting-attendance-duration-band",
+      "split": "evaluation",
+      "variant": "clear-positive",
+      "state": "The tool demonstration lasted 45 minutes. The verified attendance log shows Omar present continuously from its start to its finish, for all 45 minutes. There is no missing interval.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the attendance-duration level for Omar at the tool demonstration using verified minutes present.",
+          "criteria": [
+            "0: Fewer than 10 verified minutes present.",
+            "1: At least 10 but fewer than 30 verified minutes present.",
+            "2: At least 30 verified minutes present."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "meeting-attendance",
+        "score",
+        "clear-positive"
+      ]
+    },
+    {
+      "id": "ctrl-boundary-01",
+      "family": "warehouse-conditional-short-shipment-release",
+      "split": "evaluation",
+      "variant": "mixed-conditional",
+      "state": "Order M31 is packed and its carrier slot is confirmed. Two of ten requested sensor holders are on back order. The requester wrote, \"Send what is ready if the missing pair can follow in the same delivery week.\" The dispatch note says a replacement pair is expected Friday, but the later delivery slot has not been confirmed.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assess current dispatch readiness of order M31 under the requester's conditional permission, using the available evidence.",
+          "criteria": {
+            "ready": "The evidence supports dispatch under the requester permission.",
+            "blocked": "A remaining condition prevents permitted dispatch.",
+            "unknown": "The evidence does not resolve whether the permission condition is met."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "inventory-warehouse",
+        "choice",
+        "mixed-conditional",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ctrl-boundary-02",
+      "family": "publishing-reviewer-conditional-preview-approval",
+      "split": "evaluation",
+      "variant": "mixed-conditional",
+      "state": "Lea reviewed the booklet preview and wrote, \"The sections I could see look fine. The foldout table did not load; if the final render matches the checked proof, go ahead.\" The final render is queued. A designer notes that only the foldout table layout changed after the proof was checked.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has Lea authorized publication of the current complete booklet? Return true for an authorization that applies to the complete current booklet, and false when that authorization is not established.",
+          "criteria": {
+            "true": "The current complete booklet has applicable reviewer authorization.",
+            "false": "Applicable authorization of the current complete booklet is not established."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "document-publishing",
+        "noul",
+        "mixed-conditional",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ctrl-boundary-03",
+      "family": "meeting-conflicting-presence-records",
+      "split": "evaluation",
+      "variant": "mixed-conditional",
+      "state": "The online attendance export lists Mira connected for the full 50-minute neighborhood planning meeting. During two network outages her client stayed connected; the transcript shows no audio from her then. A later message says, \"I followed most of it on my phone, though I missed some of the route discussion.\" The secretary has not reconciled the export with that message.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate Mira's actual participation in the meeting, considering both the connection export and the participant account.",
+          "criteria": [
+            "0: No actual participation is supported.",
+            "1: Actual participation in part, but not all, of the meeting is supported.",
+            "2: Actual participation throughout the meeting is supported."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "meeting-attendance",
+        "score",
+        "mixed-conditional",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    }
+  ]
+}

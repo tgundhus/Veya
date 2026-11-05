@@ -1,0 +1,3616 @@
+{
+  "schema": "veya-checkpoint-diagnosis/1",
+  "created_utc": "2026-11-05T22:10:14.562470+00:00",
+  "checkpoint": "C:\\Users\\TGUNDHUS-PWR\\.cache\\huggingface\\hub\\models--convaiinnovations--laya\\snapshots\\55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851",
+  "corpus_id": "local-decisions-v1",
+  "corpus_path": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\qualification-v1.json",
+  "source_sha256": {
+    "laya/__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "laya/_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "laya/_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "laya/_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "laya/_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "laya/_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "laya/_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "laya/agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "laya/backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "laya/backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "laya/backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "laya/backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "laya/backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "laya/calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "laya/calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "laya/checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "laya/cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "laya/common.py": "bab0075c2374d825bc889b982503eb70d7fa63ae76c88c0252e96cda8a54d3f2",
+    "laya/compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "laya/confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "laya/consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "laya/decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "laya/email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "laya/errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "laya/evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "laya/evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "laya/evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "laya/evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "laya/fast.py": "e2feef1705f08f8b1d6e8a8d126dd726128ec7849edde92b8f4b1d17ef7ab5dd",
+    "laya/hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "laya/inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "laya/inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "laya/integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "laya/integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "laya/integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "laya/integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "laya/integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "laya/integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "laya/integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "laya/integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "laya/lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "laya/mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "laya/mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "laya/mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "laya/mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "laya/mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "laya/mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "laya/mcp/server.py": "c8ff1bddf8e766a0b6437e6fd473c88ca28fc0eb3e633bcba2fc8be7eee83b5c",
+    "laya/mcp/tools.py": "64f1f96266931fc1054b664de8eeeeb6975d22dbb072ce91afc0c2b53dad83ef",
+    "laya/onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "laya/performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "laya/presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "laya/qualification.py": "0340155de53808b200e67409d3a6cc7e0841e2e367287d13207821d0b91a4b6a",
+    "laya/replay.py": "769a3b14443d278206f4e4f1c4e70226b379c110c9bff8dff1285c3f472013f4",
+    "laya/revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "laya/router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "laya/serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "laya/shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "laya/structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "laya/tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "laya/train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "laya/train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05",
+    "research/scripts/diagnose_checkpoint.py": "b7146881e9315f10e39a9b94dd81ba25e73ab1e0d2e733bc2a8fa908ac80c7cf"
+  },
+  "corpus_file_sha256": "ff6e1998a73386eb08a08108a25d9799624aee5dbc25bfe0857222734430b3ab",
+  "artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+    "rl_agent_config.json": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+  },
+  "identity_changed_during_run": false,
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.14.1+cpu",
+    "threads": 4,
+    "interop_threads": 1,
+    "device": "cpu",
+    "precision": "float32"
+  },
+  "probes": [
+    "",
+    "N/A",
+    "[MASK]"
+  ],
+  "evidence": [
+    {
+      "case_ids": [
+        "billing-base",
+        "billing-paraphrase",
+        "billing-distractor",
+        "billing-evidence-removed",
+        "billing-counterfactual",
+        "billing-boundary-candidate"
+      ],
+      "canonical_elapsed_s": 1.0095143999787979,
+      "canonical_token_stats": [
+        {
+          "id": "billing-base",
+          "question": "department",
+          "raw_logits": [
+            3.795013904571533,
+            -2.3462231159210205,
+            -2.3362677097320557
+          ],
+          "sequence_tokens": 89,
+          "marker_positions": [
+            26,
+            40,
+            55
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 14,
+            "state_tokens_used": 14,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]choice question: Choose the department for the customer's main request. Use other when there is no billing or technical request.[SEP][MASK] billing: Charges, payments, invoices or refunds.[MASK] technical: Broken software, errors, outages or access problems.[MASK] other: All other requests, or insufficient information to identify a billing or technical issue.[SEP]I was charged twice for one order. Please refund the duplicate charge.[SEP]"
+        },
+        {
+          "id": "billing-paraphrase",
+          "question": "department",
+          "raw_logits": [
+            3.606517791748047,
+            -1.2938456535339355,
+            -2.033468723297119
+          ],
+          "sequence_tokens": 92,
+          "marker_positions": [
+            26,
+            40,
+            55
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 17,
+            "state_tokens_used": 17,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]choice question: Choose the department for the customer's main request. Use other when there is no billing or technical request.[SEP][MASK] billing: Charges, payments, invoices or refunds.[MASK] technical: Broken software, errors, outages or access problems.[MASK] other: All other requests, or insufficient information to identify a billing or technical issue.[SEP]The same purchase appears on my card statement twice. Return the extra payment, please.[SEP]"
+        },
+        {
+          "id": "billing-distractor",
+          "question": "department",
+          "raw_logits": [
+            1.874683141708374,
+            -2.503577470779419,
+            -2.058427095413208
+          ],
+          "sequence_tokens": 105,
+          "marker_positions": [
+            26,
+            40,
+            55
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 30,
+            "state_tokens_used": 30,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]choice question: Choose the department for the customer's main request. Use other when there is no billing or technical request.[SEP][MASK] billing: Charges, payments, invoices or refunds.[MASK] technical: Broken software, errors, outages or access problems.[MASK] other: All other requests, or insufficient information to identify a billing or technical issue.[SEP]I like the blue theme in the account portal and the new logo. My actual request is a refund: I was charged twice for the same order.[SEP]"
+        },
+        {
+          "id": "billing-evidence-removed",
+          "question": "department",
+          "raw_logits": [
+            1.3396490812301636,
+            -0.27122172713279724,
+            1.1509288549423218
+          ],
+          "sequence_tokens": 93,
+          "marker_positions": [
+            26,
+            40,
+            55
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 18,
+            "state_tokens_used": 18,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]choice question: Choose the department for the customer's main request. Use other when there is no billing or technical request.[SEP][MASK] billing: Charges, payments, invoices or refunds.[MASK] technical: Broken software, errors, outages or access problems.[MASK] other: All other requests, or insufficient information to identify a billing or technical issue.[SEP]Hello, I have a request about my account. I have not described the problem yet.[SEP]"
+        },
+        {
+          "id": "billing-counterfactual",
+          "question": "department",
+          "raw_logits": [
+            1.9101693630218506,
+            1.1580218076705933,
+            -1.2354915142059326
+          ],
+          "sequence_tokens": 101,
+          "marker_positions": [
+            26,
+            40,
+            55
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 26,
+            "state_tokens_used": 26,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]choice question: Choose the department for the customer's main request. Use other when there is no billing or technical request.[SEP][MASK] billing: Charges, payments, invoices or refunds.[MASK] technical: Broken software, errors, outages or access problems.[MASK] other: All other requests, or insufficient information to identify a billing or technical issue.[SEP]My payments are correct and I do not need a refund. The application crashes every time I sign in; please fix that error.[SEP]"
+        },
+        {
+          "id": "billing-boundary-candidate",
+          "question": "department",
+          "raw_logits": [
+            3.294456958770752,
+            -0.32597339153289795,
+            -1.7740716934204102
+          ],
+          "sequence_tokens": 101,
+          "marker_positions": [
+            26,
+            40,
+            55
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 26,
+            "state_tokens_used": 26,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]choice question: Choose the department for the customer's main request. Use other when there is no billing or technical request.[SEP][MASK] billing: Charges, payments, invoices or refunds.[MASK] technical: Broken software, errors, outages or access problems.[MASK] other: All other requests, or insufficient information to identify a billing or technical issue.[SEP]The invoice page crashes before I can check whether the amount charged is correct. I need help with both the page and the bill.[SEP]"
+        }
+      ],
+      "questions": {
+        "department": {
+          "rotations": [
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              2,
+              0
+            ],
+            [
+              2,
+              0,
+              1
+            ]
+          ],
+          "elapsed_s": 8.548091000004206,
+          "probe_probabilities": [
+            [
+              [
+                0.5942906435059109,
+                0.20998725988981384,
+                0.1957220966042753
+              ],
+              [
+                0.70768352713842,
+                0.1814725409532459,
+                0.11084393190833401
+              ],
+              [
+                0.5830875607734683,
+                0.26862419621379696,
+                0.1482882430127346
+              ]
+            ],
+            [
+              [
+                0.5867530713802396,
+                0.201444134223133,
+                0.21180279439662733
+              ],
+              [
+                0.6627119077775062,
+                0.19273618002194243,
+                0.14455191220055136
+              ],
+              [
+                0.5035501264497095,
+                0.25263361829821,
+                0.2438162552520805
+              ]
+            ],
+            [
+              [
+                0.5884100247612851,
+                0.2135572389229481,
+                0.19803273631576684
+              ],
+              [
+                0.6884109748367194,
+                0.19367810771350466,
+                0.11791091744977593
+              ],
+              [
+                0.5627026577006875,
+                0.2664541118084207,
+                0.17084323049089173
+              ]
+            ]
+          ],
+          "canonical_prior": [
+            0.5898179132158119,
+            0.2083295443452983,
+            0.2018525424388898
+          ],
+          "cyclic_prior": [
+            0.6086222771471053,
+            0.22006526533833506,
+            0.17131245751455976
+          ],
+          "observed_probabilities": [
+            [
+              [
+                0.9422996565725119,
+                0.028768587657942494,
+                0.028931755769545594
+              ],
+              [
+                0.9536934885203211,
+                0.021508450635695866,
+                0.024798060843983085
+              ],
+              [
+                0.9434681416668674,
+                0.0269198180859171,
+                0.029612040247215407
+              ]
+            ],
+            [
+              [
+                0.9071314222352903,
+                0.056049215332178236,
+                0.03681936243253131
+              ],
+              [
+                0.8981220582981759,
+                0.058842937182840525,
+                0.04303500451898356
+              ],
+              [
+                0.8755601455901699,
+                0.07637408888888232,
+                0.04806576552094787
+              ]
+            ],
+            [
+              [
+                0.8402190967350537,
+                0.06984165893189427,
+                0.08993924433305209
+              ],
+              [
+                0.8796127299202051,
+                0.05608520686431804,
+                0.06430206321547677
+              ],
+              [
+                0.8844621829090737,
+                0.06385091784261988,
+                0.05168689924830634
+              ]
+            ],
+            [
+              [
+                0.4350151105128367,
+                0.17419819512388554,
+                0.39078669436327784
+              ],
+              [
+                0.5374899968844257,
+                0.13634637894963827,
+                0.32616362416593603
+              ],
+              [
+                0.4477525280583981,
+                0.273366891251057,
+                0.27888058069054483
+              ]
+            ],
+            [
+              [
+                0.549543883983674,
+                0.35844269581990396,
+                0.09201342019642199
+              ],
+              [
+                0.5529370870774213,
+                0.3267401411118886,
+                0.12032277181069
+              ],
+              [
+                0.4211523228969836,
+                0.41446412674178457,
+                0.1643835503612318
+              ]
+            ],
+            [
+              [
+                0.8445880683169429,
+                0.10798206160776617,
+                0.04742987007529092
+              ],
+              [
+                0.8046517185667103,
+                0.13684577753332627,
+                0.05850250389996352
+              ],
+              [
+                0.7603009637016666,
+                0.1710037909323301,
+                0.06869524536600329
+              ]
+            ]
+          ],
+          "usage": [
+            {
+              "input_tokens": 534,
+              "output_tokens": 0,
+              "state_tokens": 14,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 552,
+              "output_tokens": 0,
+              "state_tokens": 17,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 630,
+              "output_tokens": 0,
+              "state_tokens": 30,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 558,
+              "output_tokens": 0,
+              "state_tokens": 18,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 606,
+              "output_tokens": 0,
+              "state_tokens": 26,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 606,
+              "output_tokens": 0,
+              "state_tokens": 26,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 450,
+              "output_tokens": 0,
+              "state_tokens": 0,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 468,
+              "output_tokens": 0,
+              "state_tokens": 3,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 456,
+              "output_tokens": 0,
+              "state_tokens": 1,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          ],
+          "noncyclic_orders": [
+            [
+              0,
+              2,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              0
+            ]
+          ],
+          "noncyclic_observations": [
+            [
+              [
+                0.936214068783561,
+                0.03574959727828446,
+                0.028036333938154537
+              ],
+              [
+                0.9569979914082013,
+                0.025090634916841287,
+                0.017911373674957314
+              ],
+              [
+                0.9511716305881422,
+                0.02412526859678795,
+                0.024703100815069864
+              ]
+            ],
+            [
+              [
+                0.8950418888561397,
+                0.06708909480320827,
+                0.0378690163406522
+              ],
+              [
+                0.8766120418017898,
+                0.0807243360476299,
+                0.04266362215058042
+              ],
+              [
+                0.8711244218544398,
+                0.0824477736997143,
+                0.046427804445845815
+              ]
+            ],
+            [
+              [
+                0.8448629370743641,
+                0.08792759699440998,
+                0.06720946593122594
+              ],
+              [
+                0.8931228097324518,
+                0.05637226334009184,
+                0.05050492692745626
+              ],
+              [
+                0.9006356978145483,
+                0.05391252711376973,
+                0.045451775071681993
+              ]
+            ],
+            [
+              [
+                0.37032119359165416,
+                0.28003754667664416,
+                0.34964125973170174
+              ],
+              [
+                0.44847971703286504,
+                0.1378956160852721,
+                0.41362466688186283
+              ],
+              [
+                0.4960003565336863,
+                0.24385490927305598,
+                0.2601447341932576
+              ]
+            ],
+            [
+              [
+                0.48572039021844965,
+                0.41067792170883033,
+                0.10360168807272009
+              ],
+              [
+                0.5688086081792573,
+                0.33718275783327184,
+                0.09400863398747099
+              ],
+              [
+                0.38175926042254493,
+                0.4825108353077654,
+                0.13572990426968956
+              ]
+            ],
+            [
+              [
+                0.8205257050478498,
+                0.14299110789394492,
+                0.03648318705820512
+              ],
+              [
+                0.800507323874957,
+                0.14854546213498435,
+                0.05094721399005868
+              ],
+              [
+                0.7208653258424992,
+                0.2113470693193818,
+                0.06778760483811914
+              ]
+            ]
+          ],
+          "noncyclic_probes": [
+            [
+              [
+                0.5566591719308949,
+                0.3029725371762807,
+                0.1403682908928244
+              ],
+              [
+                0.5320349533051627,
+                0.22898338413312794,
+                0.23898166256170933
+              ],
+              [
+                0.6271341201281667,
+                0.2423701520669183,
+                0.13049572780491495
+              ]
+            ],
+            [
+              [
+                0.5387811559343063,
+                0.2844063885502347,
+                0.17681245551545893
+              ],
+              [
+                0.5072205395105226,
+                0.22992798014911375,
+                0.26285148034036365
+              ],
+              [
+                0.549046107570177,
+                0.23441595651110225,
+                0.21653793591872067
+              ]
+            ],
+            [
+              [
+                0.5531577652701524,
+                0.3038598974107186,
+                0.14298233731912896
+              ],
+              [
+                0.5165510199408408,
+                0.23653912976622898,
+                0.2469098502929301
+              ],
+              [
+                0.6163664152723997,
+                0.24425726447506518,
+                0.13937632025253513
+              ]
+            ]
+          ]
+        }
+      },
+      "production_policy_elapsed_s": 3.972296899999492
+    },
+    {
+      "case_ids": [
+        "authorization-base",
+        "authorization-paraphrase",
+        "authorization-distractor",
+        "authorization-evidence-removed",
+        "authorization-counterfactual",
+        "authorization-boundary-candidate"
+      ],
+      "canonical_elapsed_s": 0.7719147999887355,
+      "canonical_token_stats": [
+        {
+          "id": "authorization-base",
+          "question": "authorized",
+          "raw_logits": [
+            -3.1920042037963867,
+            1.276650309562683
+          ],
+          "sequence_tokens": 70,
+          "marker_positions": [
+            35,
+            45
+          ],
+          "option_stats": {
+            "options": 2,
+            "options_distinct": 2,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 15,
+            "state_tokens_used": 15,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]noul question: Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false.[SEP][MASK] false: no, the statement does not hold[MASK] true: yes, the statement holds[SEP]The customer wrote: I approve the proposed refund. Please issue it now.[SEP]"
+        },
+        {
+          "id": "authorization-paraphrase",
+          "question": "authorized",
+          "raw_logits": [
+            -2.765045166015625,
+            1.1896772384643555
+          ],
+          "sequence_tokens": 71,
+          "marker_positions": [
+            35,
+            45
+          ],
+          "option_stats": {
+            "options": 2,
+            "options_distinct": 2,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 16,
+            "state_tokens_used": 16,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]noul question: Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false.[SEP][MASK] false: no, the statement does not hold[MASK] true: yes, the statement holds[SEP]Customer reply: Yes, you have my permission to send the refund you proposed.[SEP]"
+        },
+        {
+          "id": "authorization-distractor",
+          "question": "authorized",
+          "raw_logits": [
+            -3.3730647563934326,
+            1.3469194173812866
+          ],
+          "sequence_tokens": 83,
+          "marker_positions": [
+            35,
+            45
+          ],
+          "option_stats": {
+            "options": 2,
+            "options_distinct": 2,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 28,
+            "state_tokens_used": 28,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]noul question: Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false.[SEP][MASK] false: no, the statement does not hold[MASK] true: yes, the statement holds[SEP]The customer said the package arrived on Tuesday and the weather was rainy. They then wrote: I approve the proposed refund; please issue it.[SEP]"
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "question": "authorized",
+          "raw_logits": [
+            0.2159697413444519,
+            0.5389418601989746
+          ],
+          "sequence_tokens": 71,
+          "marker_positions": [
+            35,
+            45
+          ],
+          "option_stats": {
+            "options": 2,
+            "options_distinct": 2,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 16,
+            "state_tokens_used": 16,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]noul question: Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false.[SEP][MASK] false: no, the statement does not hold[MASK] true: yes, the statement holds[SEP]The refund proposal was sent to the customer. No customer reply has been received.[SEP]"
+        },
+        {
+          "id": "authorization-counterfactual",
+          "question": "authorized",
+          "raw_logits": [
+            3.2168540954589844,
+            0.7330589294433594
+          ],
+          "sequence_tokens": 71,
+          "marker_positions": [
+            35,
+            45
+          ],
+          "option_stats": {
+            "options": 2,
+            "options_distinct": 2,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 16,
+            "state_tokens_used": 16,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]noul question: Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false.[SEP][MASK] false: no, the statement does not hold[MASK] true: yes, the statement holds[SEP]The customer wrote: I reject the refund proposal. Do not issue a refund.[SEP]"
+        },
+        {
+          "id": "authorization-boundary-candidate",
+          "question": "authorized",
+          "raw_logits": [
+            -0.9130176305770874,
+            0.861803412437439
+          ],
+          "sequence_tokens": 76,
+          "marker_positions": [
+            35,
+            45
+          ],
+          "option_stats": {
+            "options": 2,
+            "options_distinct": 2,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 21,
+            "state_tokens_used": 21,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]noul question: Has the customer explicitly authorized the proposed refund? Answer true only for an explicit present approval; missing approval, refusal and conditional future approval are false.[SEP][MASK] false: no, the statement does not hold[MASK] true: yes, the statement holds[SEP]The customer wrote: The refund sounds reasonable, though I want to check one detail before we go ahead.[SEP]"
+        }
+      ],
+      "questions": {
+        "authorized": {
+          "rotations": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          "elapsed_s": 2.2648551000165753,
+          "probe_probabilities": [
+            [
+              [
+                0.29348959998457685,
+                0.7065104000154232
+              ],
+              [
+                0.4004173349605091,
+                0.5995826650394909
+              ]
+            ],
+            [
+              [
+                0.4260846800577377,
+                0.5739153199422623
+              ],
+              [
+                0.4686442169521457,
+                0.5313557830478542
+              ]
+            ],
+            [
+              [
+                0.29069986908205114,
+                0.7093001309179489
+              ],
+              [
+                0.40564361370721436,
+                0.5943563862927856
+              ]
+            ]
+          ],
+          "canonical_prior": [
+            0.3367580497081219,
+            0.6632419502918782
+          ],
+          "cyclic_prior": [
+            0.38082988579070576,
+            0.6191701142092941
+          ],
+          "observed_probabilities": [
+            [
+              [
+                0.09508858014466928,
+                0.9049114198553307
+              ],
+              [
+                0.08431214615465148,
+                0.9156878538453486
+              ]
+            ],
+            [
+              [
+                0.11984399360464147,
+                0.8801560063953585
+              ],
+              [
+                0.09494986720030756,
+                0.9050501327996925
+              ]
+            ],
+            [
+              [
+                0.0847303694663501,
+                0.9152696305336498
+              ],
+              [
+                0.07020638207008818,
+                0.9297936179299118
+              ]
+            ],
+            [
+              [
+                0.45938044554221497,
+                0.540619554457785
+              ],
+              [
+                0.45629484475655585,
+                0.5437051552434442
+              ]
+            ],
+            [
+              [
+                0.7776960642786125,
+                0.22230393572138746
+              ],
+              [
+                0.8259961437824381,
+                0.17400385621756184
+              ]
+            ],
+            [
+              [
+                0.29011278741562546,
+                0.7098872125843746
+              ],
+              [
+                0.32796393236252974,
+                0.6720360676374704
+              ]
+            ]
+          ],
+          "usage": [
+            {
+              "input_tokens": 140,
+              "output_tokens": 0,
+              "state_tokens": 15,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 142,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 166,
+              "output_tokens": 0,
+              "state_tokens": 28,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 142,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 142,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 152,
+              "output_tokens": 0,
+              "state_tokens": 21,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 110,
+              "output_tokens": 0,
+              "state_tokens": 0,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 116,
+              "output_tokens": 0,
+              "state_tokens": 3,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 112,
+              "output_tokens": 0,
+              "state_tokens": 1,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          ]
+        }
+      },
+      "production_policy_elapsed_s": 1.9720785999670625
+    },
+    {
+      "case_ids": [
+        "priority-base",
+        "priority-paraphrase",
+        "priority-distractor",
+        "priority-evidence-removed",
+        "priority-counterfactual",
+        "priority-boundary-candidate"
+      ],
+      "canonical_elapsed_s": 1.1734690999728628,
+      "canonical_token_stats": [
+        {
+          "id": "priority-base",
+          "question": "priority",
+          "raw_logits": [
+            -3.3138461112976074,
+            -1.1657068729400635,
+            4.672402858734131
+          ],
+          "sequence_tokens": 117,
+          "marker_positions": [
+            28,
+            49,
+            70
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 23,
+            "state_tokens_used": 23,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]score question: Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.[SEP][MASK] level 0: Low: routine request with no described operational impact or urgent deadline; it can wait.[MASK] level 1: Medium: limited disruption with a working workaround, or a non-immediate deadline.[MASK] level 2: High: active production outage blocking all customers with no workaround; immediate action is needed.[SEP]The production service is down for every customer. All transactions are blocked and no workaround exists. We need help immediately.[SEP]"
+        },
+        {
+          "id": "priority-paraphrase",
+          "question": "priority",
+          "raw_logits": [
+            -3.009244680404663,
+            -1.4500502347946167,
+            4.4791717529296875
+          ],
+          "sequence_tokens": 118,
+          "marker_positions": [
+            28,
+            49,
+            70
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 24,
+            "state_tokens_used": 24,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]score question: Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.[SEP][MASK] level 0: Low: routine request with no described operational impact or urgent deadline; it can wait.[MASK] level 1: Medium: limited disruption with a working workaround, or a non-immediate deadline.[MASK] level 2: High: active production outage blocking all customers with no workaround; immediate action is needed.[SEP]Every customer is unable to complete a transaction because production is unavailable. There is no alternative path. Restore service now.[SEP]"
+        },
+        {
+          "id": "priority-distractor",
+          "question": "priority",
+          "raw_logits": [
+            -3.278776168823242,
+            -1.214991807937622,
+            4.509031295776367
+          ],
+          "sequence_tokens": 131,
+          "marker_positions": [
+            28,
+            49,
+            70
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 37,
+            "state_tokens_used": 37,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]score question: Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.[SEP][MASK] level 0: Low: routine request with no described operational impact or urgent deadline; it can wait.[MASK] level 1: Medium: limited disruption with a working workaround, or a non-immediate deadline.[MASK] level 2: High: active production outage blocking all customers with no workaround; immediate action is needed.[SEP]The team changed its meeting room last week and ordered new mugs. Right now production is down, all customer transactions are blocked, and no workaround exists. Immediate restoration is required.[SEP]"
+        },
+        {
+          "id": "priority-evidence-removed",
+          "question": "priority",
+          "raw_logits": [
+            2.012202739715576,
+            1.139523983001709,
+            -2.3298630714416504
+          ],
+          "sequence_tokens": 114,
+          "marker_positions": [
+            28,
+            49,
+            70
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 20,
+            "state_tokens_used": 20,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]score question: Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.[SEP][MASK] level 0: Low: routine request with no described operational impact or urgent deadline; it can wait.[MASK] level 1: Medium: limited disruption with a working workaround, or a non-immediate deadline.[MASK] level 2: High: active production outage blocking all customers with no workaround; immediate action is needed.[SEP]Please add this routine question to the support backlog. No operational impact or deadline has been reported.[SEP]"
+        },
+        {
+          "id": "priority-counterfactual",
+          "question": "priority",
+          "raw_logits": [
+            -1.7167363166809082,
+            3.413536310195923,
+            -2.3654799461364746
+          ],
+          "sequence_tokens": 123,
+          "marker_positions": [
+            28,
+            49,
+            70
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 29,
+            "state_tokens_used": 29,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]score question: Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.[SEP][MASK] level 0: Low: routine request with no described operational impact or urgent deadline; it can wait.[MASK] level 1: Medium: limited disruption with a working workaround, or a non-immediate deadline.[MASK] level 2: High: active production outage blocking all customers with no workaround; immediate action is needed.[SEP]One employee sees an intermittent report delay. The manual export works, all customer transactions succeed, and the report is needed next week rather than today.[SEP]"
+        },
+        {
+          "id": "priority-boundary-candidate",
+          "question": "priority",
+          "raw_logits": [
+            -2.456740379333496,
+            3.5975441932678223,
+            -1.4259843826293945
+          ],
+          "sequence_tokens": 125,
+          "marker_positions": [
+            28,
+            49,
+            70
+          ],
+          "option_stats": {
+            "options": 3,
+            "options_distinct": 3,
+            "tokens_per_option": null
+          },
+          "state_stats": {
+            "state_tokens": 31,
+            "state_tokens_used": 31,
+            "state_tokens_dropped": 0,
+            "truncated": false
+          },
+          "decoded_sequence": "[CLS]score question: Rate operational priority using the three ordered levels. Select the low level when no operational impact or urgent deadline is described.[SEP][MASK] level 0: Low: routine request with no described operational impact or urgent deadline; it can wait.[MASK] level 1: Medium: limited disruption with a working workaround, or a non-immediate deadline.[MASK] level 2: High: active production outage blocking all customers with no workaround; immediate action is needed.[SEP]Some customers report intermittent checkout delays. Retrying sometimes works, but we do not yet know how many payments are affected or whether the workaround is reliable.[SEP]"
+        }
+      ],
+      "questions": {
+        "priority": {
+          "rotations": [
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              2,
+              0
+            ],
+            [
+              2,
+              0,
+              1
+            ]
+          ],
+          "elapsed_s": 5.231721899996046,
+          "probe_probabilities": [
+            [
+              [
+                0.01901514121783861,
+                0.6129180992849644,
+                0.3680667594971969
+              ],
+              [
+                0.1705448894677926,
+                0.5694105607568135,
+                0.26004454977539393
+              ],
+              [
+                0.05958241484779546,
+                0.589349328318235,
+                0.3510682568339695
+              ]
+            ],
+            [
+              [
+                0.02279115525904247,
+                0.7959522001826252,
+                0.18125664455833237
+              ],
+              [
+                0.21435961883056104,
+                0.6128792638130577,
+                0.17276111735638125
+              ],
+              [
+                0.08125781083372811,
+                0.564084082815492,
+                0.3546581063507799
+              ]
+            ],
+            [
+              [
+                0.021077551324951743,
+                0.6565033786962439,
+                0.3224190699788044
+              ],
+              [
+                0.15662793346532614,
+                0.573628348119016,
+                0.269743718415658
+              ],
+              [
+                0.06295236136468833,
+                0.5294017703752194,
+                0.4076458682600922
+              ]
+            ]
+          ],
+          "canonical_prior": [
+            0.020961282600610944,
+            0.6884578927212779,
+            0.2905808246781112
+          ],
+          "cyclic_prior": [
+            0.08980098629019159,
+            0.6115696702624074,
+            0.298629343447401
+          ],
+          "observed_probabilities": [
+            [
+              [
+                0.0016736546495424688,
+                0.00931434991948116,
+                0.9890119954309764
+              ],
+              [
+                0.0018290674363852543,
+                0.0024661116424474715,
+                0.9957048209211673
+              ],
+              [
+                0.0016308857078105258,
+                0.003823063913743397,
+                0.9945460503784461
+              ]
+            ],
+            [
+              [
+                0.0024909249742434943,
+                0.008658864796498572,
+                0.988850210229258
+              ],
+              [
+                0.002462360132799573,
+                0.0038207325947117792,
+                0.9937169072724885
+              ],
+              [
+                0.002328459668405736,
+                0.004348199155143186,
+                0.993323341176451
+              ]
+            ],
+            [
+              [
+                0.0019589397842512133,
+                0.010191405814685335,
+                0.9878496544010634
+              ],
+              [
+                0.0021872987517091154,
+                0.003691537353227271,
+                0.9941211638950638
+              ],
+              [
+                0.002280723447472692,
+                0.005594015647683436,
+                0.9921252609048439
+              ]
+            ],
+            [
+              [
+                0.6540090738419673,
+                0.32563367382281133,
+                0.020357252335221256
+              ],
+              [
+                0.8270251559382796,
+                0.15821074646145905,
+                0.014764097600261272
+              ],
+              [
+                0.903664206793959,
+                0.08989931754046976,
+                0.006436475665571354
+              ]
+            ],
+            [
+              [
+                0.016153229196364187,
+                0.974227983106945,
+                0.009618787696690848
+              ],
+              [
+                0.03253442466916197,
+                0.9605485711305297,
+                0.0069170042003083064
+              ],
+              [
+                0.04133096897087606,
+                0.9414282133748418,
+                0.017240817654282016
+              ]
+            ],
+            [
+              [
+                0.0077230576241961784,
+                0.9746774192293556,
+                0.01759952314644812
+              ],
+              [
+                0.014361355184441807,
+                0.9773862591105826,
+                0.008252385704975497
+              ],
+              [
+                0.010535250890891813,
+                0.9770004639508629,
+                0.012464285158245332
+              ]
+            ]
+          ],
+          "usage": [
+            {
+              "input_tokens": 351,
+              "output_tokens": 0,
+              "state_tokens": 23,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 354,
+              "output_tokens": 0,
+              "state_tokens": 24,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 393,
+              "output_tokens": 0,
+              "state_tokens": 37,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 342,
+              "output_tokens": 0,
+              "state_tokens": 20,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 369,
+              "output_tokens": 0,
+              "state_tokens": 29,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 375,
+              "output_tokens": 0,
+              "state_tokens": 31,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 282,
+              "output_tokens": 0,
+              "state_tokens": 0,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 291,
+              "output_tokens": 0,
+              "state_tokens": 3,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            },
+            {
+              "input_tokens": 285,
+              "output_tokens": 0,
+              "state_tokens": 1,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          ]
+        }
+      },
+      "production_policy_elapsed_s": 4.802157199999783
+    }
+  ],
+  "policies": {
+    "canonical": {
+      "metrics": {
+        "choice_accuracy": 0.6,
+        "noul_accuracy": 0.8,
+        "score_mae": 0.08263999999999999,
+        "mean_confidence": 0.8191133333333334,
+        "score_within_0.25": 0.8
+      },
+      "observations": [
+        {
+          "id": "billing-base",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.9423,
+                  "technical": 0.0288,
+                  "other": 0.0289
+                },
+                "confidence": 0.7628,
+                "answer_confidence": 0.9423,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 89,
+              "output_tokens": 0,
+              "state_tokens": 14,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "billing-paraphrase",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.9071,
+                  "technical": 0.056,
+                  "other": 0.0368
+                },
+                "confidence": 0.6619,
+                "answer_confidence": 0.9071,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 92,
+              "output_tokens": 0,
+              "state_tokens": 17,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "billing-distractor",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.8402,
+                  "technical": 0.0698,
+                  "other": 0.0899
+                },
+                "confidence": 0.5005,
+                "answer_confidence": 0.8402,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 105,
+              "output_tokens": 0,
+              "state_tokens": 30,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "billing-evidence-removed",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.435,
+                  "technical": 0.1742,
+                  "other": 0.3908
+                },
+                "confidence": 0.0591,
+                "answer_confidence": 0.435,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 93,
+              "output_tokens": 0,
+              "state_tokens": 18,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "billing-counterfactual",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.5495,
+                  "technical": 0.3584,
+                  "other": 0.092
+                },
+                "confidence": 0.166,
+                "answer_confidence": 0.5495,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 101,
+              "output_tokens": 0,
+              "state_tokens": 26,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "billing-boundary-candidate",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.8446,
+                  "technical": 0.108,
+                  "other": 0.0474
+                },
+                "confidence": 0.5198,
+                "answer_confidence": 0.8446,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 101,
+              "output_tokens": 0,
+              "state_tokens": 26,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "authorization-base",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.9049,
+                "confidence": 0.9049,
+                "answer_confidence": 0.9049,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 70,
+              "output_tokens": 0,
+              "state_tokens": 15,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "authorization-paraphrase",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.8802,
+                "confidence": 0.8802,
+                "answer_confidence": 0.8802,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 71,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "authorization-distractor",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.9153,
+                "confidence": 0.9153,
+                "answer_confidence": 0.9153,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 83,
+              "output_tokens": 0,
+              "state_tokens": 28,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.5406,
+                "confidence": 0.5406,
+                "answer_confidence": 0.5406,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 71,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "authorization-counterfactual",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.2223,
+                "confidence": 0.7777,
+                "answer_confidence": 0.7777,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 71,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "authorization-boundary-candidate",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.7099,
+                "confidence": 0.7099,
+                "answer_confidence": 0.7099,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 76,
+              "output_tokens": 0,
+              "state_tokens": 21,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "priority-base",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "score": 1.9873,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.0017,
+                  "1": 0.0093,
+                  "2": 0.989
+                },
+                "confidence": 0.9407,
+                "answer_confidence": 0.989,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 117,
+              "output_tokens": 0,
+              "state_tokens": 23,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "priority-paraphrase",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "score": 1.9864,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.0025,
+                  "1": 0.0087,
+                  "2": 0.9889
+                },
+                "confidence": 0.9389,
+                "answer_confidence": 0.9889,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 118,
+              "output_tokens": 0,
+              "state_tokens": 24,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "priority-distractor",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "score": 1.9859,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.002,
+                  "1": 0.0102,
+                  "2": 0.9878
+                },
+                "confidence": 0.9353,
+                "answer_confidence": 0.9878,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 131,
+              "output_tokens": 0,
+              "state_tokens": 37,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "priority-evidence-removed",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "score": 0.3663,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.654,
+                  "1": 0.3256,
+                  "2": 0.0204
+                },
+                "confidence": 0.3425,
+                "answer_confidence": 0.654,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 114,
+              "output_tokens": 0,
+              "state_tokens": 20,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "priority-counterfactual",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "score": 0.9935,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.0162,
+                  "1": 0.9742,
+                  "2": 0.0096
+                },
+                "confidence": 0.8755,
+                "answer_confidence": 0.9742,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 123,
+              "output_tokens": 0,
+              "state_tokens": 29,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        },
+        {
+          "id": "priority-boundary-candidate",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "score": 1.0099,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.0077,
+                  "1": 0.9747,
+                  "2": 0.0176
+                },
+                "confidence": 0.8783,
+                "answer_confidence": 0.9747,
+                "action": {
+                  "act_probability": 1.0
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 125,
+              "output_tokens": 0,
+              "state_tokens": 31,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": []
+            }
+          }
+        }
+      ],
+      "errors": [
+        {
+          "id": "billing-evidence-removed",
+          "question": "department",
+          "actual": "billing",
+          "expected": "other"
+        },
+        {
+          "id": "billing-counterfactual",
+          "question": "department",
+          "actual": "billing",
+          "expected": "technical"
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "question": "authorized",
+          "actual": true,
+          "expected": false
+        },
+        {
+          "id": "priority-evidence-removed",
+          "question": "priority",
+          "actual": 0.3663,
+          "expected": 0
+        }
+      ],
+      "boundary_observations_at_0.05": [
+        {
+          "id": "billing-evidence-removed",
+          "question": "department",
+          "margin": 0.04420000000000002
+        }
+      ],
+      "boundary_cases_at_0.05": 1
+    },
+    "cyclic": {
+      "metrics": {
+        "choice_accuracy": 0.6,
+        "noul_accuracy": 0.8,
+        "score_mae": 0.05351295415032196,
+        "mean_confidence": 0.8325986850964455,
+        "score_within_0.25": 1.0
+      },
+      "observations": [
+        {
+          "id": "billing-base",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.9464870955865669,
+                  "technical": 0.02573228545985182,
+                  "other": 0.02778061895358136
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-paraphrase",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.8936045420412121,
+                  "technical": 0.06375541380130036,
+                  "other": 0.04264004415748759
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-distractor",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.8680980031881109,
+                  "technical": 0.06325926121294406,
+                  "other": 0.06864273559894507
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-evidence-removed",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.47341921181855345,
+                  "technical": 0.1946371551081936,
+                  "other": 0.33194363307325286
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-counterfactual",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.507877764652693,
+                  "technical": 0.36654898789119233,
+                  "other": 0.12557324745611462
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-boundary-candidate",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.8031802501951065,
+                  "technical": 0.1386105433578075,
+                  "other": 0.0582092064470859
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-base",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.9102996368503397
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-paraphrase",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.8926030695975256
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-distractor",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.9225316242317808
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.5421623548506146
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-counterfactual",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.19815389596947464
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-boundary-candidate",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.6909616401109224
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-base",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.0017112025979127497,
+                  "1": 0.005201175158557342,
+                  "2": 0.99308762224353
+                },
+                "score": 1.9913764196456174
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-paraphrase",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.002427248258482934,
+                  "1": 0.00560926551545118,
+                  "2": 0.9919634862260658
+                },
+                "score": 1.9895362379675827
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-distractor",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.00214232066114434,
+                  "1": 0.00649231960519868,
+                  "2": 0.9913653597336571
+                },
+                "score": 1.989223039072513
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-evidence-removed",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.7948994788580687,
+                  "1": 0.1912479126082467,
+                  "2": 0.013852608533684627
+                },
+                "score": 0.21895312967561595
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-counterfactual",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.030006207612134073,
+                  "1": 0.958734922537439,
+                  "2": 0.011258869850427058
+                },
+                "score": 0.9812526622382931
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-boundary-candidate",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.010873221233176598,
+                  "1": 0.9763547140969338,
+                  "2": 0.01277206466988965
+                },
+                "score": 1.001898843436713
+              }
+            }
+          }
+        }
+      ],
+      "errors": [
+        {
+          "id": "billing-evidence-removed",
+          "question": "department",
+          "actual": "billing",
+          "expected": "other"
+        },
+        {
+          "id": "billing-counterfactual",
+          "question": "department",
+          "actual": "billing",
+          "expected": "technical"
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "question": "authorized",
+          "actual": true,
+          "expected": false
+        }
+      ],
+      "boundary_observations_at_0.05": [],
+      "boundary_cases_at_0.05": 0
+    },
+    "canonical_prior_corrected": {
+      "metrics": {
+        "choice_accuracy": 1.0,
+        "noul_accuracy": 1.0,
+        "score_mae": 0.1059098621147387,
+        "mean_confidence": 0.7908287746477899,
+        "score_within_0.25": 0.8
+      },
+      "observations": [
+        {
+          "id": "billing-base",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.8502300242243586,
+                  "technical": 0.07349081101933987,
+                  "other": 0.07627916475630157
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-paraphrase",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.7730769770417377,
+                  "technical": 0.1352350171038493,
+                  "other": 0.09168800585441303
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-distractor",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.6459458295134524,
+                  "technical": 0.1520145615848226,
+                  "other": 0.20203960890172507
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-evidence-removed",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.21014318202741517,
+                  "technical": 0.2382438544186559,
+                  "other": 0.551612963553929
+                },
+                "choice": "other"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-counterfactual",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.2997690596119224,
+                  "technical": 0.5535683555216083,
+                  "other": 0.1466625848664692
+                },
+                "choice": "technical"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-boundary-candidate",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.6552804070293008,
+                  "technical": 0.23719249862147962,
+                  "other": 0.10752709434921948
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-base",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.8285311822087157
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-paraphrase",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.7885376508842183
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-distractor",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.8457917843016793
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.37403664521039576
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-counterfactual",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.12674334187633915
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-boundary-candidate",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.5540532362503705
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-base",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.022832809465398955,
+                  "1": 0.0038688912608037395,
+                  "2": 0.9732982992737973
+                },
+                "score": 1.9504654898083984
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-paraphrase",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.03362204315439118,
+                  "1": 0.003558482895944525,
+                  "2": 0.9628194739496644
+                },
+                "score": 1.9291974307952733
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-distractor",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.026641886890429022,
+                  "1": 0.004220058379234938,
+                  "2": 0.969138054730336
+                },
+                "score": 1.9424961678399069
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-evidence-removed",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.9828928473513553,
+                  "1": 0.014900202811784842,
+                  "2": 0.0022069498368598815
+                },
+                "score": 0.019314102485504605
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-counterfactual",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.34731306614151836,
+                  "1": 0.6377681642487307,
+                  "2": 0.014918769609750917
+                },
+                "score": 0.6676057034682326
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-boundary-candidate",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.19972560063679592,
+                  "1": 0.7674424807338389,
+                  "2": 0.03283191862936503
+                },
+                "score": 0.833106317992569
+              }
+            }
+          }
+        }
+      ],
+      "errors": [
+        {
+          "id": "priority-counterfactual",
+          "question": "priority",
+          "actual": 0.6676057034682326,
+          "expected": 1
+        }
+      ],
+      "boundary_observations_at_0.05": [],
+      "boundary_cases_at_0.05": 0
+    },
+    "cyclic_prior_corrected": {
+      "metrics": {
+        "choice_accuracy": 1.0,
+        "noul_accuracy": 1.0,
+        "score_mae": 0.04939762331616905,
+        "mean_confidence": 0.8048177307151748,
+        "score_within_0.25": 1.0
+      },
+      "observations": [
+        {
+          "id": "billing-base",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.8478410176069271,
+                  "technical": 0.06374915487165743,
+                  "other": 0.08840982752141555
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-paraphrase",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.7316131330668112,
+                  "technical": 0.14436088603741284,
+                  "other": 0.12402598089577593
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-distractor",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.6745558656400457,
+                  "technical": 0.13594699936840587,
+                  "other": 0.1894971349915485
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-evidence-removed",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.21607315964675158,
+                  "technical": 0.24568409240171674,
+                  "other": 0.5382427479515316
+                },
+                "choice": "other"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-counterfactual",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.25810123133327534,
+                  "technical": 0.515180298634573,
+                  "other": 0.22671847003215162
+                },
+                "choice": "technical"
+              }
+            }
+          }
+        },
+        {
+          "id": "billing-boundary-candidate",
+          "result": {
+            "answers": {
+              "department": {
+                "type": "choice",
+                "probabilities": {
+                  "billing": 0.576447465846042,
+                  "technical": 0.2751308717650228,
+                  "other": 0.14842166238893523
+                },
+                "choice": "billing"
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-base",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.8619131557147044
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-paraphrase",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.8363863943852085
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-distractor",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.8798726322755023
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.4214127973552683
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-counterfactual",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.1319415542427085
+              }
+            }
+          }
+        },
+        {
+          "id": "authorization-boundary-candidate",
+          "result": {
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "noul": 0.578980981563292
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-base",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.005683041532070678,
+                  "1": 0.0025363900804229785,
+                  "2": 0.9917805683875064
+                },
+                "score": 1.9860975268554357
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-paraphrase",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.008049379799287515,
+                  "1": 0.0027314256700069293,
+                  "2": 0.9892191945307056
+                },
+                "score": 1.981169814731418
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-distractor",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.007112391016175714,
+                  "1": 0.0031649452896221394,
+                  "2": 0.9897226636942021
+                },
+                "score": 1.9826102726780264
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-evidence-removed",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.9610131458027785,
+                  "1": 0.033950719876384435,
+                  "2": 0.005036134320837016
+                },
+                "score": 0.04402298851805847
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-counterfactual",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.17228162384628265,
+                  "1": 0.8082794946351016,
+                  "2": 0.01943888151861571
+                },
+                "score": 0.8471572576723331
+              }
+            }
+          }
+        },
+        {
+          "id": "priority-boundary-candidate",
+          "result": {
+            "answers": {
+              "priority": {
+                "type": "score",
+                "probabilities": {
+                  "0": 0.06878355038155877,
+                  "1": 0.9069203756902192,
+                  "2": 0.024296073928222067
+                },
+                "score": 0.9555125235466634
+              }
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "boundary_observations_at_0.05": [],
+      "boundary_cases_at_0.05": 0
+    },
+    "context-balanced-v1": {
+      "metrics": {
+        "choice_accuracy": 1.0,
+        "noul_accuracy": 1.0,
+        "score_mae": 0.049380000000000014,
+        "mean_confidence": 0.80482,
+        "score_within_0.25": 1.0
+      },
+      "observations": [
+        {
+          "id": "billing-base",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "answer_confidence": 0.8478,
+                "confidence": 0.5177,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.8478,
+                  "technical": 0.0637,
+                  "other": 0.0884
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 954,
+              "output_tokens": 0,
+              "state_tokens": 14,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 267,
+              "policy_probe_tokens": 687,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 9
+            }
+          }
+        },
+        {
+          "id": "billing-paraphrase",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "answer_confidence": 0.7316,
+                "confidence": 0.3019,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.7316,
+                  "technical": 0.1444,
+                  "other": 0.124
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 276,
+              "output_tokens": 0,
+              "state_tokens": 17,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 276,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "billing-distractor",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "answer_confidence": 0.6746,
+                "confidence": 0.2244,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.6746,
+                  "technical": 0.1359,
+                  "other": 0.1895
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 315,
+              "output_tokens": 0,
+              "state_tokens": 30,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 315,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "billing-evidence-removed",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "answer_confidence": 0.5382,
+                "confidence": 0.0813,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "choice": "other",
+                "probabilities": {
+                  "billing": 0.2161,
+                  "technical": 0.2457,
+                  "other": 0.5382
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 279,
+              "output_tokens": 0,
+              "state_tokens": 18,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 279,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "billing-counterfactual",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "answer_confidence": 0.5152,
+                "confidence": 0.0645,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "choice": "technical",
+                "probabilities": {
+                  "billing": 0.2581,
+                  "technical": 0.5152,
+                  "other": 0.2267
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 303,
+              "output_tokens": 0,
+              "state_tokens": 26,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 303,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "billing-boundary-candidate",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "department": {
+                "type": "choice",
+                "answer_confidence": 0.5764,
+                "confidence": 0.13,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.5764,
+                  "technical": 0.2751,
+                  "other": 0.1484
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 303,
+              "output_tokens": 0,
+              "state_tokens": 26,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 303,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "authorization-base",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "answer_confidence": 0.8619,
+                "confidence": 0.8619,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "noul": 0.8619
+              }
+            },
+            "usage": {
+              "input_tokens": 478,
+              "output_tokens": 0,
+              "state_tokens": 15,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 140,
+              "policy_probe_tokens": 338,
+              "policy_variant_rows": 2,
+              "policy_probe_rows": 6
+            }
+          }
+        },
+        {
+          "id": "authorization-paraphrase",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "answer_confidence": 0.8364,
+                "confidence": 0.8364,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "noul": 0.8364
+              }
+            },
+            "usage": {
+              "input_tokens": 142,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 142,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 2,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "authorization-distractor",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "answer_confidence": 0.8799,
+                "confidence": 0.8799,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "noul": 0.8799
+              }
+            },
+            "usage": {
+              "input_tokens": 166,
+              "output_tokens": 0,
+              "state_tokens": 28,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 166,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 2,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "authorization-evidence-removed",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "answer_confidence": 0.5786,
+                "confidence": 0.5786,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "noul": 0.4214
+              }
+            },
+            "usage": {
+              "input_tokens": 142,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 142,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 2,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "authorization-counterfactual",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "answer_confidence": 0.8681,
+                "confidence": 0.8681,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "noul": 0.1319
+              }
+            },
+            "usage": {
+              "input_tokens": 142,
+              "output_tokens": 0,
+              "state_tokens": 16,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 142,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 2,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "authorization-boundary-candidate",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "authorized": {
+                "type": "noul",
+                "answer_confidence": 0.579,
+                "confidence": 0.579,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "noul": 0.579
+              }
+            },
+            "usage": {
+              "input_tokens": 152,
+              "output_tokens": 0,
+              "state_tokens": 21,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 152,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 2,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "priority-base",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "answer_confidence": 0.9918,
+                "confidence": 0.952,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "score": 1.9861,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.0057,
+                  "1": 0.0025,
+                  "2": 0.9918
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1209,
+              "output_tokens": 0,
+              "state_tokens": 23,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 351,
+              "policy_probe_tokens": 858,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 9
+            }
+          }
+        },
+        {
+          "id": "priority-paraphrase",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "answer_confidence": 0.9892,
+                "confidence": 0.9402,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "score": 1.9812,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.008,
+                  "1": 0.0027,
+                  "2": 0.9892
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 354,
+              "output_tokens": 0,
+              "state_tokens": 24,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 354,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "priority-distractor",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "answer_confidence": 0.9897,
+                "confidence": 0.9421,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "score": 1.9826,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.0071,
+                  "1": 0.0032,
+                  "2": 0.9897
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 393,
+              "output_tokens": 0,
+              "state_tokens": 37,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 393,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "priority-evidence-removed",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "answer_confidence": 0.961,
+                "confidence": 0.8364,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "score": 0.044,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.961,
+                  "1": 0.034,
+                  "2": 0.005
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 342,
+              "output_tokens": 0,
+              "state_tokens": 20,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 342,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "priority-counterfactual",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "answer_confidence": 0.8083,
+                "confidence": 0.4979,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "score": 0.8472,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.1723,
+                  "1": 0.8083,
+                  "2": 0.0194
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 369,
+              "output_tokens": 0,
+              "state_tokens": 29,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 369,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        },
+        {
+          "id": "priority-boundary-candidate",
+          "result": {
+            "model": "laya-rl-agent",
+            "answers": {
+              "priority": {
+                "type": "score",
+                "answer_confidence": 0.9069,
+                "confidence": 0.6695,
+                "action": {
+                  "act_probability": 1.0
+                },
+                "decision_policy": "context-balanced-v1",
+                "confidence_calibrated": false,
+                "score": 0.9555,
+                "legend": {
+                  "0": "Low: routine request with no described operational impact or urgent deadline; it can wait.",
+                  "1": "Medium: limited disruption with a working workaround, or a non-immediate deadline.",
+                  "2": "High: active production outage blocking all customers with no workaround; immediate action is needed."
+                },
+                "probabilities": {
+                  "0": 0.0688,
+                  "1": 0.9069,
+                  "2": 0.0243
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 375,
+              "output_tokens": 0,
+              "state_tokens": 31,
+              "state_tokens_dropped": 0,
+              "truncated": false,
+              "truncated_questions": [],
+              "decision_policy": "context-balanced-v1",
+              "policy_rotation_tokens": 375,
+              "policy_probe_tokens": 0,
+              "policy_variant_rows": 3,
+              "policy_probe_rows": 0
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "boundary_observations_at_0.05": [],
+      "boundary_cases_at_0.05": 0
+    }
+  },
+  "production_qualified": false,
+  "limits": "Development diagnosis, not qualification. Labels are scoring-only. Fixed cyclic rotations and fixed three-probe prior correction have no fitted hyperparameters. Corrected confidence is not a calibrated probability. A semantic policy change requires a new cache policy identity and independent validation. Boundary coverage is measured on returned probabilities at margin 0.05; no gate, original corpus, model weight or earlier evidence is rewritten."
+}

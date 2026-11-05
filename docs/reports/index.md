@@ -12,6 +12,10 @@ The [production capabilities report](production-capabilities-2026-11-05.md) reco
 verified replay, cache-aware HTTP scheduling, cross-SDK routing, release qualification
 and the fully local MCP code interface.
 
+The [checkpoint qualification investigation](checkpoint-qualification-repair-2026-11-05.md)
+reproduces the English checkpoint's errors and evaluates an optional correction
+against the original gates and separate controls.
+
 The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
 required decision storage, experimental HTTP microbatching and selected upstream fixes.
 

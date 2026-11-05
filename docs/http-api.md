@@ -56,6 +56,7 @@ Configure the server through environment variables. The `--backend` and
 | `LAYA_CACHE_REQUIRE_EXISTING` | refuse to create a missing SQLite decision database | `0` |
 | `LAYA_CACHE_EXPECTED_STORE_ID` | require an existing database with this store identity | none |
 | `LAYA_REPLAY_MANIFEST` | verified policy metadata for model-free replay and the cache fast path | none |
+| `LAYA_DECISION_POLICY` | select `canonical` or `context-balanced-v1` for [local inference](decision-policy.md) | checkpoint default |
 | `LAYA_HTTP_REPLAY_FAST_PATH` | let verified hits bypass inference queues when a manifest is configured | `1` |
 | `LAYA_CACHE_RENEW_ON_HIT` | renew expiry on use | `0` |
 | `LAYA_LOG_LEVEL` | uvicorn log level | `info` |
