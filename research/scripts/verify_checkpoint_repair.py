@@ -15,10 +15,13 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 
-def frozen_weights(base, candidate):
+def frozen_weights(base, candidate, *, allow_encoder_update=False):
     import torch
     from safetensors import safe_open
     changed, frozen = [], 0
+    allowed = ("head.", "type_emb.", "scorer.")
+    if allow_encoder_update:
+        allowed += ("encoder.",)
     with (safe_open(str(base / "model.safetensors"), framework="pt") as old,
           safe_open(str(candidate / "model.safetensors"), framework="pt") as new):
         assert old.keys() == new.keys()
@@ -28,7 +31,7 @@ def frozen_weights(base, candidate):
             if torch.equal(before, after):
                 frozen += 1
             else:
-                assert name.startswith(("head.", "type_emb.", "scorer.")), name
+                assert name.startswith(allowed), name
                 changed.append(name)
     assert changed
     return {"identical_tensors": frozen, "updated_tensors": changed}
@@ -183,6 +186,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("base", "base-onnx", "candidate", "onnx", "corpus", "out"):
         parser.add_argument("--" + name, type=lambda path: Path(path).resolve(), required=True)
+    parser.add_argument("--allow-encoder-update", action="store_true",
+                        help="permit changed encoder weights with identical tensor names, shapes and dtypes")
     args = parser.parse_args()
     if args.out.exists():
         parser.error("choose a new report path")
@@ -201,7 +206,8 @@ def main():
     before = identities()
     cases = [case for case in validate_corpus(load_document(args.corpus))["cases"] if case["split"] == "evaluation"]
     report = {"schema": "veya-checkpoint-verification/1", **before,
-              "weight_comparison": frozen_weights(args.base, args.candidate),
+              "weight_comparison": frozen_weights(args.base, args.candidate,
+                                                  allow_encoder_update=args.allow_encoder_update),
               "cpu_threads": 4, "latency": compare_latency(args, cases),
               "mcp": mcp_smoke(args, cases, before["candidate_artifacts"])}
     if identities() != before:
