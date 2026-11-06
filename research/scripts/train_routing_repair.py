@@ -137,8 +137,10 @@ def main():
     sources = _source_identity()
     scripts = [Path(__file__), *[Path(__file__).with_name(name) for name in
                                ("train_checkpoint_repair.py", "train_evidence_repair.py")]]
-    inputs = {str(path): _file_sha(path) for path in [*scripts, args.clinc, args.domains, args.regression,
-                                                     *args.banks, *args.development]}
+    paths = [*scripts, args.clinc, args.domains, args.regression, *args.banks, *args.development]
+    inputs = {str(path): _file_sha(path) for path in paths}
+    if len(set(inputs.values())) != len(paths):
+        parser.error("training, calibration and evaluation input files must have distinct contents")
     artifacts = _artifact_identity(args.base)
     tokenizer = load_document(args.base / "tokenizer/tokenizer_config.json")
     if (tokenizer.get("tokenizer_class") in (None, "TokenizersBackend")

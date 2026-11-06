@@ -235,6 +235,12 @@ def main():
                 "source_sha256": _source_identity(), "base_artifacts": _artifact_identity(args.base, args.base_onnx),
                 "candidate_artifacts": _artifact_identity(args.candidate, args.onnx)}
     before = identities()
+    if args.routing_only:
+        base_metadata, candidate_metadata = ({name: digest for name, digest in before[key].items()
+                                               if name.startswith(("encoder/", "tokenizer/"))}
+                                              for key in ("base_artifacts", "candidate_artifacts"))
+        if base_metadata != candidate_metadata:
+            raise ValueError("routing-only verification requires identical encoder and tokenizer metadata")
     cases = [case for case in validate_corpus(load_document(args.corpus))["cases"] if case["split"] == "evaluation"]
     report = {"schema": "veya-checkpoint-verification/1", **before,
               "weight_comparison": frozen_weights(args.base, args.candidate,
