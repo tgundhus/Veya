@@ -8,46 +8,74 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya.qualification import load_document, validate_corpus
+from laya.qualification import _limits, _saved_observations, _sha, load_document, validate_corpus
 
 
 def audit(corpus, report):
-    document = validate_corpus(load_document(corpus))
-    seal = hashlib.sha256(corpus.read_bytes()).hexdigest()
-    if report["harness"]["corpus_file_sha256"] != seal:
+    raw = corpus.read_bytes()
+    document = validate_corpus(json.loads(raw))
+    seal = hashlib.sha256(raw).hexdigest()
+    if (report["harness"]["corpus_file_sha256"] != seal or report["corpus_id"] != document["id"]
+            or report["corpus_sha256"] != _sha(document)):
         raise ValueError("the report used a different corpus")
+    evaluation_ids = {case["id"] for case in document["cases"] if case["split"] == "evaluation"}
     cases = {}
     for case in document["cases"]:
         if "plausible_score_levels" not in case:
             continue
         levels = case["plausible_score_levels"]
-        if (len(case["questions"]) != 1 or case["expected"] or len(levels) != 2
+        if (case["id"] not in evaluation_ids or len(case["questions"]) != 1 or case["expected"]
+                or not isinstance(levels, list) or len(levels) != 2
                 or any(type(level) is not int for level in levels) or levels[0] < 0 or levels[1] != levels[0] + 1):
             raise ValueError(f"invalid unlabelled adjacent pair in {case['id']}")
         qid, question = next(iter(case["questions"].items()))
         if question["type"] != "score" or levels[1] >= len(question["criteria"]):
             raise ValueError(f"invalid score question in {case['id']}")
-        cases[case["id"]] = (qid, levels)
+        score_keys = {str(level) for level in range(len(question["criteria"]))}
+        cases[case["id"]] = (qid, levels, score_keys)
     if not cases:
         raise ValueError("no predeclared adjacent pairs")
 
     threshold = report["limits"]["boundary_margin"]
-    profiles = [run for cell in report["cells"].values() for run in cell["runs"]]
-    if not profiles or report["coverage"]["skipped_cells"] or report["coverage"]["not_run_cells"]:
+    matrix = report["matrix"]
+    requested = {cell["name"] for cell in matrix["cells"]}
+    if (not requested or report["matrix_sha256"] != _sha(matrix) or set(report["cells"]) != requested
+            or _limits(matrix["limits"]) != report["limits"]
+            or set(report["coverage"]["requested_cells"]) != requested or report["coverage"]["skipped_cells"]
+            or report["coverage"]["not_run_cells"]):
         raise ValueError("the qualification report has incomplete profiles")
+    expected = {(repeat, size, mode, concurrency)
+                for repeat in range(matrix["repeats"]) for size in matrix["batch_sizes"]
+                for mode in (("ordered",) if size == 1 else ("ordered", "reversed", "neighbour"))
+                for concurrency in matrix["concurrencies"]}
+    profiles = []
+    for cell in report["cells"].values():
+        runs = cell.get("runs", [])
+        actual = {(run["repeat"], run["batch_size"], run["mode"], run["concurrency"]) for run in runs}
+        if not expected or len(runs) != len(expected) or actual != expected:
+            raise ValueError("the qualification report has incomplete or duplicate profiles")
+        profiles.extend(runs)
     rows = {cid: {"expected_levels": levels, "profiles": 0, "matching_pairs": 0, "matched_near_ties": 0,
-                  "min_margin": 1., "max_margin": 0.} for cid, (_, levels) in cases.items()}
+                  "min_margin": 1., "max_margin": 0.} for cid, (_, levels, _) in cases.items()}
     for run in profiles:
-        for observation in run["observations"]:
+        observations = _saved_observations(run)
+        if {row["id"] for row in observations} != evaluation_ids:
+            raise ValueError("a profile is missing corpus observations")
+        for observation in observations:
             cid = observation["id"]
             if cid not in cases:
                 continue
-            qid, levels = cases[cid]
-            probabilities = observation["answers"][qid]["probabilities"]
-            pair = sorted(probabilities, key=probabilities.get, reverse=True)[:2]
+            qid, levels, score_keys = cases[cid]
+            answer = observation["answers"][qid]
+            probabilities = answer["probabilities"]
+            if answer["answer"]["type"] != "score" or set(probabilities) != score_keys:
+                raise ValueError(f"expected probabilities for every score level in {cid}")
+            ranked = sorted(probabilities, key=probabilities.get, reverse=True)
+            pair = ranked[:2]
             margin = probabilities[pair[0]] - probabilities[pair[1]]
             row = rows[cid]
-            correct = sorted(map(int, pair)) == levels
+            unique_pair = len(ranked) == 2 or probabilities[ranked[1]] > probabilities[ranked[2]]
+            correct = unique_pair and sorted(map(int, pair)) == levels
             row["profiles"] += 1
             row["matching_pairs"] += correct
             row["matched_near_ties"] += correct and margin <= threshold
@@ -56,8 +84,6 @@ def audit(corpus, report):
             row.setdefault("returned_pairs", [])
             if pair not in row["returned_pairs"]:
                 row["returned_pairs"].append(pair)
-    if any(row["profiles"] != len(profiles) for row in rows.values()):
-        raise ValueError("the report is missing a boundary observation")
     stable = [cid for cid, row in rows.items() if row["matched_near_ties"] == len(profiles)]
     return {"corpus_sha256": seal, "profiles": len(profiles), "margin_threshold": threshold,
             "stable_matched_cases": stable, "cases": rows}

@@ -219,6 +219,49 @@ def diagnostic(runner=None, document=None, **kwargs):
                    reference="fixture", allow_unverified_identity=True, **kwargs)
 
 
+@pytest.mark.parametrize("defect", [None, "three_way", "missing_backend", "duplicate_case", "missing_level"])
+def test_ordinal_boundary_audit_requires_a_unique_pair_in_every_profile(tmp_path, defect):
+    from hashlib import sha256
+    from research.scripts.check_ordinal_boundaries import audit
+
+    doc = corpus()
+    row = doc["cases"][0]
+    row.update(questions={"priority": QUESTIONS["priority"]}, expected={}, plausible_score_levels=[0, 1])
+    doc["cases"] = [row]
+    path = tmp_path / "corpus.json"
+    raw = json.dumps(doc).encode()
+    path.write_bytes(raw)
+
+    class BoundaryRunner(FixtureRunner):
+        def predict(self, state, questions, model=None):
+            answer = super().predict(state, questions, model)["answers"]["priority"]
+            values = (1 / 3,) * 3 if defect == "three_way" else (.49, .49, .02)
+            answer.update(probabilities=dict(zip(("0", "1", "2"), values)), score=values[1] + 2 * values[2])
+            return {"answers": {"priority": answer}}
+
+    report = diagnostic(BoundaryRunner(), doc, repeats=2, batch_sizes=(1,))
+    names = ["fixture", "second"] if defect == "missing_backend" else ["fixture"]
+    matrix = {"cells": [{"name": name} for name in names], "repeats": 2, "batch_sizes": [1],
+              "concurrencies": [1], "limits": report["limits"]}
+    report.update(matrix=matrix, matrix_sha256=qualification._sha(matrix),
+                  harness={"corpus_file_sha256": sha256(raw).hexdigest()})
+    report["coverage"].update(requested_cells=names, skipped_cells=[], not_run_cells=[])
+    if defect == "duplicate_case":
+        observations = report["cells"]["fixture"]["runs"][0]["observations"]
+        observations.append(deepcopy(observations[0]))
+    elif defect == "missing_level":
+        observation = report["cells"]["fixture"]["runs"][0]["observations"][0]
+        answer = observation["answers"]["priority"]["answer"]
+        answer.update(probabilities={"0": .49, "1": .51}, score=.51)
+        observation["answers"] = qualification._answers({"answers": {"priority": answer}},
+                                                        {"priority": {"type": "score", "criteria": ["Low", "Medium"]}})
+    if defect in ("missing_backend", "duplicate_case", "missing_level"):
+        with pytest.raises(ValueError, match="incomplete profiles|repeat a case id|every score level"):
+            audit(path, report)
+    else:
+        assert audit(path, report)["stable_matched_cases"] == ([] if defect == "three_way" else [row["id"]])
+
+
 def test_corpus_validation_returns_an_independent_document():
     original = corpus()
     validated = validate_corpus(original)
