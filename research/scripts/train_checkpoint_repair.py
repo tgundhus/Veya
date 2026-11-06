@@ -34,6 +34,7 @@ def extract(agent, rows, *, rotate_kinds=()):
     expected = sum(len(row["expected"]) for row in rows)
     if skipped or len(items) != expected:
         raise ValueError("invalid training inputs: %r, expected %d, encoded %d" % (skipped, expected, len(items)))
+    device = next(agent.model.parameters()).device
     groups = defaultdict(list)
     for item in items:
         k = item["k"]
@@ -52,13 +53,14 @@ def extract(agent, rows, *, rotate_kinds=()):
             for start in range(0, len(group), 12):
                 chunk = group[start:start + 12]
                 batch = collate_items([chunk], agent.tok.pad_token_id)
+                batch = {key: value.to(device) for key, value in batch.items() if key != "meta"}
                 hidden = agent.model.encoder(input_ids=batch["input_ids"],
                                              attention_mask=batch["attention_mask"]).last_hidden_state
                 extra = width - hidden.shape[1]
                 features.append(pad(hidden, (0, 0, 0, extra)))
                 masks.append(pad(batch["attention_mask"], (0, extra)))
                 markers.append(batch["marker_pos"])
-                levels.append(torch.tensor([row["levels"] for row in chunk]))
+                levels.append(torch.tensor([row["levels"] for row in chunk], device=device))
                 targets.append(batch["target"][:, :k])
                 kinds.append(batch["qtype"])
         output.append((tuple(torch.cat(parts) for parts in (features, masks, markers, levels, kinds)), torch.cat(targets)))
@@ -82,9 +84,9 @@ def measure(model, features, temperatures):
     with torch.no_grad():
         for batch, targets in features:
             kinds = batch[-1]
-            logits = forward(model, batch) / torch.tensor(temperatures)[kinds, None]
+            logits = forward(model, batch) / torch.tensor(temperatures, device=kinds.device)[kinds, None]
             probabilities = logits.softmax(-1)
-            levels = torch.arange(logits.shape[-1], dtype=probabilities.dtype)
+            levels = torch.arange(logits.shape[-1], dtype=probabilities.dtype, device=logits.device)
             errors = ((probabilities - targets) @ levels).abs()
             match = torch.where(kinds == 1, errors <= .25, logits.argmax(-1) == targets.argmax(-1))
             zero = (kinds == 1) & (targets[:, 0] == 1)
@@ -99,17 +101,25 @@ def measure(model, features, temperatures):
             "cross_entropy": loss / sum(totals), "level_zero": [zero_hits, zero_total]}
 
 
-def fit_temperatures(model, features, retained=None):
+def fit_temperatures(model, features, retained=None, *, score_mse=False):
     import torch
     from laya.calibrate import MIN_TYPE_N, fit_one_temperature
     records = defaultdict(list)
     with torch.no_grad():
         for batch, target in features:
-            for logits, y, kind in zip(forward(model, batch).numpy(), target.numpy(), batch[-1].tolist()):
+            for logits, y, kind in zip(forward(model, batch).cpu().numpy(), target.cpu().numpy(), batch[-1].tolist()):
                 records[kind].append((logits, y))
     retained = retained or {}
     if any(len(records[kind]) < MIN_TYPE_N for kind in range(3) if kind not in retained):
         raise ValueError("each question type needs at least %d calibration examples" % MIN_TYPE_N)
+    if score_mse:
+        import numpy as np
+        logits, gold = [torch.from_numpy(np.stack(values)) for values in zip(*records[1])]
+        temperatures = torch.linspace(.5, 5, 181)
+        levels = torch.arange(logits.shape[-1], dtype=logits.dtype)
+        scores = (logits[None] / temperatures[:, None, None]).softmax(-1) @ levels
+        losses = (scores - gold @ levels).square().mean(-1)
+        retained = {**retained, 1: float(temperatures[losses.argmin()])}
     return [retained[kind] if kind in retained else fit_one_temperature(records[kind], min_n=MIN_TYPE_N)
             for kind in range(3)]
 
@@ -135,16 +145,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", type=Path, required=True)
     parser.add_argument("--data", type=Path, default=ROOT / "research/evals/checkpoint-repair-training-v1.json")
-    parser.add_argument("--level-zero-data", type=Path, help="supplemental score training and separate score calibration")
+    parser.add_argument("--level-zero-data", type=Path, nargs="+", help="supplemental score training and calibration banks")
+    parser.add_argument("--level-zero-canonical", action="store_true",
+                        help="train in presented option order and fit the score temperature to squared score error")
     parser.add_argument("--development", type=Path, nargs="+", default=[ROOT / "research/evals/qualification-v1.json",
                         ROOT / "research/evals/independent-repair-controls-v1.json"])
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--threads", type=int, default=6)
     parser.add_argument("--epochs", type=int, default=12)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu", help="device for offline training")
     args = parser.parse_args()
     base, output = args.base.resolve(), args.output.resolve()
     if args.threads < 1 or args.epochs < 1 or output.exists() or output.is_relative_to(base) or not base.is_dir():
         parser.error("use a local base, a new output outside it, and positive threads and epochs")
+    if args.level_zero_canonical and not args.level_zero_data:
+        parser.error("--level-zero-canonical requires supplemental score training and calibration")
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32")
     import torch
     from safetensors import safe_open
@@ -156,9 +171,9 @@ def main():
     torch.set_num_threads(args.threads)
     torch.set_num_interop_threads(1)
     torch.manual_seed(20261106)
-    input_paths = [args.data, Path(__file__), *args.development]
-    if args.level_zero_data:
-        input_paths.append(args.level_zero_data)
+    if args.device == "cuda" and not torch.cuda.is_available():
+        parser.error("CUDA training requires CUDA-enabled PyTorch")
+    input_paths = [args.data, Path(__file__), *args.development, *(args.level_zero_data or ())]
     inputs = {str(path.resolve()): _file_sha(path) for path in input_paths}
     names = [path.name for path in args.development]
     if len(set(names)) != len(names) or set(names) & {"training", "calibration"}:
@@ -166,7 +181,8 @@ def main():
     bank = load_document(args.data)
     splits = {part: list(training_rows(bank[part])) for part in ("training", "calibration")}
     if args.level_zero_data:
-        supplement = load_document(args.level_zero_data)
+        banks = [load_document(path) for path in args.level_zero_data]
+        supplement = {part: [group for bank in banks for group in bank[part]] for part in ("training", "calibration")}
         if any(group["type"] != "score" for part in ("training", "calibration") for group in supplement[part]):
             parser.error("the level-zero supplement accepts score groups only")
         splits["training"].extend(training_rows(supplement["training"]))
@@ -197,7 +213,9 @@ def main():
         if agent.parallel_options:
             raise ValueError("this recipe expects the sequential English checkpoint")
         cfg = deepcopy(agent.cfg)
-        training = extract(agent, splits["training"], rotate_kinds=(1,) if args.level_zero_data else (0, 1, 2))
+        agent.model.to(args.device)
+        rotate_kinds = (1,) if args.level_zero_data else (0, 1, 2)
+        training = extract(agent, splits["training"], rotate_kinds=() if args.level_zero_canonical else rotate_kinds)
         print("cached training features", [len(targets) for _, targets in training], flush=True)
         calibration = extract(agent, splits["calibration"])
         development = {name: extract(agent, rows) for name, rows in dev.items()}
@@ -215,7 +233,7 @@ def main():
     before = {name: measure(model, rows, temperatures) for name, rows in development.items()}
     print("development before", before, flush=True)
     optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=1e-4)
-    train_temperatures = torch.tensor(temperatures)
+    train_temperatures = torch.tensor(temperatures, device=args.device)
     retained = {kind: temperatures[kind] for kind in (0, 2)} if args.level_zero_data else None
     with torch.no_grad():
         original = [forward(model, batch).softmax(-1) for batch, _ in training]
@@ -223,7 +241,7 @@ def main():
     for epoch in range(1, args.epochs + 1):
         model.train()
         batches = [(i, ids) for i, (_, targets) in enumerate(training)
-                   for ids in torch.randperm(len(targets)).split(12)]
+                   for ids in torch.randperm(len(targets), device=args.device).split(12)]
         for order in torch.randperm(len(batches)).tolist():
             index, ids = batches[order]
             batch, targets = training[index]
@@ -248,7 +266,7 @@ def main():
             continue
         # Score the same stored precision used by the deployed checkpoint.
         stored = deepcopy(model).half().float().eval()
-        fitted = fit_temperatures(stored, calibration, retained)
+        fitted = fit_temperatures(stored, calibration, retained, score_mse=args.level_zero_canonical)
         metrics = {name: measure(stored, rows, fitted) for name, rows in development.items()}
         rates = [rate for row in metrics.values() for rate in row["rates"]]
         zero_hits = sum(row["level_zero"][0] for row in metrics.values()) if args.level_zero_data else 0
@@ -266,6 +284,8 @@ def main():
         cfg.pop(key, None)
     cfg["fine_tuned"] = True
     recipe = "english-level-zero-head-v1" if args.level_zero_data else "english-contrast-head-v1"
+    if args.level_zero_canonical:
+        recipe = "english-level-zero-canonical-v1"
     cfg["training"] = {"recipe": recipe, "selected_epoch": selected["epoch"],
                        "base_weights_sha256": artifacts["model.safetensors"]}
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -277,12 +297,13 @@ def main():
         state = load_file(str(base / "model.safetensors"))
         for key, value in weights.items():
             if key.startswith(("head.", "scorer.", "type_emb.")):
-                state[key] = value.to(state[key].dtype).contiguous()
+                state[key] = value.to(device="cpu", dtype=state[key].dtype).contiguous()
         save_file(state, str(pending / "model.safetensors"))
         (pending / "rl_agent_config.json").write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
         report = {"base": str(base), "base_artifacts": artifacts, "candidate_artifacts": _artifact_identity(pending),
                   "input_sha256": inputs, "training_rows": len(splits["training"]),
                   "calibration_rows": len(splits["calibration"]), "epochs": args.epochs,
+                  "device": args.device, "level_zero_canonical": args.level_zero_canonical,
                   "seed": 20261106, "threads": args.threads, "torch": torch.__version__,
                   "elapsed_seconds": time.perf_counter() - start, "before": before, "history": history, "selected": selected}
         if _artifact_identity(base) != artifacts or any(_file_sha(Path(p)) != digest for p, digest in inputs.items()):
