@@ -19,6 +19,9 @@ against the original gates and separate controls.
 The [single-pass checkpoint repair](checkpoint-repair-2026-11-06.md) covers
 local decision-head training, fresh acceptance cases and paired deployment checks.
 
+The [level-zero score follow-up](level-zero-repair-2026-11-06.md) checks whether
+the same inference path can distinguish routine work from active disruption.
+
 The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
 required decision storage, experimental HTTP microbatching and selected upstream fixes.
 
