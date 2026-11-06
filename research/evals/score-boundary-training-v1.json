@@ -495,7 +495,7 @@
     {
       "family": "scorefit-contrast-airfield-lighting",
       "type": "score",
-      "instructions": "Assign operational priority for runway lighting by current service impact, the alternative and urgency.",
+      "instructions": "Assign operational priority for airfield lighting by current service impact, the alternative and urgency.",
       "criteria": [
         "No active service impact, including planned work and exercises.",
         "A current interruption limited to one area with a working alternative.",

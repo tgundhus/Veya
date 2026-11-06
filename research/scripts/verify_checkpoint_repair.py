@@ -15,19 +15,20 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 
-def frozen_weights(base, candidate, *, allow_encoder_update=False, routing_only=False):
+def frozen_weights(base, candidate, *, allow_encoder_update=False, routing_only=False, score_only=False):
     import torch
     from safetensors import safe_open
     changed, frozen = [], 0
+    adapter_kind = "score" if score_only else "choice" if routing_only else None
     allowed = ("head.", "type_emb.", "scorer.")
     if allow_encoder_update:
         allowed += ("encoder.",)
     with (safe_open(str(base / "model.safetensors"), framework="pt") as old,
           safe_open(str(candidate / "model.safetensors"), framework="pt") as new):
         added = sorted(set(new.keys()) - set(old.keys()))
-        if routing_only:
+        if adapter_kind:
             assert set(old.keys()) <= set(new.keys())
-            assert added and all(name.startswith("choice_adapters.") for name in added), added
+            assert added and all(name.startswith(f"{adapter_kind}_adapters.") for name in added), added
         else:
             assert old.keys() == new.keys()
         for name in old.keys():
@@ -36,15 +37,19 @@ def frozen_weights(base, candidate, *, allow_encoder_update=False, routing_only=
             if torch.equal(before, after):
                 frozen += 1
             else:
-                assert not routing_only and name.startswith(allowed), name
+                assert not adapter_kind and name.startswith(allowed), name
                 changed.append(name)
     assert changed or added
     result = {"identical_tensors": frozen, "updated_tensors": changed}
-    if routing_only:
+    if adapter_kind:
         old_cfg, new_cfg = (json.loads((path / "rl_agent_config.json").read_text(encoding="utf-8"))
                             for path in (base, candidate))
-        assert not old_cfg.pop("choice_adapter_width", 0) and new_cfg.pop("choice_adapter_width") > 0
-        assert old_cfg.pop("temperature")[1:] == new_cfg.pop("temperature")[1:]
+        width_key = f"{adapter_kind}_adapter_width"
+        assert not old_cfg.pop(width_key, 0) and new_cfg.pop(width_key) > 0
+        protected = (0, 2) if score_only else (1, 2)
+        old_temperatures, new_temperatures = old_cfg.pop("temperature"), new_cfg.pop("temperature")
+        assert len(old_temperatures) == len(new_temperatures) == 3
+        assert all(old_temperatures[index] == new_temperatures[index] for index in protected)
         for cfg in (old_cfg, new_cfg):
             cfg.pop("training", None)
         assert old_cfg == new_cfg
@@ -108,7 +113,7 @@ def compare_latency(args, cases):
                                "base_ms": _percentiles([p["base_ms"] for p in pairs]),
                                "candidate_ms": _percentiles([p["candidate_ms"] for p in pairs]),
                                "paired_median_ratio": median(p["candidate_ms"] / p["base_ms"] for p in pairs)}
-            if args.routing_only:
+            if args.routing_only or args.score_only:
                 questions = {question["type"]: question for case in sample
                              for question in case["questions"].values()}
                 mixed = []
@@ -116,10 +121,13 @@ def compare_latency(args, cases):
                     before = forward_counts[index]
                     answers = _answers(agent.predict(sample[0]["state"], questions), questions)
                     assert forward_counts[index] - before == 1
-                    mixed.append({"id": "mixed", "answers": {kind: answers[kind] for kind in ("score", "noul")}})
+                    protected = ("choice", "noul") if args.score_only else ("score", "noul")
+                    mixed.append({"id": "mixed", "answers": {kind: answers[kind] for kind in protected}})
                 drift = _compare([mixed[0]], [mixed[1]])
                 assert drift["label_flips"] == drift["operational_flag_flips"] == 0, drift
                 assert max(drift[key] for key in drift if key.endswith("_drift")) <= .001, drift
+                if args.score_only:
+                    assert mixed[0] == mixed[1], drift
                 result[backend]["mixed_request"] = {"forward_counts": [1, 1], "protected_answers": drift}
     return result
 
@@ -219,6 +227,8 @@ def main():
                        help="permit changed encoder weights with identical tensor names, shapes and dtypes")
     modes.add_argument("--routing-only", action="store_true",
                        help="verify added choice adapters and unchanged scores and binary decisions in a mixed request")
+    modes.add_argument("--score-only", action="store_true",
+                       help="verify added score adapters and unchanged routing and binary decisions in a mixed request")
     args = parser.parse_args()
     if args.out.exists():
         parser.error("choose a new report path")
@@ -235,17 +245,17 @@ def main():
                 "source_sha256": _source_identity(), "base_artifacts": _artifact_identity(args.base, args.base_onnx),
                 "candidate_artifacts": _artifact_identity(args.candidate, args.onnx)}
     before = identities()
-    if args.routing_only:
+    if args.routing_only or args.score_only:
         base_metadata, candidate_metadata = ({name: digest for name, digest in before[key].items()
                                                if name.startswith(("encoder/", "tokenizer/"))}
                                               for key in ("base_artifacts", "candidate_artifacts"))
         if base_metadata != candidate_metadata:
-            raise ValueError("routing-only verification requires identical encoder and tokenizer metadata")
+            raise ValueError("adapter-only verification requires identical encoder and tokenizer metadata")
     cases = [case for case in validate_corpus(load_document(args.corpus))["cases"] if case["split"] == "evaluation"]
     report = {"schema": "veya-checkpoint-verification/1", **before,
               "weight_comparison": frozen_weights(args.base, args.candidate,
                                                   allow_encoder_update=args.allow_encoder_update,
-                                                  routing_only=args.routing_only),
+                                                  routing_only=args.routing_only, score_only=args.score_only),
               "cpu_threads": 4, "latency": compare_latency(args, cases),
               "mcp": mcp_smoke(args, cases, before["candidate_artifacts"])}
     if identities() != before:
