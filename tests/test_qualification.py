@@ -69,6 +69,28 @@ def test_evidence_training_rejects_conversation_state():
         check_splits({"training": [row]})
 
 
+def test_score_continuation_verification_rejects_changed_routing_weights(tmp_path):
+    torch = pytest.importorskip("torch")
+    safetensors = pytest.importorskip("safetensors.torch")
+    from research.scripts.verify_checkpoint_repair import frozen_weights
+
+    base, candidate = tmp_path / "base", tmp_path / "candidate"
+    for folder in (base, candidate):
+        folder.mkdir()
+        (folder / "rl_agent_config.json").write_text(json.dumps({
+            "choice_adapter_width": 64, "score_adapter_width": 64, "temperature": [1, 1, 1],
+        }))
+    old = {"score_adapters.0.weight": torch.zeros(2), "choice_adapters.0.weight": torch.zeros(2)}
+    adapted = {**old, "score_adapters.0.weight": torch.ones(2)}
+    safetensors.save_file(old, base / "model.safetensors")
+    safetensors.save_file(adapted, candidate / "model.safetensors")
+    comparison = frozen_weights(base, candidate, score_only=True)
+    assert comparison == {"identical_tensors": 1, "updated_tensors": ["score_adapters.0.weight"], "added_tensors": []}
+    safetensors.save_file({**adapted, "choice_adapters.0.weight": torch.ones(2)}, candidate / "model.safetensors")
+    with pytest.raises(AssertionError, match="choice_adapters"):
+        frozen_weights(base, candidate, score_only=True)
+
+
 def test_evidence_verification_allows_encoder_only_when_requested(tmp_path):
     torch = pytest.importorskip("torch")
     safetensors = pytest.importorskip("safetensors.torch")

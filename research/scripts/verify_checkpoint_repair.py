@@ -20,13 +20,24 @@ def frozen_weights(base, candidate, *, allow_encoder_update=False, routing_only=
     from safetensors import safe_open
     changed, frozen = [], 0
     adapter_kind = "score" if score_only else "choice" if routing_only else None
+    update_score = False
+    if adapter_kind:
+        old_cfg, new_cfg = (json.loads((path / "rl_agent_config.json").read_text(encoding="utf-8"))
+                            for path in (base, candidate))
+        width_key = f"{adapter_kind}_adapter_width"
+        old_width, new_width = old_cfg.pop(width_key, 0), new_cfg.pop(width_key)
+        update_score = score_only and old_width > 0
+        if update_score:
+            assert new_width == old_width
+        else:
+            assert not old_width and new_width > 0
     allowed = ("head.", "type_emb.", "scorer.")
     if allow_encoder_update:
         allowed += ("encoder.",)
     with (safe_open(str(base / "model.safetensors"), framework="pt") as old,
           safe_open(str(candidate / "model.safetensors"), framework="pt") as new):
         added = sorted(set(new.keys()) - set(old.keys()))
-        if adapter_kind:
+        if adapter_kind and not update_score:
             assert set(old.keys()) <= set(new.keys())
             assert added and all(name.startswith(f"{adapter_kind}_adapters.") for name in added), added
         else:
@@ -37,15 +48,14 @@ def frozen_weights(base, candidate, *, allow_encoder_update=False, routing_only=
             if torch.equal(before, after):
                 frozen += 1
             else:
-                assert not adapter_kind and name.startswith(allowed), name
+                if update_score:
+                    assert name.startswith("score_adapters."), name
+                else:
+                    assert not adapter_kind and name.startswith(allowed), name
                 changed.append(name)
     assert changed or added
     result = {"identical_tensors": frozen, "updated_tensors": changed}
     if adapter_kind:
-        old_cfg, new_cfg = (json.loads((path / "rl_agent_config.json").read_text(encoding="utf-8"))
-                            for path in (base, candidate))
-        width_key = f"{adapter_kind}_adapter_width"
-        assert not old_cfg.pop(width_key, 0) and new_cfg.pop(width_key) > 0
         protected = (0, 2) if score_only else (1, 2)
         old_temperatures, new_temperatures = old_cfg.pop("temperature"), new_cfg.pop("temperature")
         assert len(old_temperatures) == len(new_temperatures) == 3
@@ -228,7 +238,7 @@ def main():
     modes.add_argument("--routing-only", action="store_true",
                        help="verify added choice adapters and unchanged scores and binary decisions in a mixed request")
     modes.add_argument("--score-only", action="store_true",
-                       help="verify added score adapters and unchanged routing and binary decisions in a mixed request")
+                       help="verify added or updated score adapters and unchanged routing and binary decisions")
     args = parser.parse_args()
     if args.out.exists():
         parser.error("choose a new report path")
