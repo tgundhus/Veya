@@ -1,0 +1,2264 @@
+{
+  "selected": {
+    "epoch": 32,
+    "strength": 1.0,
+    "score_temperature": 1.6750000715255737,
+    "development": {
+      "qualification-v1": {
+        "correct": 4,
+        "total": 5,
+        "mae": 0.16357947885990143
+      },
+      "checkpoint-repair-acceptance-v1": {
+        "correct": 9,
+        "total": 12,
+        "mae": 0.1075478345155716
+      }
+    },
+    "seen_regression": {
+      "routing-repair-acceptance-v1": {
+        "correct": 18,
+        "total": 18,
+        "mae": 0.06790826469659805
+      },
+      "evidence-repair-acceptance-v1": {
+        "correct": 21,
+        "total": 21,
+        "mae": 0.04931675270199776
+      },
+      "level-zero-acceptance-v1": {
+        "correct": 21,
+        "total": 21,
+        "mae": 0.0692492127418518
+      },
+      "independent-repair-controls-v1": {
+        "correct": 15,
+        "total": 15,
+        "mae": 0.06093670055270195
+      }
+    },
+    "development_boundary_gaps": {
+      "qualification-v1": [
+        0.7544456124305725
+      ],
+      "checkpoint-repair-acceptance-v1": [
+        0.6760216355323792,
+        0.22137236595153809,
+        0.14269426465034485,
+        0.7696649432182312,
+        0.9274886846542358,
+        0.20927172899246216
+      ]
+    },
+    "calibration_hard_scores": [
+      18,
+      29
+    ],
+    "calibration_boundary_gaps": [
+      0.33050626516342163,
+      0.4641949534416199,
+      0.15874046087265015,
+      0.45651379227638245,
+      0.6242250800132751,
+      0.18825718760490417,
+      0.03185772895812988,
+      0.1445397436618805,
+      0.06446349620819092,
+      0.8924703001976013,
+      0.18484953045845032
+    ]
+  },
+  "history": [
+    {
+      "epoch": 2,
+      "strength": 0.65,
+      "score_temperature": 1.875,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1784965991973877
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 5,
+          "total": 12,
+          "mae": 0.2757364511489868
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 18,
+          "mae": 0.39459630846977234
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 6,
+          "total": 21,
+          "mae": 0.4185059070587158
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 9,
+          "total": 21,
+          "mae": 0.353969007730484
+        },
+        "independent-repair-controls-v1": {
+          "correct": 7,
+          "total": 15,
+          "mae": 0.3799825608730316
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7166796922683716
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.5350836515426636,
+          0.0012393593788146973,
+          0.09837636351585388,
+          0.4328984022140503,
+          0.4284721612930298,
+          0.3456765413284302
+        ]
+      },
+      "calibration_hard_scores": [
+        9,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.811043918132782,
+        0.07036912441253662,
+        0.03316253423690796,
+        0.04658651351928711,
+        0.3804168999195099,
+        0.08556687831878662,
+        0.045786380767822266,
+        0.06981247663497925,
+        0.18973669409751892,
+        0.530319333076477,
+        0.0126475989818573
+      ]
+    },
+    {
+      "epoch": 2,
+      "strength": 0.85,
+      "score_temperature": 1.375,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.12269318103790283
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "mae": 0.20081305503845215
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 18,
+          "mae": 0.3380126655101776
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 21,
+          "mae": 0.36214396357536316
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 21,
+          "mae": 0.28406286239624023
+        },
+        "independent-repair-controls-v1": {
+          "correct": 10,
+          "total": 15,
+          "mae": 0.29633626341819763
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8901591300964355
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.7021899223327637,
+          0.01802736520767212,
+          0.1602853536605835,
+          0.6426565051078796,
+          0.6306349039077759,
+          0.390694260597229
+        ]
+      },
+      "calibration_hard_scores": [
+        10,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.8922518491744995,
+        0.10491994023323059,
+        0.03730422258377075,
+        0.015643924474716187,
+        0.5172740817070007,
+        0.0723852813243866,
+        0.3128346800804138,
+        0.06847387552261353,
+        0.07217639684677124,
+        0.6749500036239624,
+        0.0022695064544677734
+      ]
+    },
+    {
+      "epoch": 2,
+      "strength": 1.0,
+      "score_temperature": 1.225000023841858,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.10875238478183746
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.17677390575408936
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 18,
+          "mae": 0.32132309675216675
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 21,
+          "mae": 0.34420886635780334
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 21,
+          "mae": 0.26524150371551514
+        },
+        "independent-repair-controls-v1": {
+          "correct": 10,
+          "total": 15,
+          "mae": 0.26539433002471924
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9392104148864746
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.7690882682800293,
+          0.06324940919876099,
+          0.20984137058258057,
+          0.7316582202911377,
+          0.7378624677658081,
+          0.38468873500823975
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.8858904242515564,
+        0.0764322280883789,
+        0.03712582588195801,
+        0.00012198090553283691,
+        0.5767195224761963,
+        0.15147259831428528,
+        0.5063657164573669,
+        0.06293290853500366,
+        0.31801337003707886,
+        0.7188392281532288,
+        0.0060127973556518555
+      ]
+    },
+    {
+      "epoch": 4,
+      "strength": 0.65,
+      "score_temperature": 1.850000023841858,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.13590195775032043
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.21140925586223602
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 18,
+          "mae": 0.3243141174316406
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 21,
+          "mae": 0.3111465275287628
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 13,
+          "total": 21,
+          "mae": 0.25167614221572876
+        },
+        "independent-repair-controls-v1": {
+          "correct": 10,
+          "total": 15,
+          "mae": 0.314291775226593
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8141382932662964
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6675866842269897,
+          0.3813740313053131,
+          0.14008808135986328,
+          0.42791947722435,
+          0.5840722322463989,
+          0.01982748508453369
+        ]
+      },
+      "calibration_hard_scores": [
+        11,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.9206374287605286,
+        0.1669394075870514,
+        0.12402984499931335,
+        0.024767369031906128,
+        0.23681247234344482,
+        0.2932351529598236,
+        0.10363772511482239,
+        3.984570503234863e-05,
+        0.23643437027931213,
+        0.5254485011100769,
+        0.1890181601047516
+      ]
+    },
+    {
+      "epoch": 4,
+      "strength": 0.85,
+      "score_temperature": 1.524999976158142,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.10197386890649796
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.16467782855033875
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 18,
+          "mae": 0.2521073520183563
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 21,
+          "mae": 0.2432248592376709
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 16,
+          "total": 21,
+          "mae": 0.1847280114889145
+        },
+        "independent-repair-controls-v1": {
+          "correct": 11,
+          "total": 15,
+          "mae": 0.22985678911209106
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9095611572265625
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.8261293172836304,
+          0.5277237892150879,
+          0.22916406393051147,
+          0.6003342270851135,
+          0.7614808678627014,
+          0.09337952733039856
+        ]
+      },
+      "calibration_hard_scores": [
+        13,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.9106278419494629,
+        0.2366582155227661,
+        0.22348147630691528,
+        0.03173843026161194,
+        0.004298806190490723,
+        0.3588082790374756,
+        0.030708283185958862,
+        0.09025102853775024,
+        0.15736719965934753,
+        0.5947352647781372,
+        0.29219457507133484
+      ]
+    },
+    {
+      "epoch": 4,
+      "strength": 1.0,
+      "score_temperature": 1.524999976158142,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.11312717199325562
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.1641903519630432
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 18,
+          "mae": 0.23172251880168915
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 21,
+          "mae": 0.23684418201446533
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 16,
+          "total": 21,
+          "mae": 0.17508873343467712
+        },
+        "independent-repair-controls-v1": {
+          "correct": 11,
+          "total": 15,
+          "mae": 0.2003815919160843
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9078686237335205
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.8565263748168945,
+          0.4925249516963959,
+          0.28860563039779663,
+          0.6655486226081848,
+          0.8099793195724487,
+          0.1642339527606964
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.7442750930786133,
+        0.2530631721019745,
+        0.27401307225227356,
+        0.059886813163757324,
+        0.3078860938549042,
+        0.39086246490478516,
+        0.16229087114334106,
+        0.14595243334770203,
+        0.01096537709236145,
+        0.5601708292961121,
+        0.3496147394180298
+      ]
+    },
+    {
+      "epoch": 6,
+      "strength": 0.65,
+      "score_temperature": 2.299999952316284,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1752386838197708
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "mae": 0.21503505110740662
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.32724061608314514
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 21,
+          "mae": 0.31879785656929016
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 21,
+          "mae": 0.273989737033844
+        },
+        "independent-repair-controls-v1": {
+          "correct": 10,
+          "total": 15,
+          "mae": 0.29011639952659607
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8486230969429016
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.5205570459365845,
+          0.25106582045555115,
+          0.13002288341522217,
+          0.551142692565918,
+          0.723632276058197,
+          0.24529698491096497
+        ]
+      },
+      "calibration_hard_scores": [
+        9,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.7480547428131104,
+        0.25159695744514465,
+        0.061289817094802856,
+        0.05052646994590759,
+        0.2806723415851593,
+        0.09645286202430725,
+        0.06234222650527954,
+        0.4264119267463684,
+        0.16872471570968628,
+        0.49719738960266113,
+        0.19920101761817932
+      ]
+    },
+    {
+      "epoch": 6,
+      "strength": 0.85,
+      "score_temperature": 1.850000023841858,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1497756689786911
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.1375603973865509
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 18,
+          "mae": 0.2376892864704132
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 14,
+          "total": 21,
+          "mae": 0.2229693979024887
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 14,
+          "total": 21,
+          "mae": 0.19024384021759033
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "mae": 0.1501895636320114
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9448004364967346
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6313648223876953,
+          0.5543575882911682,
+          0.28322312235832214,
+          0.8197017312049866,
+          0.9103766083717346,
+          0.35797908902168274
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.24698850512504578,
+        0.35026341676712036,
+        0.1314919888973236,
+        0.25219446420669556,
+        0.11438360810279846,
+        0.08372887969017029,
+        0.03296327590942383,
+        0.4666105806827545,
+        0.08124783635139465,
+        0.649491548538208,
+        0.316719651222229
+      ]
+    },
+    {
+      "epoch": 6,
+      "strength": 1.0,
+      "score_temperature": 1.725000023841858,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1830795854330063
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "mae": 0.1034863218665123
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 14,
+          "total": 18,
+          "mae": 0.20580776035785675
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.18063019216060638
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.16408087313175201
+        },
+        "independent-repair-controls-v1": {
+          "correct": 14,
+          "total": 15,
+          "mae": 0.10574136674404144
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9609689116477966
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6589391231536865,
+          0.7696160674095154,
+          0.4542589485645294,
+          0.9208462834358215,
+          0.956497848033905,
+          0.42530402541160583
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.4259403645992279,
+        0.4097854197025299,
+        0.12373480200767517,
+        0.36330270767211914,
+        0.008640110492706299,
+        0.11211603879928589,
+        0.15126243233680725,
+        0.30241262912750244,
+        0.10454729199409485,
+        0.7481767535209656,
+        0.3787190318107605
+      ]
+    },
+    {
+      "epoch": 8,
+      "strength": 0.65,
+      "score_temperature": 2.625,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1690100133419037
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 6,
+          "total": 12,
+          "mae": 0.23636385798454285
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.3132238984107971
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 21,
+          "mae": 0.29838788509368896
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 21,
+          "mae": 0.2638196647167206
+        },
+        "independent-repair-controls-v1": {
+          "correct": 9,
+          "total": 15,
+          "mae": 0.2880270779132843
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8144407272338867
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.5251778364181519,
+          0.3699445128440857,
+          0.18422362208366394,
+          0.4265729784965515,
+          0.7659237384796143,
+          0.16736575961112976
+        ]
+      },
+      "calibration_hard_scores": [
+        11,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.7484716176986694,
+        0.2682245969772339,
+        0.1254921853542328,
+        0.020221173763275146,
+        0.46247613430023193,
+        0.028877466917037964,
+        0.10916808247566223,
+        0.27040553092956543,
+        0.3400823175907135,
+        0.549431324005127,
+        0.079059898853302
+      ]
+    },
+    {
+      "epoch": 8,
+      "strength": 0.85,
+      "score_temperature": 2.575000047683716,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1542583405971527
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "mae": 0.20637540519237518
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 18,
+          "mae": 0.23852770030498505
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 13,
+          "total": 21,
+          "mae": 0.2022818624973297
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.19911439716815948
+        },
+        "independent-repair-controls-v1": {
+          "correct": 10,
+          "total": 15,
+          "mae": 0.1836000382900238
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8952296376228333
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.5491154789924622,
+          0.5224345922470093,
+          0.2923290729522705,
+          0.6110836267471313,
+          0.8909934163093567,
+          0.15946164727210999
+        ]
+      },
+      "calibration_hard_scores": [
+        16,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.49261653423309326,
+        0.3641364574432373,
+        0.270626962184906,
+        0.06487536430358887,
+        0.36339542269706726,
+        0.02711006999015808,
+        0.011771440505981445,
+        0.12846148014068604,
+        0.2314702570438385,
+        0.610396146774292,
+        0.052477866411209106
+      ]
+    },
+    {
+      "epoch": 8,
+      "strength": 1.0,
+      "score_temperature": 2.875,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.18455098569393158
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "mae": 0.21005170047283173
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 18,
+          "mae": 0.21542084217071533
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.17973750829696655
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 14,
+          "total": 21,
+          "mae": 0.19852390885353088
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "mae": 0.1395331770181656
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8979651927947998
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.5008474588394165,
+          0.6357654333114624,
+          0.34815749526023865,
+          0.7431379556655884,
+          0.9143277406692505,
+          0.2753227949142456
+        ]
+      },
+      "calibration_hard_scores": [
+        14,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.03160572052001953,
+        0.33457982540130615,
+        0.47098496556282043,
+        0.09177380800247192,
+        0.20841842889785767,
+        0.041081011295318604,
+        0.14674785733222961,
+        0.0731554925441742,
+        0.10227316617965698,
+        0.5701853036880493,
+        0.010295987129211426
+      ]
+    },
+    {
+      "epoch": 12,
+      "strength": 0.65,
+      "score_temperature": 2.2749998569488525,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.12459354847669601
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "mae": 0.19049951434135437
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.26565614342689514
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 21,
+          "mae": 0.26951026916503906
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 13,
+          "total": 21,
+          "mae": 0.22612738609313965
+        },
+        "independent-repair-controls-v1": {
+          "correct": 9,
+          "total": 15,
+          "mae": 0.24908079206943512
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.875361979007721
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.613962709903717,
+          0.08624815940856934,
+          0.25639891624450684,
+          0.5874933004379272,
+          0.8574777245521545,
+          0.20083793997764587
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.6981886625289917,
+        0.4055924415588379,
+        0.02741280198097229,
+        0.11151987314224243,
+        0.5242985486984253,
+        0.047947049140930176,
+        0.03495737910270691,
+        0.14060071110725403,
+        0.14536809921264648,
+        0.6480698585510254,
+        0.023341834545135498
+      ]
+    },
+    {
+      "epoch": 12,
+      "strength": 0.85,
+      "score_temperature": 2.1500000953674316,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.09984191507101059
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "mae": 0.1352899968624115
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 18,
+          "mae": 0.17171618342399597
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.15340885519981384
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 16,
+          "total": 21,
+          "mae": 0.16441501677036285
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "mae": 0.12253371626138687
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9430845379829407
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6502057313919067,
+          0.21616658568382263,
+          0.34609755873680115,
+          0.8026207089424133,
+          0.9455744028091431,
+          0.1652137041091919
+        ]
+      },
+      "calibration_hard_scores": [
+        14,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.1802038848400116,
+        0.3611098527908325,
+        0.08918625116348267,
+        0.2323605716228485,
+        0.6778699159622192,
+        0.09866395592689514,
+        0.14418178796768188,
+        0.1717267632484436,
+        0.03692731261253357,
+        0.7618524432182312,
+        0.009080767631530762
+      ]
+    },
+    {
+      "epoch": 12,
+      "strength": 1.0,
+      "score_temperature": 2.299999952316284,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.11474476009607315
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "mae": 0.11552958935499191
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 16,
+          "total": 18,
+          "mae": 0.1398410052061081
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 21,
+          "mae": 0.11264574527740479
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 17,
+          "total": 21,
+          "mae": 0.17666511237621307
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.07165811955928802
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.94576096534729
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.580319344997406,
+          0.34113988280296326,
+          0.313310831785202,
+          0.9054732918739319,
+          0.9575524926185608,
+          0.1799708604812622
+        ]
+      },
+      "calibration_hard_scores": [
+        15,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.24225002527236938,
+        0.33380359411239624,
+        0.09367251396179199,
+        0.35589754581451416,
+        0.8052260875701904,
+        0.17885786294937134,
+        0.27624574303627014,
+        0.18435931205749512,
+        0.023308753967285156,
+        0.803708016872406,
+        0.04257848858833313
+      ]
+    },
+    {
+      "epoch": 16,
+      "strength": 0.65,
+      "score_temperature": 2.4749999046325684,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.16782425343990326
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 5,
+          "total": 12,
+          "mae": 0.2335178554058075
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.2621128559112549
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 13,
+          "total": 21,
+          "mae": 0.2763614058494568
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 13,
+          "total": 21,
+          "mae": 0.24070478975772858
+        },
+        "independent-repair-controls-v1": {
+          "correct": 9,
+          "total": 15,
+          "mae": 0.2850271463394165
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.6223171353340149
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.48594799637794495,
+          0.33863407373428345,
+          0.35924381017684937,
+          0.3635570704936981,
+          0.786838173866272,
+          0.24294611811637878
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.6285392045974731,
+        0.3059837222099304,
+        0.0029914379119873047,
+        0.06462058424949646,
+        0.4070448577404022,
+        0.0577332079410553,
+        0.2703991234302521,
+        0.39350804686546326,
+        0.237709641456604,
+        0.5365915298461914,
+        0.06856703758239746
+      ]
+    },
+    {
+      "epoch": 16,
+      "strength": 0.85,
+      "score_temperature": 2.4749999046325684,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1607205867767334
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "mae": 0.20399457216262817
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 13,
+          "total": 18,
+          "mae": 0.17087441682815552
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 16,
+          "total": 21,
+          "mae": 0.17486944794654846
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.17849522829055786
+        },
+        "independent-repair-controls-v1": {
+          "correct": 10,
+          "total": 15,
+          "mae": 0.18579529225826263
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.6143155694007874
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.4475645422935486,
+          0.44098490476608276,
+          0.4308111071586609,
+          0.4308127164840698,
+          0.8600301146507263,
+          0.18133574724197388
+        ]
+      },
+      "calibration_hard_scores": [
+        13,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.3969521224498749,
+        0.4038490355014801,
+        0.017400503158569336,
+        0.11252975463867188,
+        0.3843015432357788,
+        0.07062375545501709,
+        0.03475108742713928,
+        0.3008555471897125,
+        0.04298904538154602,
+        0.6514736413955688,
+        0.134303480386734
+      ]
+    },
+    {
+      "epoch": 16,
+      "strength": 1.0,
+      "score_temperature": 2.6500000953674316,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.18760550022125244
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.18891263008117676
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 14,
+          "total": 18,
+          "mae": 0.14850404858589172
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 17,
+          "total": 21,
+          "mae": 0.13466164469718933
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 16,
+          "total": 21,
+          "mae": 0.15243342518806458
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "mae": 0.13256070017814636
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.47829607129096985
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.34736397862434387,
+          0.4899051785469055,
+          0.40056005120277405,
+          0.47162410616874695,
+          0.8706738352775574,
+          0.241242915391922
+        ]
+      },
+      "calibration_hard_scores": [
+        13,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.223058819770813,
+        0.32632118463516235,
+        0.00720745325088501,
+        0.17826515436172485,
+        0.4009731709957123,
+        0.1292169690132141,
+        0.0678519606590271,
+        0.1277460753917694,
+        0.02691119909286499,
+        0.7488634586334229,
+        0.15397372841835022
+      ]
+    },
+    {
+      "epoch": 20,
+      "strength": 0.65,
+      "score_temperature": 2.174999952316284,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.13304513692855835
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "mae": 0.21493975818157196
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.24059100449085236
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 14,
+          "total": 21,
+          "mae": 0.2584349811077118
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 14,
+          "total": 21,
+          "mae": 0.21312344074249268
+        },
+        "independent-repair-controls-v1": {
+          "correct": 9,
+          "total": 15,
+          "mae": 0.24767334759235382
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7223806381225586
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6839220523834229,
+          0.1222844123840332,
+          0.33857494592666626,
+          0.5404180288314819,
+          0.8736709356307983,
+          0.09198912978172302
+        ]
+      },
+      "calibration_hard_scores": [
+        13,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.44150233268737793,
+        0.41981443762779236,
+        0.013252496719360352,
+        0.10726827383041382,
+        0.41329050064086914,
+        0.29431596398353577,
+        0.24378472566604614,
+        0.5186452865600586,
+        0.1802406907081604,
+        0.6957030296325684,
+        0.039671897888183594
+      ]
+    },
+    {
+      "epoch": 20,
+      "strength": 0.85,
+      "score_temperature": 2.174999952316284,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1297033131122589
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.1846228688955307
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 18,
+          "mae": 0.15457415580749512
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.15179499983787537
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 17,
+          "total": 21,
+          "mae": 0.15275047719478607
+        },
+        "independent-repair-controls-v1": {
+          "correct": 11,
+          "total": 15,
+          "mae": 0.1518528312444687
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7569882273674011
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.7108352780342102,
+          0.2937266230583191,
+          0.40694862604141235,
+          0.6466461420059204,
+          0.9203828573226929,
+          0.056080162525177
+        ]
+      },
+      "calibration_hard_scores": [
+        15,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.009586453437805176,
+        0.4294550120830536,
+        0.014916747808456421,
+        0.2029852271080017,
+        0.44708573818206787,
+        0.2698534429073334,
+        0.0310918390750885,
+        0.5443556308746338,
+        0.0051992833614349365,
+        0.7936694025993347,
+        0.11892345547676086
+      ]
+    },
+    {
+      "epoch": 20,
+      "strength": 1.0,
+      "score_temperature": 2.299999952316284,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.15378829836845398
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.17061500251293182
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 18,
+          "mae": 0.12215418368577957
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 19,
+          "total": 21,
+          "mae": 0.10010655969381332
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 18,
+          "total": 21,
+          "mae": 0.125432550907135
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.10238654911518097
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7250305414199829
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6657722592353821,
+          0.4659155309200287,
+          0.2702045142650604,
+          0.720791220664978,
+          0.9258928298950195,
+          0.20888015627861023
+        ]
+      },
+      "calibration_hard_scores": [
+        16,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.26181715726852417,
+        0.4166739583015442,
+        0.07776841521263123,
+        0.3014392554759979,
+        0.4962109625339508,
+        0.2719860076904297,
+        0.16046682000160217,
+        0.4955129027366638,
+        0.05218985676765442,
+        0.817536473274231,
+        0.15163317322731018
+      ]
+    },
+    {
+      "epoch": 24,
+      "strength": 0.65,
+      "score_temperature": 2.0250000953674316,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.13383932411670685
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.20557133853435516
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 18,
+          "mae": 0.22802326083183289
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 14,
+          "total": 21,
+          "mae": 0.24864719808101654
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 14,
+          "total": 21,
+          "mae": 0.19597966969013214
+        },
+        "independent-repair-controls-v1": {
+          "correct": 9,
+          "total": 15,
+          "mae": 0.22743114829063416
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7788118124008179
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6817373633384705,
+          0.04233580827713013,
+          0.3777359426021576,
+          0.6177706718444824,
+          0.8752528429031372,
+          0.12188732624053955
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.3128856122493744,
+        0.47345054149627686,
+        0.05557695031166077,
+        0.10679474472999573,
+        0.4753704071044922,
+        0.12847402691841125,
+        0.16408339142799377,
+        0.5240706205368042,
+        0.1899602711200714,
+        0.7104740738868713,
+        0.03739684820175171
+      ]
+    },
+    {
+      "epoch": 24,
+      "strength": 0.85,
+      "score_temperature": 2.0999999046325684,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.15140067040920258
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.18358609080314636
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 13,
+          "total": 18,
+          "mae": 0.1568378061056137
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.14327362179756165
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.1452549397945404
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "mae": 0.13254189491271973
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8005099892616272
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6920841336250305,
+          0.2082536518573761,
+          0.4208797812461853,
+          0.7659816741943359,
+          0.903479814529419,
+          0.11314848065376282
+        ]
+      },
+      "calibration_hard_scores": [
+        14,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.16107091307640076,
+        0.3902498483657837,
+        0.1722521185874939,
+        0.20465078949928284,
+        0.5343603491783142,
+        0.14348536729812622,
+        0.06264987587928772,
+        0.43119993805885315,
+        0.006315648555755615,
+        0.7599781155586243,
+        0.007336050271987915
+      ]
+    },
+    {
+      "epoch": 24,
+      "strength": 1.0,
+      "score_temperature": 2.125,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1792759746313095
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "mae": 0.16260117292404175
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 16,
+          "total": 18,
+          "mae": 0.12377386540174484
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.08448116481304169
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 18,
+          "total": 21,
+          "mae": 0.11852595955133438
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.07687350362539291
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7990533113479614
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.691270112991333,
+          0.3480023443698883,
+          0.29693740606307983,
+          0.861707866191864,
+          0.9151991605758667,
+          0.22362101078033447
+        ]
+      },
+      "calibration_hard_scores": [
+        13,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.37956905364990234,
+        0.42576801776885986,
+        0.2618313133716583,
+        0.3396995961666107,
+        0.6504126787185669,
+        0.1618991494178772,
+        0.15418866276741028,
+        0.24135351181030273,
+        0.056081563234329224,
+        0.8446938395500183,
+        0.03542369604110718
+      ]
+    },
+    {
+      "epoch": 28,
+      "strength": 0.65,
+      "score_temperature": 1.9500000476837158,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.12947480380535126
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.195872962474823
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 18,
+          "mae": 0.21622949838638306
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.2350541055202484
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.18769386410713196
+        },
+        "independent-repair-controls-v1": {
+          "correct": 9,
+          "total": 15,
+          "mae": 0.22441478073596954
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7689850926399231
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6784491539001465,
+          0.05337965488433838,
+          0.32188668847084045,
+          0.6639708280563354,
+          0.8643271327018738,
+          0.0006750226020812988
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.39770013093948364,
+        0.424170583486557,
+        0.04828408360481262,
+        0.11781325936317444,
+        0.5007103681564331,
+        0.10602766275405884,
+        0.14169946312904358,
+        0.5123701095581055,
+        0.16757556796073914,
+        0.7603849172592163,
+        0.02299642562866211
+      ]
+    },
+    {
+      "epoch": 28,
+      "strength": 0.85,
+      "score_temperature": 1.9500000476837158,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1471061259508133
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "mae": 0.15914252400398254
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 18,
+          "mae": 0.13015228509902954
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 17,
+          "total": 21,
+          "mae": 0.12131913751363754
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 18,
+          "total": 21,
+          "mae": 0.12969276309013367
+        },
+        "independent-repair-controls-v1": {
+          "correct": 14,
+          "total": 15,
+          "mae": 0.12598034739494324
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7791404724121094
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6997183561325073,
+          0.02581655979156494,
+          0.2417333424091339,
+          0.7870042324066162,
+          0.8904265761375427,
+          0.11111465096473694
+        ]
+      },
+      "calibration_hard_scores": [
+        15,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.09362581372261047,
+        0.35979437828063965,
+        0.09279409050941467,
+        0.23102211952209473,
+        0.5825645923614502,
+        0.16152778267860413,
+        0.030417323112487793,
+        0.36764973402023315,
+        0.006796538829803467,
+        0.8337026834487915,
+        0.10360592603683472
+      ]
+    },
+    {
+      "epoch": 28,
+      "strength": 1.0,
+      "score_temperature": 2.075000047683716,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1896757185459137
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.14913523197174072
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 17,
+          "total": 18,
+          "mae": 0.1096845492720604
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.07935196906328201
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 19,
+          "total": 21,
+          "mae": 0.11258232593536377
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.09494984894990921
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7341926097869873
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6629645228385925,
+          0.15515625476837158,
+          0.17186686396598816,
+          0.8145483732223511,
+          0.8751296401023865,
+          0.002152353525161743
+        ]
+      },
+      "calibration_hard_scores": [
+        14,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.31137070059776306,
+        0.37651345133781433,
+        0.0942680835723877,
+        0.31791573762893677,
+        0.6554696559906006,
+        0.1890043318271637,
+        0.09717705845832825,
+        0.1710917353630066,
+        0.04070580005645752,
+        0.8621927499771118,
+        0.1452738344669342
+      ]
+    },
+    {
+      "epoch": 32,
+      "strength": 0.65,
+      "score_temperature": 1.875,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.12511597573757172
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.1838397979736328
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 12,
+          "total": 18,
+          "mae": 0.21231038868427277
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.23491458594799042
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.18170838057994843
+        },
+        "independent-repair-controls-v1": {
+          "correct": 9,
+          "total": 15,
+          "mae": 0.22811248898506165
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.6858103275299072
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6425929069519043,
+          0.004370450973510742,
+          0.3088068962097168,
+          0.6491406559944153,
+          0.8699519634246826,
+          0.09423917531967163
+        ]
+      },
+      "calibration_hard_scores": [
+        12,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.4320979714393616,
+        0.39835304021835327,
+        0.06210008263587952,
+        0.12414354085922241,
+        0.4471058249473572,
+        0.12529033422470093,
+        0.16725024580955505,
+        0.49815863370895386,
+        0.20570391416549683,
+        0.7594064474105835,
+        0.009922057390213013
+      ]
+    },
+    {
+      "epoch": 32,
+      "strength": 0.85,
+      "score_temperature": 1.8000000715255737,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.13811446726322174
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "mae": 0.1406935155391693
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 16,
+          "total": 18,
+          "mae": 0.11530346423387527
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 21,
+          "mae": 0.11363624781370163
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 20,
+          "total": 21,
+          "mae": 0.11564555764198303
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "mae": 0.12370672076940536
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7172855138778687
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6619045734405518,
+          0.10181942582130432,
+          0.20329049229621887,
+          0.7292181253433228,
+          0.9052544832229614,
+          0.3018069267272949
+        ]
+      },
+      "calibration_hard_scores": [
+        15,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.08286017179489136,
+        0.3782186508178711,
+        0.13775137066841125,
+        0.26356640458106995,
+        0.5279676914215088,
+        0.19805249571800232,
+        0.021090269088745117,
+        0.33624765276908875,
+        0.002353459596633911,
+        0.8323196172714233,
+        0.10667571425437927
+      ]
+    },
+    {
+      "epoch": 32,
+      "strength": 1.0,
+      "score_temperature": 1.6750000715255737,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.16357947885990143
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.1075478345155716
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 18,
+          "mae": 0.06790826469659805
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.04931675270199776
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.0692492127418518
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.06093670055270195
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7544456124305725
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.6760216355323792,
+          0.22137236595153809,
+          0.14269426465034485,
+          0.7696649432182312,
+          0.9274886846542358,
+          0.20927172899246216
+        ]
+      },
+      "calibration_hard_scores": [
+        18,
+        29
+      ],
+      "calibration_boundary_gaps": [
+        0.33050626516342163,
+        0.4641949534416199,
+        0.15874046087265015,
+        0.45651379227638245,
+        0.6242250800132751,
+        0.18825718760490417,
+        0.03185772895812988,
+        0.1445397436618805,
+        0.06446349620819092,
+        0.8924703001976013,
+        0.18484953045845032
+      ]
+    }
+  ],
+  "local_rows": 219,
+  "rehearsal_rows": 607,
+  "regression_rows": 75,
+  "calibration_rows": 40,
+  "epochs": 32,
+  "input_roles": {
+    "bank": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\score-boundary-training-v1.json",
+    "rehearsal": [
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-training-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-training-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-contrast-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-contrasts-v1.json"
+    ],
+    "seen_regression": [
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\routing-repair-acceptance-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-acceptance-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-acceptance-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\independent-repair-controls-v1.json"
+    ],
+    "development": [
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\qualification-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-acceptance-v1.json"
+    ]
+  },
+  "torch": "2.11.0+cu128",
+  "seed": 20261107,
+  "input_sha256": {
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_score_boundary.py": "86c2623cbfe726d980214643be6b852b3482b1a000fd504e68e3d248f2ee128e",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_checkpoint_repair.py": "2ce96494e9e73061b6c754d27c88b41544524d9b85454a789f35824e04a3a54d",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_evidence_repair.py": "73bdc48f41fedd815153fcd10ae15ee982b752be6bb7c34dca23fe30f38ac42b",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\score-boundary-training-v1.json": "e4ccf8ecdc61644ad170d28ee50b5ed4b938706b81cfad4d64471d4aefd195cd",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-training-v1.json": "6fed3ec949342a5ce220eb45615d04454a144947374909bf4672f0b7904abe53",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-training-v1.json": "cc00137044345a933f15803f28ada1809128cde0a72d43571704abe00f49b77c",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-contrast-v1.json": "360727cdc1d9a78260dd637ee89ace345430a90daa80972989d8fa28b2624926",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-contrasts-v1.json": "06c18b3a6aaf3fb266dc8e2b0a5060a5aa68323788f02640100c35415e835e80",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\routing-repair-acceptance-v1.json": "df7396336b4363c4a2f912bfc74ebe7cc99d1749a4d9f925062a703dba0a2b80",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-acceptance-v1.json": "a470c067567ed71bb504a7c7e663e76b7377743074141118271b9b92bfc7d3cd",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-acceptance-v1.json": "095910b9672fc5fd8cfbcd3497120887a50c119747aef6f11e384d00a237f085",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\independent-repair-controls-v1.json": "936c4911bf9b5ea61f95803daadef911a7c45edce7551500f92118773977baa1",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\qualification-v1.json": "ff6e1998a73386eb08a08108a25d9799624aee5dbc25bfe0857222734430b3ab",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-acceptance-v1.json": "2576a8a76a366eefb7f94e1aa66d16e9cd27a87d52c0f1912196c43880383d96"
+  },
+  "source_sha256": {
+    "__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "common.py": "7ac7ab2a7595f4762c8c56d76dfd9b7833e45efe818f2bc7d93767e718da5c2f",
+    "compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "fast.py": "dd464d604198ce672ce8d28c3c594071ffbde9f3576ce488de19ea4420dd815f",
+    "hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "mcp/server.py": "7b882304a4c910c1d36ba5e18e2e9abaff4c79f7285e820597d1d807d19f1e07",
+    "mcp/tools.py": "a93e7b68e19a780f9c3a0bf8a8e6afba183ca46d637725955bf1adcffa426bc1",
+    "onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "qualification.py": "a80ab9b89706eeb9b1598627012ce43dc9a56ce8654b250cd4b4d603a0888430",
+    "replay.py": "20344f39b3989c8e4f9b4cc20b1e0c17179605f616d9fa959816acd81d697a44",
+    "revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05"
+  },
+  "base_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "b6b11a38ce78903e6ebf6c22d6e66ef325f7a6bab3789c2eb8414218c76f07ca",
+    "repair_report.json": "fefb9927f9569b48fa28e6b1f50071cd98a1f40c619c5de9932b4206c97cb97a",
+    "rl_agent_config.json": "4559968fcccaba06e02b75c948586a1dddf8fb1079e1824782dbef9e319673b0",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+  },
+  "candidate_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "4b34a7a885407a4babbc13d76c8b89f6e11f8cc65bdf6ee0bc1adb57db18926f",
+    "rl_agent_config.json": "5ad7e3fad0577661694fc91fa09daa35b4836824bef738169696e9a8cc1d1676",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+  }
+}
