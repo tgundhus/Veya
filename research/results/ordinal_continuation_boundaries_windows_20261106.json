@@ -1,0 +1,314 @@
+{
+  "corpus_sha256": "3ef1dd482115e5d896bdc2012f8b512d7f8b79d681436ff0c11fb22896b9aac1",
+  "profiles": 32,
+  "margin_threshold": 0.05,
+  "stable_matched_cases": [],
+  "cases": {
+    "ordinal-fresh-archive-humidity-7": {
+      "expected_levels": [
+        0,
+        1
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.9996,
+      "max_margin": 0.9996,
+      "returned_pairs": [
+        [
+          "1",
+          "0"
+        ]
+      ]
+    },
+    "ordinal-fresh-archive-humidity-8": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.7559,
+      "max_margin": 0.7559,
+      "returned_pairs": [
+        [
+          "1",
+          "2"
+        ]
+      ]
+    },
+    "ordinal-fresh-archive-humidity-9": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.8292999999999999,
+      "max_margin": 0.8292999999999999,
+      "returned_pairs": [
+        [
+          "2",
+          "1"
+        ]
+      ]
+    },
+    "ordinal-fresh-waterjet-workshop-7": {
+      "expected_levels": [
+        0,
+        1
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.332,
+      "max_margin": 0.332,
+      "returned_pairs": [
+        [
+          "1",
+          "0"
+        ]
+      ]
+    },
+    "ordinal-fresh-waterjet-workshop-8": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 0,
+      "matched_near_ties": 0,
+      "min_margin": 0.39070000000000005,
+      "max_margin": 0.39070000000000005,
+      "returned_pairs": [
+        [
+          "0",
+          "1"
+        ]
+      ]
+    },
+    "ordinal-fresh-waterjet-workshop-9": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.5892999999999999,
+      "max_margin": 0.5892999999999999,
+      "returned_pairs": [
+        [
+          "1",
+          "2"
+        ]
+      ]
+    },
+    "ordinal-fresh-mold-preparation-7": {
+      "expected_levels": [
+        0,
+        1
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.4058,
+      "max_margin": 0.4058,
+      "returned_pairs": [
+        [
+          "1",
+          "0"
+        ]
+      ]
+    },
+    "ordinal-fresh-mold-preparation-8": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.9295,
+      "max_margin": 0.9295,
+      "returned_pairs": [
+        [
+          "1",
+          "2"
+        ]
+      ]
+    },
+    "ordinal-fresh-mold-preparation-9": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.8844000000000001,
+      "max_margin": 0.8844000000000001,
+      "returned_pairs": [
+        [
+          "2",
+          "1"
+        ]
+      ]
+    },
+    "ordinal-fresh-herd-transport-7": {
+      "expected_levels": [
+        0,
+        1
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.9037999999999999,
+      "max_margin": 0.9037999999999999,
+      "returned_pairs": [
+        [
+          "0",
+          "1"
+        ]
+      ]
+    },
+    "ordinal-fresh-herd-transport-8": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 0,
+      "matched_near_ties": 0,
+      "min_margin": 0.5964,
+      "max_margin": 0.5966,
+      "returned_pairs": [
+        [
+          "1",
+          "0"
+        ]
+      ]
+    },
+    "ordinal-fresh-herd-transport-9": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 0,
+      "matched_near_ties": 0,
+      "min_margin": 0.1316,
+      "max_margin": 0.1316,
+      "returned_pairs": [
+        [
+          "1",
+          "0"
+        ]
+      ]
+    },
+    "ordinal-fresh-heat-exposure-7": {
+      "expected_levels": [
+        0,
+        1
+      ],
+      "profiles": 32,
+      "matching_pairs": 0,
+      "matched_near_ties": 0,
+      "min_margin": 0.21170000000000005,
+      "max_margin": 0.21170000000000005,
+      "returned_pairs": [
+        [
+          "1",
+          "2"
+        ]
+      ]
+    },
+    "ordinal-fresh-heat-exposure-8": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 0,
+      "matched_near_ties": 0,
+      "min_margin": 1.0,
+      "max_margin": 1.0,
+      "returned_pairs": [
+        [
+          "2",
+          "0"
+        ]
+      ]
+    },
+    "ordinal-fresh-heat-exposure-9": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.9858,
+      "max_margin": 0.9858,
+      "returned_pairs": [
+        [
+          "1",
+          "2"
+        ]
+      ]
+    },
+    "ordinal-fresh-pond-samples-7": {
+      "expected_levels": [
+        0,
+        1
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.9925999999999999,
+      "max_margin": 0.9925999999999999,
+      "returned_pairs": [
+        [
+          "0",
+          "1"
+        ]
+      ]
+    },
+    "ordinal-fresh-pond-samples-8": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 32,
+      "matched_near_ties": 0,
+      "min_margin": 0.9998,
+      "max_margin": 0.9998,
+      "returned_pairs": [
+        [
+          "2",
+          "1"
+        ]
+      ]
+    },
+    "ordinal-fresh-pond-samples-9": {
+      "expected_levels": [
+        1,
+        2
+      ],
+      "profiles": 32,
+      "matching_pairs": 0,
+      "matched_near_ties": 0,
+      "min_margin": 0.9998,
+      "max_margin": 0.9998,
+      "returned_pairs": [
+        [
+          "1",
+          "0"
+        ]
+      ]
+    }
+  }
+}

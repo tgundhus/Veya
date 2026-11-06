@@ -1,0 +1,590 @@
+{
+  "schema": "veya-checkpoint-verification/1",
+  "corpus_sha256": "3ef1dd482115e5d896bdc2012f8b512d7f8b79d681436ff0c11fb22896b9aac1",
+  "script_sha256": "b23966df3259569feef680c2938b2cde74b502e1a5519ef0a8d3e83f16ac142d",
+  "source_sha256": {
+    "__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "common.py": "7ac7ab2a7595f4762c8c56d76dfd9b7833e45efe818f2bc7d93767e718da5c2f",
+    "compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "fast.py": "dd464d604198ce672ce8d28c3c594071ffbde9f3576ce488de19ea4420dd815f",
+    "hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "mcp/server.py": "7b882304a4c910c1d36ba5e18e2e9abaff4c79f7285e820597d1d807d19f1e07",
+    "mcp/tools.py": "a93e7b68e19a780f9c3a0bf8a8e6afba183ca46d637725955bf1adcffa426bc1",
+    "onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "qualification.py": "a80ab9b89706eeb9b1598627012ce43dc9a56ce8654b250cd4b4d603a0888430",
+    "replay.py": "20344f39b3989c8e4f9b4cc20b1e0c17179605f616d9fa959816acd81d697a44",
+    "revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05"
+  },
+  "base_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "0ddee2ab8c799e418a0bbddba90b7e4f50472edc1720c33443b4e549efb47645",
+    "repair_report.json": "7b8562e8802e689587d0203b43651d756f28bcb7d96e81316a233921acc08987",
+    "rl_agent_config.json": "548c6424df3aa1655a39fcfd78180c726b054061f2f6007b94bee8278f1a380c",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "onnx/english-wide.onnx": "b1fcc6585b17a9de49a68503e0dc1d09b8e73cd0df82162ddbbeccea1169d5bb",
+    "onnx-external/english-wide.onnx.data": "7cdcbab8e877b6aff35f23d3cec83eccc0bd9d23241cf01ce871070b55c03901"
+  },
+  "candidate_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "07b3c36410397531e9ccef43452949b6b79c66586467f2907acc0582b82c9932",
+    "repair_report.json": "eed04544074c0e0fa45fe80f7afe27b123d7072473d2459ded89cf629e54370e",
+    "rl_agent_config.json": "8ad7643273143ed18a31271fa5a6bb96d5882c707cba5202b046c5f94e0544d5",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "onnx/english-ordinal.onnx": "6d981ebc24ca6d3e53e6119ab15bf0aaeef0e971962cbd3bf9a085abd7b4b677",
+    "onnx-external/english-ordinal.onnx.data": "195659ee40819a136f27211188f16a6a8397bd2e91490af0e99bfbdf8181702d"
+  },
+  "weight_comparison": {
+    "identical_tensors": 218,
+    "updated_tensors": [
+      "score_adapters.0.0.bias",
+      "score_adapters.0.0.weight",
+      "score_adapters.0.1.bias",
+      "score_adapters.0.1.weight",
+      "score_adapters.0.3.bias",
+      "score_adapters.0.3.weight",
+      "score_adapters.1.0.bias",
+      "score_adapters.1.0.weight",
+      "score_adapters.1.1.bias",
+      "score_adapters.1.1.weight",
+      "score_adapters.1.3.bias",
+      "score_adapters.1.3.weight"
+    ],
+    "added_tensors": []
+  },
+  "cpu_threads": 4,
+  "latency": {
+    "eager": {
+      "pairs": [
+        {
+          "id": "ordinal-fresh-lodging-desk-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 351.67010000441223,
+          "candidate_ms": 378.92160000046715
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 368.314300023485,
+          "candidate_ms": 356.15489998599514
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 412.4739000108093,
+          "candidate_ms": 388.5883999755606
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-1",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 290.66439997404814,
+          "candidate_ms": 298.7237999914214
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-2",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 307.2584999608807,
+          "candidate_ms": 284.12790002766997
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-3",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 238.6151000391692,
+          "candidate_ms": 298.96839999128133
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 356.7449999973178,
+          "candidate_ms": 378.6736000329256
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 396.70419995673,
+          "candidate_ms": 351.87320003751665
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 382.23399996059015,
+          "candidate_ms": 427.9112000367604
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 381.23080000514165,
+          "candidate_ms": 398.2669999822974
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 362.2965999529697,
+          "candidate_ms": 346.87220002524555
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 360.35390000324696,
+          "candidate_ms": 382.3032000218518
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-1",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 289.6445999504067,
+          "candidate_ms": 304.6557999914512
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-2",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 287.86609997041523,
+          "candidate_ms": 296.1432000156492
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-3",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 221.25389997381717,
+          "candidate_ms": 275.23930004099384
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 392.17439998174086,
+          "candidate_ms": 401.8612999934703
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 397.7990999701433,
+          "candidate_ms": 418.67079999065027
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 438.4532999829389,
+          "candidate_ms": 428.23200003476813
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 383.6103000212461,
+          "candidate_ms": 327.1291999844834
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 380.8015999966301,
+          "candidate_ms": 355.736400000751
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 408.5928000276908,
+          "candidate_ms": 402.5876999949105
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-1",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 316.84109999332577,
+          "candidate_ms": 307.67150002066046
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-2",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 296.5406000148505,
+          "candidate_ms": 292.1852999716066
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-3",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 285.77539999969304,
+          "candidate_ms": 289.95050000958145
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 396.95570000912994,
+          "candidate_ms": 407.1257999748923
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 406.9562000222504,
+          "candidate_ms": 421.39679996762425
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 367.16829997021705,
+          "candidate_ms": 395.41820000158623
+        }
+      ],
+      "forward_counts": [
+        27,
+        27
+      ],
+      "base_ms": {
+        "p50": 367.16829997021705,
+        "p95": 412.4739000108093,
+        "p99": 438.4532999829389
+      },
+      "candidate_ms": {
+        "p50": 356.15489998599514,
+        "p95": 427.9112000367604,
+        "p99": 428.23200003476813
+      },
+      "paired_median_ratio": 1.0256202391489238,
+      "mixed_request": {
+        "forward_counts": [
+          1,
+          1
+        ],
+        "protected_answers": {
+          "label_flips": 0,
+          "labelled_comparisons": 2,
+          "label_flip_rate": 0.0,
+          "max_probability_drift": 0.0,
+          "max_score_drift": 0.0,
+          "max_confidence_drift": 0.0,
+          "max_action_drift": 0.0,
+          "operational_flag_flips": 0,
+          "operational_flag_comparisons": 0,
+          "operational_flag_flip_rate": 0.0
+        }
+      }
+    },
+    "onnx": {
+      "pairs": [
+        {
+          "id": "ordinal-fresh-lodging-desk-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 252.0270999521017,
+          "candidate_ms": 254.92750003468245
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 268.2773999986239,
+          "candidate_ms": 240.109600010328
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 274.7681000037119,
+          "candidate_ms": 234.91360002662987
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-1",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 196.79849996464327,
+          "candidate_ms": 162.61420003138483
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-2",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 174.2536000092514,
+          "candidate_ms": 160.45310004847124
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-3",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 155.5930000031367,
+          "candidate_ms": 183.3184999995865
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 275.34659998491406,
+          "candidate_ms": 243.99889999767765
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 265.75869997031987,
+          "candidate_ms": 270.89689997956157
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 261.2758000032045,
+          "candidate_ms": 260.72479999857023
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 258.77169996965677,
+          "candidate_ms": 267.5766000174917
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 271.99440001277253,
+          "candidate_ms": 267.5511999987066
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 238.16900001838803,
+          "candidate_ms": 290.06339999614283
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-1",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 192.61319999350235,
+          "candidate_ms": 156.64830000605434
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-2",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 195.51340001635253,
+          "candidate_ms": 166.05820000404492
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-3",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 135.3236999711953,
+          "candidate_ms": 148.29500002088025
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 263.0051999585703,
+          "candidate_ms": 232.0865000365302
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 278.75589998438954,
+          "candidate_ms": 252.46920000063255
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 238.68300003232434,
+          "candidate_ms": 225.46529996907339
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 232.97100001946092,
+          "candidate_ms": 197.29140005074441
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 247.58379999548197,
+          "candidate_ms": 249.63099998421967
+        },
+        {
+          "id": "ordinal-fresh-lodging-desk-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 269.6023999596946,
+          "candidate_ms": 239.82310004066676
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-1",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 159.11879995837808,
+          "candidate_ms": 174.18060003546998
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-2",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 183.3296999684535,
+          "candidate_ms": 162.59329998865724
+        },
+        {
+          "id": "ordinal-fresh-studio-recording-3",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 139.1056000138633,
+          "candidate_ms": 146.66780002880841
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 229.6974000055343,
+          "candidate_ms": 211.94419998209924
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 261.7702000425197,
+          "candidate_ms": 250.97749999258667
+        },
+        {
+          "id": "ordinal-fresh-archive-humidity-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 280.11270001297817,
+          "candidate_ms": 272.49449997907504
+        }
+      ],
+      "forward_counts": [
+        27,
+        27
+      ],
+      "base_ms": {
+        "p50": 247.58379999548197,
+        "p95": 278.75589998438954,
+        "p99": 280.11270001297817
+      },
+      "candidate_ms": {
+        "p50": 234.91360002662987,
+        "p95": 272.49449997907504,
+        "p99": 290.06339999614283
+      },
+      "paired_median_ratio": 0.944622364971695,
+      "mixed_request": {
+        "forward_counts": [
+          1,
+          1
+        ],
+        "protected_answers": {
+          "label_flips": 0,
+          "labelled_comparisons": 2,
+          "label_flip_rate": 0.0,
+          "max_probability_drift": 0.0,
+          "max_score_drift": 0.0,
+          "max_confidence_drift": 0.0,
+          "max_action_drift": 0.0,
+          "operational_flag_flips": 0,
+          "operational_flag_comparisons": 0,
+          "operational_flag_flip_rate": 0.0
+        }
+      }
+    }
+  },
+  "mcp": {
+    "classic": {
+      "catalog_size": 10,
+      "retained_predictions": 2,
+      "cold_models_loaded": [],
+      "fresh_models_loaded": [
+        "english-repair"
+      ],
+      "decision_policy": {
+        "english-repair": "canonical"
+      },
+      "fresh_misses": 1,
+      "repeat_hits": 1
+    },
+    "code": {
+      "catalog_size": 1,
+      "retained_predictions": 2,
+      "cold_models_loaded": [],
+      "fresh_models_loaded": [
+        "english-repair"
+      ],
+      "decision_policy": {
+        "english-repair": "canonical"
+      },
+      "fresh_misses": 1,
+      "repeat_hits": 1
+    }
+  }
+}

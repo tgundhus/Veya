@@ -31,6 +31,9 @@ changes and score preservation through the same single-pass runtime.
 The [score and boundary repair](score-boundary-repair-2026-11-06.md) checks
 ordinal scores and uncertainty while protecting choice and binary decisions.
 
+The [ordinal continuation](ordinal-continuation-2026-11-06.md) tests the
+wider checkpoint on fresh score cases and audits which levels form near ties.
+
 The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
 required decision storage, experimental HTTP microbatching and selected upstream fixes.
 

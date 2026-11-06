@@ -1,0 +1,1971 @@
+{
+  "selected": {
+    "epoch": 1,
+    "strength": 0.65,
+    "score_temperature": 0.5,
+    "development": {
+      "qualification-v1": {
+        "correct": 4,
+        "total": 5,
+        "mae": 0.08993612974882126
+      },
+      "checkpoint-repair-acceptance-v1": {
+        "correct": 10,
+        "total": 12,
+        "mae": 0.1656494140625
+      }
+    },
+    "seen_regression": {
+      "routing-repair-acceptance-v1": {
+        "correct": 18,
+        "total": 18,
+        "mae": 0.00917391013354063
+      },
+      "evidence-repair-acceptance-v1": {
+        "correct": 20,
+        "total": 21,
+        "mae": 0.033284012228250504
+      },
+      "level-zero-acceptance-v1": {
+        "correct": 21,
+        "total": 21,
+        "mae": 0.005484551656991243
+      },
+      "independent-repair-controls-v1": {
+        "correct": 15,
+        "total": 15,
+        "mae": 0.0035856461618095636
+      },
+      "score-boundary-acceptance-v1": {
+        "correct": 29,
+        "total": 30,
+        "mae": 0.05718713998794556
+      }
+    },
+    "development_boundary_gaps": {
+      "qualification-v1": [
+        0.999396562576294
+      ],
+      "checkpoint-repair-acceptance-v1": [
+        0.7227582931518555,
+        0.9782567620277405,
+        0.9658132195472717,
+        0.8797479271888733,
+        0.2924601435661316,
+        0.8087284564971924
+      ]
+    },
+    "development_boundary_top_levels": {
+      "qualification-v1": [
+        {
+          "id": "priority-boundary-candidate",
+          "qid": "priority",
+          "levels": [
+            1,
+            2
+          ]
+        }
+      ],
+      "checkpoint-repair-acceptance-v1": [
+        {
+          "id": "observatory-operations-5",
+          "qid": "decision",
+          "levels": [
+            1,
+            0
+          ]
+        },
+        {
+          "id": "observatory-operations-6",
+          "qid": "decision",
+          "levels": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": "greenhouse-operations-5",
+          "qid": "decision",
+          "levels": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": "greenhouse-operations-6",
+          "qid": "decision",
+          "levels": [
+            1,
+            0
+          ]
+        },
+        {
+          "id": "campus-shuttle-operations-5",
+          "qid": "decision",
+          "levels": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "campus-shuttle-operations-6",
+          "qid": "decision",
+          "levels": [
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    "calibration_hard_scores": [
+      28,
+      38
+    ],
+    "calibration_matched_near_ties": 0,
+    "calibration_boundary_gaps": [
+      0.4298305809497833,
+      0.81740403175354,
+      0.44506293535232544,
+      0.9237476587295532,
+      0.383690744638443,
+      0.6156545281410217,
+      0.9979195594787598,
+      0.6741831302642822,
+      0.9526766538619995,
+      0.9640012979507446,
+      0.3423786461353302,
+      0.5014191269874573,
+      0.8249653577804565,
+      0.286134272813797,
+      0.9971602559089661,
+      0.5490772128105164
+    ]
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "strength": 0.65,
+      "score_temperature": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.08993612974882126
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "mae": 0.1656494140625
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 18,
+          "mae": 0.00917391013354063
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 20,
+          "total": 21,
+          "mae": 0.033284012228250504
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.005484551656991243
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.0035856461618095636
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 29,
+          "total": 30,
+          "mae": 0.05718713998794556
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.999396562576294
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.7227582931518555,
+          0.9782567620277405,
+          0.9658132195472717,
+          0.8797479271888733,
+          0.2924601435661316,
+          0.8087284564971924
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        28,
+        38
+      ],
+      "calibration_matched_near_ties": 0,
+      "calibration_boundary_gaps": [
+        0.4298305809497833,
+        0.81740403175354,
+        0.44506293535232544,
+        0.9237476587295532,
+        0.383690744638443,
+        0.6156545281410217,
+        0.9979195594787598,
+        0.6741831302642822,
+        0.9526766538619995,
+        0.9640012979507446,
+        0.3423786461353302,
+        0.5014191269874573,
+        0.8249653577804565,
+        0.286134272813797,
+        0.9971602559089661,
+        0.5490772128105164
+      ]
+    },
+    {
+      "epoch": 1,
+      "strength": 0.85,
+      "score_temperature": 1.600000023841858,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "mae": 0.20858554542064667
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.21593879163265228
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.21861836314201355
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 13,
+          "total": 21,
+          "mae": 0.24488100409507751
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 16,
+          "total": 21,
+          "mae": 0.15917135775089264
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "mae": 0.11836273223161697
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 17,
+          "total": 30,
+          "mae": 0.2508007884025574
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7826329469680786
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.2637244760990143,
+          0.628132164478302,
+          0.5431745648384094,
+          0.329616904258728,
+          0.02845633029937744,
+          0.2875078320503235
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        26,
+        38
+      ],
+      "calibration_matched_near_ties": 1,
+      "calibration_boundary_gaps": [
+        0.09144654870033264,
+        0.24221256375312805,
+        0.08819058537483215,
+        0.40061238408088684,
+        0.09942129254341125,
+        0.11464622616767883,
+        0.7066248655319214,
+        0.21095451712608337,
+        0.2940729856491089,
+        0.4671594798564911,
+        0.04990479350090027,
+        0.21042805910110474,
+        0.35536107420921326,
+        0.09110045433044434,
+        0.5917845964431763,
+        0.10305207967758179
+      ]
+    },
+    {
+      "epoch": 1,
+      "strength": 1.0,
+      "score_temperature": 1.4500000476837158,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "mae": 0.20494937896728516
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "mae": 0.21644756197929382
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.22508485615253448
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 13,
+          "total": 21,
+          "mae": 0.26193901896476746
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 16,
+          "total": 21,
+          "mae": 0.1640128493309021
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "mae": 0.1312464475631714
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 17,
+          "total": 30,
+          "mae": 0.2596251666545868
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7945155501365662
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.2970983684062958,
+          0.7006279230117798,
+          0.5836450457572937,
+          0.2973887622356415,
+          0.002438664436340332,
+          0.3133440911769867
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        27,
+        38
+      ],
+      "calibration_matched_near_ties": 1,
+      "calibration_boundary_gaps": [
+        0.06783872842788696,
+        0.23161906003952026,
+        0.06718486547470093,
+        0.39518406987190247,
+        0.09574595093727112,
+        0.07121828198432922,
+        0.7195528745651245,
+        0.21188881993293762,
+        0.17704620957374573,
+        0.4813701808452606,
+        0.03211855888366699,
+        0.2680210769176483,
+        0.37328648567199707,
+        0.1137951910495758,
+        0.5297321081161499,
+        0.05766594409942627
+      ]
+    },
+    {
+      "epoch": 2,
+      "strength": 0.65,
+      "score_temperature": 0.824999988079071,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.13776350021362305
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "mae": 0.20297318696975708
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 18,
+          "mae": 0.07383376359939575
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 19,
+          "total": 21,
+          "mae": 0.09071312844753265
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.04515545815229416
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.020495666190981865
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 27,
+          "total": 30,
+          "mae": 0.11602221429347992
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.7668657898902893
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.389604777097702,
+          0.9055225253105164,
+          0.7889560461044312,
+          0.5316592454910278,
+          0.15514644980430603,
+          0.6253105401992798
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        26,
+        38
+      ],
+      "calibration_matched_near_ties": 0,
+      "calibration_boundary_gaps": [
+        0.3109011650085449,
+        0.48683688044548035,
+        0.2694969177246094,
+        0.614050030708313,
+        0.33431410789489746,
+        0.4695025384426117,
+        0.9336544275283813,
+        0.3450050354003906,
+        0.2776806056499481,
+        0.7149327397346497,
+        0.1779058575630188,
+        0.21067121624946594,
+        0.30252930521965027,
+        0.08690664172172546,
+        0.8785130381584167,
+        0.2522207796573639
+      ]
+    },
+    {
+      "epoch": 2,
+      "strength": 0.85,
+      "score_temperature": 0.6499999761581421,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.14899729192256927
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "mae": 0.1998620629310608
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 17,
+          "total": 18,
+          "mae": 0.08044128865003586
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 21,
+          "mae": 0.0937337651848793
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 20,
+          "total": 21,
+          "mae": 0.051555510610342026
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.020127536728978157
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 26,
+          "total": 30,
+          "mae": 0.11496765911579132
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.740608811378479
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.4494611322879791,
+          0.9646992683410645,
+          0.8874743580818176,
+          0.3928343653678894,
+          0.14452898502349854,
+          0.7074873447418213
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        26,
+        38
+      ],
+      "calibration_matched_near_ties": 0,
+      "calibration_boundary_gaps": [
+        0.3131175935268402,
+        0.4844730496406555,
+        0.26747292280197144,
+        0.6114687919616699,
+        0.38117244839668274,
+        0.43315988779067993,
+        0.9535673260688782,
+        0.3226505517959595,
+        0.05966106057167053,
+        0.7071818709373474,
+        0.10198035836219788,
+        0.16840922832489014,
+        0.37428632378578186,
+        0.1427624523639679,
+        0.8318393230438232,
+        0.2141866683959961
+      ]
+    },
+    {
+      "epoch": 2,
+      "strength": 1.0,
+      "score_temperature": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.18908369541168213
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "mae": 0.23398080468177795
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 18,
+          "mae": 0.20502527058124542
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 15,
+          "total": 21,
+          "mae": 0.2171349972486496
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 19,
+          "total": 21,
+          "mae": 0.13975933194160461
+        },
+        "independent-repair-controls-v1": {
+          "correct": 14,
+          "total": 15,
+          "mae": 0.08742956817150116
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 17,
+          "total": 30,
+          "mae": 0.2264638990163803
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.42836418747901917
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.26673969626426697,
+          0.8549749851226807,
+          0.7026986479759216,
+          0.12515589594841003,
+          0.0854971706867218,
+          0.4790401756763458
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        24,
+        38
+      ],
+      "calibration_matched_near_ties": 2,
+      "calibration_boundary_gaps": [
+        0.1582641899585724,
+        0.25837409496307373,
+        0.13714247941970825,
+        0.3583052158355713,
+        0.2292707860469818,
+        0.2146260142326355,
+        0.7696053981781006,
+        0.16661334037780762,
+        0.02825292944908142,
+        0.3435571789741516,
+        0.01198035478591919,
+        0.09043064713478088,
+        0.2199687957763672,
+        0.10415405035018921,
+        0.5260710716247559,
+        0.10011067986488342
+      ]
+    },
+    {
+      "epoch": 4,
+      "strength": 0.65,
+      "score_temperature": 0.7250000238418579,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.13425813615322113
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.21918676793575287
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 18,
+          "mae": 0.05984801799058914
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 19,
+          "total": 21,
+          "mae": 0.07785758376121521
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.034322626888751984
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.019590647891163826
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 26,
+          "total": 30,
+          "mae": 0.101764976978302
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9351840019226074
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.39476802945137024,
+          0.9556123614311218,
+          0.8587836623191833,
+          0.3559713363647461,
+          0.00918656587600708,
+          0.6750555634498596
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        26,
+        38
+      ],
+      "calibration_matched_near_ties": 0,
+      "calibration_boundary_gaps": [
+        0.27544644474983215,
+        0.5140725374221802,
+        0.31857579946517944,
+        0.6259840726852417,
+        0.39690688252449036,
+        0.5307615995407104,
+        0.9737763404846191,
+        0.21645528078079224,
+        0.43794795870780945,
+        0.8243032693862915,
+        0.3788967728614807,
+        0.28163543343544006,
+        0.16649267077445984,
+        0.08917960524559021,
+        0.8786894083023071,
+        0.37347131967544556
+      ]
+    },
+    {
+      "epoch": 4,
+      "strength": 0.85,
+      "score_temperature": 0.5249999761581421,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1574513018131256
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.23353582620620728
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 18,
+          "mae": 0.050788793712854385
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 19,
+          "total": 21,
+          "mae": 0.06688877940177917
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.02952740341424942
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.016293535009026527
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 26,
+          "total": 30,
+          "mae": 0.09059327840805054
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9589640498161316
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.4841603636741638,
+          0.991461455821991,
+          0.9503268599510193,
+          0.10083884000778198,
+          0.035519152879714966,
+          0.7839174270629883
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              2,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        26,
+        38
+      ],
+      "calibration_matched_near_ties": 0,
+      "calibration_boundary_gaps": [
+        0.25765860080718994,
+        0.5182051658630371,
+        0.32209575176239014,
+        0.6558375358581543,
+        0.4636656641960144,
+        0.5487082004547119,
+        0.991558313369751,
+        0.1121513843536377,
+        0.1626656949520111,
+        0.8015118837356567,
+        0.4145275354385376,
+        0.3304106295108795,
+        0.23523491621017456,
+        0.15100160241127014,
+        0.8701256513595581,
+        0.4007483422756195
+      ]
+    },
+    {
+      "epoch": 4,
+      "strength": 1.0,
+      "score_temperature": 0.875,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.16669882833957672
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.2604045569896698
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 14,
+          "total": 18,
+          "mae": 0.16031064093112946
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 17,
+          "total": 21,
+          "mae": 0.1798090785741806
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 20,
+          "total": 21,
+          "mae": 0.11435651779174805
+        },
+        "independent-repair-controls-v1": {
+          "correct": 14,
+          "total": 15,
+          "mae": 0.08392889052629471
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 20,
+          "total": 30,
+          "mae": 0.19480423629283905
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.689622700214386
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.2451476752758026,
+          0.9176225662231445,
+          0.7615174055099487,
+          0.07481694221496582,
+          0.0228288471698761,
+          0.5150522589683533
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              2,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        23,
+        38
+      ],
+      "calibration_matched_near_ties": 2,
+      "calibration_boundary_gaps": [
+        0.10629093647003174,
+        0.23622742295265198,
+        0.14592638611793518,
+        0.36507871747016907,
+        0.2567439079284668,
+        0.2703525722026825,
+        0.8441863059997559,
+        0.007539242506027222,
+        0.006288766860961914,
+        0.35820502042770386,
+        0.219363272190094,
+        0.16851231455802917,
+        0.13378462195396423,
+        0.0947171151638031,
+        0.55109041929245,
+        0.19932618737220764
+      ]
+    },
+    {
+      "epoch": 6,
+      "strength": 0.65,
+      "score_temperature": 0.8999999761581421,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.1461331695318222
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.23436014354228973
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 18,
+          "mae": 0.0789717361330986
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 20,
+          "total": 21,
+          "mae": 0.09746458381414413
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.047449998557567596
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.029772236943244934
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 26,
+          "total": 30,
+          "mae": 0.12290385365486145
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.8690015077590942
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.23913472890853882,
+          0.895185649394989,
+          0.7675390243530273,
+          0.2264028787612915,
+          0.03653743863105774,
+          0.6536716222763062
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              2,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        26,
+        38
+      ],
+      "calibration_matched_near_ties": 0,
+      "calibration_boundary_gaps": [
+        0.24527764320373535,
+        0.4430962800979614,
+        0.1958296000957489,
+        0.5165886878967285,
+        0.2884288430213928,
+        0.45383158326148987,
+        0.9342244863510132,
+        0.1899631917476654,
+        0.24058088660240173,
+        0.7270528674125671,
+        0.3889075517654419,
+        0.1856936812400818,
+        0.32593396306037903,
+        0.01623404026031494,
+        0.5975439548492432,
+        0.1812448799610138
+      ]
+    },
+    {
+      "epoch": 6,
+      "strength": 0.85,
+      "score_temperature": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.17487458884716034
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.24438904225826263
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 18,
+          "mae": 0.03516673296689987
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 20,
+          "total": 21,
+          "mae": 0.04955451935529709
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 21,
+          "total": 21,
+          "mae": 0.014905376359820366
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.009128104895353317
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 28,
+          "total": 30,
+          "mae": 0.07263980060815811
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.9610406756401062
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.30648916959762573,
+          0.990310788154602,
+          0.9571210741996765,
+          0.006701797246932983,
+          0.14927375316619873,
+          0.886177122592926
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              2,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        26,
+        38
+      ],
+      "calibration_matched_near_ties": 1,
+      "calibration_boundary_gaps": [
+        0.3136241137981415,
+        0.588153600692749,
+        0.2344144582748413,
+        0.6468497514724731,
+        0.4226326644420624,
+        0.5870369672775269,
+        0.993049144744873,
+        0.16468510031700134,
+        0.04647541046142578,
+        0.8525394201278687,
+        0.55162513256073,
+        0.2970479428768158,
+        0.5466402769088745,
+        0.04741090536117554,
+        0.7093120217323303,
+        0.20026502013206482
+      ]
+    },
+    {
+      "epoch": 6,
+      "strength": 1.0,
+      "score_temperature": 0.875,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "mae": 0.17756319046020508
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "mae": 0.2610490024089813
+        }
+      },
+      "seen_regression": {
+        "routing-repair-acceptance-v1": {
+          "correct": 14,
+          "total": 18,
+          "mae": 0.13490989804267883
+        },
+        "evidence-repair-acceptance-v1": {
+          "correct": 18,
+          "total": 21,
+          "mae": 0.16032272577285767
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 20,
+          "total": 21,
+          "mae": 0.08772298693656921
+        },
+        "independent-repair-controls-v1": {
+          "correct": 15,
+          "total": 15,
+          "mae": 0.06863021850585938
+        },
+        "score-boundary-acceptance-v1": {
+          "correct": 22,
+          "total": 30,
+          "mae": 0.17306306958198547
+        }
+      },
+      "development_boundary_gaps": {
+        "qualification-v1": [
+          0.6489456295967102
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          0.12353846430778503,
+          0.8989230990409851,
+          0.7556129693984985,
+          0.12712183594703674,
+          0.09834739565849304,
+          0.6313562393188477
+        ]
+      },
+      "development_boundary_top_levels": {
+        "qualification-v1": [
+          {
+            "id": "priority-boundary-candidate",
+            "qid": "priority",
+            "levels": [
+              1,
+              2
+            ]
+          }
+        ],
+        "checkpoint-repair-acceptance-v1": [
+          {
+            "id": "observatory-operations-5",
+            "qid": "decision",
+            "levels": [
+              1,
+              0
+            ]
+          },
+          {
+            "id": "observatory-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-5",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "greenhouse-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-5",
+            "qid": "decision",
+            "levels": [
+              2,
+              1
+            ]
+          },
+          {
+            "id": "campus-shuttle-operations-6",
+            "qid": "decision",
+            "levels": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "calibration_hard_scores": [
+        25,
+        38
+      ],
+      "calibration_matched_near_ties": 1,
+      "calibration_boundary_gaps": [
+        0.12714114785194397,
+        0.26986163854599,
+        0.08623296022415161,
+        0.33928075432777405,
+        0.21767738461494446,
+        0.29370957612991333,
+        0.841434121131897,
+        0.04619532823562622,
+        0.08011874556541443,
+        0.4302416741847992,
+        0.28415319323539734,
+        0.14699488878250122,
+        0.29975536465644836,
+        0.034072548151016235,
+        0.40438222885131836,
+        0.0664970874786377
+      ]
+    }
+  ],
+  "local_rows": 196,
+  "rehearsal_rows": 1067,
+  "regression_rows": 105,
+  "calibration_rows": 54,
+  "epochs": 6,
+  "rotated_rows": 602,
+  "boundary_focus": true,
+  "input_roles": {
+    "bank": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\ordinal-continuation-training-v1.json",
+    "rehearsal": [
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\score-boundary-training-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\.venv\\score-boundary-generated-v3.json"
+    ],
+    "seen_regression": [
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\routing-repair-acceptance-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-acceptance-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-acceptance-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\independent-repair-controls-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\score-boundary-acceptance-v1.json"
+    ],
+    "development": [
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\qualification-v1.json",
+      "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-acceptance-v1.json"
+    ]
+  },
+  "torch": "2.11.0+cu128",
+  "seed": 20261107,
+  "input_sha256": {
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_score_boundary.py": "9009e20936354ce30aa7b2d8f1502fbe5320a654001bd9a259921919e8d5c6a3",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_checkpoint_repair.py": "2ce96494e9e73061b6c754d27c88b41544524d9b85454a789f35824e04a3a54d",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_evidence_repair.py": "73bdc48f41fedd815153fcd10ae15ee982b752be6bb7c34dca23fe30f38ac42b",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\ordinal-continuation-training-v1.json": "84419fd373d6deb1368860a2e4ce387bca5bb348ff4d7fc0441bbc06a4d54908",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\score-boundary-training-v1.json": "e4ccf8ecdc61644ad170d28ee50b5ed4b938706b81cfad4d64471d4aefd195cd",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\.venv\\score-boundary-generated-v3.json": "b994a6d46ea6650fc712ab8ca20c580e3d5a5bfdbca68eee234bc39a9119fad6",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\routing-repair-acceptance-v1.json": "df7396336b4363c4a2f912bfc74ebe7cc99d1749a4d9f925062a703dba0a2b80",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-acceptance-v1.json": "a470c067567ed71bb504a7c7e663e76b7377743074141118271b9b92bfc7d3cd",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-acceptance-v1.json": "095910b9672fc5fd8cfbcd3497120887a50c119747aef6f11e384d00a237f085",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\independent-repair-controls-v1.json": "936c4911bf9b5ea61f95803daadef911a7c45edce7551500f92118773977baa1",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\score-boundary-acceptance-v1.json": "15fad48105f2fd9e8575d24f7ac9cc92fd923543f96207712226378ccf96b7d6",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\qualification-v1.json": "ff6e1998a73386eb08a08108a25d9799624aee5dbc25bfe0857222734430b3ab",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-acceptance-v1.json": "2576a8a76a366eefb7f94e1aa66d16e9cd27a87d52c0f1912196c43880383d96"
+  },
+  "source_sha256": {
+    "__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "common.py": "7ac7ab2a7595f4762c8c56d76dfd9b7833e45efe818f2bc7d93767e718da5c2f",
+    "compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "fast.py": "dd464d604198ce672ce8d28c3c594071ffbde9f3576ce488de19ea4420dd815f",
+    "hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "mcp/server.py": "7b882304a4c910c1d36ba5e18e2e9abaff4c79f7285e820597d1d807d19f1e07",
+    "mcp/tools.py": "a93e7b68e19a780f9c3a0bf8a8e6afba183ca46d637725955bf1adcffa426bc1",
+    "onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "qualification.py": "a80ab9b89706eeb9b1598627012ce43dc9a56ce8654b250cd4b4d603a0888430",
+    "replay.py": "20344f39b3989c8e4f9b4cc20b1e0c17179605f616d9fa959816acd81d697a44",
+    "revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05"
+  },
+  "base_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "07b3c36410397531e9ccef43452949b6b79c66586467f2907acc0582b82c9932",
+    "repair_report.json": "eed04544074c0e0fa45fe80f7afe27b123d7072473d2459ded89cf629e54370e",
+    "rl_agent_config.json": "8ad7643273143ed18a31271fa5a6bb96d5882c707cba5202b046c5f94e0544d5",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+  },
+  "candidate_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "fdcf5329322f16b3cba03415ad93df4b14810cc9b171e8785fec84b1c248a054",
+    "rl_agent_config.json": "4ba31b1a5e8bd0663790cbf444fa471124422dc82ca2956e5e2b38a98ab82bf5",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+  }
+}
