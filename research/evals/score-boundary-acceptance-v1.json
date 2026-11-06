@@ -1,0 +1,1685 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "english-score-boundary-acceptance-v1",
+  "description": "Predeclared fresh ordinal contrasts, conflicting-evidence boundaries, and routing and binary controls.",
+  "cases": [
+    {
+      "id": "scorefit-fresh-valley-cableway-1",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Add the cableway office email to the directory. All three lines ran their advertised timetable.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-2",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The board reviewed the winter storm closure. The closure ended in February and every line is running today.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-3",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Line three stopped at noon. A scheduled shuttle is carrying its passengers while the other two lines operate.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-4",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Only the lower valley stop is closed for inspection. Its passengers are getting a ride to the working middle stop.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-5",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All cable cars have stopped and snow closed the only road. Stranded passengers need evacuation now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-6",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Yesterday only the lower stop closed. The current fault shut every line and no road or foot route is usable. Passengers need help immediately.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-7",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The duty manager says all three lines are on schedule. The platform log from the same hour says one line has failed and a shuttle is carrying its passengers. Both reports remain unverified.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-8",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "One current message says only line three stopped and its shuttle is working. Another says every line stopped, the road is closed, and stranded riders need evacuation. Control cannot verify either message.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-9",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "A dispatch sheet is marked as an exercise with all lines running. A station log from the same hour calls it a live shuttle dispatch after line three stopped. The timestamp and source are being checked.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-valley-cableway-10",
+      "family": "scorefit-fresh-valley-cableway",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "A current fault is confirmed. One responder says it only closed the lower station and passengers are using the middle stop. Another says all stations are down and no replacement route is available for stranded riders. The operator cannot confirm either report.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate current cableway service based on verified coverage and replacement transport.",
+          "criteria": [
+            "No current interruption or only administrative work.",
+            "A local interruption with a working replacement route.",
+            "Urgent system-wide interruption with no replacement route."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-1",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The town rehearsed a failure of every siren. It was a tabletop exercise and all sirens remained online.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-2",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Refresh the photograph in the siren leaflet. All town districts have a working signal.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-3",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The south siren lost its amplifier. The mobile alert unit reaches that district and the rest of the sirens work.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-4",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Yesterday every station was offline. Today just one pole's siren remains offline during repair, and the neighboring tower covers that street.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-5",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Every tower lost power, emergency broadcasts are unavailable, and a storm warning must go out now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-6",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "An old report describes one failed pole. The current incident has stopped every district’s alert path, including the only backup, as a storm approaches.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-7",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The operator sheet shows all districts green. A call from the same interval says the south siren is down and an alert van covers its streets. The duty officer cannot reconcile the sources.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-8",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The west report says its tower failed but text alerts work there. The network report says all warning paths including texts failed and the storm has arrived. Both reports are stamped current and their source is being checked.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-9",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "One status export is unmarked and may be the simulation in which nothing actually failed or the real event where one pole failed and the van covered it. Both runs happened this morning.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-storm-sirens-10",
+      "family": "scorefit-fresh-storm-sirens",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "There is a current failure report. The two dispatchers disagree on whether only one district is affected and its radio backup works or all districts are without any alert path. The storm is imminent.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the present effect on the public warning network. Consider verified scope and any live backup.",
+          "criteria": [
+            "0: Network operating normally, with no present interruption.",
+            "1: Limited active interruption with a working alternate warning path.",
+            "2: Active network-wide loss, no functioning alternate, and an urgent need to warn."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-1",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The archive shows two passes on console K8. The K9 record contains no results for either test.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-2",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "K9 has a test appointment and an engineer accepted both work orders. Neither test has been performed.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-3",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "K9’s noise floor passed. The signed channel map result names K8, and K9 has no map result.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-4",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The engineer signed a channel mapping pass for K9. The noise-floor test for it is still running.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-5",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The K9 certificate records PASS for noise floor and PASS for channel mapping. Both entries are signed for its serial.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-6",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "K8 had a mapping failure. The replacement K9 has since passed both mapping and noise-floor checks, with each result signed for K9.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-7",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "K9 has a verified noise-floor pass. Two channel mapping records for K9 share a timestamp. One says PASS and one says NOT RUN. The engineer has not identified the valid record.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-8",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "No mapping result exists for K9. A signed noise-floor PASS could refer to K8 or K9 because the serial field is missing and the two units were tested on the same day.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-9",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The K9 channel mapping test is a confirmed pass. Two current noise-floor records for serial K9 disagree. One says the test passed, the other says the test was canceled before any reading. Neither record takes precedence.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-broadcast-console-10",
+      "family": "scorefit-fresh-broadcast-console",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Noise-floor testing has not started. The channel map pass lost the console number and could be for either the replacement or the retired console. There are no other results.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the verified pass results for replacement console K9. Only the noise-floor and channel mapping tests count.",
+          "criteria": [
+            "0: Neither required test has a verified pass on K9.",
+            "1: One required test has a verified pass on K9.",
+            "2: Both required tests have verified passes on K9."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-1",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The folder has both signatures, but each names the discarded design. No permission has been signed for the submitted design.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-2",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The artist and venue staff received the new sketch. Both said they will review it, and neither has given permission yet.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-3",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The artist signed a release for the submitted design. The venue signed only for the older design.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-4",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The venue approved the current design. The artist confirmed receipt of the release form but did not sign.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-5",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The current design number appears on the artist’s signed release and the venue’s signed consent.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-6",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The venue declined the earlier sketch. It signed consent for the current sketch, and the artist signed its release separately.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-7",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The venue consent names the current submission. An artist release omits the design number and could be for either sketch. No one can identify the sketch it covers.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-8",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "There is no venue signature. Two current emails attributed to the artist disagree on whether the release for this exact design was signed. The signed form has not been located.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-9",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The artist release is verified for this design. Two recent versions of the venue consent for it disagree on whether the venue signed or returned a draft. Neither version has precedence.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-mural-release-10",
+      "family": "scorefit-fresh-mural-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The artist has not signed any release. A signed venue consent names the wall but omits which of the two submitted sketches it covers. Both were discussed at the signing meeting.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the two valid permissions on the current mural design submission. Require the artist release and the venue consent for this exact design.",
+          "criteria": [
+            "0: Neither permission is valid for the current design.",
+            "1: Exactly one permission is valid for the current design.",
+            "2: Both permissions are valid for the current design."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-1",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The previous shift logged 83 usable scans. This shift has verified only five.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-2",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The operator planned to scan 100 pages. This shift’s verified count of usable scans is zero.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-3",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The shift log records 31 usable scans. The queue contains 70 more pages that have not been processed.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-4",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "This shift verified 45 usable scans. The 19-scan total in the folder is from a different station yesterday.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-5",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "This shift produced 77 usable scans according to the signed final count.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-6",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Yesterday’s counter stalled at 17. The verified count for this shift is 91 usable scans.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-7",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Two independent logs for this shift give 17 and 24 usable scans respectively. Both are signed and have the same closing timestamp.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-8",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The supervisor has two final reports for this shift, one with 55 usable scans and one with 66. Both appear valid and no station-level totals are available.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-9",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "There are 18 verified scans and four accepted in a different report with an unreadable shift header. The four belong either to this shift or the previous one.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-archive-scan-rate-10",
+      "family": "scorefit-fresh-archive-scan-rate",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The summary shows between 57 and 64 usable scans for this shift. Several borderline images still need verification before the count can be placed above or below 60.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the number of verified usable scans from this shift. Use only this shift’s verified count.",
+          "criteria": [
+            "0: Fewer than 20 usable scans.",
+            "1: At least 20 and fewer than 60 usable scans.",
+            "2: At least 60 usable scans."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-stage-supplies-1",
+      "family": "scorefit-fresh-stage-supplies",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The costume fitting finished yesterday. Today the spotlight controller will not power on. Please repair it.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now.",
+          "criteria": {
+            "lighting": "Repair or replace stage lights and their electrical controls.",
+            "costumes": "Fit, alter or replace garments worn on stage.",
+            "office": "General enquiries and requests that have yet to be described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "lighting"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-stage-supplies-2",
+      "family": "scorefit-fresh-stage-supplies",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please shorten the sleeves on the coat worn in act two. The lamps all work.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now.",
+          "criteria": {
+            "lighting": "Repair or replace stage lights and their electrical controls.",
+            "costumes": "Fit, alter or replace garments worn on stage.",
+            "office": "General enquiries and requests that have yet to be described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "costumes"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-stage-supplies-3",
+      "family": "scorefit-fresh-stage-supplies",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Two overhead fixtures flicker as the dimmer moves. Please send a technician to fix the dimmer.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now.",
+          "criteria": {
+            "lighting": "Repair or replace stage lights and their electrical controls.",
+            "costumes": "Fit, alter or replace garments worn on stage.",
+            "office": "General enquiries and requests that have yet to be described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "lighting"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-stage-supplies-4",
+      "family": "scorefit-fresh-stage-supplies",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Where can I find the office opening hours? I have no repairs or alterations to request.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now.",
+          "criteria": {
+            "lighting": "Repair or replace stage lights and their electrical controls.",
+            "costumes": "Fit, alter or replace garments worn on stage.",
+            "office": "General enquiries and requests that have yet to be described."
+          }
+        }
+      },
+      "expected": {
+        "decision": "office"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-reading-room-1",
+      "family": "scorefit-fresh-reading-room",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please set aside the atlas so I can collect it tomorrow. I do not need a scan.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action the visitor wants.",
+          "criteria": {
+            "reserves": "Reserve a physical book or request collection of a reserved title.",
+            "copies": "Order or correct an image scan of archive pages.",
+            "office": "General questions, opening hours or unspecified requests."
+          }
+        }
+      },
+      "expected": {
+        "decision": "reserves"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-reading-room-2",
+      "family": "scorefit-fresh-reading-room",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The hold has already been collected. The image of page 19 was cropped, and I need a new scan.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action the visitor wants.",
+          "criteria": {
+            "reserves": "Reserve a physical book or request collection of a reserved title.",
+            "copies": "Order or correct an image scan of archive pages.",
+            "office": "General questions, opening hours or unspecified requests."
+          }
+        }
+      },
+      "expected": {
+        "decision": "copies"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-reading-room-3",
+      "family": "scorefit-fresh-reading-room",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Could you tell me how late the reading room stays open on Thursday?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action the visitor wants.",
+          "criteria": {
+            "reserves": "Reserve a physical book or request collection of a reserved title.",
+            "copies": "Order or correct an image scan of archive pages.",
+            "office": "General questions, opening hours or unspecified requests."
+          }
+        }
+      },
+      "expected": {
+        "decision": "office"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-reading-room-4",
+      "family": "scorefit-fresh-reading-room",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please create a scan of the fold-out map and email it to me. There is no book to hold.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action the visitor wants.",
+          "criteria": {
+            "reserves": "Reserve a physical book or request collection of a reserved title.",
+            "copies": "Order or correct an image scan of archive pages.",
+            "office": "General questions, opening hours or unspecified requests."
+          }
+        }
+      },
+      "expected": {
+        "decision": "copies"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-commuter-desk-1",
+      "family": "scorefit-fresh-commuter-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "My bank shows the train fare twice. Please return the second charge.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that handles it.",
+          "criteria": {
+            "fares": "Incorrect fare charges, ticket charges or refund requests.",
+            "equipment": "Repairs to station equipment such as gates and lifts.",
+            "information": "General station information or no specific request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "fares"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-commuter-desk-2",
+      "family": "scorefit-fresh-commuter-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "My fare is correct. The station lift door jams open and needs a repair.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that handles it.",
+          "criteria": {
+            "fares": "Incorrect fare charges, ticket charges or refund requests.",
+            "equipment": "Repairs to station equipment such as gates and lifts.",
+            "information": "General station information or no specific request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "equipment"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-commuter-desk-3",
+      "family": "scorefit-fresh-commuter-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The fare refund has cleared. Can you tell me whether the station has a waiting room?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that handles it.",
+          "criteria": {
+            "fares": "Incorrect fare charges, ticket charges or refund requests.",
+            "equipment": "Repairs to station equipment such as gates and lifts.",
+            "information": "General station information or no specific request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "information"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-commuter-desk-4",
+      "family": "scorefit-fresh-commuter-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The fare gate takes my ticket and then stays closed. Send someone to fix the gate.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that handles it.",
+          "criteria": {
+            "fares": "Incorrect fare charges, ticket charges or refund requests.",
+            "equipment": "Repairs to station equipment such as gates and lifts.",
+            "information": "General station information or no specific request."
+          }
+        }
+      },
+      "expected": {
+        "decision": "equipment"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-exhibit-loan-consent-1",
+      "family": "scorefit-fresh-exhibit-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The lender wrote today: I approve the proposed extension for this exhibit. You may keep the loan until Friday.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the lender explicitly approve the proposed loan extension for the current exhibit?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-exhibit-loan-consent-2",
+      "family": "scorefit-fresh-exhibit-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "For this exhibit and the extension you proposed, yes, I approve it, the lender replied.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the lender explicitly approve the proposed loan extension for the current exhibit?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-exhibit-loan-consent-3",
+      "family": "scorefit-fresh-exhibit-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The lender acknowledged the extension request and said they would decide after speaking to their board.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the lender explicitly approve the proposed loan extension for the current exhibit?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-exhibit-loan-consent-4",
+      "family": "scorefit-fresh-exhibit-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The lender approved an extension for last year’s exhibit. For this exhibit the lender explicitly refused.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the lender explicitly approve the proposed loan extension for the current exhibit?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-exhibit-loan-consent-5",
+      "family": "scorefit-fresh-exhibit-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "An email proposing an extension was sent to the lender. No response has been received.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the lender explicitly approve the proposed loan extension for the current exhibit?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-filtration-test-1",
+      "family": "scorefit-fresh-filtration-test",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The technician’s signed report for this visit states pressure test PASS on the installed filter and lists its serial.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does a verified record confirm that the installed filter passed the pressure test for this service visit?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-filtration-test-2",
+      "family": "scorefit-fresh-filtration-test",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The filter was replaced, and a verified service record says the installed replacement passed the pressure test today.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does a verified record confirm that the installed filter passed the pressure test for this service visit?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-filtration-test-3",
+      "family": "scorefit-fresh-filtration-test",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The removed filter passed a pressure test before it was taken out. No pressure test result is recorded for its replacement.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does a verified record confirm that the installed filter passed the pressure test for this service visit?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-filtration-test-4",
+      "family": "scorefit-fresh-filtration-test",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The technician booked the pressure test for tomorrow. A successful flow test is already on file.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does a verified record confirm that the installed filter passed the pressure test for this service visit?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "scorefit-fresh-filtration-test-5",
+      "family": "scorefit-fresh-filtration-test",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Today’s pressure report for the installed filter is signed and marked FAIL.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does a verified record confirm that the installed filter passed the pressure test for this service visit?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    }
+  ]
+}
