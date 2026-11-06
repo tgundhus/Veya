@@ -1,0 +1,1925 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "english-ordinal-continuation-acceptance-v1",
+  "description": "Fresh ordinal, routing and binary cases. Unlabelled boundaries record the two plausible levels before evaluation.",
+  "cases": [
+    {
+      "id": "ordinal-fresh-archive-humidity-1",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The collection guide has an incorrect humidity chart. Every monitored archive room is holding its setpoint.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-2",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The annual exercise assumed all humidity controllers failed. Live instruments show that no archive room left its setpoint.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-3",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "One storage room lost its main controller. The portable dehumidifier is keeping that room at the required humidity.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-4",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "A failed sensor stopped the east room’s main control. A verified spare controller has taken over there; the other rooms are unaffected.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-5",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Control stopped in every archive room. The portable units cannot be started, and collection staff say the rising humidity has crossed the emergency limit. The manuscripts need protection now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-6",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The prior east-room event ended yesterday. The current controller outage affects every room, with no spare available, and collections need emergency protection now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-7",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "One live dashboard shows every room's primary controller online and holding setpoint. A verified-looking shift note reports a failed east room controller with a working portable unit. The systems disagree and the duty staff cannot check either.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        0,
+        1
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-8",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "Two current signed logs disagree. One lists a west-room controller fault and a working spare serving that room. The other says every room lost control, spares cannot run, and damp air is threatening collections now. Neither log has precedence.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-archive-humidity-9",
+      "family": "ordinal-fresh-archive-humidity",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "The archive received two reports of a live control problem. One says the east room alone lost its main unit and the portable unit is maintaining its setpoint. The other says all room controllers and portable units have stopped and fragile manuscripts need protection immediately. The site has not confirmed which report is current.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the present interruption to humidity control in the manuscript archive.",
+          "criteria": [
+            "Humidity control is operating throughout the archive.",
+            "One area lost its primary controller, and a working backup maintains that area.",
+            "Every archive area lost control and backups are unavailable while collections need protection now."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-1",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Correct the spelling in the cutting guide. Every station completed its jobs during the last production window.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-2",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The log quotes January’s total shutdown. It was resolved months ago and current measurements show all machines running.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-3",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Jet four has a cracked feed line. Jet two is cutting the affected jobs and all the other stations work.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-4",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The south workbench cannot cut this morning. Its batch is in progress on the west machine, which is sized for the same parts.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-5",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "No cutting machine has usable pressure. The only outside shop cannot take the work, and the urgent parts need cutting now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-6",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The emergency log confirms that all waterjets and the only spare are stopped. An urgent order needs the parts cut immediately and there is no other process available.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-7",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "The central meter shows all cutting machines available. An equally recent signed sheet says one bench stopped and its parts are being cut at the west station. Neither record has been verified.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        0,
+        1
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-8",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "One shift note describes only jet four stopped with jet two covering its work. Another says every jet is down, outside cutting is unavailable, and urgent parts are waiting. Both notes describe the current shift and have equal standing.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-waterjet-workshop-9",
+      "family": "ordinal-fresh-waterjet-workshop",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "One report claims the west machine is covering the only interrupted bench. Another reports the whole cutting line and its spare are offline while urgent work waits. The workshop cannot verify either report.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assign the current impact on workshop waterjet cutting, based on verified stoppage and available alternatives.",
+          "criteria": [
+            "All cutting is operating normally or only administrative work is requested.",
+            "One station is interrupted and another machine is covering its work.",
+            "All workshop cutting is stopped, no alternative can cut the urgent orders, and action is needed now."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-1",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The binder shows a signed wash and heat check for V25. V24 is untouched and has no result for either step.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-2",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Two technicians acknowledged their V24 assignments. Neither process has started on that batch.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-3",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The batch traveler confirms the solvent wash passed for V24. The heat cycle is booked for tomorrow.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-4",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The heat-cycle result passes V24. The accepted wash result belongs to V23, and the wash has yet to run on V24.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-5",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Batch V24 has an accepted solvent wash and accepted heat cycle, each in its own signed record naming V24.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-6",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The earlier batch failed both steps. For V24 the live release sheet contains signed PASS entries for solvent wash and heat cycle.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-7",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "The heat cycle for V24 has not run. A signed wash result has a smeared batch number. V24 and V25 both had wash jobs that morning, and the surviving data cannot identify which job passed.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        0,
+        1
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-8",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "V24’s wash is a confirmed pass. One signed heat-cycle record for V24 says PASS and an equally recent one says CANCELED before the cycle. The supervisor has no basis yet to pick the valid entry.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-mold-preparation-9",
+      "family": "ordinal-fresh-mold-preparation",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "A confirmed V24 heat-cycle pass is on file. A signed wash pass is attached to a batch photo whose number might read V24 or V21. No surviving entry confirms which batch it applies to.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed and accepted mold preparation checks for batch V24. The checks are solvent wash and heat cycle.",
+          "criteria": [
+            "Neither wash nor heat cycle is accepted for V24.",
+            "Exactly one required check is accepted for V24.",
+            "Both required checks are accepted for V24."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-1",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The folder has the veterinarian’s release and the receiving farm’s acceptance for D44. The two entries for D45 remain blank.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-2",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The vet and receiving farm said they will inspect D45 tomorrow. Neither has issued clearance for it.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-3",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The veterinarian signed release for D45, but the receiving farm has acknowledged the request without accepting the animals.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-4",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Destination acceptance names D45. The only veterinary release is the one for yesterday’s consignment, D44.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-5",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The veterinary release and receiving farm’s signed acceptance both name D45, with valid dates and no revocation.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-6",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "D44 was rejected by the receiving farm. For the new consignment D45 the farm’s valid acceptance and the veterinarian’s signed release are on file.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-7",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "There is no destination acceptance. One email from the vet says D45 was released and another equally current email says the release was withdrawn before dispatch. The signed register is unavailable.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        0,
+        1
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-8",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "The receiving farm signed for D45. A veterinary release is valid but omits the consignment number and could belong to D45 or D44, which were inspected together.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-herd-transport-9",
+      "family": "ordinal-fresh-herd-transport",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "D45 has a verified veterinary release. The farm’s two intake sheets conflict on whether it signed D45 or left that entry pending. Both sheets are undated and staff cannot tell which is authoritative.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count valid clearances for the current sheep transport consignment D45. Require the veterinary release and destination acceptance for D45.",
+          "criteria": [
+            "Neither clearance is valid for D45.",
+            "Exactly one of the two clearances is valid for D45.",
+            "Both clearances are valid for D45."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-1",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Planning estimate: 55 minutes. Actual signed exposure report for today: 7 minutes.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-2",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The log for today gives 14 verified minutes above the limit, with no additional intervals. Yesterday had 63.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-3",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The sensor log was checked against the shift record. Exactly 15 minutes exceeded the limit.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-4",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The briefing forecast 54 minutes. Today’s verified result was 32 minutes above the limit.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-5",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "At shift close the signed report gave 45 minutes above the limit, exactly.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-6",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The supervisor crossed out a planned 21-minute estimate. The verified sensor trace shows 67 minutes above the limit for today.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-7",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "Two independent signed exports for today report 13 and 18 minutes. Their clocks agree, but the source mismatch remains unresolved.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        0,
+        1
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-8",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "For today one admissible log shows 42 minutes and another shows 49. Both logs were closed at the same time and neither has priority.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-heat-exposure-9",
+      "family": "ordinal-fresh-heat-exposure",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "Today’s verified segments total 44 minutes. A separate 4-minute segment may belong to this shift or last shift. No date remains in that segment.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Use verified minutes above the workplace heat limit for today’s monitored shift.",
+          "criteria": [
+            "Below 15 minutes.",
+            "At least 15 but below 45 minutes.",
+            "At least 45 minutes."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-1",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The current tray contains four confirmed viable specimens. The published plan had expected 23.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-2",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The signed viability tally reads five. An older tray’s tally of 22 appears on the same clipboard.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-3",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The final count was six viable specimens for the current tray, one more than yesterday’s count.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-4",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The first estimate was 26. Today’s completed microscopy confirms 18 viable specimens.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-5",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The current tray’s signed tally confirms exactly 19 viable specimens, with no provisional results included.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-6",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "A quality check confirmed 27 viable specimens in the present tray. The 11-specimen entry refers to a different pond.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-7",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "The current tray has competing confirmed-looking totals of five and seven. Both sheets are signed and the specimens cannot yet be rechecked.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        0,
+        1
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-8",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "Two readers recorded 17 and 21 viable specimens from this tray. Both used the approved method and a supervisor has yet to reconcile the readings.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-pond-samples-9",
+      "family": "ordinal-fresh-pond-samples",
+      "variant": "boundary_candidate",
+      "split": "evaluation",
+      "state": "The current verified count is 18. One additional confirmed viable specimen has lost its tray label and may belong here or to the next tray.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the count of confirmed viable pond specimens in the current tray using the three levels.",
+          "criteria": [
+            "Fewer than 6 viable specimens.",
+            "6 through 18 viable specimens.",
+            "19 or more viable specimens."
+          ]
+        }
+      },
+      "expected": {},
+      "plausible_score_levels": [
+        1,
+        2
+      ],
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-lodging-desk-1",
+      "family": "ordinal-fresh-lodging-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "My room is clean. Please move my booking from Monday to Tuesday.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "reservations": "Book a room or amend dates, guest count or room type on an existing booking.",
+            "housekeeping": "Clean a room, collect used linen or deliver fresh towels.",
+            "concierge": "General visitor information, directions and local recommendations."
+          }
+        }
+      },
+      "expected": {
+        "decision": "reservations"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-lodging-desk-2",
+      "family": "ordinal-fresh-lodging-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Can you book two double rooms for the weekend for us?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "reservations": "Book a room or amend dates, guest count or room type on an existing booking.",
+            "housekeeping": "Clean a room, collect used linen or deliver fresh towels.",
+            "concierge": "General visitor information, directions and local recommendations."
+          }
+        }
+      },
+      "expected": {
+        "decision": "reservations"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-lodging-desk-3",
+      "family": "ordinal-fresh-lodging-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "I have checked in. The towels in room 312 are wet, and I need fresh towels.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "reservations": "Book a room or amend dates, guest count or room type on an existing booking.",
+            "housekeeping": "Clean a room, collect used linen or deliver fresh towels.",
+            "concierge": "General visitor information, directions and local recommendations."
+          }
+        }
+      },
+      "expected": {
+        "decision": "housekeeping"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-lodging-desk-4",
+      "family": "ordinal-fresh-lodging-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Yesterday you updated my booking. Today I need someone to clean the room after a spill.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "reservations": "Book a room or amend dates, guest count or room type on an existing booking.",
+            "housekeeping": "Clean a room, collect used linen or deliver fresh towels.",
+            "concierge": "General visitor information, directions and local recommendations."
+          }
+        }
+      },
+      "expected": {
+        "decision": "housekeeping"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-lodging-desk-5",
+      "family": "ordinal-fresh-lodging-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Where is the nearest bus stop? I have no changes to my stay.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "reservations": "Book a room or amend dates, guest count or room type on an existing booking.",
+            "housekeeping": "Clean a room, collect used linen or deliver fresh towels.",
+            "concierge": "General visitor information, directions and local recommendations."
+          }
+        }
+      },
+      "expected": {
+        "decision": "concierge"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-plant-nursery-1",
+      "family": "ordinal-fresh-plant-nursery",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Please move collection of order 228 from the morning to the afternoon.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "pickup": "Book or amend a pickup slot for a plant order.",
+            "plant_care": "Diagnose pests, leaf damage or plant disease and advise on treatment.",
+            "desk": "General nursery opening hours and directions."
+          }
+        }
+      },
+      "expected": {
+        "decision": "pickup"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-plant-nursery-2",
+      "family": "ordinal-fresh-plant-nursery",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "I have ordered three shrubs. Can I reserve a pickup time on Friday?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "pickup": "Book or amend a pickup slot for a plant order.",
+            "plant_care": "Diagnose pests, leaf damage or plant disease and advise on treatment.",
+            "desk": "General nursery opening hours and directions."
+          }
+        }
+      },
+      "expected": {
+        "decision": "pickup"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-plant-nursery-3",
+      "family": "ordinal-fresh-plant-nursery",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The leaves on the rose have round black spots. What disease is it and how should I treat it?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "pickup": "Book or amend a pickup slot for a plant order.",
+            "plant_care": "Diagnose pests, leaf damage or plant disease and advise on treatment.",
+            "desk": "General nursery opening hours and directions."
+          }
+        }
+      },
+      "expected": {
+        "decision": "plant_care"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-plant-nursery-4",
+      "family": "ordinal-fresh-plant-nursery",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "I already collected the order. Tiny insects are eating through the new leaves. Can someone identify the pest?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "pickup": "Book or amend a pickup slot for a plant order.",
+            "plant_care": "Diagnose pests, leaf damage or plant disease and advise on treatment.",
+            "desk": "General nursery opening hours and directions."
+          }
+        }
+      },
+      "expected": {
+        "decision": "plant_care"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-plant-nursery-5",
+      "family": "ordinal-fresh-plant-nursery",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "What are the nursery opening hours tomorrow?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "pickup": "Book or amend a pickup slot for a plant order.",
+            "plant_care": "Diagnose pests, leaf damage or plant disease and advise on treatment.",
+            "desk": "General nursery opening hours and directions."
+          }
+        }
+      },
+      "expected": {
+        "decision": "desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-conference-desk-1",
+      "family": "ordinal-fresh-conference-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Please withdraw my proposed talk from the conference program.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "program": "Submit, amend or withdraw a proposed talk for the conference program.",
+            "access": "Arrange step-free routes, hearing support or other accessibility accommodations.",
+            "information": "Provide general event information, venue directions or contact details."
+          }
+        }
+      },
+      "expected": {
+        "decision": "program"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-conference-desk-2",
+      "family": "ordinal-fresh-conference-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The accommodation request is sorted. I need to amend the title on my session proposal.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "program": "Submit, amend or withdraw a proposed talk for the conference program.",
+            "access": "Arrange step-free routes, hearing support or other accessibility accommodations.",
+            "information": "Provide general event information, venue directions or contact details."
+          }
+        }
+      },
+      "expected": {
+        "decision": "program"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-conference-desk-3",
+      "family": "ordinal-fresh-conference-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "I need a step-free route from registration to the lecture hall. Please arrange access.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "program": "Submit, amend or withdraw a proposed talk for the conference program.",
+            "access": "Arrange step-free routes, hearing support or other accessibility accommodations.",
+            "information": "Provide general event information, venue directions or contact details."
+          }
+        }
+      },
+      "expected": {
+        "decision": "access"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-conference-desk-4",
+      "family": "ordinal-fresh-conference-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "My talk has already been accepted. Please arrange a hearing loop for the session room.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "program": "Submit, amend or withdraw a proposed talk for the conference program.",
+            "access": "Arrange step-free routes, hearing support or other accessibility accommodations.",
+            "information": "Provide general event information, venue directions or contact details."
+          }
+        }
+      },
+      "expected": {
+        "decision": "access"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-conference-desk-5",
+      "family": "ordinal-fresh-conference-desk",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Can you tell me the street address of the conference venue?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current request to the team that can act on it.",
+          "criteria": {
+            "program": "Submit, amend or withdraw a proposed talk for the conference program.",
+            "access": "Arrange step-free routes, hearing support or other accessibility accommodations.",
+            "information": "Provide general event information, venue directions or contact details."
+          }
+        }
+      },
+      "expected": {
+        "decision": "information"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-studio-recording-1",
+      "family": "ordinal-fresh-studio-recording",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The speaker said: I explicitly approve the public release of today’s recording. You can publish it.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the speaker explicitly approve public release of the current recording?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-studio-recording-2",
+      "family": "ordinal-fresh-studio-recording",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "After hearing the new recording, the speaker wrote that the studio may release this version publicly.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the speaker explicitly approve public release of the current recording?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-studio-recording-3",
+      "family": "ordinal-fresh-studio-recording",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The speaker received the consent request and will decide after listening.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the speaker explicitly approve public release of the current recording?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-studio-recording-4",
+      "family": "ordinal-fresh-studio-recording",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The speaker approved last year’s recording. For this recording they explicitly withheld consent.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the speaker explicitly approve public release of the current recording?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-studio-recording-5",
+      "family": "ordinal-fresh-studio-recording",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The studio sent a public release request. The speaker has not answered.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Did the speaker explicitly approve public release of the current recording?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-courier-crossing-1",
+      "family": "ordinal-fresh-courier-crossing",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The courier’s signed log says they entered Alder Province at the river checkpoint during this delivery.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does the trip record say the courier crossed into Alder Province during the current delivery?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-courier-crossing-2",
+      "family": "ordinal-fresh-courier-crossing",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "Today’s completed delivery record has an Alder entry stamp and a note that the van crossed the provincial border.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does the trip record say the courier crossed into Alder Province during the current delivery?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-courier-crossing-3",
+      "family": "ordinal-fresh-courier-crossing",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The Alder route was scheduled, but the van turned back on the near side of the border and never entered the province.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does the trip record say the courier crossed into Alder Province during the current delivery?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-courier-crossing-4",
+      "family": "ordinal-fresh-courier-crossing",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The courier crossed into Alder Province on Monday’s delivery. Today the courier stayed in Birch Province.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does the trip record say the courier crossed into Alder Province during the current delivery?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ordinal-fresh-courier-crossing-5",
+      "family": "ordinal-fresh-courier-crossing",
+      "variant": "rubric",
+      "split": "evaluation",
+      "state": "The planned route mentions a possible Alder crossing. The trip record ends before departure and shows no border crossing.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Does the trip record say the courier crossed into Alder Province during the current delivery?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    }
+  ]
+}
