@@ -17,6 +17,25 @@ import laya.qualification as qualification
 from laya.qualification import qualify, run_matrix, split_families, validate_corpus, validate_matrix
 
 
+def test_level_zero_repair_loss_uses_semantic_levels_after_rotation():
+    torch = pytest.importorskip("torch")
+    from research.scripts.train_checkpoint_repair import level_zero_loss
+
+    logits = torch.tensor([[-1., 0., 2.], [-1., 2., -2.]], requires_grad=True)
+    gold = torch.tensor([[1., 0., 0.], [0., 1., 0.]])
+    anchor = torch.tensor([[.1, .2, .7], [.15, .72, .13]])
+    levels = torch.arange(3).expand(2, 3)
+    kinds = torch.tensor([1, 1])
+    temperatures = torch.tensor([.85, .94, 1.65])
+    loss = level_zero_loss(logits, gold, anchor, levels, kinds, temperatures)
+    order = [2, 0, 1]
+    rotated = level_zero_loss(logits[:, order], gold[:, order], anchor[:, order],
+                              levels[:, order], kinds, temperatures)
+    torch.testing.assert_close(loss, rotated)
+    loss.backward()
+    assert logits.grad[0, 0] < 0 < logits.grad[0, 2]
+
+
 def test_artifact_identity_detects_changed_sparse_external_data(tmp_path):
     onnx = pytest.importorskip("onnx")
     from onnx import TensorProto, helper

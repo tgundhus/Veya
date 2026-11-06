@@ -23,7 +23,7 @@ def training_rows(groups):
                    "family": group["family"]}
 
 
-def extract(agent, rows, *, rotate):
+def extract(agent, rows, *, rotate_kinds=()):
     import torch
     from torch.nn.functional import pad
     from laya.common import collate_items
@@ -39,7 +39,7 @@ def extract(agent, rows, *, rotate):
         k = item["k"]
         if k != (2 if item["qtype"] == 2 else 3):
             raise ValueError("this English repair recipe uses three-way choice/score and binary noul")
-        for offset in range(k if rotate else 1):
+        for offset in range(k if item["qtype"] in rotate_kinds else 1):
             order = [(i + offset) % k for i in range(k)]
             encoded = encode_item(agent.tok, item, max_len, head_len, order)
             encoded["levels"] = order
@@ -77,6 +77,7 @@ def measure(model, features, temperatures):
     import torch
     hits = [0, 0, 0]
     totals = [0, 0, 0]
+    zero_hits = zero_total = 0
     loss = 0.0
     with torch.no_grad():
         for batch, targets in features:
@@ -86,16 +87,19 @@ def measure(model, features, temperatures):
             levels = torch.arange(logits.shape[-1], dtype=probabilities.dtype)
             errors = ((probabilities - targets) @ levels).abs()
             match = torch.where(kinds == 1, errors <= .25, logits.argmax(-1) == targets.argmax(-1))
+            zero = (kinds == 1) & (targets[:, 0] == 1)
+            zero_hits += int((match & zero).sum())
+            zero_total += int(zero.sum())
             for kind in range(3):
                 mask = kinds == kind
                 hits[kind] += int((match & mask).sum())
                 totals[kind] += int(mask.sum())
             loss -= float((targets * logits.log_softmax(-1)).sum())
     return {"correct": hits, "total": totals, "rates": [a / b for a, b in zip(hits, totals)],
-            "cross_entropy": loss / sum(totals)}
+            "cross_entropy": loss / sum(totals), "level_zero": [zero_hits, zero_total]}
 
 
-def fit_temperatures(model, features):
+def fit_temperatures(model, features, retained=None):
     import torch
     from laya.calibrate import MIN_TYPE_N, fit_one_temperature
     records = defaultdict(list)
@@ -103,15 +107,35 @@ def fit_temperatures(model, features):
         for batch, target in features:
             for logits, y, kind in zip(forward(model, batch).numpy(), target.numpy(), batch[-1].tolist()):
                 records[kind].append((logits, y))
-    if any(len(records[kind]) < MIN_TYPE_N for kind in range(3)):
+    retained = retained or {}
+    if any(len(records[kind]) < MIN_TYPE_N for kind in range(3) if kind not in retained):
         raise ValueError("each question type needs at least %d calibration examples" % MIN_TYPE_N)
-    return [fit_one_temperature(records[kind], min_n=MIN_TYPE_N) for kind in range(3)]
+    return [retained[kind] if kind in retained else fit_one_temperature(records[kind], min_n=MIN_TYPE_N)
+            for kind in range(3)]
+
+
+def level_zero_loss(logits, gold, original, levels, kinds, temperatures):
+    import torch
+    # Train the served expected score at the base temperature. The independent
+    # calibration split fits the final score temperature after each epoch.
+    logp = (logits / temperatures[kinds, None]).log_softmax(-1)
+    anchor = original.clamp_min(1e-8).log() / temperatures[kinds, None]
+    anchor = anchor.softmax(-1)
+    score = kinds == 1
+    target = torch.where(score[:, None], .995 * gold + .005 * anchor, .1 * gold + .9 * anchor)
+    ce = -(target * logp).sum(-1)
+    gold_level = (gold * levels).sum(-1)
+    error = (logp.exp() * levels).sum(-1) - gold_level
+    hard = 1 + 4 * (1 - (gold * anchor).sum(-1))
+    weights = torch.where(score, hard * (1 + .8 * (gold_level == 0)), 4.0)
+    return ((ce + score * 1.5 * error.square()) * weights).sum() / weights.sum()
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", type=Path, required=True)
     parser.add_argument("--data", type=Path, default=ROOT / "research/evals/checkpoint-repair-training-v1.json")
+    parser.add_argument("--level-zero-data", type=Path, help="supplemental score training and separate score calibration")
     parser.add_argument("--development", type=Path, nargs="+", default=[ROOT / "research/evals/qualification-v1.json",
                         ROOT / "research/evals/independent-repair-controls-v1.json"])
     parser.add_argument("--output", type=Path, required=True)
@@ -132,12 +156,21 @@ def main():
     torch.set_num_threads(args.threads)
     torch.set_num_interop_threads(1)
     torch.manual_seed(20261106)
-    inputs = {str(path.resolve()): _file_sha(path) for path in (args.data, Path(__file__), *args.development)}
+    input_paths = [args.data, Path(__file__), *args.development]
+    if args.level_zero_data:
+        input_paths.append(args.level_zero_data)
+    inputs = {str(path.resolve()): _file_sha(path) for path in input_paths}
     names = [path.name for path in args.development]
     if len(set(names)) != len(names) or set(names) & {"training", "calibration"}:
         parser.error("development inputs need distinct filenames outside the split names")
     bank = load_document(args.data)
     splits = {part: list(training_rows(bank[part])) for part in ("training", "calibration")}
+    if args.level_zero_data:
+        supplement = load_document(args.level_zero_data)
+        if any(group["type"] != "score" for part in ("training", "calibration") for group in supplement[part]):
+            parser.error("the level-zero supplement accepts score groups only")
+        splits["training"].extend(training_rows(supplement["training"]))
+        splits["calibration"] = list(training_rows(supplement["calibration"]))
     dev = {path.name: [row for row in validate_corpus(load_document(path))["cases"]
                       if row["split"] == "evaluation" and row["expected"]] for path in args.development}
     seen_families, seen_states = {}, {}
@@ -164,10 +197,10 @@ def main():
         if agent.parallel_options:
             raise ValueError("this recipe expects the sequential English checkpoint")
         cfg = deepcopy(agent.cfg)
-        training = extract(agent, splits["training"], rotate=True)
+        training = extract(agent, splits["training"], rotate_kinds=(1,) if args.level_zero_data else (0, 1, 2))
         print("cached training features", [len(targets) for _, targets in training], flush=True)
-        calibration = extract(agent, splits["calibration"], rotate=False)
-        development = {name: extract(agent, rows, rotate=False) for name, rows in dev.items()}
+        calibration = extract(agent, splits["calibration"])
+        development = {name: extract(agent, rows) for name, rows in dev.items()}
         temperatures = [agent.temperature_by_options.get(temp_bucket(kind, k), agent.temperature[kind])
                         for kind, k in enumerate((3, 3, 2))]
         model = agent.model
@@ -182,6 +215,8 @@ def main():
     before = {name: measure(model, rows, temperatures) for name, rows in development.items()}
     print("development before", before, flush=True)
     optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=1e-4)
+    train_temperatures = torch.tensor(temperatures)
+    retained = {kind: temperatures[kind] for kind in (0, 2)} if args.level_zero_data else None
     with torch.no_grad():
         original = [forward(model, batch).softmax(-1) for batch, _ in training]
     history, best = [], None
@@ -192,15 +227,20 @@ def main():
         for order in torch.randperm(len(batches)).tolist():
             index, ids = batches[order]
             batch, targets = training[index]
-            logp = forward(model, tuple(t[ids] for t in batch)).log_softmax(-1)
-            # A small anchor retains information about alternatives in the base model.
+            logits = forward(model, tuple(t[ids] for t in batch))
             gold = targets[ids]
-            target = .98 * gold + .02 * original[index][ids]
-            hard = 1 + 4 * (1 - (gold * original[index][ids]).sum(-1))
-            per_row = -(target * logp).sum(-1)
-            ordinal_error = ((logp.exp() - gold) * batch[-2][ids]).sum(-1)
-            per_row = per_row + (batch[-1][ids] == 1) * ordinal_error.square()
-            loss = (hard * per_row).sum() / hard.sum()
+            anchor = original[index][ids]
+            levels, kinds = batch[-2][ids], batch[-1][ids]
+            if args.level_zero_data:
+                loss = level_zero_loss(logits, gold, anchor, levels, kinds, train_temperatures)
+            else:
+                logp = logits.log_softmax(-1)
+                target = .98 * gold + .02 * anchor
+                hard = 1 + 4 * (1 - (gold * anchor).sum(-1))
+                per_row = -(target * logp).sum(-1)
+                ordinal_error = ((logp.exp() - gold) * levels).sum(-1)
+                per_row = per_row + (kinds == 1) * ordinal_error.square()
+                loss = (hard * per_row).sum() / hard.sum()
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             optimizer.step()
@@ -208,10 +248,11 @@ def main():
             continue
         # Score the same stored precision used by the deployed checkpoint.
         stored = deepcopy(model).half().float().eval()
-        fitted = fit_temperatures(stored, calibration)
+        fitted = fit_temperatures(stored, calibration, retained)
         metrics = {name: measure(stored, rows, fitted) for name, rows in development.items()}
         rates = [rate for row in metrics.values() for rate in row["rates"]]
-        rank = (-sum(max(0, .8 - rate) for rate in rates), min(rates), sum(rates),
+        zero_hits = sum(row["level_zero"][0] for row in metrics.values()) if args.level_zero_data else 0
+        rank = (-sum(max(0, .8 - rate) for rate in rates), min(rates), zero_hits, sum(rates),
                 -sum(row["cross_entropy"] for row in metrics.values()))
         row = {"epoch": epoch, "temperatures": fitted, "development": metrics}
         history.append(row)
@@ -224,7 +265,8 @@ def main():
     for key in ("temperature_by_options", "lang_temperatures", "binning_map", "decision_policy"):
         cfg.pop(key, None)
     cfg["fine_tuned"] = True
-    cfg["training"] = {"recipe": "english-contrast-head-v1", "selected_epoch": selected["epoch"],
+    recipe = "english-level-zero-head-v1" if args.level_zero_data else "english-contrast-head-v1"
+    cfg["training"] = {"recipe": recipe, "selected_epoch": selected["epoch"],
                        "base_weights_sha256": artifacts["model.safetensors"]}
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="checkpoint-repair-", dir=output.parent) as tmp:
