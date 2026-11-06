@@ -1,0 +1,90 @@
+{
+  "training": [
+    {"family":"sterile-supply-disruption","type":"score","instructions":"Grade the current impact on sterile instrument supply. Treat contingency drills and future maintenance as routine when delivery continues.","criteria":["Level 0: routine work with no current supply interruption.","Level 1: a limited interruption with a working supply route.","Level 2: urgent interruption across the service with no working supply route."],"rows":[
+      ["Add a photo of the new cart to the manual. Every tray is arriving at its station on schedule.",0],
+      ["The exercise script reads 'both sterilizers failed and the backup is down'. It is a tabletop drill. Both sterilizers are working and deliveries are on time.",0],
+      ["Archive the record of last year's complete supply outage. It was resolved last year. Every unit has its trays today.",0],
+      ["A jam has stopped the washer in the east room, delaying trays to one unit. Staff have started delivering replacement trays from the west room.",1],
+      ["One floor's tray lift failed. Staff are delivering those trays by the service elevator until it is repaired.",1],
+      ["Both sterilizers failed and the backup is down. No ward can receive a sterile tray and urgent procedures are waiting.",2],
+      ["The only certified stock was recalled at dawn. All areas have exhausted their trays, and no alternative supplier can deliver in time for the emergency list.",2]]},
+    {"family":"data-feed-disruption","type":"score","instructions":"Grade impact on current market-data delivery. A report, simulation, or alert alone does not establish that data delivery stopped.","criteria":["0 means routine work, an advisory, or an investigation without confirmed interruption.","1 means confirmed localized interruption with usable alternate data.","2 means no client can get data and no alternate feed works for today's trading."],"rows":[
+      ["Rename the old outage dashboard. Every client is receiving live quotes, with normal delay.",0],
+      ["The alert title is 'total feed loss'. The exchange traced it to a probe credential. Client measurements confirm continuous delivery.",0],
+      ["A broker asked us to explain our fallback plan if the feed and mirrors both fail. No incident was reported.",0],
+      ["The raw feed stopped updating in one branch. That branch is consuming current data from the mirror and can trade.",1],
+      ["One vendor lost the options stream. Subscribers can see options quotes on the secondary terminal.",1],
+      ["All streams are frozen, including the mirrors. Clients have no current prices and the session opens in two minutes.",2],
+      ["Authentication for all vendors failed at once. Neither the main endpoints nor the alternate feed can be reached by any client during the open.",2]]},
+    {"family":"water-testing-disruption","type":"score","instructions":"Classify the present interruption to sampling and reporting using actual availability, scope and urgency.","criteria":["0: scheduled work or record updates while tests and reporting proceed.","1: a localized interruption for which a usable alternate lab or method is in use.","2: time-critical testing is unavailable for the entire service and no alternate lab or method is usable."],"rows":[
+      ["Someone asked for the address to put on the reagent order. Every shift reported normal sampling.",0],
+      ["We updated the emergency procedure for loss of every analyzer. The test was a simulation and all samples have results.",0],
+      ["The reprinted lab notice still mentions yesterday's hold. That hold ended at 06:00 and all current samples are being processed.",0],
+      ["The north-site reader is broken. Technicians drove the samples to the south site and are using its certified reader today.",1],
+      ["One unit cannot send electronic results. Its results are still being taken by phone and entered in the shared register.",1],
+      ["All analyzers and approved manual kits were contaminated. No lab can run the emergency safety tests before water is released this afternoon.",2],
+      ["Every testing room lost power. Backup batteries have failed, no nearby lab can accept samples, and the regulator needs the safety results now.",2]]},
+    {"family":"event-caption-disruption","type":"score","instructions":"Assess the live impact on the captioning service. Use observed service and substitute coverage for the active event.","criteria":["0: planning, editorial work or alerts with captions still available for every active event.","1: some caption loss with an adequate substitute still in use.","2: every active feed lacks captions, no substitute is available, and coverage is needed now."],"rows":[
+      ["Use a bigger speaker label in the template next week. All live streams have captions today.",0],
+      ["The support ticket quotes 'all channels silent' from a hypothetical vendor test. The live feeds never lost captions.",0],
+      ["Staff are collecting reports about the outage that ended yesterday. Each live feed is showing current captions again.",0],
+      ["The caption stream for room B froze. That room has switched to the live stenographer's feed.",1],
+      ["One broadcast lost translated captions. Staff are sending the corresponding translation through the approved companion page.",1],
+      ["Captions disappeared on every active feed. The contracted backup and companion pages are unavailable during the live evacuation briefing.",2],
+      ["No venue can display captions after the relay failed. Neither human operators nor alternate terminals are available while all meetings are in progress.",2]]},
+    {"family":"orchid-release-evidence","type":"score","instructions":"Grade documented clearance of the current plant lot. Only evidence for the named lot and current release counts.","criteria":["0: no completed clearance prerequisite is documented for the lot, or release is currently barred.","1: one of the two clearance prerequisites for the lot is complete.","2: both the inspection and identity check passed for this lot."],"rows":[
+      ["A form names the inspector and the label checker for lot F. Both completion fields are blank.",0],
+      ["Lot D remains on an active no-release hold. The attached pass certificates cover lot B.",0],
+      ["The team ordered replacement labels for lot K. The notice contains neither a completed inspection nor a completed identity check.",0],
+      ["The inspector signed off lot S. The identity verifier has yet to scan its labels.",1],
+      ["Lot P's identity check passed. The inspection is still scheduled for Friday.",1],
+      ["The identity verifier and the inspector each signed a pass for current lot X. The records name the same lot.",2],
+      ["Both prerequisites for lot T passed today. The older inspection rejection on the attachment is for withdrawn lot J.",2]]},
+    {"family":"equipment-drill-evidence","type":"score","instructions":"Score what the record establishes about completion of the drill. A staffing plan, a future entry, or a practice for another group gives no completion evidence.","criteria":["0: neither required role completed the drill, or the record has no verified completion for either.","1: one of the two required roles completed the drill.","2: both required roles completed the same drill and are verified."],"rows":[
+      ["The operations lead and first aider are named on tomorrow's roster. There are no attendance records because the drill has yet to take place.",0],
+      ["The observer heard both names read out during planning. The sign-in ledger for this drill is empty.",0],
+      ["Two roles completed the west team's drill. The report gives no actual attendance for the east team's drill being scored.",0],
+      ["The operations lead completed the east drill and signed. The first aider was on call elsewhere and took no part.",1],
+      ["The first aider appears on the signed completion log. The operations lead only received the invitation.",1],
+      ["The log verifies completion by the operations lead and first aider in the same session. Both entries name this drill.",2],
+      ["The first aider and operations lead completed the drill in full. Both signed the observed completion sheet before leaving.",2]]},
+    {"family":"export-approval-evidence","type":"score","instructions":"Score the state of the two signoffs for the exact export described. Count completed signoffs only.","criteria":["0: no valid completed signoff for this version or both signoffs were revoked.","1: exactly one valid completed signoff for this version.","2: both valid completed signoffs for this version."],"rows":[
+      ["The producer copied a form from export 1. Both entries say 'approve after review'. Export 2 has yet to be reviewed.",0],
+      ["The signoffs on the exact export were revoked. The release checklist now marks both signoffs pending.",0],
+      ["The email lists the two people expected to approve export R. It contains no responses from either person.",0],
+      ["Editorial signed export R. Compliance approved export Q and has not received R.",1],
+      ["Compliance signed export 6. Editorial confirmed receipt and will review it tomorrow.",1],
+      ["Editorial and compliance signed export H. Both confirmations quote the H checksum, and both are still in effect.",2],
+      ["Export J has completed signoffs from editorial and compliance. A request for revisions only applies to the older export G.",2]]},
+    {"family":"roof-inspection-impact","type":"score","instructions":"Rate the effect on current building access. Base the answer on observed closures and the availability of another usable route.","criteria":["0: ordinary administrative or preventive work with no closure.","1: limited closure with a working alternate route.","2: urgent loss of all access without any working alternate."],"rows":[
+      ["Please send a quote for replacing the roof inspection labels. All entrances are open and pass their checks.",0],
+      ["The report lists the worst case of structural collapse and blocked exits as a design assumption. Nothing collapsed and no access route closed.",0],
+      ["An alert asks where staff should gather if a closure is ever announced. Every entry route remains open.",0],
+      ["The southern footbridge was shut for inspection. People continue to enter through the staffed north door.",1],
+      ["One stairwell is cordoned off. Both other routes are open, and the affected staff are using them.",1],
+      ["A landslide blocked every entrance and the emergency access road. No other route exists and a response team needs to get in now.",2],
+      ["The main and emergency doors seized shut. Engineers confirmed nobody can enter by any route and the critical rooms need urgent access.",2]]}
+  ],
+  "calibration": [
+    {"family":"battery-exchange-calibration","type":"score","instructions":"Rate current effect on exchange operations using the evidence of a stoppage and any usable alternative.","criteria":["0: normal exchanges continue without an active interruption.","1: a limited fault with an exchange route that works.","2: urgent loss of all exchange capacity with no working route."],"rows":[
+      ["Please print a different label. All exchange counters are working normally.",0],
+      ["The alert simulated a simultaneous counter outage. Exchange records were uninterrupted.",0],
+      ["The warehouse asked for an explanation of last week's shutdown. Every counter is open now.",0],
+      ["One counter failed. Customers can still exchange at the other two counters in this depot.",1],
+      ["The automatic terminal stopped reading cards. A staffed desk is doing the affected exchanges by hand.",1],
+      ["One neighborhood's units are incompatible with the first terminal. The second terminal is processing them now.",1],
+      ["Every unit stopped accepting batteries. Staff cannot complete exchanges by hand and emergency crews are waiting.",2],
+      ["A contamination notice closed every exchange point. The relief depot is also closed and teams have no route to replace failed batteries now.",2],
+      ["The depot is completely inaccessible, including the mobile point. There is no replacement source for critical exchanges in progress.",2]]},
+    {"family":"recording-release-calibration","type":"score","instructions":"Score completion of the two required permissions for the exact recording.","criteria":["0: neither permission is in force for this recording.","1: exactly one permission is in force for this recording.","2: both permissions are in force for this recording."],"rows":[
+      ["The requests were queued. Nobody has signed the studio or performer permission for this take.",0],
+      ["The attachment contains both permissions for the rehearsal. There is no permission for the concert recording.",0],
+      ["Both signatories withdrew their permission for take C, and the current record has no replacements.",0],
+      ["The studio granted permission for the take. The performer has yet to reply.",1],
+      ["The performer signed for take D. The studio signed for take A only.",1],
+      ["Take Q has studio permission. Its performer permission was withdrawn this morning.",1],
+      ["Both permission forms for take K were signed and remain valid.",2],
+      ["The performer and the studio gave current permission for the concert recording. Both records name that recording.",2],
+      ["Take W can be released with the two signed, current permissions attached for take W.",2]]}
+  ]
+}
