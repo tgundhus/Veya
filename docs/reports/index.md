@@ -22,6 +22,9 @@ local decision-head training, fresh acceptance cases and paired deployment check
 The [level-zero score follow-up](level-zero-repair-2026-11-06.md) checks whether
 the same inference path can distinguish routine work from active disruption.
 
+The [evidence-grounding follow-up](evidence-repair-2026-11-06.md) evaluates
+current-versus-historical contrasts and an independent acceptance set.
+
 The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
 required decision storage, experimental HTTP microbatching and selected upstream fixes.
 
