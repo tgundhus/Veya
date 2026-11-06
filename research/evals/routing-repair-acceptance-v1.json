@@ -1,0 +1,1459 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "english-routing-repair-acceptance-v1",
+  "description": "Fresh routing and score preservation cases. The unlabelled cases contain actual competing or unresolved evidence.",
+  "cases": [
+    {
+      "id": "library-lock-helpdesk-1",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "My access card is missing. Please cancel it and issue a replacement.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {
+        "decision": "keys"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "library-lock-helpdesk-2",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The door mechanism is fine. My card was cancelled in error and I need an active credential.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {
+        "decision": "keys"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "library-lock-helpdesk-3",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The card reader accepts my card. The bolt jams when the handle turns. Please repair the door.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {
+        "decision": "locksmith"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "library-lock-helpdesk-4",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Last week's lost-card ticket is closed. I need somebody to fix the broken latch on the side entrance.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {
+        "decision": "locksmith"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "library-lock-helpdesk-5",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "What is the reception number? I have neither a lost card nor a broken door to report.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {
+        "decision": "reception"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "library-lock-helpdesk-6",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I have the door location and my card number ready. I'd like to speak to someone before I explain what I need.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {
+        "decision": "reception"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "library-lock-helpdesk-7",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Please replace my missing card and fix the door that won't latch. Both issues need attention and neither has priority.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "library-lock-helpdesk-8",
+      "family": "library-lock-helpdesk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "My spare card stopped working and the north lock also jammed. Please send both actions to the right people; I can't say which is the main request.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the action requested now. Use reception when the request is general or still unspecified.",
+          "criteria": {
+            "keys": "Reader access cards, lost cards or credential replacements.",
+            "locksmith": "Physical lock or door faults that need a repair.",
+            "reception": "General information and requests the visitor has yet to explain."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-1",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The artwork arrived safely. Please update its insured value before renewal.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {
+        "decision": "appraisal"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-2",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The carrier issue was settled. I need a formal valuation of the new sculpture.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {
+        "decision": "appraisal"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-3",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The valuation is in the file. The frame was cracked during transport and I need to open a claim.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {
+        "decision": "transit_claims"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-4",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The insured value is correct. The carrier has lost the crate, and I'd like to report the transit loss.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {
+        "decision": "transit_claims"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-5",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Can you tell me the service desk's opening hours? I'm not requesting an appraisal or making a shipment claim.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {
+        "decision": "service_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-6",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I have the artwork number and the transit reference. I'd like to discuss my inquiry before you assign it.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {
+        "decision": "service_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-7",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Please update the insurance value and log the dent from transport. We need both and don't have a primary request.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "art-cover-service-desk-8",
+      "family": "art-cover-service-desk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The collector asks for a formal appraisal and a claim for a missing shipment. They don't rank the two requests.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the active inquiry to the responsible team. Use the service desk when the inquiry has no specific appraisal or transit claim.",
+          "criteria": {
+            "appraisal": "Assessing or updating a work's insurance value.",
+            "transit_claims": "Damage, loss, or claims relating to shipment.",
+            "service_desk": "General information and contact before a specific request is stated."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-1",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please confirm whether Friday's soup contains milk and send the dairy-free alternative.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "menu_team"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-2",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The refund arrived. I need to know which vegetarian meal is available next week.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "menu_team"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-3",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The meal options are fine. The account was charged twice for Tuesday, and I want the extra charge reversed.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "payments"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-4",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "My menu question was answered. Please tell me how to pay the outstanding lunch balance.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "payments"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-5",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Where is the welcome desk? I haven't asked about a menu or account payment.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "welcome_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-6",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I have the student number and a recent receipt. I'll describe what I need when the office calls.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "welcome_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-7",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Please fix the duplicate charge and arrange a dairy-free substitute for Friday. Neither request is more urgent.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "school-lunch-account-desk-8",
+      "family": "school-lunch-account-desk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "A parent requests both a refund for a cancelled lunch and the ingredient list for the replacement meal, with no primary action.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the request the parent is making now. Use the welcome desk if they have only asked for general contact.",
+          "criteria": {
+            "menu_team": "Ingredients, meal substitutions or dietary menu information.",
+            "payments": "Incorrect charges, refunds or lunch-account payments.",
+            "welcome_desk": "General inquiries or a request with no specified menu or payment action."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "projection-room-access-1",
+      "family": "projection-room-access",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The manager signed today's entry grant for this technician and the named projection room.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May this technician enter the named projection room today under a current grant from the building manager?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "projection-room-access-2",
+      "family": "projection-room-access",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The manager's latest signed note replaces an earlier refusal and authorizes this exact technician to enter this room today.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May this technician enter the named projection room today under a current grant from the building manager?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "projection-room-access-3",
+      "family": "projection-room-access",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The technician sent a request and received an automatic receipt. The manager has made no decision.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May this technician enter the named projection room today under a current grant from the building manager?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "projection-room-access-4",
+      "family": "projection-room-access",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The permission names another technician and expired yesterday. No new grant exists for today's visitor.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May this technician enter the named projection room today under a current grant from the building manager?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "projection-room-access-5",
+      "family": "projection-room-access",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The grant applies if the room's electrical work is complete. The manager says it passed, but the current maintenance sheet still marks the test pending.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May this technician enter the named projection room today under a current grant from the building manager?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "projection-room-access-6",
+      "family": "projection-room-access",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "A scan has a current signature but part of the room number is missing. Two projection rooms were on the same request.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May this technician enter the named projection room today under a current grant from the building manager?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "seed-packet-release-1",
+      "family": "seed-packet-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The curator signed the current distribution release for packet R, and the record identifies that exact packet.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the responsible curator released this exact seed packet for distribution under a valid current authorization?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seed-packet-release-2",
+      "family": "seed-packet-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The curator signed a later release that explicitly lifts packet M's hold and grants distribution today.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the responsible curator released this exact seed packet for distribution under a valid current authorization?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seed-packet-release-3",
+      "family": "seed-packet-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The release form is filled out for this packet, but the curator has not signed it.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the responsible curator released this exact seed packet for distribution under a valid current authorization?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seed-packet-release-4",
+      "family": "seed-packet-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The current approval covers packet L. The packet being assessed has a different number and remains on hold.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the responsible curator released this exact seed packet for distribution under a valid current authorization?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seed-packet-release-5",
+      "family": "seed-packet-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The signed release appears to cover this packet, but a second copy lists a different lot and the final copy is unclear.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the responsible curator released this exact seed packet for distribution under a valid current authorization?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "seed-packet-release-6",
+      "family": "seed-packet-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The curator said to release the packet if the inspection passed. A text says 'pass' without identifying which of two packets it refers to.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the responsible curator released this exact seed packet for distribution under a valid current authorization?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-1",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Update the depot logo on the scan report. Every pallet still has a current tracking record.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-2",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The night team copied the full outage into its training manual. That incident ended last month; all readers are reporting now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-3",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One loading bay lost its reader. Staff can track all of its pallets using a working portable scanner.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-4",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The scanner at the north door froze. Staff redirected its pallets through the adjacent bay, where their locations are being recorded.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-5",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Every fixed and portable reader failed. No depot can locate any pallet and the urgent handover has no manual tracking route.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-6",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All pallet location records stopped updating, including the recovery system. Nobody can locate the urgent loads by any alternative method.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-7",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The depot reports one reader failed and a portable scanner is working. Dispatch says every tracking feed is unavailable and the portable logs are empty.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-8",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "One supervisor says all readers are normal. Another says one bay lost its reader and is now using a portable scanner.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "pallet-scan-service-impact-9",
+      "family": "pallet-scan-service-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The control dashboard shows a total loss with no backup. A floor lead says only one bay disconnected and its working substitute has tracked every pallet affected there.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade the current effect on pallet tracking using verified interruption and working alternatives.",
+          "criteria": [
+            "0: normal tracking or routine work without a current tracking interruption.",
+            "1: limited current interruption with a working alternative for the affected pallets.",
+            "2: urgent loss of all tracking without any working alternative."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-1",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The tuner booked both checks for tomorrow. There are no signed results for the piano being handed over.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-2",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The folder holds both signed results for the rehearsal piano. The concert piano has a blank handover record.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-3",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The pitch test passed for the current piano and was signed. Its damper inspection is pending.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-4",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The damper inspection is signed for this piano. The attached pitch certificate identifies a different piano.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-5",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Both the pitch test and damper inspection passed. Both signed records identify this piano by its serial number.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-6",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The current piano has a signed pitch pass and a signed damper pass. The older practice piano failed pitch and is out of scope.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-7",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The damper check is signed. The pitch report says 'pass pending signature' and nobody knows if it has been signed since then.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-8",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Both tests appear signed, but the scanned serial number on the second sheet could refer to another piano.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "piano-handover-checks-9",
+      "family": "piano-handover-checks",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "A signed pitch certificate records a pass, but its smudged serial number could identify either of two pianos. The damper check is still pending.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count completed handover checks for the exact piano. The required checks are a signed pitch test and a signed damper inspection.",
+          "criteria": [
+            "Neither required check is complete for the current piano.",
+            "Exactly one required check is complete for the current piano.",
+            "Both required checks are complete for the current piano."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-1",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please reformat the old service notice. Every receiver still has current images.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-2",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The exercise simulated loss of every receiver. The operational feed and its subscribers kept receiving images throughout.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-3",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One receiving station dropped the primary relay. Its users are receiving the current images through the secondary relay.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-4",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The image link for one sector stopped. That sector is collecting the same current pictures from a functioning ground station.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-5",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All links and both ground stations lost their feeds. No receiver can get current images for the active emergency response.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-6",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All subscribers lost delivery and the spare relay is offline. Teams need images urgently and there is no substitute feed.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-7",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "One site says only its main link failed and the secondary is receiving images. The command desk says every feed, including that secondary, went offline.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-8",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The support desk calls it a simulation that left all deliveries normal. A subscriber says one sector really lost the primary and is using the ground station.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "satellite-image-relay-impact-9",
+      "family": "satellite-image-relay-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The receiving log says only one sector lost its primary route and its working spare is delivering all affected pictures. Operations reports a complete loss with no replacement. The records are from the same minute.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current image delivery from confirmed impact and working substitutes.",
+          "criteria": [
+            "0: routine activity with no interruption to current image delivery.",
+            "1: localized interruption with a working substitute route.",
+            "2: urgent service-wide interruption with no working substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    }
+  ]
+}
