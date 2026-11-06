@@ -16,6 +16,9 @@ The [checkpoint qualification investigation](checkpoint-qualification-repair-202
 reproduces the English checkpoint's errors and evaluates an optional correction
 against the original gates and separate controls.
 
+The [single-pass checkpoint repair](checkpoint-repair-2026-11-06.md) covers
+local decision-head training, fresh acceptance cases and paired deployment checks.
+
 The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
 required decision storage, experimental HTTP microbatching and selected upstream fixes.
 

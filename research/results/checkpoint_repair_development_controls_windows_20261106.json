@@ -1,0 +1,4752 @@
+{
+  "schema": "veya-qualification-report/1",
+  "corpus_id": "independent-repair-controls-v1",
+  "corpus_sha256": "3cb0256a3fd338c4d10e4f64f305eb030a5744753f5796a827005e176e755a17",
+  "reference": "eager-cpu-fp32",
+  "limits": {
+    "max_label_flip_rate": 0,
+    "max_probability_drift": 0.001,
+    "max_score_drift": 0.001,
+    "min_accuracy": 0.8,
+    "max_accuracy_drop": 0,
+    "max_p95_ms": null,
+    "max_p99_ms": null,
+    "min_boundary_cases": 1,
+    "boundary_margin": 0.05
+  },
+  "batch_sizes": [
+    1
+  ],
+  "repeats": 1,
+  "concurrencies": [
+    1
+  ],
+  "scope": "local-artifact-matrix",
+  "production_qualified": false,
+  "passed": false,
+  "failures": [
+    "eager-cpu-fp32 repeat=0 batch=1 concurrency=1 ordered: score_within_0.25=0.6 is below 0.8",
+    "onnx-cpu-graph repeat=0 batch=1 concurrency=1 ordered: score_within_0.25=0.6 is below 0.8"
+  ],
+  "cells": {
+    "eager-cpu-fp32": {
+      "status": "failed",
+      "identity": {
+        "verification": "local artifacts and runtime",
+        "artifacts": {
+          "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+          "model.safetensors": "f42fde11f624c2d60cdffd76ccb8dd45291545be1e5109ff5204f0259cad1778",
+          "repair_report.json": "a0af1c6c2531d43d22dc0e359cb7b3cdfd15edafd15236cb0492b47bc324385d",
+          "rl_agent_config.json": "a4245d6b9b7e7e38f89b872b71ed92390c01fb1391bed06ed7c0cadd86bf0a32",
+          "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+          "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+        },
+        "backend": "eager",
+        "device": "cpu",
+        "precision": "float32",
+        "torch": "2.14.1+cpu",
+        "threads": 4,
+        "math_settings": {
+          "float32_matmul_precision": "per-backend",
+          "deterministic_algorithms": false,
+          "global_fp32_precision": "none",
+          "mkldnn_enabled": true,
+          "mkldnn_fp32_precision": "none",
+          "mkldnn_matmul_fp32_precision": "none",
+          "mkldnn_conv_fp32_precision": "none",
+          "mkldnn_rnn_fp32_precision": "none"
+        },
+        "model_fingerprint": [
+          "0.3.29",
+          "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-repair-20261106",
+          null,
+          null,
+          [
+            [
+              "rl_agent_config.json",
+              "stat",
+              572,
+              1793923170523880700,
+              4503599629780710
+            ],
+            [
+              "model.safetensors",
+              "stat",
+              842609210,
+              1793923170522880400,
+              10414574140704273
+            ],
+            [
+              "encoder/config.json",
+              "stat",
+              2083,
+              1791495347017115300,
+              13229323907811112
+            ],
+            [
+              "tokenizer/tokenizer.json",
+              "stat",
+              3583228,
+              1791495347047690600,
+              12103424000969634
+            ],
+            [
+              "tokenizer/tokenizer_config.json",
+              "stat",
+              308,
+              1791495347152919700,
+              26740122789923763
+            ]
+          ],
+          512,
+          192,
+          [
+            0.8491682410240173,
+            0.9383260011672974,
+            1.6506056785583496
+          ],
+          {},
+          {},
+          null,
+          null,
+          {
+            "escalate": 0.5
+          },
+          "veya-routing-v1-unicode15"
+        ]
+      },
+      "runs": [
+        {
+          "observations": [
+            {
+              "id": "ctrl-choice-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9793,
+                      "blocked": 0.0078,
+                      "unknown": 0.0128
+                    },
+                    "confidence": 0.896,
+                    "answer_confidence": 0.9793,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9793,
+                    "blocked": 0.0078,
+                    "unknown": 0.0128
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.896,
+                    "answer_confidence": 0.9793,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9664999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.0168,
+                      "blocked": 0.9603,
+                      "unknown": 0.0229
+                    },
+                    "confidence": 0.8233,
+                    "answer_confidence": 0.9603,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0168,
+                    "blocked": 0.9603,
+                    "unknown": 0.0229
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8233,
+                    "answer_confidence": 0.9603,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9374
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.2315,
+                      "blocked": 0.3119,
+                      "unknown": 0.4566
+                    },
+                    "confidence": 0.0351,
+                    "answer_confidence": 0.4566,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.2315,
+                    "blocked": 0.3119,
+                    "unknown": 0.4566
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0351,
+                    "answer_confidence": 0.4566,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.1447
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-04",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9783,
+                      "blocked": 0.01,
+                      "unknown": 0.0116
+                    },
+                    "confidence": 0.8912,
+                    "answer_confidence": 0.9783,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9783,
+                    "blocked": 0.01,
+                    "unknown": 0.0116
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8912,
+                    "answer_confidence": 0.9783,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9666999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-05",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.1775,
+                      "blocked": 0.7982,
+                      "unknown": 0.0243
+                    },
+                    "confidence": 0.4746,
+                    "answer_confidence": 0.7982,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.1775,
+                    "blocked": 0.7982,
+                    "unknown": 0.0243
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.4746,
+                    "answer_confidence": 0.7982,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6207
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-06",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9997,
+                      "blocked": 0.0001,
+                      "unknown": 0.0002
+                    },
+                    "confidence": 0.9974,
+                    "answer_confidence": 0.9997,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9997,
+                    "blocked": 0.0001,
+                    "unknown": 0.0002
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9974,
+                    "answer_confidence": 0.9997,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9995
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-07",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.0017,
+                      "blocked": 0.9982,
+                      "unknown": 0.0001
+                    },
+                    "confidence": 0.9877,
+                    "answer_confidence": 0.9982,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0017,
+                    "blocked": 0.9982,
+                    "unknown": 0.0001
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9877,
+                    "answer_confidence": 0.9982,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9964999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-08",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.8052,
+                      "blocked": 0.0031,
+                      "unknown": 0.1918
+                    },
+                    "confidence": 0.5368,
+                    "answer_confidence": 0.8052,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.8052,
+                    "blocked": 0.0031,
+                    "unknown": 0.1918
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5368,
+                    "answer_confidence": 0.8052,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6134000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-09",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.0889,
+                      "blocked": 0.0291,
+                      "unknown": 0.882
+                    },
+                    "confidence": 0.6096,
+                    "answer_confidence": 0.882,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0889,
+                    "blocked": 0.0291,
+                    "unknown": 0.882
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.6096,
+                    "answer_confidence": 0.882,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7931
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-10",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.8652,
+                      "blocked": 0.0441,
+                      "unknown": 0.0907
+                    },
+                    "confidence": 0.5626,
+                    "answer_confidence": 0.8652,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.8652,
+                    "blocked": 0.0441,
+                    "unknown": 0.0907
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5626,
+                    "answer_confidence": 0.8652,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7745
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-11",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9564,
+                      "blocked": 0.0113,
+                      "unknown": 0.0323
+                    },
+                    "confidence": 0.8142,
+                    "answer_confidence": 0.9564,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9564,
+                    "blocked": 0.0113,
+                    "unknown": 0.0323
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8142,
+                    "answer_confidence": 0.9564,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9241
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-12",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.1282,
+                      "blocked": 0.7488,
+                      "unknown": 0.123
+                    },
+                    "confidence": 0.3285,
+                    "answer_confidence": 0.7488,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.1282,
+                    "blocked": 0.7488,
+                    "unknown": 0.123
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3285,
+                    "answer_confidence": 0.7488,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6206
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-13",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.0051,
+                      "blocked": 0.4177,
+                      "unknown": 0.5772
+                    },
+                    "confidence": 0.3548,
+                    "answer_confidence": 0.5772,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0051,
+                    "blocked": 0.4177,
+                    "unknown": 0.5772
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3548,
+                    "answer_confidence": 0.5772,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.15950000000000003
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-14",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.3093,
+                      "blocked": 0.3395,
+                      "unknown": 0.3512
+                    },
+                    "confidence": 0.0013,
+                    "answer_confidence": 0.3512,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.3093,
+                    "blocked": 0.3395,
+                    "unknown": 0.3512
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0013,
+                    "answer_confidence": 0.3512,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.011699999999999988
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-15",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.3036,
+                      "blocked": 0.3778,
+                      "unknown": 0.3186
+                    },
+                    "confidence": 0.0041,
+                    "answer_confidence": 0.3778,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.3036,
+                    "blocked": 0.3778,
+                    "unknown": 0.3186
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0041,
+                    "answer_confidence": 0.3778,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.05920000000000003
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9928,
+                    "confidence": 0.9928,
+                    "answer_confidence": 0.9928,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.007199999999999984,
+                    "true": 0.9928
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9928,
+                    "answer_confidence": 0.9928,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9856
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4075,
+                    "confidence": 0.5925,
+                    "answer_confidence": 0.5925,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5925,
+                    "true": 0.4075
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5925,
+                    "answer_confidence": 0.5925,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.18500000000000005
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.6375,
+                    "confidence": 0.6375,
+                    "answer_confidence": 0.6375,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.36250000000000004,
+                    "true": 0.6375
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.6375,
+                    "answer_confidence": 0.6375,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.2749999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-04",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.998,
+                    "confidence": 0.998,
+                    "answer_confidence": 0.998,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.0020000000000000018,
+                    "true": 0.998
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.998,
+                    "answer_confidence": 0.998,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.996
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-05",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9804,
+                    "confidence": 0.9804,
+                    "answer_confidence": 0.9804,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.01959999999999995,
+                    "true": 0.9804
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9804,
+                    "answer_confidence": 0.9804,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9608000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-06",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9898,
+                    "confidence": 0.9898,
+                    "answer_confidence": 0.9898,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.010199999999999987,
+                    "true": 0.9898
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9898,
+                    "answer_confidence": 0.9898,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9796
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-07",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1817,
+                    "confidence": 0.8183,
+                    "answer_confidence": 0.8183,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8183,
+                    "true": 0.1817
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8183,
+                    "answer_confidence": 0.8183,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6366
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-08",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1057,
+                    "confidence": 0.8943,
+                    "answer_confidence": 0.8943,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8943,
+                    "true": 0.1057
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8943,
+                    "answer_confidence": 0.8943,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7886
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-09",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.8609,
+                    "confidence": 0.8609,
+                    "answer_confidence": 0.8609,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.1391,
+                    "true": 0.8609
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8609,
+                    "answer_confidence": 0.8609,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7218
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-10",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.0255,
+                    "confidence": 0.9745,
+                    "answer_confidence": 0.9745,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.9745,
+                    "true": 0.0255
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9745,
+                    "answer_confidence": 0.9745,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9490000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-11",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9415,
+                    "confidence": 0.9415,
+                    "answer_confidence": 0.9415,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.058499999999999996,
+                    "true": 0.9415
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9415,
+                    "answer_confidence": 0.9415,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.883
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-12",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.0098,
+                    "confidence": 0.9902,
+                    "answer_confidence": 0.9902,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.9902,
+                    "true": 0.0098
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9902,
+                    "answer_confidence": 0.9902,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9803999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-13",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.5115,
+                    "confidence": 0.5115,
+                    "answer_confidence": 0.5115,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.48850000000000005,
+                    "true": 0.5115
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5115,
+                    "answer_confidence": 0.5115,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.02299999999999991
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-14",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4787,
+                    "confidence": 0.5213,
+                    "answer_confidence": 0.5213,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5213,
+                    "true": 0.4787
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5213,
+                    "answer_confidence": 0.5213,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.04259999999999997
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-15",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9411,
+                    "confidence": 0.9411,
+                    "answer_confidence": 0.9411,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.05889999999999995,
+                    "true": 0.9411
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9411,
+                    "answer_confidence": 0.9411,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8822000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.6452,
+                    "legend": {
+                      "0": "0: Neither the carton seal nor the dispatch label is complete.",
+                      "1": "1: Exactly one of the two preparation requirements is complete.",
+                      "2": "2: Both preparation requirements are complete."
+                    },
+                    "probabilities": {
+                      "0": 0.6455,
+                      "1": 0.0638,
+                      "2": 0.2907
+                    },
+                    "confidence": 0.2562,
+                    "answer_confidence": 0.6455,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.6455,
+                    "1": 0.0638,
+                    "2": 0.2907
+                  },
+                  "label": null,
+                  "score": 0.6452,
+                  "operational": {
+                    "confidence": 0.2562,
+                    "answer_confidence": 0.6455,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.35479999999999995
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8355,
+                    "legend": {
+                      "0": "0: No physical count of G4 is reported.",
+                      "1": "1: One physical count of G4 is reported without an independent confirming count.",
+                      "2": "2: Two independent physical counts of G4 agree."
+                    },
+                    "probabilities": {
+                      "0": 0.4441,
+                      "1": 0.2763,
+                      "2": 0.2796
+                    },
+                    "confidence": 0.024,
+                    "answer_confidence": 0.4441,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.4441,
+                    "1": 0.2763,
+                    "2": 0.2796
+                  },
+                  "label": null,
+                  "score": 0.8355,
+                  "operational": {
+                    "confidence": 0.024,
+                    "answer_confidence": 0.4441,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.16449999999999998
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.1233,
+                    "legend": {
+                      "0": "0: No assigned aisle or bin is reported.",
+                      "1": "1: An aisle is assigned, but no specific bin is assigned.",
+                      "2": "2: Both an aisle and a specific bin are assigned."
+                    },
+                    "probabilities": {
+                      "0": 0.0369,
+                      "1": 0.803,
+                      "2": 0.1602
+                    },
+                    "confidence": 0.4618,
+                    "answer_confidence": 0.803,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0369,
+                    "1": 0.803,
+                    "2": 0.1602
+                  },
+                  "label": null,
+                  "score": 1.1233,
+                  "operational": {
+                    "confidence": 0.4618,
+                    "answer_confidence": 0.803,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6428
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-04",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9967,
+                    "legend": {
+                      "0": "0: An inspection has rejected Q6.",
+                      "1": "1: Inspection is pending and no outcome is recorded.",
+                      "2": "2: An inspection has accepted and released Q6."
+                    },
+                    "probabilities": {
+                      "0": 0.0059,
+                      "1": 0.9914,
+                      "2": 0.0027
+                    },
+                    "confidence": 0.95,
+                    "answer_confidence": 0.9914,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0059,
+                    "1": 0.9914,
+                    "2": 0.0027
+                  },
+                  "label": null,
+                  "score": 0.9967,
+                  "operational": {
+                    "confidence": 0.95,
+                    "answer_confidence": 0.9914,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9854999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-05",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.8946,
+                    "legend": {
+                      "0": "0: No physical count of E8 is reported.",
+                      "1": "1: Only one count is reported, or independent counts disagree.",
+                      "2": "2: Two independent physical counts of E8 agree."
+                    },
+                    "probabilities": {
+                      "0": 0.0138,
+                      "1": 0.0777,
+                      "2": 0.9084
+                    },
+                    "confidence": 0.6859,
+                    "answer_confidence": 0.9084,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0138,
+                    "1": 0.0777,
+                    "2": 0.9084
+                  },
+                  "label": null,
+                  "score": 1.8946,
+                  "operational": {
+                    "confidence": 0.6859,
+                    "answer_confidence": 0.9084,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8307
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-06",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.2024,
+                    "legend": {
+                      "0": "0: The leaflet is withdrawn or release is expressly refused.",
+                      "1": "1: The leaflet is approved for internal preview only.",
+                      "2": "2: The leaflet is approved and active for public release."
+                    },
+                    "probabilities": {
+                      "0": 0.8762,
+                      "1": 0.0452,
+                      "2": 0.0786
+                    },
+                    "confidence": 0.5852,
+                    "answer_confidence": 0.8762,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.8762,
+                    "1": 0.0452,
+                    "2": 0.0786
+                  },
+                  "label": null,
+                  "score": 0.2024,
+                  "operational": {
+                    "confidence": 0.5852,
+                    "answer_confidence": 0.8762,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7976
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-07",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8314,
+                    "legend": {
+                      "0": "0: No source works are named.",
+                      "1": "1: Source works are named, but no exact passage locations are given.",
+                      "2": "2: Source works and exact passage locations are both given."
+                    },
+                    "probabilities": {
+                      "0": 0.2096,
+                      "1": 0.7494,
+                      "2": 0.041
+                    },
+                    "confidence": 0.3858,
+                    "answer_confidence": 0.7494,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2096,
+                    "1": 0.7494,
+                    "2": 0.041
+                  },
+                  "label": null,
+                  "score": 0.8314,
+                  "operational": {
+                    "confidence": 0.3858,
+                    "answer_confidence": 0.7494,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5398
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-08",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9736,
+                    "legend": {
+                      "0": "0: No complete French translation is available.",
+                      "1": "1: A complete French translation exists but has not been approved by a reviewer.",
+                      "2": "2: A complete French translation has reviewer approval."
+                    },
+                    "probabilities": {
+                      "0": 0.1032,
+                      "1": 0.8199,
+                      "2": 0.0769
+                    },
+                    "confidence": 0.459,
+                    "answer_confidence": 0.8199,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.1032,
+                    "1": 0.8199,
+                    "2": 0.0769
+                  },
+                  "label": null,
+                  "score": 0.9736,
+                  "operational": {
+                    "confidence": 0.459,
+                    "answer_confidence": 0.8199,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7167
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-09",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.5801,
+                    "legend": {
+                      "0": "0: Neither required test has a reported passing result.",
+                      "1": "1: Exactly one required test has a reported passing result.",
+                      "2": "2: Both required tests have reported passing results."
+                    },
+                    "probabilities": {
+                      "0": 0.0092,
+                      "1": 0.4014,
+                      "2": 0.5894
+                    },
+                    "confidence": 0.3435,
+                    "answer_confidence": 0.5894,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0092,
+                    "1": 0.4014,
+                    "2": 0.5894
+                  },
+                  "label": null,
+                  "score": 1.5801,
+                  "operational": {
+                    "confidence": 0.3435,
+                    "answer_confidence": 0.5894,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.18800000000000006
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-10",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8302,
+                    "legend": {
+                      "0": "0: Neither an editorial nor a subject-expert review is complete for revision 5.",
+                      "1": "1: Exactly one of those two review roles is complete for revision 5.",
+                      "2": "2: Both review roles are complete for revision 5."
+                    },
+                    "probabilities": {
+                      "0": 0.2823,
+                      "1": 0.6051,
+                      "2": 0.1125
+                    },
+                    "confidence": 0.1745,
+                    "answer_confidence": 0.6051,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2823,
+                    "1": 0.6051,
+                    "2": 0.1125
+                  },
+                  "label": null,
+                  "score": 0.8302,
+                  "operational": {
+                    "confidence": 0.1745,
+                    "answer_confidence": 0.6051,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.3228
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-11",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0001,
+                    "legend": {
+                      "0": "0: Zora did not attend any part.",
+                      "1": "1: Zora attended some but not all of the workshop.",
+                      "2": "2: Zora attended the entire workshop."
+                    },
+                    "probabilities": {
+                      "0": 1.0,
+                      "1": 0.0,
+                      "2": 0.0
+                    },
+                    "confidence": 0.9995,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 1.0,
+                    "1": 0.0,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.0001,
+                  "operational": {
+                    "confidence": 0.9995,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-12",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.2238,
+                    "legend": {
+                      "0": "0: Actual attendance of neither required role is confirmed.",
+                      "1": "1: Actual attendance of exactly one required role is confirmed.",
+                      "2": "2: Actual attendance of both required roles is confirmed."
+                    },
+                    "probabilities": {
+                      "0": 0.0762,
+                      "1": 0.6238,
+                      "2": 0.3
+                    },
+                    "confidence": 0.2247,
+                    "answer_confidence": 0.6238,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0762,
+                    "1": 0.6238,
+                    "2": 0.3
+                  },
+                  "label": null,
+                  "score": 1.2238,
+                  "operational": {
+                    "confidence": 0.2247,
+                    "answer_confidence": 0.6238,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.32380000000000003
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-13",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.0195,
+                    "legend": {
+                      "0": "0: Maren has explicitly declined attendance.",
+                      "1": "1: Maren has given only a tentative or conditional attendance response.",
+                      "2": "2: Maren has firmly confirmed attendance without a remaining condition."
+                    },
+                    "probabilities": {
+                      "0": 0.0496,
+                      "1": 0.8812,
+                      "2": 0.0691
+                    },
+                    "confidence": 0.5947,
+                    "answer_confidence": 0.8812,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0496,
+                    "1": 0.8812,
+                    "2": 0.0691
+                  },
+                  "label": null,
+                  "score": 1.0195,
+                  "operational": {
+                    "confidence": 0.5947,
+                    "answer_confidence": 0.8812,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8121
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-14",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.9934,
+                    "legend": {
+                      "0": "0: Actual attendance of neither required role is confirmed.",
+                      "1": "1: Actual attendance of exactly one required role is confirmed.",
+                      "2": "2: Actual attendance of both required roles is confirmed."
+                    },
+                    "probabilities": {
+                      "0": 0.0018,
+                      "1": 0.003,
+                      "2": 0.9952
+                    },
+                    "confidence": 0.9694,
+                    "answer_confidence": 0.9952,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0018,
+                    "1": 0.003,
+                    "2": 0.9952
+                  },
+                  "label": null,
+                  "score": 1.9934,
+                  "operational": {
+                    "confidence": 0.9694,
+                    "answer_confidence": 0.9952,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9922
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-15",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8659,
+                    "legend": {
+                      "0": "0: Fewer than 10 verified minutes present.",
+                      "1": "1: At least 10 but fewer than 30 verified minutes present.",
+                      "2": "2: At least 30 verified minutes present."
+                    },
+                    "probabilities": {
+                      "0": 0.2105,
+                      "1": 0.7131,
+                      "2": 0.0764
+                    },
+                    "confidence": 0.303,
+                    "answer_confidence": 0.7131,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2105,
+                    "1": 0.7131,
+                    "2": 0.0764
+                  },
+                  "label": null,
+                  "score": 0.8659,
+                  "operational": {
+                    "confidence": 0.303,
+                    "answer_confidence": 0.7131,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5025999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-boundary-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.6656,
+                      "blocked": 0.158,
+                      "unknown": 0.1765
+                    },
+                    "confidence": 0.2094,
+                    "answer_confidence": 0.6656,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.6656,
+                    "blocked": 0.158,
+                    "unknown": 0.1765
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.2094,
+                    "answer_confidence": 0.6656,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.4891
+                }
+              }
+            },
+            {
+              "id": "ctrl-boundary-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4781,
+                    "confidence": 0.5219,
+                    "answer_confidence": 0.5219,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5219,
+                    "true": 0.4781
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5219,
+                    "answer_confidence": 0.5219,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.043800000000000006
+                }
+              }
+            },
+            {
+              "id": "ctrl-boundary-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9946,
+                    "legend": {
+                      "0": "0: No actual participation is supported.",
+                      "1": "1: Actual participation in part, but not all, of the meeting is supported.",
+                      "2": "2: Actual participation throughout the meeting is supported."
+                    },
+                    "probabilities": {
+                      "0": 0.0109,
+                      "1": 0.9835,
+                      "2": 0.0055
+                    },
+                    "confidence": 0.914,
+                    "answer_confidence": 0.9835,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0109,
+                    "1": 0.9835,
+                    "2": 0.0055
+                  },
+                  "label": null,
+                  "score": 0.9946,
+                  "operational": {
+                    "confidence": 0.914,
+                    "answer_confidence": 0.9835,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9726
+                }
+              }
+            }
+          ],
+          "latency_ms": {
+            "p50": 180.3094000206329,
+            "p95": 240.0779000017792,
+            "p99": 270.56249999441206
+          },
+          "latencies_ms": [
+            176.52320000343025,
+            184.1998000163585,
+            180.3094000206329,
+            195.36000001244247,
+            206.32950001163408,
+            167.47290000785142,
+            178.5565000027418,
+            204.5378999901004,
+            179.93509996449575,
+            179.91370003437623,
+            184.34399995021522,
+            179.9544999958016,
+            164.8235999746248,
+            193.67680000141263,
+            175.78789999242872,
+            168.57410001102835,
+            181.90500000491738,
+            160.64960003132,
+            165.46200000448152,
+            169.6333999861963,
+            168.58429997228086,
+            154.03039997909218,
+            164.1496999654919,
+            176.46759998751804,
+            163.17849996266887,
+            170.54239998105913,
+            192.9486999870278,
+            203.2484999508597,
+            233.04159997496754,
+            169.7159000323154,
+            195.1765000121668,
+            198.93759995466098,
+            168.70719997677952,
+            179.30530000012368,
+            189.5226000342518,
+            270.56249999441206,
+            181.208299996797,
+            207.72970002144575,
+            212.47269999003038,
+            240.0779000017792,
+            164.11359998164698,
+            201.16080000298098,
+            198.67200002772734,
+            211.23349998379126,
+            167.6282999687828,
+            207.61680003488436,
+            233.035099983681,
+            263.07960000121966
+          ],
+          "metrics": {
+            "choice_accuracy": 0.9333333333333333,
+            "noul_accuracy": 0.9333333333333333,
+            "score_mae": 0.4055933333333333,
+            "mean_confidence": 0.800548888888889,
+            "score_within_0.25": 0.6
+          },
+          "elapsed_ms": 9086.001699964982,
+          "requests_per_second": 5.282851752073191,
+          "execution": [
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 176.52320000343025,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 184.1998000163585,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 180.3094000206329,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 195.36000001244247,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 206.32950001163408,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 167.47290000785142,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 178.5565000027418,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 204.5378999901004,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 179.93509996449575,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 179.91370003437623,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 184.34399995021522,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 179.9544999958016,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 164.8235999746248,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 193.67680000141263,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 175.78789999242872,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 168.57410001102835,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 181.90500000491738,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 160.64960003132,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 165.46200000448152,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 169.6333999861963,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 168.58429997228086,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 154.03039997909218,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 164.1496999654919,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 176.46759998751804,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 163.17849996266887,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 170.54239998105913,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 192.9486999870278,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 203.2484999508597,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 233.04159997496754,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 169.7159000323154,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 195.1765000121668,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 198.93759995466098,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 168.70719997677952,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 179.30530000012368,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 189.5226000342518,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 270.56249999441206,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 181.208299996797,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 207.72970002144575,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 212.47269999003038,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 240.0779000017792,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 164.11359998164698,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 201.16080000298098,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 198.67200002772734,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 211.23349998379126,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 167.6282999687828,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 207.61680003488436,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 233.035099983681,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 263.07960000121966,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            }
+          ],
+          "batch_size": 1,
+          "mode": "ordered",
+          "repeat": 0,
+          "concurrency": 1,
+          "comparison": {
+            "label_flips": 0,
+            "labelled_comparisons": 32,
+            "label_flip_rate": 0.0,
+            "max_probability_drift": 0.0,
+            "max_score_drift": 0.0,
+            "max_confidence_drift": 0.0,
+            "max_action_drift": 0.0,
+            "operational_flag_flips": 0,
+            "operational_flag_comparisons": 0,
+            "operational_flag_flip_rate": 0.0
+          },
+          "failures": [
+            "score_within_0.25=0.6 is below 0.8"
+          ]
+        }
+      ]
+    },
+    "onnx-cpu-graph": {
+      "status": "failed",
+      "identity": {
+        "verification": "local artifacts and runtime",
+        "artifacts": {
+          "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+          "model.safetensors": "f42fde11f624c2d60cdffd76ccb8dd45291545be1e5109ff5204f0259cad1778",
+          "repair_report.json": "a0af1c6c2531d43d22dc0e359cb7b3cdfd15edafd15236cb0492b47bc324385d",
+          "rl_agent_config.json": "a4245d6b9b7e7e38f89b872b71ed92390c01fb1391bed06ed7c0cadd86bf0a32",
+          "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+          "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+          "onnx/english-repair.onnx": "2d3627cdb98d16fd48a09c1ac0cb637f79ae57ffcc0853b1c3d8b5db0e15d87b",
+          "onnx-external/english-repair.onnx.data": "5a6e3b00e22c40b65bb30c82a68ae094ce4414c668e2aa9ef5509aab3463d9ea"
+        },
+        "backend": "onnx",
+        "device": "cpu",
+        "precision": "graph",
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "onnxruntime": "1.30.0",
+        "intra_op_threads": 4,
+        "inter_op_threads": 0,
+        "model_fingerprint": [
+          "0.3.29",
+          "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-repair-20261106",
+          null,
+          null,
+          [
+            [
+              "rl_agent_config.json",
+              "stat",
+              572,
+              1793923170523880700,
+              4503599629780710
+            ],
+            [
+              "english-repair.onnx",
+              "stat",
+              3349276,
+              1793923207349201800,
+              7318349397005489
+            ],
+            [
+              "encoder/config.json",
+              "stat",
+              2083,
+              1791495347017115300,
+              13229323907811112
+            ],
+            [
+              "tokenizer/tokenizer.json",
+              "stat",
+              3583228,
+              1791495347047690600,
+              12103424000969634
+            ],
+            [
+              "tokenizer/tokenizer_config.json",
+              "stat",
+              308,
+              1791495347152919700,
+              26740122789923763
+            ]
+          ],
+          512,
+          192,
+          [
+            0.8491682410240173,
+            0.9383260011672974,
+            1.6506056785583496
+          ],
+          {},
+          {},
+          null,
+          null,
+          {
+            "escalate": 0.5
+          },
+          "veya-routing-v1-unicode15"
+        ]
+      },
+      "runs": [
+        {
+          "observations": [
+            {
+              "id": "ctrl-choice-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9793,
+                      "blocked": 0.0078,
+                      "unknown": 0.0128
+                    },
+                    "confidence": 0.896,
+                    "answer_confidence": 0.9793,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9793,
+                    "blocked": 0.0078,
+                    "unknown": 0.0128
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.896,
+                    "answer_confidence": 0.9793,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9664999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.0168,
+                      "blocked": 0.9603,
+                      "unknown": 0.0229
+                    },
+                    "confidence": 0.8233,
+                    "answer_confidence": 0.9603,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0168,
+                    "blocked": 0.9603,
+                    "unknown": 0.0229
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8233,
+                    "answer_confidence": 0.9603,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9374
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.2315,
+                      "blocked": 0.3119,
+                      "unknown": 0.4566
+                    },
+                    "confidence": 0.0351,
+                    "answer_confidence": 0.4566,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.2315,
+                    "blocked": 0.3119,
+                    "unknown": 0.4566
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0351,
+                    "answer_confidence": 0.4566,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.1447
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-04",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9783,
+                      "blocked": 0.01,
+                      "unknown": 0.0116
+                    },
+                    "confidence": 0.8912,
+                    "answer_confidence": 0.9783,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9783,
+                    "blocked": 0.01,
+                    "unknown": 0.0116
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8912,
+                    "answer_confidence": 0.9783,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9666999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-05",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.1775,
+                      "blocked": 0.7982,
+                      "unknown": 0.0243
+                    },
+                    "confidence": 0.4747,
+                    "answer_confidence": 0.7982,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.1775,
+                    "blocked": 0.7982,
+                    "unknown": 0.0243
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.4747,
+                    "answer_confidence": 0.7982,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6207
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-06",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9997,
+                      "blocked": 0.0001,
+                      "unknown": 0.0002
+                    },
+                    "confidence": 0.9974,
+                    "answer_confidence": 0.9997,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9997,
+                    "blocked": 0.0001,
+                    "unknown": 0.0002
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9974,
+                    "answer_confidence": 0.9997,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9995
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-07",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.0017,
+                      "blocked": 0.9982,
+                      "unknown": 0.0001
+                    },
+                    "confidence": 0.9877,
+                    "answer_confidence": 0.9982,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0017,
+                    "blocked": 0.9982,
+                    "unknown": 0.0001
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9877,
+                    "answer_confidence": 0.9982,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9964999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-08",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.8052,
+                      "blocked": 0.0031,
+                      "unknown": 0.1918
+                    },
+                    "confidence": 0.5368,
+                    "answer_confidence": 0.8052,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.8052,
+                    "blocked": 0.0031,
+                    "unknown": 0.1918
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5368,
+                    "answer_confidence": 0.8052,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6134000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-09",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.0889,
+                      "blocked": 0.0291,
+                      "unknown": 0.882
+                    },
+                    "confidence": 0.6096,
+                    "answer_confidence": 0.882,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0889,
+                    "blocked": 0.0291,
+                    "unknown": 0.882
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.6096,
+                    "answer_confidence": 0.882,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7931
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-10",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.8653,
+                      "blocked": 0.0441,
+                      "unknown": 0.0907
+                    },
+                    "confidence": 0.5626,
+                    "answer_confidence": 0.8653,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.8653,
+                    "blocked": 0.0441,
+                    "unknown": 0.0907
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5626,
+                    "answer_confidence": 0.8653,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7746
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-11",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.9564,
+                      "blocked": 0.0113,
+                      "unknown": 0.0323
+                    },
+                    "confidence": 0.8142,
+                    "answer_confidence": 0.9564,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.9564,
+                    "blocked": 0.0113,
+                    "unknown": 0.0323
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8142,
+                    "answer_confidence": 0.9564,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9241
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-12",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.1282,
+                      "blocked": 0.7488,
+                      "unknown": 0.123
+                    },
+                    "confidence": 0.3285,
+                    "answer_confidence": 0.7488,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.1282,
+                    "blocked": 0.7488,
+                    "unknown": 0.123
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3285,
+                    "answer_confidence": 0.7488,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6206
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-13",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.0051,
+                      "blocked": 0.4177,
+                      "unknown": 0.5772
+                    },
+                    "confidence": 0.3548,
+                    "answer_confidence": 0.5772,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.0051,
+                    "blocked": 0.4177,
+                    "unknown": 0.5772
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3548,
+                    "answer_confidence": 0.5772,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.15950000000000003
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-14",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "unknown",
+                    "probabilities": {
+                      "ready": 0.3093,
+                      "blocked": 0.3395,
+                      "unknown": 0.3512
+                    },
+                    "confidence": 0.0013,
+                    "answer_confidence": 0.3512,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.3093,
+                    "blocked": 0.3395,
+                    "unknown": 0.3512
+                  },
+                  "label": "unknown",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0013,
+                    "answer_confidence": 0.3512,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.011699999999999988
+                }
+              }
+            },
+            {
+              "id": "ctrl-choice-15",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "blocked",
+                    "probabilities": {
+                      "ready": 0.3036,
+                      "blocked": 0.3778,
+                      "unknown": 0.3186
+                    },
+                    "confidence": 0.0041,
+                    "answer_confidence": 0.3778,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.3036,
+                    "blocked": 0.3778,
+                    "unknown": 0.3186
+                  },
+                  "label": "blocked",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0041,
+                    "answer_confidence": 0.3778,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.05920000000000003
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9928,
+                    "confidence": 0.9928,
+                    "answer_confidence": 0.9928,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.007199999999999984,
+                    "true": 0.9928
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9928,
+                    "answer_confidence": 0.9928,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9856
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4075,
+                    "confidence": 0.5925,
+                    "answer_confidence": 0.5925,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5925,
+                    "true": 0.4075
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5925,
+                    "answer_confidence": 0.5925,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.18500000000000005
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.6375,
+                    "confidence": 0.6375,
+                    "answer_confidence": 0.6375,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.36250000000000004,
+                    "true": 0.6375
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.6375,
+                    "answer_confidence": 0.6375,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.2749999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-04",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.998,
+                    "confidence": 0.998,
+                    "answer_confidence": 0.998,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.0020000000000000018,
+                    "true": 0.998
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.998,
+                    "answer_confidence": 0.998,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.996
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-05",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9804,
+                    "confidence": 0.9804,
+                    "answer_confidence": 0.9804,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.01959999999999995,
+                    "true": 0.9804
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9804,
+                    "answer_confidence": 0.9804,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9608000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-06",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9898,
+                    "confidence": 0.9898,
+                    "answer_confidence": 0.9898,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.010199999999999987,
+                    "true": 0.9898
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9898,
+                    "answer_confidence": 0.9898,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9796
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-07",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1817,
+                    "confidence": 0.8183,
+                    "answer_confidence": 0.8183,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8183,
+                    "true": 0.1817
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8183,
+                    "answer_confidence": 0.8183,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6366
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-08",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1057,
+                    "confidence": 0.8943,
+                    "answer_confidence": 0.8943,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8943,
+                    "true": 0.1057
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8943,
+                    "answer_confidence": 0.8943,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7886
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-09",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.8609,
+                    "confidence": 0.8609,
+                    "answer_confidence": 0.8609,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.1391,
+                    "true": 0.8609
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8609,
+                    "answer_confidence": 0.8609,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7218
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-10",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.0255,
+                    "confidence": 0.9745,
+                    "answer_confidence": 0.9745,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.9745,
+                    "true": 0.0255
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9745,
+                    "answer_confidence": 0.9745,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9490000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-11",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9415,
+                    "confidence": 0.9415,
+                    "answer_confidence": 0.9415,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.058499999999999996,
+                    "true": 0.9415
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9415,
+                    "answer_confidence": 0.9415,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.883
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-12",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.0098,
+                    "confidence": 0.9902,
+                    "answer_confidence": 0.9902,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.9902,
+                    "true": 0.0098
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9902,
+                    "answer_confidence": 0.9902,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9803999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-13",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.5115,
+                    "confidence": 0.5115,
+                    "answer_confidence": 0.5115,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.48850000000000005,
+                    "true": 0.5115
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5115,
+                    "answer_confidence": 0.5115,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.02299999999999991
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-14",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4787,
+                    "confidence": 0.5213,
+                    "answer_confidence": 0.5213,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5213,
+                    "true": 0.4787
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5213,
+                    "answer_confidence": 0.5213,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.04259999999999997
+                }
+              }
+            },
+            {
+              "id": "ctrl-noul-15",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9411,
+                    "confidence": 0.9411,
+                    "answer_confidence": 0.9411,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.05889999999999995,
+                    "true": 0.9411
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9411,
+                    "answer_confidence": 0.9411,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8822000000000001
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.6452,
+                    "legend": {
+                      "0": "0: Neither the carton seal nor the dispatch label is complete.",
+                      "1": "1: Exactly one of the two preparation requirements is complete.",
+                      "2": "2: Both preparation requirements are complete."
+                    },
+                    "probabilities": {
+                      "0": 0.6455,
+                      "1": 0.0638,
+                      "2": 0.2907
+                    },
+                    "confidence": 0.2562,
+                    "answer_confidence": 0.6455,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.6455,
+                    "1": 0.0638,
+                    "2": 0.2907
+                  },
+                  "label": null,
+                  "score": 0.6452,
+                  "operational": {
+                    "confidence": 0.2562,
+                    "answer_confidence": 0.6455,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.35479999999999995
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8355,
+                    "legend": {
+                      "0": "0: No physical count of G4 is reported.",
+                      "1": "1: One physical count of G4 is reported without an independent confirming count.",
+                      "2": "2: Two independent physical counts of G4 agree."
+                    },
+                    "probabilities": {
+                      "0": 0.4441,
+                      "1": 0.2763,
+                      "2": 0.2796
+                    },
+                    "confidence": 0.024,
+                    "answer_confidence": 0.4441,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.4441,
+                    "1": 0.2763,
+                    "2": 0.2796
+                  },
+                  "label": null,
+                  "score": 0.8355,
+                  "operational": {
+                    "confidence": 0.024,
+                    "answer_confidence": 0.4441,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.16449999999999998
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.1233,
+                    "legend": {
+                      "0": "0: No assigned aisle or bin is reported.",
+                      "1": "1: An aisle is assigned, but no specific bin is assigned.",
+                      "2": "2: Both an aisle and a specific bin are assigned."
+                    },
+                    "probabilities": {
+                      "0": 0.0369,
+                      "1": 0.803,
+                      "2": 0.1602
+                    },
+                    "confidence": 0.4618,
+                    "answer_confidence": 0.803,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0369,
+                    "1": 0.803,
+                    "2": 0.1602
+                  },
+                  "label": null,
+                  "score": 1.1233,
+                  "operational": {
+                    "confidence": 0.4618,
+                    "answer_confidence": 0.803,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6428
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-04",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9967,
+                    "legend": {
+                      "0": "0: An inspection has rejected Q6.",
+                      "1": "1: Inspection is pending and no outcome is recorded.",
+                      "2": "2: An inspection has accepted and released Q6."
+                    },
+                    "probabilities": {
+                      "0": 0.0059,
+                      "1": 0.9914,
+                      "2": 0.0027
+                    },
+                    "confidence": 0.95,
+                    "answer_confidence": 0.9914,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0059,
+                    "1": 0.9914,
+                    "2": 0.0027
+                  },
+                  "label": null,
+                  "score": 0.9967,
+                  "operational": {
+                    "confidence": 0.95,
+                    "answer_confidence": 0.9914,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9854999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-05",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.8946,
+                    "legend": {
+                      "0": "0: No physical count of E8 is reported.",
+                      "1": "1: Only one count is reported, or independent counts disagree.",
+                      "2": "2: Two independent physical counts of E8 agree."
+                    },
+                    "probabilities": {
+                      "0": 0.0138,
+                      "1": 0.0777,
+                      "2": 0.9084
+                    },
+                    "confidence": 0.6859,
+                    "answer_confidence": 0.9084,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0138,
+                    "1": 0.0777,
+                    "2": 0.9084
+                  },
+                  "label": null,
+                  "score": 1.8946,
+                  "operational": {
+                    "confidence": 0.6859,
+                    "answer_confidence": 0.9084,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8307
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-06",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.2024,
+                    "legend": {
+                      "0": "0: The leaflet is withdrawn or release is expressly refused.",
+                      "1": "1: The leaflet is approved for internal preview only.",
+                      "2": "2: The leaflet is approved and active for public release."
+                    },
+                    "probabilities": {
+                      "0": 0.8762,
+                      "1": 0.0452,
+                      "2": 0.0786
+                    },
+                    "confidence": 0.5852,
+                    "answer_confidence": 0.8762,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.8762,
+                    "1": 0.0452,
+                    "2": 0.0786
+                  },
+                  "label": null,
+                  "score": 0.2024,
+                  "operational": {
+                    "confidence": 0.5852,
+                    "answer_confidence": 0.8762,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7976
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-07",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8314,
+                    "legend": {
+                      "0": "0: No source works are named.",
+                      "1": "1: Source works are named, but no exact passage locations are given.",
+                      "2": "2: Source works and exact passage locations are both given."
+                    },
+                    "probabilities": {
+                      "0": 0.2096,
+                      "1": 0.7494,
+                      "2": 0.041
+                    },
+                    "confidence": 0.3858,
+                    "answer_confidence": 0.7494,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2096,
+                    "1": 0.7494,
+                    "2": 0.041
+                  },
+                  "label": null,
+                  "score": 0.8314,
+                  "operational": {
+                    "confidence": 0.3858,
+                    "answer_confidence": 0.7494,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5398
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-08",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9736,
+                    "legend": {
+                      "0": "0: No complete French translation is available.",
+                      "1": "1: A complete French translation exists but has not been approved by a reviewer.",
+                      "2": "2: A complete French translation has reviewer approval."
+                    },
+                    "probabilities": {
+                      "0": 0.1032,
+                      "1": 0.8199,
+                      "2": 0.0769
+                    },
+                    "confidence": 0.459,
+                    "answer_confidence": 0.8199,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.1032,
+                    "1": 0.8199,
+                    "2": 0.0769
+                  },
+                  "label": null,
+                  "score": 0.9736,
+                  "operational": {
+                    "confidence": 0.459,
+                    "answer_confidence": 0.8199,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7167
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-09",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.5801,
+                    "legend": {
+                      "0": "0: Neither required test has a reported passing result.",
+                      "1": "1: Exactly one required test has a reported passing result.",
+                      "2": "2: Both required tests have reported passing results."
+                    },
+                    "probabilities": {
+                      "0": 0.0092,
+                      "1": 0.4014,
+                      "2": 0.5894
+                    },
+                    "confidence": 0.3435,
+                    "answer_confidence": 0.5894,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0092,
+                    "1": 0.4014,
+                    "2": 0.5894
+                  },
+                  "label": null,
+                  "score": 1.5801,
+                  "operational": {
+                    "confidence": 0.3435,
+                    "answer_confidence": 0.5894,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.18800000000000006
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-10",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8302,
+                    "legend": {
+                      "0": "0: Neither an editorial nor a subject-expert review is complete for revision 5.",
+                      "1": "1: Exactly one of those two review roles is complete for revision 5.",
+                      "2": "2: Both review roles are complete for revision 5."
+                    },
+                    "probabilities": {
+                      "0": 0.2823,
+                      "1": 0.6051,
+                      "2": 0.1125
+                    },
+                    "confidence": 0.1745,
+                    "answer_confidence": 0.6051,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2823,
+                    "1": 0.6051,
+                    "2": 0.1125
+                  },
+                  "label": null,
+                  "score": 0.8302,
+                  "operational": {
+                    "confidence": 0.1745,
+                    "answer_confidence": 0.6051,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.3228
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-11",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0001,
+                    "legend": {
+                      "0": "0: Zora did not attend any part.",
+                      "1": "1: Zora attended some but not all of the workshop.",
+                      "2": "2: Zora attended the entire workshop."
+                    },
+                    "probabilities": {
+                      "0": 1.0,
+                      "1": 0.0,
+                      "2": 0.0
+                    },
+                    "confidence": 0.9995,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 1.0,
+                    "1": 0.0,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.0001,
+                  "operational": {
+                    "confidence": 0.9995,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-12",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.2238,
+                    "legend": {
+                      "0": "0: Actual attendance of neither required role is confirmed.",
+                      "1": "1: Actual attendance of exactly one required role is confirmed.",
+                      "2": "2: Actual attendance of both required roles is confirmed."
+                    },
+                    "probabilities": {
+                      "0": 0.0762,
+                      "1": 0.6238,
+                      "2": 0.3
+                    },
+                    "confidence": 0.2247,
+                    "answer_confidence": 0.6238,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0762,
+                    "1": 0.6238,
+                    "2": 0.3
+                  },
+                  "label": null,
+                  "score": 1.2238,
+                  "operational": {
+                    "confidence": 0.2247,
+                    "answer_confidence": 0.6238,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.32380000000000003
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-13",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.0195,
+                    "legend": {
+                      "0": "0: Maren has explicitly declined attendance.",
+                      "1": "1: Maren has given only a tentative or conditional attendance response.",
+                      "2": "2: Maren has firmly confirmed attendance without a remaining condition."
+                    },
+                    "probabilities": {
+                      "0": 0.0496,
+                      "1": 0.8812,
+                      "2": 0.0691
+                    },
+                    "confidence": 0.5947,
+                    "answer_confidence": 0.8812,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0496,
+                    "1": 0.8812,
+                    "2": 0.0691
+                  },
+                  "label": null,
+                  "score": 1.0195,
+                  "operational": {
+                    "confidence": 0.5947,
+                    "answer_confidence": 0.8812,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8121
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-14",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.9934,
+                    "legend": {
+                      "0": "0: Actual attendance of neither required role is confirmed.",
+                      "1": "1: Actual attendance of exactly one required role is confirmed.",
+                      "2": "2: Actual attendance of both required roles is confirmed."
+                    },
+                    "probabilities": {
+                      "0": 0.0018,
+                      "1": 0.003,
+                      "2": 0.9952
+                    },
+                    "confidence": 0.9694,
+                    "answer_confidence": 0.9952,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0018,
+                    "1": 0.003,
+                    "2": 0.9952
+                  },
+                  "label": null,
+                  "score": 1.9934,
+                  "operational": {
+                    "confidence": 0.9694,
+                    "answer_confidence": 0.9952,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9922
+                }
+              }
+            },
+            {
+              "id": "ctrl-score-15",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.8659,
+                    "legend": {
+                      "0": "0: Fewer than 10 verified minutes present.",
+                      "1": "1: At least 10 but fewer than 30 verified minutes present.",
+                      "2": "2: At least 30 verified minutes present."
+                    },
+                    "probabilities": {
+                      "0": 0.2105,
+                      "1": 0.7131,
+                      "2": 0.0764
+                    },
+                    "confidence": 0.303,
+                    "answer_confidence": 0.7131,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2105,
+                    "1": 0.7131,
+                    "2": 0.0764
+                  },
+                  "label": null,
+                  "score": 0.8659,
+                  "operational": {
+                    "confidence": 0.303,
+                    "answer_confidence": 0.7131,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5025999999999999
+                }
+              }
+            },
+            {
+              "id": "ctrl-boundary-01",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "ready",
+                    "probabilities": {
+                      "ready": 0.6656,
+                      "blocked": 0.158,
+                      "unknown": 0.1765
+                    },
+                    "confidence": 0.2094,
+                    "answer_confidence": 0.6656,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "ready": 0.6656,
+                    "blocked": 0.158,
+                    "unknown": 0.1765
+                  },
+                  "label": "ready",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.2094,
+                    "answer_confidence": 0.6656,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.4891
+                }
+              }
+            },
+            {
+              "id": "ctrl-boundary-02",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4781,
+                    "confidence": 0.5219,
+                    "answer_confidence": 0.5219,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5219,
+                    "true": 0.4781
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5219,
+                    "answer_confidence": 0.5219,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.043800000000000006
+                }
+              }
+            },
+            {
+              "id": "ctrl-boundary-03",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9946,
+                    "legend": {
+                      "0": "0: No actual participation is supported.",
+                      "1": "1: Actual participation in part, but not all, of the meeting is supported.",
+                      "2": "2: Actual participation throughout the meeting is supported."
+                    },
+                    "probabilities": {
+                      "0": 0.0109,
+                      "1": 0.9835,
+                      "2": 0.0055
+                    },
+                    "confidence": 0.914,
+                    "answer_confidence": 0.9835,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0109,
+                    "1": 0.9835,
+                    "2": 0.0055
+                  },
+                  "label": null,
+                  "score": 0.9946,
+                  "operational": {
+                    "confidence": 0.914,
+                    "answer_confidence": 0.9835,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9726
+                }
+              }
+            }
+          ],
+          "latency_ms": {
+            "p50": 163.9990999829024,
+            "p95": 200.1035999855958,
+            "p99": 235.79239996615797
+          },
+          "latencies_ms": [
+            161.75080003449693,
+            170.44200003147125,
+            165.8127999980934,
+            172.22999996738508,
+            176.35840002913028,
+            142.2067999956198,
+            155.64620000077412,
+            188.36600001668558,
+            160.69320001406595,
+            160.41730000870302,
+            150.95440001459792,
+            162.58449997985736,
+            143.4548999532126,
+            173.57130005257204,
+            156.8595000426285,
+            151.28869999898598,
+            165.36009998526424,
+            148.25119997840375,
+            164.49319996172562,
+            165.5352000379935,
+            177.59899998782203,
+            149.2867000051774,
+            149.88559996709228,
+            176.86030000913888,
+            149.7008999576792,
+            153.74109998811036,
+            147.01850002165884,
+            148.23069999692962,
+            164.30730000138283,
+            139.1379000269808,
+            172.35049995360896,
+            181.61530001088977,
+            156.96739999111742,
+            163.6968000093475,
+            164.75210001226515,
+            163.9990999829024,
+            155.58359998976812,
+            176.4905999880284,
+            164.4672999973409,
+            172.8919000015594,
+            143.36590003222227,
+            180.0340000190772,
+            171.92739999154583,
+            187.9975000047125,
+            155.4265000158921,
+            200.1035999855958,
+            205.12629998847842,
+            235.79239996615797
+          ],
+          "metrics": {
+            "choice_accuracy": 0.9333333333333333,
+            "noul_accuracy": 0.9333333333333333,
+            "score_mae": 0.4055933333333333,
+            "mean_confidence": 0.8005511111111111,
+            "score_within_0.25": 0.6
+          },
+          "elapsed_ms": 7946.463200030848,
+          "requests_per_second": 6.040423115507999,
+          "execution": [
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 161.75080003449693,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 170.44200003147125,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 165.8127999980934,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 172.22999996738508,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 176.35840002913028,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 142.2067999956198,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 155.64620000077412,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 188.36600001668558,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 160.69320001406595,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 160.41730000870302,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 150.95440001459792,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 162.58449997985736,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 143.4548999532126,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 173.57130005257204,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 156.8595000426285,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 151.28869999898598,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 165.36009998526424,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 148.25119997840375,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 164.49319996172562,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 165.5352000379935,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 177.59899998782203,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 149.2867000051774,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 149.88559996709228,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 176.86030000913888,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 149.7008999576792,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 153.74109998811036,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 147.01850002165884,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 148.23069999692962,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 164.30730000138283,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 139.1379000269808,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 172.35049995360896,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 181.61530001088977,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 156.96739999111742,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 163.6968000093475,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 164.75210001226515,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 163.9990999829024,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 155.58359998976812,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 176.4905999880284,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 164.4672999973409,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 172.8919000015594,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 143.36590003222227,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 180.0340000190772,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 171.92739999154583,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 187.9975000047125,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 155.4265000158921,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 200.1035999855958,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 205.12629998847842,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 235.79239996615797,
+              "forwards": []
+            }
+          ],
+          "batch_size": 1,
+          "mode": "ordered",
+          "repeat": 0,
+          "concurrency": 1,
+          "comparison": {
+            "label_flips": 0,
+            "labelled_comparisons": 32,
+            "label_flip_rate": 0.0,
+            "max_probability_drift": 9.999999999998899e-05,
+            "max_score_drift": 0.0,
+            "max_confidence_drift": 9.999999999998899e-05,
+            "max_action_drift": 0.0,
+            "operational_flag_flips": 0,
+            "operational_flag_comparisons": 0,
+            "operational_flag_flip_rate": 0.0
+          },
+          "failures": [
+            "score_within_0.25=0.6 is below 0.8"
+          ]
+        }
+      ]
+    }
+  },
+  "coverage": {
+    "evaluation_cases": 48,
+    "families": 48,
+    "labelled_answers": 45,
+    "boundary_answers": 4,
+    "boundary_cases": 4,
+    "boundary_observations": [
+      {
+        "id": "ctrl-choice-14",
+        "qid": "decision",
+        "margin": 0.011699999999999988
+      },
+      {
+        "id": "ctrl-noul-13",
+        "qid": "decision",
+        "margin": 0.02299999999999991
+      },
+      {
+        "id": "ctrl-noul-14",
+        "qid": "decision",
+        "margin": 0.04259999999999997
+      },
+      {
+        "id": "ctrl-boundary-02",
+        "qid": "decision",
+        "margin": 0.043800000000000006
+      }
+    ],
+    "requested_cells": [
+      "eager-cpu-fp32",
+      "onnx-cpu-graph"
+    ],
+    "completed_cells": [],
+    "skipped_cells": [],
+    "not_run_cells": []
+  },
+  "measurement": {
+    "latency": "whole completed local call, unsplit per target request; includes local inference queue waiting",
+    "load": "bounded closed-loop callers; threadpool admission waiting excluded; no HTTP SLO claim",
+    "warmth": "model load excluded; first call can include cold operator initialization",
+    "tail_warning": "small samples do not certify production tail latency",
+    "reference": "first serial run; agreement is separate from correctness",
+    "boundary": "measured top-two probability gap; score drift is gated separately"
+  },
+  "matrix": {
+    "schema": "veya-qualification-matrix/1",
+    "reference": "eager-cpu-fp32",
+    "cells": [
+      {
+        "name": "eager-cpu-fp32",
+        "checkpoint": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-repair-20261106",
+        "backend": "eager",
+        "device": "cpu",
+        "precision": "fp32",
+        "required": true,
+        "decision_policy": "canonical"
+      },
+      {
+        "name": "onnx-cpu-graph",
+        "checkpoint": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-repair-20261106",
+        "backend": "onnx",
+        "device": "cpu",
+        "precision": "graph",
+        "onnx_path": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-repair-20261106\\english-repair.onnx",
+        "required": true,
+        "decision_policy": "canonical"
+      }
+    ],
+    "batch_sizes": [
+      1
+    ],
+    "concurrencies": [
+      1
+    ],
+    "repeats": 1,
+    "limits": {
+      "max_label_flip_rate": 0,
+      "max_probability_drift": 0.001,
+      "max_score_drift": 0.001,
+      "max_accuracy_drop": 0,
+      "boundary_margin": 0.05,
+      "min_boundary_cases": 1,
+      "min_accuracy": 0.8
+    }
+  },
+  "matrix_sha256": "283c0d936315c6ac46257d01dd02a7863dee177ecd144fc1e27d4b017b6998c1",
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "dependencies": {
+      "veya": "0.3.29",
+      "torch": "2.14.1",
+      "transformers": "5.19.0",
+      "safetensors": "0.8.0",
+      "numpy": "2.5.3",
+      "tokenizers": "0.23.2",
+      "onnxruntime": "1.30.0",
+      "onnx": "1.23.2"
+    }
+  },
+  "source_sha256": {
+    "__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "common.py": "bab0075c2374d825bc889b982503eb70d7fa63ae76c88c0252e96cda8a54d3f2",
+    "compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "fast.py": "e2feef1705f08f8b1d6e8a8d126dd726128ec7849edde92b8f4b1d17ef7ab5dd",
+    "hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "mcp/server.py": "7b882304a4c910c1d36ba5e18e2e9abaff4c79f7285e820597d1d807d19f1e07",
+    "mcp/tools.py": "a93e7b68e19a780f9c3a0bf8a8e6afba183ca46d637725955bf1adcffa426bc1",
+    "onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "qualification.py": "a80ab9b89706eeb9b1598627012ce43dc9a56ce8654b250cd4b4d603a0888430",
+    "replay.py": "20344f39b3989c8e4f9b4cc20b1e0c17179605f616d9fa959816acd81d697a44",
+    "revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05"
+  },
+  "source_changed_during_run": false,
+  "harness": {
+    "created_utc": "2026-11-06T00:08:21.102161+00:00",
+    "script_sha256": "1ba39f35c8928d4fb5194cd95db2e321eadfc013ecad461e640c3c75260d50e6",
+    "corpus_file_sha256": "936c4911bf9b5ea61f95803daadef911a7c45edce7551500f92118773977baa1",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logical_cpus": 32,
+    "cpu_threads": 4,
+    "cpu_interop_threads": 1,
+    "limits": "Synthetic rubric fixture, small local sample; no general accuracy or HTTP p99 claim. Workstation load is uncontrolled. Zero cache use, fp32/eager versus the pinned graph."
+  }
+}
