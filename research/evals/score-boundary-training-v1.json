@@ -1079,6 +1079,174 @@
           1.5
         ]
       ]
+    },
+    {
+      "family": "scorefit-uncertain-treatment-plant",
+      "type": "score",
+      "instructions": "Rate current priority for water treatment from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "One operator saw intermittent filtration delays, and the standby vessel sometimes clears the backlog. The active incident needs attention, but the number of affected treatment lines and the reserve capacity remain unverified.",
+          1.5
+        ],
+        [
+          "One operator saw intermittent filtration delays, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "One operator saw intermittent filtration delays. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "One operator saw intermittent filtration delays. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-ice-factory",
+      "type": "score",
+      "instructions": "Rate current priority for industrial ice supply from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "Several orders have been delayed at the loading dock, and the reserve freezer occasionally releases a full load. The active incident needs attention, but there is no verified count of blocked lines or evidence that the reserve can sustain demand.",
+          1.5
+        ],
+        [
+          "Several orders have been delayed at the loading dock, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "Several orders have been delayed at the loading dock. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "Several orders have been delayed at the loading dock. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-printing-centre",
+      "type": "score",
+      "instructions": "Rate current priority for production printing from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "The first shops report that files are stalling before print, and resubmission sometimes gets a job through. The active incident needs attention, but nobody has confirmed how many printers are affected or whether resubmission is reliable.",
+          1.5
+        ],
+        [
+          "The first shops report that files are stalling before print, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "The first shops report that files are stalling before print. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "The first shops report that files are stalling before print. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-radiology-link",
+      "type": "score",
+      "instructions": "Rate current priority for delivery of urgent imaging studies from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A ward reports that some image transfers stall, and retrying succeeds for several uploads. The active incident needs attention, but the control desk has not verified site coverage or sustained retry performance.",
+          1.5
+        ],
+        [
+          "A ward reports that some image transfers stall, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A ward reports that some image transfers stall. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A ward reports that some image transfers stall. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-warehouse-lifts",
+      "type": "score",
+      "instructions": "Rate current priority for warehouse lift availability from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A loading crew reports intermittent lift delays, and manual rerouting has moved some pallets. The active incident needs attention, but the affected aisles and available manual capacity are still unknown.",
+          1.5
+        ],
+        [
+          "A loading crew reports intermittent lift delays, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A loading crew reports intermittent lift delays. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A loading crew reports intermittent lift delays. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-animal-feed-line",
+      "type": "score",
+      "instructions": "Rate current priority for feed distribution from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A technician saw several conveyors cycle slowly, and the spare chute has worked in a few runs. The active incident needs attention, but the current yard-wide scope and effectiveness of the chute are unverified.",
+          1.5
+        ],
+        [
+          "A technician saw several conveyors cycle slowly, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A technician saw several conveyors cycle slowly. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A technician saw several conveyors cycle slowly. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
     }
   ],
   "calibration": [
@@ -1267,6 +1435,62 @@
         [
           "The two final reports are for this run and give 23 and 26. Both are signed. The operator is checking which count is correct.",
           1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-test-sample-shipping",
+      "type": "score",
+      "instructions": "Rate current priority for laboratory specimen collection from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A collection driver reports several missed scans, and manual entry has cleared a few of them. The active incident needs attention, but the scope of the problem and reliability of manual entry remain unknown.",
+          1.5
+        ],
+        [
+          "A collection driver reports several missed scans, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A collection driver reports several missed scans. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A collection driver reports several missed scans. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-cross-river-freight",
+      "type": "score",
+      "instructions": "Rate current priority for river freight service from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A dock reports that several load bookings have stalled, and another loading slip has sometimes accepted them. The active incident needs attention, but the affected terminals and capacity of that route have not been confirmed.",
+          1.5
+        ],
+        [
+          "A dock reports that several load bookings have stalled, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A dock reports that several load bookings have stalled. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A dock reports that several load bookings have stalled. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
         ]
       ]
     }
