@@ -173,8 +173,11 @@ def main():
     torch.manual_seed(20261106)
     if args.device == "cuda" and not torch.cuda.is_available():
         parser.error("CUDA training requires CUDA-enabled PyTorch")
-    input_paths = [args.data, Path(__file__), *args.development, *(args.level_zero_data or ())]
+    bank_paths = [path.resolve() for path in (args.data, *(args.level_zero_data or ()))]
+    input_paths = [Path(__file__), *args.development, *bank_paths]
     inputs = {str(path.resolve()): _file_sha(path) for path in input_paths}
+    if len({inputs[str(path)] for path in bank_paths}) != len(bank_paths):
+        parser.error("training and supplemental banks must be distinct files with distinct contents")
     names = [path.name for path in args.development]
     if len(set(names)) != len(names) or set(names) & {"training", "calibration"}:
         parser.error("development inputs need distinct filenames outside the split names")
