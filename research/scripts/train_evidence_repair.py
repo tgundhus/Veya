@@ -48,6 +48,8 @@ def check_splits(splits):
     families, states = {}, {}
     for split, rows in splits.items():
         for row in rows:
+            if isinstance(row["state"], list) or any("option_order" in q for q in row["questions"].values()):
+                raise ValueError("the evidence recipe requires string or object states and default option order")
             state = json.dumps(row["state"], ensure_ascii=False, sort_keys=True).strip().casefold()
             for observed, key in ((families, row["family"]), (states, state)):
                 if observed.setdefault(key, split) != split:
@@ -55,14 +57,17 @@ def check_splits(splits):
 
 
 def main():
+    def local_path(value):
+        return Path(value).resolve()
+
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("base", "out", "wanli"):
-        parser.add_argument("--" + name, type=Path, required=True)
-    parser.add_argument("--banks", type=Path, nargs="+", required=True)
-    parser.add_argument("--development", type=Path, nargs="+", required=True)
-    parser.add_argument("--regression", type=Path, help="published corpus deliberately moved into training")
+        parser.add_argument("--" + name, type=local_path, required=True)
+    parser.add_argument("--banks", type=local_path, nargs="+", required=True)
+    parser.add_argument("--development", type=local_path, nargs="+", required=True)
+    parser.add_argument("--regression", type=local_path, help="published corpus deliberately moved into training")
     parser.add_argument("--regression-repeats", type=int, default=4)
-    parser.add_argument("--teacher", type=Path, help="local ModernBERT classifier safetensors")
+    parser.add_argument("--teacher", type=local_path, help="local ModernBERT classifier safetensors")
     parser.add_argument("--blend", type=float, default=0)
     parser.add_argument("--wanli-per-label", type=int, default=160)
     parser.add_argument("--rehearse", type=int, default=1)
@@ -72,7 +77,7 @@ def main():
     parser.add_argument("--head-lr", type=float, default=8e-5)
     parser.add_argument("--encoder-lr", type=float, default=2e-5)
     args = parser.parse_args()
-    base, output = args.base.resolve(), args.out.resolve()
+    base, output = args.base, args.out
     if not base.is_dir() or output.exists() or output.is_relative_to(base):
         parser.error("use an existing local base and a new output outside it")
     if not 0 <= args.blend <= 1 or bool(args.teacher) != bool(args.blend):
@@ -100,7 +105,7 @@ def main():
     paths = [Path(__file__), Path(__file__).with_name("train_checkpoint_repair.py"),
              args.wanli, *args.banks, *args.development]
     paths.extend(path for path in (args.regression, args.teacher) if path is not None)
-    inputs = {str(path.resolve()): _file_sha(path.resolve()) for path in paths}
+    inputs = {str(path): _file_sha(path) for path in paths}
     if len(set(inputs.values())) != len(paths):
         parser.error("training, calibration and evaluation input files must have distinct contents")
     source_hashes = _source_identity()
@@ -127,9 +132,6 @@ def main():
     natural_language = list(nli_rows(args.wanli, args.wanli_per_label))
     splits = {"training": training + regression + natural_language, "calibration": calibration, **dev}
     check_splits(splits)
-    if any("option_order" in question for split in splits.values() for row in split
-           for question in row["questions"].values()):
-        parser.error("the evidence recipe requires the default option order")
     regression = [row for row in regression if row["expected"]]
     rows = training * args.rehearse + natural_language + regression * args.regression_repeats
     dev = {name: [row for row in cases if row["expected"]] for name, cases in dev.items()}

@@ -17,6 +17,35 @@ import laya.qualification as qualification
 from laya.qualification import qualify, run_matrix, split_families, validate_corpus, validate_matrix
 
 
+def test_evidence_training_rejects_conversation_state():
+    from research.scripts.train_evidence_repair import check_splits
+
+    row = {"family": "long-conversation", "state": [{"role": "user", "content": "Latest update"}],
+           "questions": {"decision": {"type": "noul"}}}
+    with pytest.raises(ValueError, match="string or object states"):
+        check_splits({"training": [row]})
+
+
+def test_evidence_verification_allows_encoder_only_when_requested(tmp_path):
+    torch = pytest.importorskip("torch")
+    safetensors = pytest.importorskip("safetensors.torch")
+    from research.scripts.verify_checkpoint_repair import frozen_weights
+
+    base, candidate = tmp_path / "base", tmp_path / "candidate"
+    base.mkdir()
+    candidate.mkdir()
+    original = {"encoder.weight": torch.zeros(2), "act_head.weight": torch.zeros(1)}
+    adapted = {**original, "encoder.weight": torch.ones(2)}
+    safetensors.save_file(original, base / "model.safetensors")
+    safetensors.save_file(adapted, candidate / "model.safetensors")
+    with pytest.raises(AssertionError, match="encoder.weight"):
+        frozen_weights(base, candidate)
+    assert frozen_weights(base, candidate, allow_encoder_update=True)["updated_tensors"] == ["encoder.weight"]
+    safetensors.save_file({**adapted, "act_head.weight": torch.ones(1)}, candidate / "model.safetensors")
+    with pytest.raises(AssertionError, match="act_head.weight"):
+        frozen_weights(base, candidate, allow_encoder_update=True)
+
+
 def test_level_zero_repair_loss_uses_semantic_levels_after_rotation():
     torch = pytest.importorskip("torch")
     from research.scripts.train_checkpoint_repair import level_zero_loss
