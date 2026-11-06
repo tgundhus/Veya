@@ -33,6 +33,8 @@ def main():
     for name in ("rehearsal", "regression", "development"):
         parser.add_argument("--" + name, type=lambda value: Path(value).resolve(), nargs="+", required=True)
     parser.add_argument("--epochs", type=int, default=32)
+    parser.add_argument("--boundary-focus", action="store_true",
+                        help="emphasize adjacent uncertainty while retaining hard scores")
     args = parser.parse_args()
     if not args.base.is_dir() or args.out.exists() or args.out.is_relative_to(args.base) or args.epochs < 1:
         parser.error("use a local base, a new output outside it, and positive epochs")
@@ -106,6 +108,8 @@ def main():
                 or cfg.get("temperature_by_options") or cfg.get("lang_temperatures")):
             parser.error("use a sequential choice-adapted checkpoint with scalar type temperatures")
         continuing = bool(cfg.get("score_adapter_width"))
+        if args.boundary_focus and not continuing:
+            parser.error("--boundary-focus requires an existing score adapter")
         width = cfg.get("score_adapter_width") or 64
         agent.model.cuda().eval()
         training, targets = capture(agent, local + rehearsal + regression)
@@ -142,6 +146,7 @@ def main():
     levels = torch.arange(3., device="cuda")
     cal_score = cal_targets @ levels
     cal_ambiguous = cal_targets.max(-1).values < 1
+    cal_midpoint = cal_targets.max(-1).values == .5
     base_temperature = cfg["temperature"][1]
 
     def predict(batch):
@@ -163,6 +168,8 @@ def main():
     weights[rotated_start - len(regression):rotated_start] = 3
     weights[rotated_start:] = .35
     weights *= torch.where(hard, torch.where(correct, 1., 2.), 3.)
+    if args.boundary_focus:
+        weights *= torch.where(midpoint, 3., 1.)
     anchor = torch.where(hard & correct, .35 if continuing else .08, .0)[:, None]
     mixed = (1 - anchor) * targets + anchor * original
     mixed = torch.where(hard[:, None], .99 * mixed + .01 / len(levels), mixed)
@@ -193,13 +200,23 @@ def main():
                 loss = errors.square().mean(-1) + cross_entropy.mean(-1)
                 if continuing:
                     # Choose among temperatures that preserve the most hard
-                    # calibration scores, then use proper loss to break ties.
+                    # calibration scores. Boundary polishing also counts
+                    # correct adjacent near ties as calibration successes.
                     hits = (errors[:, ~cal_ambiguous] <= .25).sum(-1)
+                    if args.boundary_focus:
+                        pair = logp.exp()[:, cal_midpoint].topk(2)
+                        plausible = (cal_targets[cal_midpoint] > 0).expand(len(temperatures), -1, -1)
+                        matched = plausible.gather(-1, pair.indices).all(-1)
+                        gaps = pair.values[..., 0] - pair.values[..., 1]
+                        hits = hits + (matched & (gaps <= .05)).sum(-1)
                     loss = loss.masked_fill(hits != hits.max(), torch.inf)
                 temperature = float(temperatures[loss.argmin()])
                 probability = (logits / temperature).softmax(-1)
                 top = probability[cal_ambiguous].topk(2).values
                 cal_gaps = (top[:, 0] - top[:, 1]).tolist()
+                cal_top = probability[cal_midpoint].topk(2)
+                cal_pair_ok = (cal_targets[cal_midpoint] > 0).gather(-1, cal_top.indices).all(-1)
+                cal_near = int((cal_pair_ok & ((cal_top.values[:, 0] - cal_top.values[:, 1]) <= .05)).sum())
                 cal_correct = int(((probability @ levels - cal_score).abs()[~cal_ambiguous] <= .25).sum())
                 cal_total = int((~cal_ambiguous).sum())
                 metrics = {}
@@ -215,7 +232,8 @@ def main():
                                           for (cid, qid), indices in zip(boundary_ids[name], top.indices.tolist())]
                 rates = [row["correct"] / row["total"] for row in metrics.values()] + [cal_correct / cal_total]
                 coverage = sum(min(gaps) <= .05 for gaps in margins.values())
-                rank = (-sum(max(0, .8 - rate) for rate in rates), coverage, min(rates), sum(rates),
+                rank = (-sum(max(0, .8 - rate) for rate in rates), cal_near if args.boundary_focus else 0,
+                        coverage, min(rates), sum(rates),
                         -sum(row["mae"] for row in metrics.values()), -sum(cal_gaps))
                 record = {"epoch": epoch, "strength": strength, "score_temperature": temperature,
                           "development": {name: metrics[name] for name in development},
@@ -223,6 +241,7 @@ def main():
                           "development_boundary_gaps": margins,
                           "development_boundary_top_levels": boundary_top,
                           "calibration_hard_scores": [cal_correct, cal_total],
+                          "calibration_matched_near_ties": cal_near,
                           "calibration_boundary_gaps": cal_gaps}
                 history.append(record)
                 print(record, flush=True)
@@ -245,7 +264,7 @@ def main():
                 # rewarding uncertainty on examples with a verified level.
                 adjacent = targets[idx] > 0
                 pair_gap = probability.masked_fill(~adjacent, 0).amax(-1) - probability.masked_fill(~adjacent, 1).amin(-1)
-                error = error + torch.where(midpoint[idx], pair_gap.square(), 0)
+                error = error + torch.where(midpoint[idx], pair_gap.square() * (3 if args.boundary_focus else 1), 0)
             loss = (-(mixed[idx] * logp).sum(-1) + error).mean()
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
@@ -274,6 +293,7 @@ def main():
         report = {"selected": selected, "history": history, "local_rows": len(local), "rehearsal_rows": len(rehearsal),
                   "regression_rows": len(regression), "calibration_rows": len(calibration), "epochs": args.epochs,
                   "rotated_rows": len(targets) - rotated_start,
+                  "boundary_focus": args.boundary_focus,
                   "input_roles": {"bank": str(args.bank), "rehearsal": [str(p) for p in args.rehearsal],
                                   "seen_regression": [str(p) for p in args.regression],
                                   "development": [str(p) for p in args.development]},
