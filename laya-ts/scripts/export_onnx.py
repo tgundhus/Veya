@@ -108,6 +108,7 @@ def main(argv=None):
             super().__init__()
             self.head = model.head
             self.choice_adapters = getattr(model, "choice_adapters", None)
+            self.score_adapters = getattr(model, "score_adapters", None)
             self.type_emb = model.type_emb
             self.scorer = model.scorer
             self.act_head = model.act_head
@@ -123,6 +124,8 @@ def main(argv=None):
                 for index, layer in enumerate(self.head.layers):
                     if self.choice_adapters is not None:
                         h = DecisionModel.adapt_choice_hidden(self, h, qtype, index)
+                    if self.score_adapters is not None:
+                        h = DecisionModel.adapt_score_hidden(self, h, qtype, index)
                     h = layer(h, src_key_padding_mask=pad)
             idx = marker_pos.clamp(min=0)[:, :, None].expand(-1, -1, h.size(-1))
             m = torch.gather(h, 1, idx)
@@ -148,8 +151,8 @@ def main(argv=None):
     from safetensors.torch import load_file as _load_safetensors
 
     missing, unexpected = model.load_state_dict(_load_safetensors(weights_path), strict=False)
-    if any(name.startswith("choice_adapters.") for name in (*missing, *unexpected)):
-        raise SystemExit("checkpoint choice adapter weights do not match its configuration")
+    if any(name.startswith(("choice_adapters.", "score_adapters.")) for name in (*missing, *unexpected)):
+        raise SystemExit("checkpoint adapter weights do not match its configuration")
     model.eval().float()
 
     # Batch must stay symbolic: tracing with batch=1 lets dynamo bake batch=1
@@ -222,7 +225,7 @@ def _run_ref(model, head, seq, batch=1):
         marker_mask = torch.tensor([[True, True]] * batch)
         qtype = (torch.arange(batch, dtype=torch.long) % 3)[:, None]
         ref_logits, ref_act = head(ref_hidden, marker_pos, marker_mask, qtype, attention_mask)
-        if getattr(model, "choice_adapters", None) is not None:
+        if head.choice_adapters is not None or head.score_adapters is not None:
             logits, act = model(input_ids, attention_mask, marker_pos, marker_mask, qtype.squeeze(-1))
             torch.testing.assert_close(ref_logits, logits)
             torch.testing.assert_close(ref_act, act)

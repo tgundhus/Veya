@@ -17,7 +17,8 @@ import laya.qualification as qualification
 from laya.qualification import qualify, run_matrix, split_families, validate_corpus, validate_matrix
 
 
-def test_choice_adapter_preserves_nonchoice_rows_in_one_forward():
+@pytest.mark.parametrize(("kind", "index"), [("choice", 0), ("score", 1)])
+def test_typed_adapter_preserves_other_rows_in_one_forward(kind, index):
     torch = pytest.importorskip("torch")
     from laya.common import DecisionModel
 
@@ -33,23 +34,30 @@ def test_choice_adapter_preserves_nonchoice_rows_in_one_forward():
             self.calls += 1
             return SimpleNamespace(last_hidden_state=self.embedding(input_ids))
 
-    base = DecisionModel(Encoder()).eval()
-    repaired = DecisionModel(Encoder(), choice_adapter_width=8).eval()
+    choice_width = 8 if kind == "score" else 0
+    base = DecisionModel(Encoder(), choice_adapter_width=choice_width).eval()
+    if base.choice_adapters is not None:
+        with torch.no_grad():
+            for adapter in base.choice_adapters:
+                adapter[-1].weight.normal_(std=.2)
+    kwargs = {"choice_adapter_width": 8, f"{kind}_adapter_width": 8}
+    repaired = DecisionModel(Encoder(), **kwargs).eval()
     missing, unexpected = repaired.load_state_dict(base.state_dict(), strict=False)
-    assert missing and all(name.startswith("choice_adapters.") for name in missing) and not unexpected
+    assert missing and all(name.startswith(f"{kind}_adapters.") for name in missing) and not unexpected
     ids = torch.arange(6).expand(3, -1)
     positions = torch.tensor([[1, 2, 4], [1, 3, 4], [1, 2, 0]])
     markers = torch.tensor([[True, True, True], [True, True, True], [True, True, False]])
     args = (ids, torch.ones_like(ids), positions, markers, torch.arange(3))
     with torch.no_grad():
-        for adapter in repaired.choice_adapters:
+        for adapter in getattr(repaired, f"{kind}_adapters"):
             adapter[-1].weight.normal_(std=.2)
         logits, action = base(*args)
         updated_logits, updated_action = repaired(*args)
     assert repaired.encoder.calls == 1
-    assert not torch.equal(logits[0], updated_logits[0])
-    assert torch.equal(logits[1:], updated_logits[1:])
-    assert torch.equal(action[1:], updated_action[1:])
+    assert not torch.equal(logits[index], updated_logits[index])
+    other = [row for row in range(3) if row != index]
+    assert torch.equal(logits[other], updated_logits[other])
+    assert torch.equal(action[other], updated_action[other])
 
 
 def test_evidence_training_rejects_conversation_state():

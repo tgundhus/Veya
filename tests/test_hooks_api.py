@@ -1935,6 +1935,7 @@ check_param("CodeModeRunner.execute", CodeModeRunner.execute, "router", None, in
 
 from laya.common import DecisionModel  # noqa: E402
 check_param("DecisionModel", DecisionModel.__init__, "choice_adapter_width", 0)
+check_param("DecisionModel", DecisionModel.__init__, "score_adapter_width", 0)
 
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
