@@ -25,6 +25,9 @@ the same inference path can distinguish routine work from active disruption.
 The [evidence-grounding follow-up](evidence-repair-2026-11-06.md) evaluates
 current-versus-historical contrasts and an independent acceptance set.
 
+The [choice-only routing repair](routing-repair-2026-11-06.md) checks routing
+changes and score preservation through the same single-pass runtime.
+
 The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
 required decision storage, experimental HTTP microbatching and selected upstream fixes.
 
