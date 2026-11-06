@@ -17,6 +17,41 @@ import laya.qualification as qualification
 from laya.qualification import qualify, run_matrix, split_families, validate_corpus, validate_matrix
 
 
+def test_choice_adapter_preserves_nonchoice_rows_in_one_forward():
+    torch = pytest.importorskip("torch")
+    from laya.common import DecisionModel
+
+    class Encoder(torch.nn.Module):
+        config = SimpleNamespace(hidden_size=64)
+
+        def __init__(self):
+            super().__init__()
+            self.embedding = torch.nn.Embedding(16, 64)
+            self.calls = 0
+
+        def forward(self, input_ids, attention_mask):
+            self.calls += 1
+            return SimpleNamespace(last_hidden_state=self.embedding(input_ids))
+
+    base = DecisionModel(Encoder()).eval()
+    repaired = DecisionModel(Encoder(), choice_adapter_width=8).eval()
+    missing, unexpected = repaired.load_state_dict(base.state_dict(), strict=False)
+    assert missing and all(name.startswith("choice_adapters.") for name in missing) and not unexpected
+    ids = torch.arange(6).expand(3, -1)
+    positions = torch.tensor([[1, 2, 4], [1, 3, 4], [1, 2, 0]])
+    markers = torch.tensor([[True, True, True], [True, True, True], [True, True, False]])
+    args = (ids, torch.ones_like(ids), positions, markers, torch.arange(3))
+    with torch.no_grad():
+        for adapter in repaired.choice_adapters:
+            adapter[-1].weight.normal_(std=.2)
+        logits, action = base(*args)
+        updated_logits, updated_action = repaired(*args)
+    assert repaired.encoder.calls == 1
+    assert not torch.equal(logits[0], updated_logits[0])
+    assert torch.equal(logits[1:], updated_logits[1:])
+    assert torch.equal(action[1:], updated_action[1:])
+
+
 def test_evidence_training_rejects_conversation_state():
     from research.scripts.train_evidence_repair import check_splits
 

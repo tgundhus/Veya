@@ -147,8 +147,11 @@ class DecisionModel(nn.Module):
     """Bidirectional transformer encoder backbone + typed decision head."""
 
     def __init__(self, encoder: nn.Module, head_layers: int = 2, n_act: int = 2, dropout: float = 0.1,
-                 no_init: bool = False):
+                 no_init: bool = False, choice_adapter_width: int = 0):
         super().__init__()
+        if (type(choice_adapter_width) is not int or not 0 <= choice_adapter_width <= 1024
+                or (choice_adapter_width and head_layers < 1)):
+            raise ValueError("choice_adapter_width must be an integer from 0 to 1024 and requires a decision head")
         self.encoder = encoder
         d = encoder.config.hidden_size
         # `no_init` means the caller is about to load every parameter from a checkpoint, so the
@@ -165,6 +168,15 @@ class DecisionModel(nn.Module):
             # _DynamicMultiheadAttention. Same parameters, same maths, traceable shapes.
             layer.self_attn = _DynamicMultiheadAttention(d, nhead, dropout=dropout, batch_first=True)
             self.head = nn.TransformerEncoder(layer, head_layers, enable_nested_tensor=False) if head_layers > 0 else None
+            self.choice_adapters = None
+            if choice_adapter_width:
+                self.choice_adapters = nn.ModuleList(
+                    nn.Sequential(nn.LayerNorm(d), nn.Linear(d, choice_adapter_width), nn.GELU(),
+                                  nn.Linear(choice_adapter_width, d)) for _ in range(head_layers))
+                if not no_init:
+                    for adapter in self.choice_adapters:
+                        nn.init.zeros_(adapter[-1].weight)
+                        nn.init.zeros_(adapter[-1].bias)
             self.type_emb = nn.Embedding(3, d)
             self.scorer = nn.Sequential(nn.LayerNorm(d), nn.Linear(d, d), nn.GELU(), nn.Linear(d, 1))
             self.act_head = nn.Sequential(nn.Linear(d + 4, 256), nn.GELU(), nn.Linear(256, n_act))
@@ -172,11 +184,17 @@ class DecisionModel(nn.Module):
         if no_init:
             # Only the modules created above are on the meta device; the encoder is already real
             # and may hold non-persistent buffers (RoPE frequencies) that to_empty would wipe.
-            for module in (self.head, self.type_emb, self.scorer, self.act_head):
+            for module in (self.head, self.choice_adapters, self.type_emb, self.scorer, self.act_head):
                 if module is not None:
                     module.to_empty(device="cpu")
             self.temperature = torch.empty_like(self.temperature, device="cpu")
         self.head_checkpointing = False
+
+    def adapt_choice_hidden(self, hidden, qtype, layer_index):
+        if self.choice_adapters is None:
+            return hidden
+        corrected = hidden + self.choice_adapters[layer_index](hidden)
+        return torch.where((qtype == QTYPES["choice"])[:, None, None], corrected, hidden)
 
     def forward(self, input_ids, attention_mask, marker_pos, marker_mask, qtype, detach_encoder: bool = False,
                 position_ids=None, option_ids=None):
@@ -193,7 +211,8 @@ class DecisionModel(nn.Module):
         h = h + self.type_emb(qtype)[:, None, :]
         if self.head is not None:
             pad = ~attention_mask.bool()
-            for layer in self.head.layers:
+            for index, layer in enumerate(self.head.layers):
+                h = self.adapt_choice_hidden(h, qtype, index)
                 if self.head_checkpointing and self.training and torch.is_grad_enabled():
                     # Non-reentrant checkpointing also trains the head when its input
                     # is frozen. Default RNG preservation keeps dropout consistent.
@@ -274,18 +293,19 @@ def build_model(cfg: Dict, encoder_dir: Optional[str] = None, pretrained: bool =
     from transformers import AutoConfig, AutoModel
 
     head_layers, n_act = cfg.get("head_layers", 2), len(cfg.get("act_costs", {})) + 1
+    choice_width = cfg.get("choice_adapter_width", 0)
     if not pretrained or (encoder_dir and os.path.exists(encoder_dir)):
         ecfg = AutoConfig.from_pretrained(encoder_dir or cfg["encoder"])
         _apply_rope_config(ecfg)
         with _no_init_weights():
             enc = AutoModel.from_config(ecfg, attn_implementation="sdpa")
-        return DecisionModel(enc, head_layers, n_act, no_init=True)
+        return DecisionModel(enc, head_layers, n_act, no_init=True, choice_adapter_width=choice_width)
     # Training-time Hub load of the base encoder; allow pinning it like the checkpoints.
     kw = {"attn_implementation": "sdpa"}
     if revision:
         kw["revision"] = revision
     enc = AutoModel.from_pretrained(cfg["encoder"], **kw)
-    return DecisionModel(enc, head_layers, n_act)
+    return DecisionModel(enc, head_layers, n_act, choice_adapter_width=choice_width)
 
 
 def proper_reward(

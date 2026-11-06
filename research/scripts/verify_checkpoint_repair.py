@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 
-def frozen_weights(base, candidate, *, allow_encoder_update=False):
+def frozen_weights(base, candidate, *, allow_encoder_update=False, routing_only=False):
     import torch
     from safetensors import safe_open
     changed, frozen = [], 0
@@ -24,23 +24,38 @@ def frozen_weights(base, candidate, *, allow_encoder_update=False):
         allowed += ("encoder.",)
     with (safe_open(str(base / "model.safetensors"), framework="pt") as old,
           safe_open(str(candidate / "model.safetensors"), framework="pt") as new):
-        assert old.keys() == new.keys()
+        added = sorted(set(new.keys()) - set(old.keys()))
+        if routing_only:
+            assert set(old.keys()) <= set(new.keys())
+            assert added and all(name.startswith("choice_adapters.") for name in added), added
+        else:
+            assert old.keys() == new.keys()
         for name in old.keys():
             before, after = old.get_tensor(name), new.get_tensor(name)
             assert before.dtype == after.dtype and before.shape == after.shape, name
             if torch.equal(before, after):
                 frozen += 1
             else:
-                assert name.startswith(allowed), name
+                assert not routing_only and name.startswith(allowed), name
                 changed.append(name)
-    assert changed
-    return {"identical_tensors": frozen, "updated_tensors": changed}
+    assert changed or added
+    result = {"identical_tensors": frozen, "updated_tensors": changed}
+    if routing_only:
+        old_cfg, new_cfg = (json.loads((path / "rl_agent_config.json").read_text(encoding="utf-8"))
+                            for path in (base, candidate))
+        assert not old_cfg.pop("choice_adapter_width", 0) and new_cfg.pop("choice_adapter_width") > 0
+        assert old_cfg.pop("temperature")[1:] == new_cfg.pop("temperature")[1:]
+        for cfg in (old_cfg, new_cfg):
+            cfg.pop("training", None)
+        assert old_cfg == new_cfg
+        result["added_tensors"] = added
+    return result
 
 
 def compare_latency(args, cases):
     from laya.agent import Agent
     from laya.onnx_agent import _NativeONNXAgent
-    from laya.qualification import _percentiles
+    from laya.qualification import _answers, _compare, _percentiles
 
     sample = []
     for kind in ("choice", "noul", "score"):
@@ -89,10 +104,23 @@ def compare_latency(args, cases):
                     pairs.append({"id": case["id"], "repeat": repeat, "first": start_index,
                                   "base_ms": timings[0], "candidate_ms": timings[1]})
             assert forward_counts == [len(pairs)] * 2, forward_counts
-            result[backend] = {"pairs": pairs, "forward_counts": forward_counts,
+            result[backend] = {"pairs": pairs, "forward_counts": forward_counts.copy(),
                                "base_ms": _percentiles([p["base_ms"] for p in pairs]),
                                "candidate_ms": _percentiles([p["candidate_ms"] for p in pairs]),
                                "paired_median_ratio": median(p["candidate_ms"] / p["base_ms"] for p in pairs)}
+            if args.routing_only:
+                questions = {question["type"]: question for case in sample
+                             for question in case["questions"].values()}
+                mixed = []
+                for index, agent in enumerate(agents):
+                    before = forward_counts[index]
+                    answers = _answers(agent.predict(sample[0]["state"], questions), questions)
+                    assert forward_counts[index] - before == 1
+                    mixed.append({"id": "mixed", "answers": {kind: answers[kind] for kind in ("score", "noul")}})
+                drift = _compare([mixed[0]], [mixed[1]])
+                assert drift["label_flips"] == drift["operational_flag_flips"] == 0, drift
+                assert max(drift[key] for key in drift if key.endswith("_drift")) <= .001, drift
+                result[backend]["mixed_request"] = {"forward_counts": [1, 1], "protected_answers": drift}
     return result
 
 
@@ -186,8 +214,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("base", "base-onnx", "candidate", "onnx", "corpus", "out"):
         parser.add_argument("--" + name, type=lambda path: Path(path).resolve(), required=True)
-    parser.add_argument("--allow-encoder-update", action="store_true",
-                        help="permit changed encoder weights with identical tensor names, shapes and dtypes")
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--allow-encoder-update", action="store_true",
+                       help="permit changed encoder weights with identical tensor names, shapes and dtypes")
+    modes.add_argument("--routing-only", action="store_true",
+                       help="verify added choice adapters and unchanged scores and binary decisions in a mixed request")
     args = parser.parse_args()
     if args.out.exists():
         parser.error("choose a new report path")
@@ -207,7 +238,8 @@ def main():
     cases = [case for case in validate_corpus(load_document(args.corpus))["cases"] if case["split"] == "evaluation"]
     report = {"schema": "veya-checkpoint-verification/1", **before,
               "weight_comparison": frozen_weights(args.base, args.candidate,
-                                                  allow_encoder_update=args.allow_encoder_update),
+                                                  allow_encoder_update=args.allow_encoder_update,
+                                                  routing_only=args.routing_only),
               "cpu_threads": 4, "latency": compare_latency(args, cases),
               "mcp": mcp_smoke(args, cases, before["candidate_artifacts"])}
     if identities() != before:
