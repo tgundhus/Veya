@@ -23,7 +23,7 @@ import os
 import shutil
 
 try:
-    from laya.common import build_model
+    from laya.common import DecisionModel, build_model
 except ImportError:  # --help must work without torch installed
     build_model = None
 
@@ -107,18 +107,22 @@ def main(argv=None):
         def __init__(self, model):
             super().__init__()
             self.head = model.head
+            self.choice_adapters = getattr(model, "choice_adapters", None)
             self.type_emb = model.type_emb
             self.scorer = model.scorer
             self.act_head = model.act_head
 
         def forward(self, hidden_states, marker_pos, marker_mask, qtype, attention_mask):
-            h = hidden_states + self.type_emb(qtype.squeeze(-1))[:, None, :]
+            qtype = qtype.squeeze(-1)
+            h = hidden_states + self.type_emb(qtype)[:, None, :]
             if self.head is not None:
                 # Same as DecisionModel.forward: padding must not be attended.
                 # Without this, batch mates of unequal length corrupt each
                 # other's markers through the head transformer.
                 pad = attention_mask == 0
-                for layer in self.head.layers:
+                for index, layer in enumerate(self.head.layers):
+                    if self.choice_adapters is not None:
+                        h = DecisionModel.adapt_choice_hidden(self, h, qtype, index)
                     h = layer(h, src_key_padding_mask=pad)
             idx = marker_pos.clamp(min=0)[:, :, None].expand(-1, -1, h.size(-1))
             m = torch.gather(h, 1, idx)
@@ -143,7 +147,9 @@ def main(argv=None):
                         pretrained=False)
     from safetensors.torch import load_file as _load_safetensors
 
-    model.load_state_dict(_load_safetensors(weights_path), strict=False)
+    missing, unexpected = model.load_state_dict(_load_safetensors(weights_path), strict=False)
+    if any(name.startswith("choice_adapters.") for name in (*missing, *unexpected)):
+        raise SystemExit("checkpoint choice adapter weights do not match its configuration")
     model.eval().float()
 
     # Batch must stay symbolic: tracing with batch=1 lets dynamo bake batch=1
@@ -214,8 +220,12 @@ def _run_ref(model, head, seq, batch=1):
         ref_hidden = model.encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
         marker_pos = torch.tensor([[1, 2]] * batch, dtype=torch.long)
         marker_mask = torch.tensor([[True, True]] * batch)
-        qtype = torch.tensor([[0]] * batch, dtype=torch.long)
+        qtype = (torch.arange(batch, dtype=torch.long) % 3)[:, None]
         ref_logits, ref_act = head(ref_hidden, marker_pos, marker_mask, qtype, attention_mask)
+        if getattr(model, "choice_adapters", None) is not None:
+            logits, act = model(input_ids, attention_mask, marker_pos, marker_mask, qtype.squeeze(-1))
+            torch.testing.assert_close(ref_logits, logits)
+            torch.testing.assert_close(ref_act, act)
     return ref_hidden, ref_logits, ref_act, marker_pos, marker_mask, qtype, attention_mask
 
 

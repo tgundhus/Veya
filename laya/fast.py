@@ -173,7 +173,10 @@ class FastLaya:
         F1 = torch.empty(M, 4 * D, device=dev, dtype=self.dtype)
         for j, h in enumerate(self.head):
             if self.m.choice_adapters is not None:
-                X = self.m.adapt_choice_hidden(X.view(B, L, D), qtype, j).reshape(M, D).contiguous()
+                # Capture the casts inside the graph instead of reusing autocast
+                # weight copies that belong to the warm-up call.
+                with torch.autocast(device_type=dev.type, dtype=self.dtype, cache_enabled=False):
+                    X = self.m.adapt_choice_hidden(X.view(B, L, D), qtype, j).reshape(M, D).contiguous()
             self.k_ln_b(X, Y, h["n1w"], h["n1b"], Y)
             self.k_in(Y, h["in_w"], h["in_b"], qkv)
             self.attn_k_head(B, L)(qkv.view(B, L, 3, self.H_head, self.Dh_head), lens, O.view(B, L, D))
