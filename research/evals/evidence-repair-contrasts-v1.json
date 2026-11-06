@@ -1,0 +1,2725 @@
+{
+  "training": [
+    {
+      "family": "evidence-impact-toll-reader",
+      "type": "score",
+      "instructions": "Classify the current effect on vehicle toll readers using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "The administrative team requested an updated vehicle-class list. All toll readers are online.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The administrative team requested an updated vehicle-class list. All toll readers are online. Today's verified record: The administrative team requested an updated vehicle-class list. All toll readers are online.",
+          0
+        ],
+        [
+          "Current update: The administrative team requested an updated vehicle-class list. All toll readers are online. For history only, the older entry said: The administrative team requested an updated vehicle-class list. All toll readers are online.",
+          0
+        ],
+        [
+          "Yesterday's closed report: One inbound reader failed. Its traffic is using the staffed toll booth next to it. Today's verified record: The administrative team requested an updated vehicle-class list. All toll readers are online.",
+          0
+        ],
+        [
+          "Current update: The administrative team requested an updated vehicle-class list. All toll readers are online. For history only, the older entry said: One inbound reader failed. Its traffic is using the staffed toll booth next to it.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through. Today's verified record: The administrative team requested an updated vehicle-class list. All toll readers are online.",
+          0
+        ],
+        [
+          "Current update: The administrative team requested an updated vehicle-class list. All toll readers are online. For history only, the older entry said: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through.",
+          0
+        ],
+        [
+          "One inbound reader failed. Its traffic is using the staffed toll booth next to it.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The administrative team requested an updated vehicle-class list. All toll readers are online. Today's verified record: One inbound reader failed. Its traffic is using the staffed toll booth next to it.",
+          1
+        ],
+        [
+          "Current update: One inbound reader failed. Its traffic is using the staffed toll booth next to it. For history only, the older entry said: The administrative team requested an updated vehicle-class list. All toll readers are online.",
+          1
+        ],
+        [
+          "Yesterday's closed report: One inbound reader failed. Its traffic is using the staffed toll booth next to it. Today's verified record: One inbound reader failed. Its traffic is using the staffed toll booth next to it.",
+          1
+        ],
+        [
+          "Current update: One inbound reader failed. Its traffic is using the staffed toll booth next to it. For history only, the older entry said: One inbound reader failed. Its traffic is using the staffed toll booth next to it.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through. Today's verified record: One inbound reader failed. Its traffic is using the staffed toll booth next to it.",
+          1
+        ],
+        [
+          "Current update: One inbound reader failed. Its traffic is using the staffed toll booth next to it. For history only, the older entry said: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through.",
+          1
+        ],
+        [
+          "Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The administrative team requested an updated vehicle-class list. All toll readers are online. Today's verified record: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through.",
+          2
+        ],
+        [
+          "Current update: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through. For history only, the older entry said: The administrative team requested an updated vehicle-class list. All toll readers are online.",
+          2
+        ],
+        [
+          "Yesterday's closed report: One inbound reader failed. Its traffic is using the staffed toll booth next to it. Today's verified record: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through.",
+          2
+        ],
+        [
+          "Current update: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through. For history only, the older entry said: One inbound reader failed. Its traffic is using the staffed toll booth next to it.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through. Today's verified record: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through.",
+          2
+        ],
+        [
+          "Current update: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through. For history only, the older entry said: Every toll reader failed, the booths cannot take payments, and the urgent crossing queue has no other way through.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-clay-batch-line",
+      "type": "score",
+      "instructions": "Classify the current effect on clay mixing using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "The operator wants to update the batch-card footer. Every mixing line is producing normally.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The operator wants to update the batch-card footer. Every mixing line is producing normally. Today's verified record: The operator wants to update the batch-card footer. Every mixing line is producing normally.",
+          0
+        ],
+        [
+          "Current update: The operator wants to update the batch-card footer. Every mixing line is producing normally. For history only, the older entry said: The operator wants to update the batch-card footer. Every mixing line is producing normally.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The small mixer stopped. The working large mixer can process its batches today. Today's verified record: The operator wants to update the batch-card footer. Every mixing line is producing normally.",
+          0
+        ],
+        [
+          "Current update: The operator wants to update the batch-card footer. Every mixing line is producing normally. For history only, the older entry said: The small mixer stopped. The working large mixer can process its batches today.",
+          0
+        ],
+        [
+          "Yesterday's closed report: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay. Today's verified record: The operator wants to update the batch-card footer. Every mixing line is producing normally.",
+          0
+        ],
+        [
+          "Current update: The operator wants to update the batch-card footer. Every mixing line is producing normally. For history only, the older entry said: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay.",
+          0
+        ],
+        [
+          "The small mixer stopped. The working large mixer can process its batches today.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The operator wants to update the batch-card footer. Every mixing line is producing normally. Today's verified record: The small mixer stopped. The working large mixer can process its batches today.",
+          1
+        ],
+        [
+          "Current update: The small mixer stopped. The working large mixer can process its batches today. For history only, the older entry said: The operator wants to update the batch-card footer. Every mixing line is producing normally.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The small mixer stopped. The working large mixer can process its batches today. Today's verified record: The small mixer stopped. The working large mixer can process its batches today.",
+          1
+        ],
+        [
+          "Current update: The small mixer stopped. The working large mixer can process its batches today. For history only, the older entry said: The small mixer stopped. The working large mixer can process its batches today.",
+          1
+        ],
+        [
+          "Yesterday's closed report: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay. Today's verified record: The small mixer stopped. The working large mixer can process its batches today.",
+          1
+        ],
+        [
+          "Current update: The small mixer stopped. The working large mixer can process its batches today. For history only, the older entry said: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay.",
+          1
+        ],
+        [
+          "All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The operator wants to update the batch-card footer. Every mixing line is producing normally. Today's verified record: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay.",
+          2
+        ],
+        [
+          "Current update: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay. For history only, the older entry said: The operator wants to update the batch-card footer. Every mixing line is producing normally.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The small mixer stopped. The working large mixer can process its batches today. Today's verified record: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay.",
+          2
+        ],
+        [
+          "Current update: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay. For history only, the older entry said: The small mixer stopped. The working large mixer can process its batches today.",
+          2
+        ],
+        [
+          "Yesterday's closed report: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay. Today's verified record: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay.",
+          2
+        ],
+        [
+          "Current update: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay. For history only, the older entry said: All mixers and the mobile substitute are unusable. Every batch is stalled and time-critical casting has no source of clay.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-public-wayfinding",
+      "type": "score",
+      "instructions": "Classify the current effect on indoor wayfinding using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available. Today's verified record: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available.",
+          0
+        ],
+        [
+          "Current update: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available. For history only, the older entry said: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk. Today's verified record: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available.",
+          0
+        ],
+        [
+          "Current update: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available. For history only, the older entry said: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance. Today's verified record: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available.",
+          0
+        ],
+        [
+          "Current update: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available. For history only, the older entry said: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance.",
+          0
+        ],
+        [
+          "Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available. Today's verified record: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk.",
+          1
+        ],
+        [
+          "Current update: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk. For history only, the older entry said: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk. Today's verified record: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk.",
+          1
+        ],
+        [
+          "Current update: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk. For history only, the older entry said: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance. Today's verified record: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk.",
+          1
+        ],
+        [
+          "Current update: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk. For history only, the older entry said: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance.",
+          1
+        ],
+        [
+          "The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available. Today's verified record: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance.",
+          2
+        ],
+        [
+          "Current update: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance. For history only, the older entry said: Please use a clearer font on next month's direction cards. All navigation screens and printed guides are available.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk. Today's verified record: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance.",
+          2
+        ],
+        [
+          "Current update: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance. For history only, the older entry said: Screens in one corridor are blank. Staff are giving the affected visitors directions from a staffed desk.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance. Today's verified record: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance.",
+          2
+        ],
+        [
+          "Current update: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance. For history only, the older entry said: The whole complex has lost its screens, signs and staffed directions. Urgent evacuation routing has no available guidance.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-wool-mill-dryer",
+      "type": "score",
+      "instructions": "Classify the current effect on wool drying using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally. Today's verified record: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally.",
+          0
+        ],
+        [
+          "Current update: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally. For history only, the older entry said: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The fan in one drying room failed. Workers transferred that room's batches to a working rack. Today's verified record: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally.",
+          0
+        ],
+        [
+          "Current update: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally. For history only, the older entry said: The fan in one drying room failed. Workers transferred that room's batches to a working rack.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline. Today's verified record: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally.",
+          0
+        ],
+        [
+          "Current update: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally. For history only, the older entry said: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline.",
+          0
+        ],
+        [
+          "The fan in one drying room failed. Workers transferred that room's batches to a working rack.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally. Today's verified record: The fan in one drying room failed. Workers transferred that room's batches to a working rack.",
+          1
+        ],
+        [
+          "Current update: The fan in one drying room failed. Workers transferred that room's batches to a working rack. For history only, the older entry said: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The fan in one drying room failed. Workers transferred that room's batches to a working rack. Today's verified record: The fan in one drying room failed. Workers transferred that room's batches to a working rack.",
+          1
+        ],
+        [
+          "Current update: The fan in one drying room failed. Workers transferred that room's batches to a working rack. For history only, the older entry said: The fan in one drying room failed. Workers transferred that room's batches to a working rack.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline. Today's verified record: The fan in one drying room failed. Workers transferred that room's batches to a working rack.",
+          1
+        ],
+        [
+          "Current update: The fan in one drying room failed. Workers transferred that room's batches to a working rack. For history only, the older entry said: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline.",
+          1
+        ],
+        [
+          "Every rack and backup heater is out. No batch can be dried before the immediate loading deadline.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally. Today's verified record: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline.",
+          2
+        ],
+        [
+          "Current update: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline. For history only, the older entry said: The supervisor asked for the previous shift's attendance sheet. All drying racks are operating normally.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The fan in one drying room failed. Workers transferred that room's batches to a working rack. Today's verified record: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline.",
+          2
+        ],
+        [
+          "Current update: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline. For history only, the older entry said: The fan in one drying room failed. Workers transferred that room's batches to a working rack.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline. Today's verified record: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline.",
+          2
+        ],
+        [
+          "Current update: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline. For history only, the older entry said: Every rack and backup heater is out. No batch can be dried before the immediate loading deadline.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-aviary-light-cycle",
+      "type": "score",
+      "instructions": "Classify the current effect on aviary lighting using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "Update the roster for the light checks. Every aviary has its normal light cycle.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Update the roster for the light checks. Every aviary has its normal light cycle. Today's verified record: Update the roster for the light checks. Every aviary has its normal light cycle.",
+          0
+        ],
+        [
+          "Current update: Update the roster for the light checks. Every aviary has its normal light cycle. For history only, the older entry said: Update the roster for the light checks. Every aviary has its normal light cycle.",
+          0
+        ],
+        [
+          "Yesterday's closed report: One light controller failed. An approved temporary controller is providing that aviary's lighting. Today's verified record: Update the roster for the light checks. Every aviary has its normal light cycle.",
+          0
+        ],
+        [
+          "Current update: Update the roster for the light checks. Every aviary has its normal light cycle. For history only, the older entry said: One light controller failed. An approved temporary controller is providing that aviary's lighting.",
+          0
+        ],
+        [
+          "Yesterday's closed report: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle. Today's verified record: Update the roster for the light checks. Every aviary has its normal light cycle.",
+          0
+        ],
+        [
+          "Current update: Update the roster for the light checks. Every aviary has its normal light cycle. For history only, the older entry said: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle.",
+          0
+        ],
+        [
+          "One light controller failed. An approved temporary controller is providing that aviary's lighting.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Update the roster for the light checks. Every aviary has its normal light cycle. Today's verified record: One light controller failed. An approved temporary controller is providing that aviary's lighting.",
+          1
+        ],
+        [
+          "Current update: One light controller failed. An approved temporary controller is providing that aviary's lighting. For history only, the older entry said: Update the roster for the light checks. Every aviary has its normal light cycle.",
+          1
+        ],
+        [
+          "Yesterday's closed report: One light controller failed. An approved temporary controller is providing that aviary's lighting. Today's verified record: One light controller failed. An approved temporary controller is providing that aviary's lighting.",
+          1
+        ],
+        [
+          "Current update: One light controller failed. An approved temporary controller is providing that aviary's lighting. For history only, the older entry said: One light controller failed. An approved temporary controller is providing that aviary's lighting.",
+          1
+        ],
+        [
+          "Yesterday's closed report: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle. Today's verified record: One light controller failed. An approved temporary controller is providing that aviary's lighting.",
+          1
+        ],
+        [
+          "Current update: One light controller failed. An approved temporary controller is providing that aviary's lighting. For history only, the older entry said: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle.",
+          1
+        ],
+        [
+          "All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Update the roster for the light checks. Every aviary has its normal light cycle. Today's verified record: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle.",
+          2
+        ],
+        [
+          "Current update: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle. For history only, the older entry said: Update the roster for the light checks. Every aviary has its normal light cycle.",
+          2
+        ],
+        [
+          "Yesterday's closed report: One light controller failed. An approved temporary controller is providing that aviary's lighting. Today's verified record: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle.",
+          2
+        ],
+        [
+          "Current update: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle. For history only, the older entry said: One light controller failed. An approved temporary controller is providing that aviary's lighting.",
+          2
+        ],
+        [
+          "Yesterday's closed report: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle. Today's verified record: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle.",
+          2
+        ],
+        [
+          "Current update: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle. For history only, the older entry said: All controllers and the emergency supply failed. Every enclosure lost lighting and the duty keeper has no usable substitute for the urgent cycle.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-rehearsal-room-audio",
+      "type": "score",
+      "instructions": "Classify the current effect on rehearsal room audio using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "The choir needs a map for next week's induction. Current sound equipment is working in every room.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The choir needs a map for next week's induction. Current sound equipment is working in every room. Today's verified record: The choir needs a map for next week's induction. Current sound equipment is working in every room.",
+          0
+        ],
+        [
+          "Current update: The choir needs a map for next week's induction. Current sound equipment is working in every room. For history only, the older entry said: The choir needs a map for next week's induction. Current sound equipment is working in every room.",
+          0
+        ],
+        [
+          "Yesterday's closed report: One room's soundboard failed. Its rehearsal is running through a working mobile board. Today's verified record: The choir needs a map for next week's induction. Current sound equipment is working in every room.",
+          0
+        ],
+        [
+          "Current update: The choir needs a map for next week's induction. Current sound equipment is working in every room. For history only, the older entry said: One room's soundboard failed. Its rehearsal is running through a working mobile board.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response. Today's verified record: The choir needs a map for next week's induction. Current sound equipment is working in every room.",
+          0
+        ],
+        [
+          "Current update: The choir needs a map for next week's induction. Current sound equipment is working in every room. For history only, the older entry said: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response.",
+          0
+        ],
+        [
+          "One room's soundboard failed. Its rehearsal is running through a working mobile board.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The choir needs a map for next week's induction. Current sound equipment is working in every room. Today's verified record: One room's soundboard failed. Its rehearsal is running through a working mobile board.",
+          1
+        ],
+        [
+          "Current update: One room's soundboard failed. Its rehearsal is running through a working mobile board. For history only, the older entry said: The choir needs a map for next week's induction. Current sound equipment is working in every room.",
+          1
+        ],
+        [
+          "Yesterday's closed report: One room's soundboard failed. Its rehearsal is running through a working mobile board. Today's verified record: One room's soundboard failed. Its rehearsal is running through a working mobile board.",
+          1
+        ],
+        [
+          "Current update: One room's soundboard failed. Its rehearsal is running through a working mobile board. For history only, the older entry said: One room's soundboard failed. Its rehearsal is running through a working mobile board.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response. Today's verified record: One room's soundboard failed. Its rehearsal is running through a working mobile board.",
+          1
+        ],
+        [
+          "Current update: One room's soundboard failed. Its rehearsal is running through a working mobile board. For history only, the older entry said: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response.",
+          1
+        ],
+        [
+          "Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The choir needs a map for next week's induction. Current sound equipment is working in every room. Today's verified record: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response.",
+          2
+        ],
+        [
+          "Current update: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response. For history only, the older entry said: The choir needs a map for next week's induction. Current sound equipment is working in every room.",
+          2
+        ],
+        [
+          "Yesterday's closed report: One room's soundboard failed. Its rehearsal is running through a working mobile board. Today's verified record: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response.",
+          2
+        ],
+        [
+          "Current update: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response. For history only, the older entry said: One room's soundboard failed. Its rehearsal is running through a working mobile board.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response. Today's verified record: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response.",
+          2
+        ],
+        [
+          "Current update: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response. For history only, the older entry said: Sound equipment is out throughout the venue, including the spare boards. Every current rehearsal is blocked and the dress rehearsal needs an immediate response.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-salt-packing-line",
+      "type": "score",
+      "instructions": "Classify the current effect on salt packing using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "A clerk requested a corrected printer header for the labels. All packers are processing orders.",
+          0
+        ],
+        [
+          "Yesterday's closed report: A clerk requested a corrected printer header for the labels. All packers are processing orders. Today's verified record: A clerk requested a corrected printer header for the labels. All packers are processing orders.",
+          0
+        ],
+        [
+          "Current update: A clerk requested a corrected printer header for the labels. All packers are processing orders. For history only, the older entry said: A clerk requested a corrected printer header for the labels. All packers are processing orders.",
+          0
+        ],
+        [
+          "Yesterday's closed report: One bag sealer broke. The crew is using an approved manual sealer for that line. Today's verified record: A clerk requested a corrected printer header for the labels. All packers are processing orders.",
+          0
+        ],
+        [
+          "Current update: A clerk requested a corrected printer header for the labels. All packers are processing orders. For history only, the older entry said: One bag sealer broke. The crew is using an approved manual sealer for that line.",
+          0
+        ],
+        [
+          "Yesterday's closed report: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff. Today's verified record: A clerk requested a corrected printer header for the labels. All packers are processing orders.",
+          0
+        ],
+        [
+          "Current update: A clerk requested a corrected printer header for the labels. All packers are processing orders. For history only, the older entry said: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff.",
+          0
+        ],
+        [
+          "One bag sealer broke. The crew is using an approved manual sealer for that line.",
+          1
+        ],
+        [
+          "Yesterday's closed report: A clerk requested a corrected printer header for the labels. All packers are processing orders. Today's verified record: One bag sealer broke. The crew is using an approved manual sealer for that line.",
+          1
+        ],
+        [
+          "Current update: One bag sealer broke. The crew is using an approved manual sealer for that line. For history only, the older entry said: A clerk requested a corrected printer header for the labels. All packers are processing orders.",
+          1
+        ],
+        [
+          "Yesterday's closed report: One bag sealer broke. The crew is using an approved manual sealer for that line. Today's verified record: One bag sealer broke. The crew is using an approved manual sealer for that line.",
+          1
+        ],
+        [
+          "Current update: One bag sealer broke. The crew is using an approved manual sealer for that line. For history only, the older entry said: One bag sealer broke. The crew is using an approved manual sealer for that line.",
+          1
+        ],
+        [
+          "Yesterday's closed report: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff. Today's verified record: One bag sealer broke. The crew is using an approved manual sealer for that line.",
+          1
+        ],
+        [
+          "Current update: One bag sealer broke. The crew is using an approved manual sealer for that line. For history only, the older entry said: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff.",
+          1
+        ],
+        [
+          "All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff.",
+          2
+        ],
+        [
+          "Yesterday's closed report: A clerk requested a corrected printer header for the labels. All packers are processing orders. Today's verified record: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff.",
+          2
+        ],
+        [
+          "Current update: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff. For history only, the older entry said: A clerk requested a corrected printer header for the labels. All packers are processing orders.",
+          2
+        ],
+        [
+          "Yesterday's closed report: One bag sealer broke. The crew is using an approved manual sealer for that line. Today's verified record: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff.",
+          2
+        ],
+        [
+          "Current update: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff. For history only, the older entry said: One bag sealer broke. The crew is using an approved manual sealer for that line.",
+          2
+        ],
+        [
+          "Yesterday's closed report: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff. Today's verified record: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff.",
+          2
+        ],
+        [
+          "Current update: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff. For history only, the older entry said: All packing equipment failed and no manual sealer is available. Every shipment is held with an immediate dispatch cutoff.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-park-permit-printing",
+      "type": "score",
+      "instructions": "Classify the current effect on permit printing using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "The contact address on the help page needs an edit. Current permits are being issued everywhere.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The contact address on the help page needs an edit. Current permits are being issued everywhere. Today's verified record: The contact address on the help page needs an edit. Current permits are being issued everywhere.",
+          0
+        ],
+        [
+          "Current update: The contact address on the help page needs an edit. Current permits are being issued everywhere. For history only, the older entry said: The contact address on the help page needs an edit. Current permits are being issued everywhere.",
+          0
+        ],
+        [
+          "Yesterday's closed report: One park printer stopped. Its desk is printing permits on the working machine next door. Today's verified record: The contact address on the help page needs an edit. Current permits are being issued everywhere.",
+          0
+        ],
+        [
+          "Current update: The contact address on the help page needs an edit. Current permits are being issued everywhere. For history only, the older entry said: One park printer stopped. Its desk is printing permits on the working machine next door.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting. Today's verified record: The contact address on the help page needs an edit. Current permits are being issued everywhere.",
+          0
+        ],
+        [
+          "Current update: The contact address on the help page needs an edit. Current permits are being issued everywhere. For history only, the older entry said: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting.",
+          0
+        ],
+        [
+          "One park printer stopped. Its desk is printing permits on the working machine next door.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The contact address on the help page needs an edit. Current permits are being issued everywhere. Today's verified record: One park printer stopped. Its desk is printing permits on the working machine next door.",
+          1
+        ],
+        [
+          "Current update: One park printer stopped. Its desk is printing permits on the working machine next door. For history only, the older entry said: The contact address on the help page needs an edit. Current permits are being issued everywhere.",
+          1
+        ],
+        [
+          "Yesterday's closed report: One park printer stopped. Its desk is printing permits on the working machine next door. Today's verified record: One park printer stopped. Its desk is printing permits on the working machine next door.",
+          1
+        ],
+        [
+          "Current update: One park printer stopped. Its desk is printing permits on the working machine next door. For history only, the older entry said: One park printer stopped. Its desk is printing permits on the working machine next door.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting. Today's verified record: One park printer stopped. Its desk is printing permits on the working machine next door.",
+          1
+        ],
+        [
+          "Current update: One park printer stopped. Its desk is printing permits on the working machine next door. For history only, the older entry said: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting.",
+          1
+        ],
+        [
+          "Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The contact address on the help page needs an edit. Current permits are being issued everywhere. Today's verified record: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting.",
+          2
+        ],
+        [
+          "Current update: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting. For history only, the older entry said: The contact address on the help page needs an edit. Current permits are being issued everywhere.",
+          2
+        ],
+        [
+          "Yesterday's closed report: One park printer stopped. Its desk is printing permits on the working machine next door. Today's verified record: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting.",
+          2
+        ],
+        [
+          "Current update: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting. For history only, the older entry said: One park printer stopped. Its desk is printing permits on the working machine next door.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting. Today's verified record: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting.",
+          2
+        ],
+        [
+          "Current update: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting. For history only, the older entry said: Every printer and the digital permit fallback failed. No desk can issue a permit for the urgent field crews waiting.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-optics-polishing",
+      "type": "score",
+      "instructions": "Classify the current effect on optics polishing using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "The production planner asked who owns the polishing instructions. All stations are completing their work.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The production planner asked who owns the polishing instructions. All stations are completing their work. Today's verified record: The production planner asked who owns the polishing instructions. All stations are completing their work.",
+          0
+        ],
+        [
+          "Current update: The production planner asked who owns the polishing instructions. All stations are completing their work. For history only, the older entry said: The production planner asked who owns the polishing instructions. All stations are completing their work.",
+          0
+        ],
+        [
+          "Yesterday's closed report: One station's pad drive failed. The staff are completing its lenses at a certified substitute station. Today's verified record: The production planner asked who owns the polishing instructions. All stations are completing their work.",
+          0
+        ],
+        [
+          "Current update: The production planner asked who owns the polishing instructions. All stations are completing their work. For history only, the older entry said: One station's pad drive failed. The staff are completing its lenses at a certified substitute station.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them. Today's verified record: The production planner asked who owns the polishing instructions. All stations are completing their work.",
+          0
+        ],
+        [
+          "Current update: The production planner asked who owns the polishing instructions. All stations are completing their work. For history only, the older entry said: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them.",
+          0
+        ],
+        [
+          "One station's pad drive failed. The staff are completing its lenses at a certified substitute station.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The production planner asked who owns the polishing instructions. All stations are completing their work. Today's verified record: One station's pad drive failed. The staff are completing its lenses at a certified substitute station.",
+          1
+        ],
+        [
+          "Current update: One station's pad drive failed. The staff are completing its lenses at a certified substitute station. For history only, the older entry said: The production planner asked who owns the polishing instructions. All stations are completing their work.",
+          1
+        ],
+        [
+          "Yesterday's closed report: One station's pad drive failed. The staff are completing its lenses at a certified substitute station. Today's verified record: One station's pad drive failed. The staff are completing its lenses at a certified substitute station.",
+          1
+        ],
+        [
+          "Current update: One station's pad drive failed. The staff are completing its lenses at a certified substitute station. For history only, the older entry said: One station's pad drive failed. The staff are completing its lenses at a certified substitute station.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them. Today's verified record: One station's pad drive failed. The staff are completing its lenses at a certified substitute station.",
+          1
+        ],
+        [
+          "Current update: One station's pad drive failed. The staff are completing its lenses at a certified substitute station. For history only, the older entry said: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them.",
+          1
+        ],
+        [
+          "Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The production planner asked who owns the polishing instructions. All stations are completing their work. Today's verified record: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them.",
+          2
+        ],
+        [
+          "Current update: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them. For history only, the older entry said: The production planner asked who owns the polishing instructions. All stations are completing their work.",
+          2
+        ],
+        [
+          "Yesterday's closed report: One station's pad drive failed. The staff are completing its lenses at a certified substitute station. Today's verified record: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them.",
+          2
+        ],
+        [
+          "Current update: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them. For history only, the older entry said: One station's pad drive failed. The staff are completing its lenses at a certified substitute station.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them. Today's verified record: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them.",
+          2
+        ],
+        [
+          "Current update: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them. For history only, the older entry said: Every polishing station and its backups stopped. All urgent instrument parts are stuck and no other process can finish them.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-impact-flower-market-dispatch",
+      "type": "score",
+      "instructions": "Classify the current effect on flower dispatch using verified service and alternatives.",
+      "criteria": [
+        "No active disruption.",
+        "Limited active disruption with an available alternate route.",
+        "Urgent service-wide disruption without an available alternative."
+      ],
+      "rows": [
+        [
+          "Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules. Today's verified record: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules.",
+          0
+        ],
+        [
+          "Current update: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules. For history only, the older entry said: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules.",
+          0
+        ],
+        [
+          "Yesterday's closed report: One wrapping station jammed. Another station is wrapping its orders in time. Today's verified record: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules.",
+          0
+        ],
+        [
+          "Current update: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules. For history only, the older entry said: One wrapping station jammed. Another station is wrapping its orders in time.",
+          0
+        ],
+        [
+          "Yesterday's closed report: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching. Today's verified record: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules.",
+          0
+        ],
+        [
+          "Current update: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules. For history only, the older entry said: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching.",
+          0
+        ],
+        [
+          "One wrapping station jammed. Another station is wrapping its orders in time.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules. Today's verified record: One wrapping station jammed. Another station is wrapping its orders in time.",
+          1
+        ],
+        [
+          "Current update: One wrapping station jammed. Another station is wrapping its orders in time. For history only, the older entry said: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules.",
+          1
+        ],
+        [
+          "Yesterday's closed report: One wrapping station jammed. Another station is wrapping its orders in time. Today's verified record: One wrapping station jammed. Another station is wrapping its orders in time.",
+          1
+        ],
+        [
+          "Current update: One wrapping station jammed. Another station is wrapping its orders in time. For history only, the older entry said: One wrapping station jammed. Another station is wrapping its orders in time.",
+          1
+        ],
+        [
+          "Yesterday's closed report: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching. Today's verified record: One wrapping station jammed. Another station is wrapping its orders in time.",
+          1
+        ],
+        [
+          "Current update: One wrapping station jammed. Another station is wrapping its orders in time. For history only, the older entry said: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching.",
+          1
+        ],
+        [
+          "All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules. Today's verified record: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching.",
+          2
+        ],
+        [
+          "Current update: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching. For history only, the older entry said: Print a new help label for the wrapping room. All flower loads are leaving on their normal schedules.",
+          2
+        ],
+        [
+          "Yesterday's closed report: One wrapping station jammed. Another station is wrapping its orders in time. Today's verified record: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching.",
+          2
+        ],
+        [
+          "Current update: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching. For history only, the older entry said: One wrapping station jammed. Another station is wrapping its orders in time.",
+          2
+        ],
+        [
+          "Yesterday's closed report: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching. Today's verified record: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching.",
+          2
+        ],
+        [
+          "Current update: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching. For history only, the older entry said: All wrapping and loading routes closed. No carrier can take any urgent shipments and the market cutoff is approaching.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-harp-return",
+      "type": "score",
+      "instructions": "Count completed steps for the current rental harp. The required steps are the string condition check and the frame inspection.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete. Today's verified record: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete. For history only, the older entry said: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow. Today's verified record: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete. For history only, the older entry said: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the string condition check and the frame inspection passed and were signed for this rental harp. Today's verified record: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete. For history only, the older entry said: Both the string condition check and the frame inspection passed and were signed for this rental harp.",
+          0
+        ],
+        [
+          "The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete. Today's verified record: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow. For history only, the older entry said: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow. Today's verified record: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow. For history only, the older entry said: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the string condition check and the frame inspection passed and were signed for this rental harp. Today's verified record: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow. For history only, the older entry said: Both the string condition check and the frame inspection passed and were signed for this rental harp.",
+          1
+        ],
+        [
+          "Both the string condition check and the frame inspection passed and were signed for this rental harp.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete. Today's verified record: Both the string condition check and the frame inspection passed and were signed for this rental harp.",
+          2
+        ],
+        [
+          "Current update: Both the string condition check and the frame inspection passed and were signed for this rental harp. For history only, the older entry said: The team planned the string condition check and the frame inspection for this rental harp. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow. Today's verified record: Both the string condition check and the frame inspection passed and were signed for this rental harp.",
+          2
+        ],
+        [
+          "Current update: Both the string condition check and the frame inspection passed and were signed for this rental harp. For history only, the older entry said: The string condition check is signed for this rental harp. The frame inspection is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the string condition check and the frame inspection passed and were signed for this rental harp. Today's verified record: Both the string condition check and the frame inspection passed and were signed for this rental harp.",
+          2
+        ],
+        [
+          "Current update: Both the string condition check and the frame inspection passed and were signed for this rental harp. For history only, the older entry said: Both the string condition check and the frame inspection passed and were signed for this rental harp.",
+          2
+        ],
+        [
+          "The frame inspection is complete; the string condition check is pending for this rental harp.",
+          1
+        ],
+        [
+          "The adjacent item's string condition check and frame inspection both passed. Neither is recorded for this rental harp.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-busker-stage",
+      "type": "score",
+      "instructions": "Count completed steps for the current street stage. The required steps are the anchor inspection and the power safety test.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete. Today's verified record: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete. For history only, the older entry said: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow. Today's verified record: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete. For history only, the older entry said: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the anchor inspection and the power safety test passed and were signed for this street stage. Today's verified record: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete. For history only, the older entry said: Both the anchor inspection and the power safety test passed and were signed for this street stage.",
+          0
+        ],
+        [
+          "The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete. Today's verified record: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow. For history only, the older entry said: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow. Today's verified record: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow. For history only, the older entry said: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the anchor inspection and the power safety test passed and were signed for this street stage. Today's verified record: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow. For history only, the older entry said: Both the anchor inspection and the power safety test passed and were signed for this street stage.",
+          1
+        ],
+        [
+          "Both the anchor inspection and the power safety test passed and were signed for this street stage.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete. Today's verified record: Both the anchor inspection and the power safety test passed and were signed for this street stage.",
+          2
+        ],
+        [
+          "Current update: Both the anchor inspection and the power safety test passed and were signed for this street stage. For history only, the older entry said: The team planned the anchor inspection and the power safety test for this street stage. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow. Today's verified record: Both the anchor inspection and the power safety test passed and were signed for this street stage.",
+          2
+        ],
+        [
+          "Current update: Both the anchor inspection and the power safety test passed and were signed for this street stage. For history only, the older entry said: The anchor inspection is signed for this street stage. The power safety test is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the anchor inspection and the power safety test passed and were signed for this street stage. Today's verified record: Both the anchor inspection and the power safety test passed and were signed for this street stage.",
+          2
+        ],
+        [
+          "Current update: Both the anchor inspection and the power safety test passed and were signed for this street stage. For history only, the older entry said: Both the anchor inspection and the power safety test passed and were signed for this street stage.",
+          2
+        ],
+        [
+          "The power safety test is complete; the anchor inspection is pending for this street stage.",
+          1
+        ],
+        [
+          "The adjacent item's anchor inspection and power safety test both passed. Neither is recorded for this street stage.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-fossil-digitization",
+      "type": "score",
+      "instructions": "Count completed steps for the current fossil scan. The required steps are the scale verification and the mesh review.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete. Today's verified record: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete. For history only, the older entry said: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow. Today's verified record: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete. For history only, the older entry said: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the scale verification and the mesh review passed and were signed for this fossil scan. Today's verified record: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete. For history only, the older entry said: Both the scale verification and the mesh review passed and were signed for this fossil scan.",
+          0
+        ],
+        [
+          "The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete. Today's verified record: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow. For history only, the older entry said: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow. Today's verified record: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow. For history only, the older entry said: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the scale verification and the mesh review passed and were signed for this fossil scan. Today's verified record: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow. For history only, the older entry said: Both the scale verification and the mesh review passed and were signed for this fossil scan.",
+          1
+        ],
+        [
+          "Both the scale verification and the mesh review passed and were signed for this fossil scan.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete. Today's verified record: Both the scale verification and the mesh review passed and were signed for this fossil scan.",
+          2
+        ],
+        [
+          "Current update: Both the scale verification and the mesh review passed and were signed for this fossil scan. For history only, the older entry said: The team planned the scale verification and the mesh review for this fossil scan. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow. Today's verified record: Both the scale verification and the mesh review passed and were signed for this fossil scan.",
+          2
+        ],
+        [
+          "Current update: Both the scale verification and the mesh review passed and were signed for this fossil scan. For history only, the older entry said: The scale verification is signed for this fossil scan. The mesh review is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the scale verification and the mesh review passed and were signed for this fossil scan. Today's verified record: Both the scale verification and the mesh review passed and were signed for this fossil scan.",
+          2
+        ],
+        [
+          "Current update: Both the scale verification and the mesh review passed and were signed for this fossil scan. For history only, the older entry said: Both the scale verification and the mesh review passed and were signed for this fossil scan.",
+          2
+        ],
+        [
+          "The mesh review is complete; the scale verification is pending for this fossil scan.",
+          1
+        ],
+        [
+          "The adjacent item's scale verification and mesh review both passed. Neither is recorded for this fossil scan.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-apiary-handover",
+      "type": "score",
+      "instructions": "Count completed steps for the current hive handover. The required steps are the queen confirmation and the health inspection.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete. Today's verified record: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete. For history only, the older entry said: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow. Today's verified record: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete. For history only, the older entry said: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the queen confirmation and the health inspection passed and were signed for this hive handover. Today's verified record: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete. For history only, the older entry said: Both the queen confirmation and the health inspection passed and were signed for this hive handover.",
+          0
+        ],
+        [
+          "The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete. Today's verified record: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow. For history only, the older entry said: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow. Today's verified record: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow. For history only, the older entry said: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the queen confirmation and the health inspection passed and were signed for this hive handover. Today's verified record: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow. For history only, the older entry said: Both the queen confirmation and the health inspection passed and were signed for this hive handover.",
+          1
+        ],
+        [
+          "Both the queen confirmation and the health inspection passed and were signed for this hive handover.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete. Today's verified record: Both the queen confirmation and the health inspection passed and were signed for this hive handover.",
+          2
+        ],
+        [
+          "Current update: Both the queen confirmation and the health inspection passed and were signed for this hive handover. For history only, the older entry said: The team planned the queen confirmation and the health inspection for this hive handover. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow. Today's verified record: Both the queen confirmation and the health inspection passed and were signed for this hive handover.",
+          2
+        ],
+        [
+          "Current update: Both the queen confirmation and the health inspection passed and were signed for this hive handover. For history only, the older entry said: The queen confirmation is signed for this hive handover. The health inspection is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the queen confirmation and the health inspection passed and were signed for this hive handover. Today's verified record: Both the queen confirmation and the health inspection passed and were signed for this hive handover.",
+          2
+        ],
+        [
+          "Current update: Both the queen confirmation and the health inspection passed and were signed for this hive handover. For history only, the older entry said: Both the queen confirmation and the health inspection passed and were signed for this hive handover.",
+          2
+        ],
+        [
+          "The health inspection is complete; the queen confirmation is pending for this hive handover.",
+          1
+        ],
+        [
+          "The adjacent item's queen confirmation and health inspection both passed. Neither is recorded for this hive handover.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-irrigation-meter",
+      "type": "score",
+      "instructions": "Count completed steps for the current meter installation. The required steps are the flow reading and the seal inspection.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete. Today's verified record: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete. For history only, the older entry said: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow. Today's verified record: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete. For history only, the older entry said: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the flow reading and the seal inspection passed and were signed for this meter installation. Today's verified record: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete. For history only, the older entry said: Both the flow reading and the seal inspection passed and were signed for this meter installation.",
+          0
+        ],
+        [
+          "The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete. Today's verified record: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow. For history only, the older entry said: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow. Today's verified record: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow. For history only, the older entry said: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the flow reading and the seal inspection passed and were signed for this meter installation. Today's verified record: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow. For history only, the older entry said: Both the flow reading and the seal inspection passed and were signed for this meter installation.",
+          1
+        ],
+        [
+          "Both the flow reading and the seal inspection passed and were signed for this meter installation.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete. Today's verified record: Both the flow reading and the seal inspection passed and were signed for this meter installation.",
+          2
+        ],
+        [
+          "Current update: Both the flow reading and the seal inspection passed and were signed for this meter installation. For history only, the older entry said: The team planned the flow reading and the seal inspection for this meter installation. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow. Today's verified record: Both the flow reading and the seal inspection passed and were signed for this meter installation.",
+          2
+        ],
+        [
+          "Current update: Both the flow reading and the seal inspection passed and were signed for this meter installation. For history only, the older entry said: The flow reading is signed for this meter installation. The seal inspection is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the flow reading and the seal inspection passed and were signed for this meter installation. Today's verified record: Both the flow reading and the seal inspection passed and were signed for this meter installation.",
+          2
+        ],
+        [
+          "Current update: Both the flow reading and the seal inspection passed and were signed for this meter installation. For history only, the older entry said: Both the flow reading and the seal inspection passed and were signed for this meter installation.",
+          2
+        ],
+        [
+          "The seal inspection is complete; the flow reading is pending for this meter installation.",
+          1
+        ],
+        [
+          "The adjacent item's flow reading and seal inspection both passed. Neither is recorded for this meter installation.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-kiln-loading",
+      "type": "score",
+      "instructions": "Count completed steps for the current kiln load. The required steps are the glaze compatibility check and the shelf clearance check.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete. Today's verified record: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete. For history only, the older entry said: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow. Today's verified record: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete. For history only, the older entry said: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load. Today's verified record: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete. For history only, the older entry said: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load.",
+          0
+        ],
+        [
+          "The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete. Today's verified record: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow. For history only, the older entry said: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow. Today's verified record: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow. For history only, the older entry said: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load. Today's verified record: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow. For history only, the older entry said: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load.",
+          1
+        ],
+        [
+          "Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete. Today's verified record: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load.",
+          2
+        ],
+        [
+          "Current update: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load. For history only, the older entry said: The team planned the glaze compatibility check and the shelf clearance check for this kiln load. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow. Today's verified record: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load.",
+          2
+        ],
+        [
+          "Current update: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load. For history only, the older entry said: The glaze compatibility check is signed for this kiln load. The shelf clearance check is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load. Today's verified record: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load.",
+          2
+        ],
+        [
+          "Current update: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load. For history only, the older entry said: Both the glaze compatibility check and the shelf clearance check passed and were signed for this kiln load.",
+          2
+        ],
+        [
+          "The shelf clearance check is complete; the glaze compatibility check is pending for this kiln load.",
+          1
+        ],
+        [
+          "The adjacent item's glaze compatibility check and shelf clearance check both passed. Neither is recorded for this kiln load.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-bridge-sensor-fit",
+      "type": "score",
+      "instructions": "Count completed steps for the current sensor fitting. The required steps are the alignment check and the transmission test.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete. Today's verified record: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete. For history only, the older entry said: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow. Today's verified record: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete. For history only, the older entry said: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the alignment check and the transmission test passed and were signed for this sensor fitting. Today's verified record: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete. For history only, the older entry said: Both the alignment check and the transmission test passed and were signed for this sensor fitting.",
+          0
+        ],
+        [
+          "The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete. Today's verified record: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow. For history only, the older entry said: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow. Today's verified record: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow. For history only, the older entry said: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the alignment check and the transmission test passed and were signed for this sensor fitting. Today's verified record: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow. For history only, the older entry said: Both the alignment check and the transmission test passed and were signed for this sensor fitting.",
+          1
+        ],
+        [
+          "Both the alignment check and the transmission test passed and were signed for this sensor fitting.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete. Today's verified record: Both the alignment check and the transmission test passed and were signed for this sensor fitting.",
+          2
+        ],
+        [
+          "Current update: Both the alignment check and the transmission test passed and were signed for this sensor fitting. For history only, the older entry said: The team planned the alignment check and the transmission test for this sensor fitting. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow. Today's verified record: Both the alignment check and the transmission test passed and were signed for this sensor fitting.",
+          2
+        ],
+        [
+          "Current update: Both the alignment check and the transmission test passed and were signed for this sensor fitting. For history only, the older entry said: The alignment check is signed for this sensor fitting. The transmission test is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the alignment check and the transmission test passed and were signed for this sensor fitting. Today's verified record: Both the alignment check and the transmission test passed and were signed for this sensor fitting.",
+          2
+        ],
+        [
+          "Current update: Both the alignment check and the transmission test passed and were signed for this sensor fitting. For history only, the older entry said: Both the alignment check and the transmission test passed and were signed for this sensor fitting.",
+          2
+        ],
+        [
+          "The transmission test is complete; the alignment check is pending for this sensor fitting.",
+          1
+        ],
+        [
+          "The adjacent item's alignment check and transmission test both passed. Neither is recorded for this sensor fitting.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-printing-proof",
+      "type": "score",
+      "instructions": "Count completed steps for the current printing proof. The required steps are the registration check and the colour approval.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the registration check and the colour approval for this printing proof. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the registration check and the colour approval for this printing proof. Neither step is complete. Today's verified record: The team planned the registration check and the colour approval for this printing proof. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the registration check and the colour approval for this printing proof. Neither step is complete. For history only, the older entry said: The team planned the registration check and the colour approval for this printing proof. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow. Today's verified record: The team planned the registration check and the colour approval for this printing proof. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the registration check and the colour approval for this printing proof. Neither step is complete. For history only, the older entry said: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the registration check and the colour approval passed and were signed for this printing proof. Today's verified record: The team planned the registration check and the colour approval for this printing proof. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the registration check and the colour approval for this printing proof. Neither step is complete. For history only, the older entry said: Both the registration check and the colour approval passed and were signed for this printing proof.",
+          0
+        ],
+        [
+          "The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the registration check and the colour approval for this printing proof. Neither step is complete. Today's verified record: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow. For history only, the older entry said: The team planned the registration check and the colour approval for this printing proof. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow. Today's verified record: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow. For history only, the older entry said: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the registration check and the colour approval passed and were signed for this printing proof. Today's verified record: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow. For history only, the older entry said: Both the registration check and the colour approval passed and were signed for this printing proof.",
+          1
+        ],
+        [
+          "Both the registration check and the colour approval passed and were signed for this printing proof.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the registration check and the colour approval for this printing proof. Neither step is complete. Today's verified record: Both the registration check and the colour approval passed and were signed for this printing proof.",
+          2
+        ],
+        [
+          "Current update: Both the registration check and the colour approval passed and were signed for this printing proof. For history only, the older entry said: The team planned the registration check and the colour approval for this printing proof. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow. Today's verified record: Both the registration check and the colour approval passed and were signed for this printing proof.",
+          2
+        ],
+        [
+          "Current update: Both the registration check and the colour approval passed and were signed for this printing proof. For history only, the older entry said: The registration check is signed for this printing proof. The colour approval is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the registration check and the colour approval passed and were signed for this printing proof. Today's verified record: Both the registration check and the colour approval passed and were signed for this printing proof.",
+          2
+        ],
+        [
+          "Current update: Both the registration check and the colour approval passed and were signed for this printing proof. For history only, the older entry said: Both the registration check and the colour approval passed and were signed for this printing proof.",
+          2
+        ],
+        [
+          "The colour approval is complete; the registration check is pending for this printing proof.",
+          1
+        ],
+        [
+          "The adjacent item's registration check and colour approval both passed. Neither is recorded for this printing proof.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-diver-radio",
+      "type": "score",
+      "instructions": "Count completed steps for the current radio unit. The required steps are the waterproof seal test and the channel test.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete. Today's verified record: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete. For history only, the older entry said: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow. Today's verified record: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete. For history only, the older entry said: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the waterproof seal test and the channel test passed and were signed for this radio unit. Today's verified record: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete. For history only, the older entry said: Both the waterproof seal test and the channel test passed and were signed for this radio unit.",
+          0
+        ],
+        [
+          "The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete. Today's verified record: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow. For history only, the older entry said: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow. Today's verified record: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow. For history only, the older entry said: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the waterproof seal test and the channel test passed and were signed for this radio unit. Today's verified record: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow. For history only, the older entry said: Both the waterproof seal test and the channel test passed and were signed for this radio unit.",
+          1
+        ],
+        [
+          "Both the waterproof seal test and the channel test passed and were signed for this radio unit.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete. Today's verified record: Both the waterproof seal test and the channel test passed and were signed for this radio unit.",
+          2
+        ],
+        [
+          "Current update: Both the waterproof seal test and the channel test passed and were signed for this radio unit. For history only, the older entry said: The team planned the waterproof seal test and the channel test for this radio unit. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow. Today's verified record: Both the waterproof seal test and the channel test passed and were signed for this radio unit.",
+          2
+        ],
+        [
+          "Current update: Both the waterproof seal test and the channel test passed and were signed for this radio unit. For history only, the older entry said: The waterproof seal test is signed for this radio unit. The channel test is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the waterproof seal test and the channel test passed and were signed for this radio unit. Today's verified record: Both the waterproof seal test and the channel test passed and were signed for this radio unit.",
+          2
+        ],
+        [
+          "Current update: Both the waterproof seal test and the channel test passed and were signed for this radio unit. For history only, the older entry said: Both the waterproof seal test and the channel test passed and were signed for this radio unit.",
+          2
+        ],
+        [
+          "The channel test is complete; the waterproof seal test is pending for this radio unit.",
+          1
+        ],
+        [
+          "The adjacent item's waterproof seal test and channel test both passed. Neither is recorded for this radio unit.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-verification-shelter-key",
+      "type": "score",
+      "instructions": "Count completed steps for the current shelter key return. The required steps are the key count and the lock function check.",
+      "criteria": [
+        "Neither required step complete.",
+        "Exactly one required step complete.",
+        "Both required steps complete."
+      ],
+      "rows": [
+        [
+          "The team planned the key count and the lock function check for this shelter key return. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The team planned the key count and the lock function check for this shelter key return. Neither step is complete. Today's verified record: The team planned the key count and the lock function check for this shelter key return. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the key count and the lock function check for this shelter key return. Neither step is complete. For history only, the older entry said: The team planned the key count and the lock function check for this shelter key return. Neither step is complete.",
+          0
+        ],
+        [
+          "Yesterday's closed report: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow. Today's verified record: The team planned the key count and the lock function check for this shelter key return. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the key count and the lock function check for this shelter key return. Neither step is complete. For history only, the older entry said: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow.",
+          0
+        ],
+        [
+          "Yesterday's closed report: Both the key count and the lock function check passed and were signed for this shelter key return. Today's verified record: The team planned the key count and the lock function check for this shelter key return. Neither step is complete.",
+          0
+        ],
+        [
+          "Current update: The team planned the key count and the lock function check for this shelter key return. Neither step is complete. For history only, the older entry said: Both the key count and the lock function check passed and were signed for this shelter key return.",
+          0
+        ],
+        [
+          "The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The team planned the key count and the lock function check for this shelter key return. Neither step is complete. Today's verified record: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow. For history only, the older entry said: The team planned the key count and the lock function check for this shelter key return. Neither step is complete.",
+          1
+        ],
+        [
+          "Yesterday's closed report: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow. Today's verified record: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow. For history only, the older entry said: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Yesterday's closed report: Both the key count and the lock function check passed and were signed for this shelter key return. Today's verified record: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow.",
+          1
+        ],
+        [
+          "Current update: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow. For history only, the older entry said: Both the key count and the lock function check passed and were signed for this shelter key return.",
+          1
+        ],
+        [
+          "Both the key count and the lock function check passed and were signed for this shelter key return.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The team planned the key count and the lock function check for this shelter key return. Neither step is complete. Today's verified record: Both the key count and the lock function check passed and were signed for this shelter key return.",
+          2
+        ],
+        [
+          "Current update: Both the key count and the lock function check passed and were signed for this shelter key return. For history only, the older entry said: The team planned the key count and the lock function check for this shelter key return. Neither step is complete.",
+          2
+        ],
+        [
+          "Yesterday's closed report: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow. Today's verified record: Both the key count and the lock function check passed and were signed for this shelter key return.",
+          2
+        ],
+        [
+          "Current update: Both the key count and the lock function check passed and were signed for this shelter key return. For history only, the older entry said: The key count is signed for this shelter key return. The lock function check is scheduled for tomorrow.",
+          2
+        ],
+        [
+          "Yesterday's closed report: Both the key count and the lock function check passed and were signed for this shelter key return. Today's verified record: Both the key count and the lock function check passed and were signed for this shelter key return.",
+          2
+        ],
+        [
+          "Current update: Both the key count and the lock function check passed and were signed for this shelter key return. For history only, the older entry said: Both the key count and the lock function check passed and were signed for this shelter key return.",
+          2
+        ],
+        [
+          "The lock function check is complete; the key count is pending for this shelter key return.",
+          1
+        ],
+        [
+          "The adjacent item's key count and lock function check both passed. Neither is recorded for this shelter key return.",
+          0
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-theatre-workshop",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "wardrobe": "costume alterations and damaged costumes",
+        "prop_store": "prop rentals and missing props",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Could you repair the torn costume sleeve?",
+          "wardrobe"
+        ],
+        [
+          "Could you loan us the wooden chair prop?",
+          "prop_store"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you repair the torn costume sleeve? My current request is: Could you repair the torn costume sleeve?",
+          "wardrobe"
+        ],
+        [
+          "Could you repair the torn costume sleeve? The original issue was already handled: Could you repair the torn costume sleeve?",
+          "wardrobe"
+        ],
+        [
+          "The following older ticket was resolved: Could you loan us the wooden chair prop? My current request is: Could you repair the torn costume sleeve?",
+          "wardrobe"
+        ],
+        [
+          "Could you repair the torn costume sleeve? The original issue was already handled: Could you loan us the wooden chair prop?",
+          "wardrobe"
+        ],
+        [
+          "The following older ticket was resolved: Could you repair the torn costume sleeve? My current request is: Could you loan us the wooden chair prop?",
+          "prop_store"
+        ],
+        [
+          "Could you loan us the wooden chair prop? The original issue was already handled: Could you repair the torn costume sleeve?",
+          "prop_store"
+        ],
+        [
+          "The following older ticket was resolved: Could you loan us the wooden chair prop? My current request is: Could you loan us the wooden chair prop?",
+          "prop_store"
+        ],
+        [
+          "Could you loan us the wooden chair prop? The original issue was already handled: Could you loan us the wooden chair prop?",
+          "prop_store"
+        ],
+        [
+          "The following older ticket was resolved: Could you repair the torn costume sleeve? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you repair the torn costume sleeve?",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you loan us the wooden chair prop? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you loan us the wooden chair prop?",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-marina-market",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "stall_admin": "market stall reservations and changes",
+        "metering": "electric meter faults at a stall",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Please move my stall booking to next week.",
+          "stall_admin"
+        ],
+        [
+          "Please repair the faulty electric meter at my stall.",
+          "metering"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please move my stall booking to next week. My current request is: Please move my stall booking to next week.",
+          "stall_admin"
+        ],
+        [
+          "Please move my stall booking to next week. The original issue was already handled: Please move my stall booking to next week.",
+          "stall_admin"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the faulty electric meter at my stall. My current request is: Please move my stall booking to next week.",
+          "stall_admin"
+        ],
+        [
+          "Please move my stall booking to next week. The original issue was already handled: Please repair the faulty electric meter at my stall.",
+          "stall_admin"
+        ],
+        [
+          "The following older ticket was resolved: Please move my stall booking to next week. My current request is: Please repair the faulty electric meter at my stall.",
+          "metering"
+        ],
+        [
+          "Please repair the faulty electric meter at my stall. The original issue was already handled: Please move my stall booking to next week.",
+          "metering"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the faulty electric meter at my stall. My current request is: Please repair the faulty electric meter at my stall.",
+          "metering"
+        ],
+        [
+          "Please repair the faulty electric meter at my stall. The original issue was already handled: Please repair the faulty electric meter at my stall.",
+          "metering"
+        ],
+        [
+          "The following older ticket was resolved: Please move my stall booking to next week. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please move my stall booking to next week.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the faulty electric meter at my stall. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please repair the faulty electric meter at my stall.",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-hill-club",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "training": "coaching sessions and practice times",
+        "kit": "broken club kit and repairs",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Can I book a coaching session for Saturday?",
+          "training"
+        ],
+        [
+          "Can someone fix the broken club harness?",
+          "kit"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Can I book a coaching session for Saturday? My current request is: Can I book a coaching session for Saturday?",
+          "training"
+        ],
+        [
+          "Can I book a coaching session for Saturday? The original issue was already handled: Can I book a coaching session for Saturday?",
+          "training"
+        ],
+        [
+          "The following older ticket was resolved: Can someone fix the broken club harness? My current request is: Can I book a coaching session for Saturday?",
+          "training"
+        ],
+        [
+          "Can I book a coaching session for Saturday? The original issue was already handled: Can someone fix the broken club harness?",
+          "training"
+        ],
+        [
+          "The following older ticket was resolved: Can I book a coaching session for Saturday? My current request is: Can someone fix the broken club harness?",
+          "kit"
+        ],
+        [
+          "Can someone fix the broken club harness? The original issue was already handled: Can I book a coaching session for Saturday?",
+          "kit"
+        ],
+        [
+          "The following older ticket was resolved: Can someone fix the broken club harness? My current request is: Can someone fix the broken club harness?",
+          "kit"
+        ],
+        [
+          "Can someone fix the broken club harness? The original issue was already handled: Can someone fix the broken club harness?",
+          "kit"
+        ],
+        [
+          "The following older ticket was resolved: Can I book a coaching session for Saturday? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Can I book a coaching session for Saturday?",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Can someone fix the broken club harness? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Can someone fix the broken club harness?",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-woodworking-desk",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "materials": "orders for timber and supplies",
+        "machines": "broken workshop machinery",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Could you order six more oak boards?",
+          "materials"
+        ],
+        [
+          "Could you look at the saw that will not start?",
+          "machines"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you order six more oak boards? My current request is: Could you order six more oak boards?",
+          "materials"
+        ],
+        [
+          "Could you order six more oak boards? The original issue was already handled: Could you order six more oak boards?",
+          "materials"
+        ],
+        [
+          "The following older ticket was resolved: Could you look at the saw that will not start? My current request is: Could you order six more oak boards?",
+          "materials"
+        ],
+        [
+          "Could you order six more oak boards? The original issue was already handled: Could you look at the saw that will not start?",
+          "materials"
+        ],
+        [
+          "The following older ticket was resolved: Could you order six more oak boards? My current request is: Could you look at the saw that will not start?",
+          "machines"
+        ],
+        [
+          "Could you look at the saw that will not start? The original issue was already handled: Could you order six more oak boards?",
+          "machines"
+        ],
+        [
+          "The following older ticket was resolved: Could you look at the saw that will not start? My current request is: Could you look at the saw that will not start?",
+          "machines"
+        ],
+        [
+          "Could you look at the saw that will not start? The original issue was already handled: Could you look at the saw that will not start?",
+          "machines"
+        ],
+        [
+          "The following older ticket was resolved: Could you order six more oak boards? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you order six more oak boards?",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you look at the saw that will not start? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you look at the saw that will not start?",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-film-kiosk",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "screening": "screening tickets and seat changes",
+        "archive": "film preservation and retrieval",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Please change my ticket to the later screening.",
+          "screening"
+        ],
+        [
+          "Could you retrieve the missing negative from the archive?",
+          "archive"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please change my ticket to the later screening. My current request is: Please change my ticket to the later screening.",
+          "screening"
+        ],
+        [
+          "Please change my ticket to the later screening. The original issue was already handled: Please change my ticket to the later screening.",
+          "screening"
+        ],
+        [
+          "The following older ticket was resolved: Could you retrieve the missing negative from the archive? My current request is: Please change my ticket to the later screening.",
+          "screening"
+        ],
+        [
+          "Please change my ticket to the later screening. The original issue was already handled: Could you retrieve the missing negative from the archive?",
+          "screening"
+        ],
+        [
+          "The following older ticket was resolved: Please change my ticket to the later screening. My current request is: Could you retrieve the missing negative from the archive?",
+          "archive"
+        ],
+        [
+          "Could you retrieve the missing negative from the archive? The original issue was already handled: Please change my ticket to the later screening.",
+          "archive"
+        ],
+        [
+          "The following older ticket was resolved: Could you retrieve the missing negative from the archive? My current request is: Could you retrieve the missing negative from the archive?",
+          "archive"
+        ],
+        [
+          "Could you retrieve the missing negative from the archive? The original issue was already handled: Could you retrieve the missing negative from the archive?",
+          "archive"
+        ],
+        [
+          "The following older ticket was resolved: Please change my ticket to the later screening. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please change my ticket to the later screening.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you retrieve the missing negative from the archive? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you retrieve the missing negative from the archive?",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-beekeepers-shop",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "orders": "placing orders and shipments for supplies",
+        "diagnostics": "disease reports or diagnosis for hives",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Please send two new frames to our club.",
+          "orders"
+        ],
+        [
+          "Could you diagnose the unexplained brood loss in my hive?",
+          "diagnostics"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please send two new frames to our club. My current request is: Please send two new frames to our club.",
+          "orders"
+        ],
+        [
+          "Please send two new frames to our club. The original issue was already handled: Please send two new frames to our club.",
+          "orders"
+        ],
+        [
+          "The following older ticket was resolved: Could you diagnose the unexplained brood loss in my hive? My current request is: Please send two new frames to our club.",
+          "orders"
+        ],
+        [
+          "Please send two new frames to our club. The original issue was already handled: Could you diagnose the unexplained brood loss in my hive?",
+          "orders"
+        ],
+        [
+          "The following older ticket was resolved: Please send two new frames to our club. My current request is: Could you diagnose the unexplained brood loss in my hive?",
+          "diagnostics"
+        ],
+        [
+          "Could you diagnose the unexplained brood loss in my hive? The original issue was already handled: Please send two new frames to our club.",
+          "diagnostics"
+        ],
+        [
+          "The following older ticket was resolved: Could you diagnose the unexplained brood loss in my hive? My current request is: Could you diagnose the unexplained brood loss in my hive?",
+          "diagnostics"
+        ],
+        [
+          "Could you diagnose the unexplained brood loss in my hive? The original issue was already handled: Could you diagnose the unexplained brood loss in my hive?",
+          "diagnostics"
+        ],
+        [
+          "The following older ticket was resolved: Please send two new frames to our club. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please send two new frames to our club.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you diagnose the unexplained brood loss in my hive? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you diagnose the unexplained brood loss in my hive?",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-courtyard-centre",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "rooms": "space reservations and booking changes",
+        "landscape": "planting problems and outdoor repairs",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Please reserve the corner room for Tuesday.",
+          "rooms"
+        ],
+        [
+          "Please repair the fallen planter at the entrance.",
+          "landscape"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please reserve the corner room for Tuesday. My current request is: Please reserve the corner room for Tuesday.",
+          "rooms"
+        ],
+        [
+          "Please reserve the corner room for Tuesday. The original issue was already handled: Please reserve the corner room for Tuesday.",
+          "rooms"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the fallen planter at the entrance. My current request is: Please reserve the corner room for Tuesday.",
+          "rooms"
+        ],
+        [
+          "Please reserve the corner room for Tuesday. The original issue was already handled: Please repair the fallen planter at the entrance.",
+          "rooms"
+        ],
+        [
+          "The following older ticket was resolved: Please reserve the corner room for Tuesday. My current request is: Please repair the fallen planter at the entrance.",
+          "landscape"
+        ],
+        [
+          "Please repair the fallen planter at the entrance. The original issue was already handled: Please reserve the corner room for Tuesday.",
+          "landscape"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the fallen planter at the entrance. My current request is: Please repair the fallen planter at the entrance.",
+          "landscape"
+        ],
+        [
+          "Please repair the fallen planter at the entrance. The original issue was already handled: Please repair the fallen planter at the entrance.",
+          "landscape"
+        ],
+        [
+          "The following older ticket was resolved: Please reserve the corner room for Tuesday. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please reserve the corner room for Tuesday.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the fallen planter at the entrance. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please repair the fallen planter at the entrance.",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-radio-library",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "licensing": "copyright permission and recording use",
+        "hardware": "repairs to receivers and audio equipment",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Please grant permission to use the old recording in our show.",
+          "licensing"
+        ],
+        [
+          "Please repair the receiver that loses its signal.",
+          "hardware"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please grant permission to use the old recording in our show. My current request is: Please grant permission to use the old recording in our show.",
+          "licensing"
+        ],
+        [
+          "Please grant permission to use the old recording in our show. The original issue was already handled: Please grant permission to use the old recording in our show.",
+          "licensing"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the receiver that loses its signal. My current request is: Please grant permission to use the old recording in our show.",
+          "licensing"
+        ],
+        [
+          "Please grant permission to use the old recording in our show. The original issue was already handled: Please repair the receiver that loses its signal.",
+          "licensing"
+        ],
+        [
+          "The following older ticket was resolved: Please grant permission to use the old recording in our show. My current request is: Please repair the receiver that loses its signal.",
+          "hardware"
+        ],
+        [
+          "Please repair the receiver that loses its signal. The original issue was already handled: Please grant permission to use the old recording in our show.",
+          "hardware"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the receiver that loses its signal. My current request is: Please repair the receiver that loses its signal.",
+          "hardware"
+        ],
+        [
+          "Please repair the receiver that loses its signal. The original issue was already handled: Please repair the receiver that loses its signal.",
+          "hardware"
+        ],
+        [
+          "The following older ticket was resolved: Please grant permission to use the old recording in our show. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please grant permission to use the old recording in our show.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please repair the receiver that loses its signal. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please repair the receiver that loses its signal.",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-flour-store",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "supplies": "flour orders and deliveries",
+        "equipment": "faults with the store weighing equipment",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Could you send the flour order to our branch on Friday?",
+          "supplies"
+        ],
+        [
+          "Could you repair the scales that no longer hold zero?",
+          "equipment"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you send the flour order to our branch on Friday? My current request is: Could you send the flour order to our branch on Friday?",
+          "supplies"
+        ],
+        [
+          "Could you send the flour order to our branch on Friday? The original issue was already handled: Could you send the flour order to our branch on Friday?",
+          "supplies"
+        ],
+        [
+          "The following older ticket was resolved: Could you repair the scales that no longer hold zero? My current request is: Could you send the flour order to our branch on Friday?",
+          "supplies"
+        ],
+        [
+          "Could you send the flour order to our branch on Friday? The original issue was already handled: Could you repair the scales that no longer hold zero?",
+          "supplies"
+        ],
+        [
+          "The following older ticket was resolved: Could you send the flour order to our branch on Friday? My current request is: Could you repair the scales that no longer hold zero?",
+          "equipment"
+        ],
+        [
+          "Could you repair the scales that no longer hold zero? The original issue was already handled: Could you send the flour order to our branch on Friday?",
+          "equipment"
+        ],
+        [
+          "The following older ticket was resolved: Could you repair the scales that no longer hold zero? My current request is: Could you repair the scales that no longer hold zero?",
+          "equipment"
+        ],
+        [
+          "Could you repair the scales that no longer hold zero? The original issue was already handled: Could you repair the scales that no longer hold zero?",
+          "equipment"
+        ],
+        [
+          "The following older ticket was resolved: Could you send the flour order to our branch on Friday? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you send the flour order to our branch on Friday?",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Could you repair the scales that no longer hold zero? My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Could you repair the scales that no longer hold zero?",
+          "intake"
+        ]
+      ]
+    },
+    {
+      "family": "evidence-routing-pet-grooming-desk",
+      "type": "choice",
+      "instructions": "Send the current request to its responsible team. Use intake when the current request is general or still unspecified.",
+      "criteria": {
+        "booking": "changes to grooming appointments",
+        "product": "faulty products sold at the desk",
+        "intake": "General information and unspecified requests."
+      },
+      "rows": [
+        [
+          "Please reschedule my grooming appointment.",
+          "booking"
+        ],
+        [
+          "Please exchange the brush that broke on first use.",
+          "product"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please reschedule my grooming appointment. My current request is: Please reschedule my grooming appointment.",
+          "booking"
+        ],
+        [
+          "Please reschedule my grooming appointment. The original issue was already handled: Please reschedule my grooming appointment.",
+          "booking"
+        ],
+        [
+          "The following older ticket was resolved: Please exchange the brush that broke on first use. My current request is: Please reschedule my grooming appointment.",
+          "booking"
+        ],
+        [
+          "Please reschedule my grooming appointment. The original issue was already handled: Please exchange the brush that broke on first use.",
+          "booking"
+        ],
+        [
+          "The following older ticket was resolved: Please reschedule my grooming appointment. My current request is: Please exchange the brush that broke on first use.",
+          "product"
+        ],
+        [
+          "Please exchange the brush that broke on first use. The original issue was already handled: Please reschedule my grooming appointment.",
+          "product"
+        ],
+        [
+          "The following older ticket was resolved: Please exchange the brush that broke on first use. My current request is: Please exchange the brush that broke on first use.",
+          "product"
+        ],
+        [
+          "Please exchange the brush that broke on first use. The original issue was already handled: Please exchange the brush that broke on first use.",
+          "product"
+        ],
+        [
+          "The following older ticket was resolved: Please reschedule my grooming appointment. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please reschedule my grooming appointment.",
+          "intake"
+        ],
+        [
+          "The following older ticket was resolved: Please exchange the brush that broke on first use. My current request is: What is the main contact number? I haven't described a specific request yet.",
+          "intake"
+        ],
+        [
+          "What is the main contact number? I haven't described a specific request yet. The original issue was already handled: Please exchange the brush that broke on first use.",
+          "intake"
+        ]
+      ]
+    }
+  ],
+  "calibration": []
+}
