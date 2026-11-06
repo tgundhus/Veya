@@ -1,0 +1,1501 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "english-evidence-repair-acceptance-v1",
+  "description": "Fresh evidence-grounding acceptance. Unlabelled boundary candidates contain unresolved, competing or missing evidence.",
+  "cases": [
+    {
+      "id": "compost-coop-enquiries-1",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The truck did not take our bin this morning. Can you arrange another pickup?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {
+        "decision": "collection"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-2",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The replacement lid arrived and fits. Please move our pickup from Monday to Thursday.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {
+        "decision": "collection"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-3",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Our pickup arrived on time. The bin's latch broke and won't stay shut. Can you replace it?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {
+        "decision": "containers"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-4",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The pickup date is sorted. I need a new lid for the cracked bin in the rear yard.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {
+        "decision": "containers"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-5",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I have my member number and pickup reference. I'd like to speak to somebody before I describe the issue.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {
+        "decision": "member_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-6",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Where do new members sign in? I have no bin fault or collection change to report.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {
+        "decision": "member_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-7",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "We need a replacement bin and a new pickup slot before the weekend. Neither request has priority.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-8",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The bin handle tore off and today's pickup was also missed. Please assign somebody to each problem.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "compost-coop-enquiries-9",
+      "family": "compost-coop-enquiries",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "We need the collection rescheduled and a cracked lid replaced. We can't say which request can wait.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Send the request to the team that can act on what the member needs now. Use member desk when there is no specific collection or container request.",
+          "criteria": {
+            "collection": "Collection times, missed pickups, or rescheduling a pickup.",
+            "containers": "Repair or replace a compost bin, lid, or latch.",
+            "member_desk": "General membership information or a request that has yet to be specified."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-1",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I received the last certificate. Please move my new speaking exam from July to August.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "enrollment"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-2",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I do not need a regrade. The payment page for next week's booking won't accept my card.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "enrollment"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-3",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The next exam slot is already booked. Please release the certificate for last month's exam to my account.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "results"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-4",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Registration is settled, but the result sheet shows a different candidate's name. Please correct the result record.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "results"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-5",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "What are the centre's public opening hours? I am not asking about an exam booking or a score.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "public_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-6",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I have my candidate number ready. I'd like to explain what I need when someone calls back.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {
+        "decision": "public_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-7",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Please correct my certificate and move the retake to another date. I need both resolved before Friday and there is no primary request.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-8",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "I need the old score reviewed and the next place paid for. I asked about both and didn't rank them.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "language-exam-helpdesk-9",
+      "family": "language-exam-helpdesk",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The certificate has the wrong name, and today's booking also needs to move. The candidate asks for both in one ticket.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the current exam inquiry. Use the public desk if the request is general or the action has yet to be explained.",
+          "criteria": {
+            "enrollment": "Registration, changing an exam booking, or paying for a place.",
+            "results": "Correcting, releasing, or reviewing a score or certificate.",
+            "public_desk": "General information and inquiries without a specified enrollment or results action."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-1",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner signed today's authorization for team K to move sculpture R to the workshop.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-2",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner initially denied the move. A later signed message explicitly revokes that denial and authorizes the exact team and sculpture for today.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-3",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The current signed release names sculpture M, today's move, and the team waiting at the loading bay.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-4",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The team submitted a request and received a delivery receipt. The owner has issued no decision.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-5",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The permission names another sculpture. There is no permit for the sculpture at the loading bay today.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-6",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner withdrew yesterday's authorization and has not issued a replacement.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-7",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The release covers today's move if the cradle passes inspection. One copy records a pass and another records the inspection as pending.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-8",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The signature appears on a scan with an unreadable sculpture number. The team thinks it names this sculpture, and the owner has not confirmed.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "sculpture-move-permit-9",
+      "family": "sculpture-move-permit",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "One owner message says to proceed, but a later message may supersede it. The relevant part of the later message is missing from the record.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner authorized the named team to move this sculpture today? Require a current authorization for the exact sculpture, team and move."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-1",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The responsible verifier signed the release for batch N and its current recipe. The release is in force.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-2",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "An earlier hold was removed by the same verifier in a signed release naming this batch.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-3",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The verification sheet states this batch may be distributed and carries the responsible verifier's valid signature.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-4",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The kitchen prepared the release form and entered the batch number. The verifier has not signed it.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-5",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The attached release applies to yesterday's batch with a different identifier. No release has been issued for today's batch.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-6",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The verifier signed a hold for this batch after the recipe changed and has issued no new release.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-7",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "A message confirms release for the recipe, but the lot reference is cropped and two batches use the recipe.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-8",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The release appears to have a signature, but the roster shows two people with the same initials and only one can authorize distribution.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "canteen-allergen-release-9",
+      "family": "canteen-allergen-release",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The signed release was conditional on a label check. Two current records disagree on whether that check finished.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May staff distribute this batch under a valid allergen release signed by the responsible verifier?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-1",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Change the phone number in the resurfacing handbook. Temperature logs show all rinks are operating.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-2",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The annual drill rehearses what to do if every chiller fails. During the drill the ice temperatures stayed normal and no session stopped.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-3",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "A message quoted the failure notice from February. Today's readings confirm every active rink is operating normally.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-4",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One practice rink lost a compressor. The assigned practice groups have switched to the other usable rink.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-5",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "A localized cold-loop leak closed the small rink. Staff have moved its remaining bookings to the working adjoining pad.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-6",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All chillers and the emergency plant failed, with no other rink in service. Ice temperatures are rising during the ongoing sessions and staff need immediate help.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-7",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The primary and spare cooling loops have both stopped. Every rink is out of service and the urgent tournament cannot move to another venue.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-8",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The rink manager says only the small pad closed and the large pad is taking its bookings. The engineer reports that the common feed has stopped both pads and there is no spare ice for the session now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-9",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Both controller displays report no cooling. Staff on site report that one pad still feels normal and haven't measured it yet.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "rink-refrigeration-impact-10",
+      "family": "rink-refrigeration-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The old fallback venue offered ice earlier. It's unclear whether the offer is still active while both pads here are closed.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the operational impact of current rink refrigeration problems. Use confirmed availability and substitutes, with urgency for a full loss.",
+          "criteria": [
+            "Level 0 is ordinary work, or a report with current refrigeration confirmed normal.",
+            "Level 1 is a limited interruption with a practical working alternate arrangement.",
+            "Level 2 is urgent loss across all active rinks with no practical substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-1",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The coordinator has scheduled both checks for next week. The current submission has no signoffs.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-2",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The attached budget and eligibility approvals identify a withdrawn application. The current one has a blank approval log.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-3",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The committee discussed both checks and named the reviewers. Nobody recorded a completed approval for this submission.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-4",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The budget reviewer signed for this submission. The eligibility reviewer has only confirmed receipt.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-5",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Eligibility is signed for the current submission. The signed budget sheet in the folder is for the earlier application.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-6",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The budget and eligibility reviewers both signed for this submission. Their confirmation records carry its matching reference.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-7",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The current submission has completed budget and eligibility approvals. The earlier application was withdrawn after only one approval.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-8",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The budget sheet is complete. Eligibility is marked 'approved pending review' and the clerk cannot tell whether the review has since finished.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-9",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Two signatures are present. The scanned header is cut off, so the second page might belong to a different submission.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "grant-dossier-verification-10",
+      "family": "grant-dossier-verification",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The budget reviewer emailed 'approved' while reviewing two applications, and the subject line identifying the application is missing. Eligibility is pending.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Count the completed approvals for the exact submission. Two completed steps are required, a budget signoff and an eligibility signoff.",
+          "criteria": [
+            "Neither of the two approvals is complete for the current submission.",
+            "Exactly one of the two approvals is complete for the current submission.",
+            "Both required approvals are complete for the current submission."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-1",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please put the correct logo on the operator handout. The monitor still shows every gate's current position.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-2",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Operators copied last year's full-loss report into the incident manual. Today every live position is visible.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-3",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The exercise assumed the backup and every live feed would disappear. It was a simulation, and the live gate monitors all stayed in service.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-4",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One position transducer stopped reporting. The handheld inspection team is relaying accurate positions for that gate.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-5",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One control room lost its monitor wall. The affected operators moved to a working staffed terminal with the same positions.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-6",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Both live and standby systems lost position data at every gate during the rising-water event. No gate can be checked manually and the duty team needs positions now.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-7",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "All position links are down, including the mobile replacement. Crews cannot see any gate position and emergency decisions are waiting.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-8",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The duty desk reports a single failed link with the field team relaying that gate's position. The field supervisor says the whole network has failed and all approaches are closed during the rising-water alert.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-9",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The wall shows no positions anywhere. The standby room may still see some gates, but operators have conflicting reports about its feed.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "floodgate-monitoring-impact-10",
+      "family": "floodgate-monitoring-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "One operator reports that the display test left live positions visible for every gate. A second reports that two gates lost their feeds and that the mobile monitor is now covering those positions.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Grade current monitoring of floodgate positions, based on actual coverage and alternatives rather than the severity of a hypothetical flood.",
+          "criteria": [
+            "0 means ordinary work or no current reduction in monitoring coverage.",
+            "1 means a limited monitoring loss with a working replacement covering the affected gates.",
+            "2 means urgent loss of all monitoring, with no working replacement."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    }
+  ]
+}
