@@ -30,6 +30,45 @@ its fresh holdout scored 20/36 within ±0.25 for ordinal answers, 10/15 choice a
 9/10 binary. Score and choice miss the 80% gates; the default checkpoint is unchanged.
 [6 November qualification and limits](docs/reports/ordinal-continuation-2026-11-06.md).
 
+## Matched Jev, Laya and Veya quality — 7 November 2026
+
+All three systems answer the frozen Feishu-style diagnostic: 64 AI-assisted synthetic
+Chinese cases, two question modes, three shuffled repetitions, identical request hashes.
+Quality uses the preselected first repeat and retains failed requests in the denominator;
+all three runs have zero failures. The four-binary mode maps four answers to one class
+using the same frozen thresholds. It is not four independent label-accuracy scores.
+
+Jev 1.13.0 and Laya were measured on 21 September; Veya 0.3.29 was run locally on
+7 November with two CPU threads, without a decision cache. Laya and Veya use the
+same pinned multilingual weights at `1c5edc17a7acd8701df6fc341c0d179f1c62c982`;
+the weight SHA256 matches the recorded environment check. Model versions, dates and
+hardware differ, so this is a matched-prompt quality comparison, not a latency ranking.
+
+| System | Choice labels | Four-binary labels | Choice macro F1 | Choice ECE, 10 bins | Exact answer groups across 3 runs |
+|---|---:|---:|---:|---:|---:|
+| Jev 1.13.0 | 64/64 | 63/64 | 1.0000 | 0.0320 | 29/128 |
+| Laya multilingual | 20/64 | 18/64 | 0.2569 | 0.2614 | 128/128 |
+| Veya multilingual | 20/64 | 18/64 | 0.2569 | 0.2614 | 128/128 |
+
+Veya changes **zero first-repeat labels** relative to Laya in either mode. The new
+caching policy improves reuse, not checkpoint quality. Exact answer groups compare
+whole answer payloads, including probabilities and confidence; they are distinct
+from repeated labels. The results are specific to these 64 synthetic cases and
+are not a general multilingual or production qualification.
+
+[Audited comparison, per-family metrics and sources](research/results/matched_quality_comparison_20261107.json) ·
+[Veya raw responses and metadata](research/results/matched_feishu_veya_cpu_20261107/metadata.json).
+Reproduce using a local copy of the pinned multilingual checkpoint:
+
+```bash
+python research/benchmarks/feishu_zh/run.py --backend veya --checkpoint /local/multilingual --checkpoint-revision 1c5edc17a7acd8701df6fc341c0d179f1c62c982 --device cpu --output /tmp/veya-matched
+python research/benchmarks/feishu_zh/audit.py --run-dir /tmp/veya-matched
+python research/scripts/summarize_matched_quality.py --veya-run /tmp/veya-matched --out /tmp/matched-comparison.json
+```
+
+The summarizer keeps the recorded Jev/Laya reference paths and accepts the new Veya
+run explicitly. Retain raw responses before publishing a replacement comparison.
+
 ## Bounded memory eviction — 7 November 2026
 
 The production memory store now supports opt-in `eviction="lru"`. A live read promotes
@@ -67,6 +106,33 @@ router = Router(hooks=[cache])
 
 ```bash
 python research/scripts/bench_cache_eviction.py --production-lru --out eviction.json
+```
+
+### Real-model cache workload
+
+The implementation was also measured through `Router.predict` on the pinned real
+multilingual checkpoint. A fixed Zipf trace draws 128 choice requests from the same
+64-case bank (38 distinct requests) with a 16-entry cache. Each trial starts empty;
+one warmed agent is shared across three alternating FIFO/LRU trial pairs, using
+two CPU threads. All 768 returned answer payloads match the uncached reference.
+
+| Memory policy | Forward passes per 128 requests | Cache hits | Median total wall time |
+|---|---:|---:|---:|
+| FIFO | 63 | 65 | 24.585 s |
+| LRU | 58 | 70 | 22.722 s |
+
+LRU performs **7.94% fewer model forwards** and lowers median workload time by
+**7.58%** in this run. This is a workload-level result from reuse, not faster
+uncached model inference. All three paired wall-time trials favor LRU. No quality,
+probability or retention improvement is claimed. Other workloads may differ.
+
+[Raw trials, request indices, reference hashes and source digests](research/results/cache_workflow_real_20261107.json).
+An [earlier exploratory run](research/results/cache_workflow_real_validation_overlap_20261107.json)
+that overlapped regression validation is retained; the table and README use the
+subsequent standalone run after validation finished.
+
+```bash
+python research/scripts/bench_cache_workflow.py --checkpoint /local/multilingual --out workflow.json
 ```
 
 ## Cache store scaling — 7 November 2026

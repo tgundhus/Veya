@@ -1,0 +1,2669 @@
+{
+  "created_utc": "2026-11-07T20:23:04.973168+00:00",
+  "models": {
+    "jev": {
+      "choice": {
+        "n": 64,
+        "correct": 64,
+        "accuracy": 1.0,
+        "errors": 0,
+        "macro_f1": 1.0,
+        "false_action_count": 0,
+        "nonaction_denominator": 32,
+        "missed_action_count": 0,
+        "action_denominator": 32,
+        "urgent_recalled": 16,
+        "urgent_denominator": 16,
+        "confusion_matrix": {
+          "urgent": {
+            "urgent": 16,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "todo": {
+            "urgent": 0,
+            "todo": 16,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "valuable": {
+            "urgent": 0,
+            "todo": 0,
+            "valuable": 16,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "noise": {
+            "urgent": 0,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 16,
+            "ERROR": 0
+          }
+        },
+        "timing": {
+          "n": 192,
+          "p50_ms": 253.4769795020111,
+          "p95_ms": 317.53035607689526,
+          "mean_ms": 258.2745267069792,
+          "definition": "Client end-to-end wall clock, excluding warmup; p95 uses linear interpolation."
+        },
+        "total_requests": 192,
+        "failed_requests": 0,
+        "repeat_consistency": {
+          "complete_cases": 64,
+          "same_label_all_three": 63
+        },
+        "by_family": {
+          "conditional": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "cross_chat": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "knowledge": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "lifecycle": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "ownership": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "thread_context": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "untrusted_content": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "urgency": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          }
+        },
+        "truncation": {
+          "state_truncated": null,
+          "instructions_truncated": null
+        },
+        "choice_probability_diagnostics": {
+          "n": 64,
+          "multiclass_brier_sum": 0.012337500000000001,
+          "ece_10_equal_width_bins": 0.03203125000000004,
+          "caution": "Descriptive only; 64 synthetic labels, no calibration fitting or general calibration claim."
+        }
+      },
+      "four_noul": {
+        "n": 64,
+        "correct": 63,
+        "accuracy": 0.984375,
+        "errors": 0,
+        "macro_f1": 0.9843597262952102,
+        "false_action_count": 0,
+        "nonaction_denominator": 32,
+        "missed_action_count": 1,
+        "action_denominator": 32,
+        "urgent_recalled": 16,
+        "urgent_denominator": 16,
+        "confusion_matrix": {
+          "urgent": {
+            "urgent": 16,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "todo": {
+            "urgent": 0,
+            "todo": 15,
+            "valuable": 0,
+            "noise": 1,
+            "ERROR": 0
+          },
+          "valuable": {
+            "urgent": 0,
+            "todo": 0,
+            "valuable": 16,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "noise": {
+            "urgent": 0,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 16,
+            "ERROR": 0
+          }
+        },
+        "timing": {
+          "n": 192,
+          "p50_ms": 249.7323334973771,
+          "p95_ms": 314.9564684572396,
+          "mean_ms": 256.39781600996986,
+          "definition": "Client end-to-end wall clock, excluding warmup; p95 uses linear interpolation."
+        },
+        "total_requests": 192,
+        "failed_requests": 0,
+        "repeat_consistency": {
+          "complete_cases": 64,
+          "same_label_all_three": 64
+        },
+        "by_family": {
+          "conditional": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "cross_chat": {
+            "n": 8,
+            "correct": 7,
+            "accuracy": 0.875,
+            "errors": 0,
+            "macro_f1": 0.8666666666666667,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 1,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 1,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "knowledge": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "lifecycle": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "ownership": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "thread_context": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "untrusted_content": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          },
+          "urgency": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0,
+            "errors": 0,
+            "macro_f1": 1.0,
+            "false_action_count": 0,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 2,
+                "ERROR": 0
+              }
+            }
+          }
+        },
+        "truncation": {
+          "state_truncated": null,
+          "instructions_truncated": null
+        }
+      },
+      "exact_repeat_groups": {
+        "identical": 29,
+        "total": 128
+      }
+    },
+    "laya": {
+      "choice": {
+        "n": 64,
+        "correct": 20,
+        "accuracy": 0.3125,
+        "errors": 0,
+        "macro_f1": 0.2569444444444444,
+        "false_action_count": 22,
+        "nonaction_denominator": 32,
+        "missed_action_count": 6,
+        "action_denominator": 32,
+        "urgent_recalled": 11,
+        "urgent_denominator": 16,
+        "confusion_matrix": {
+          "urgent": {
+            "urgent": 11,
+            "todo": 2,
+            "valuable": 3,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "todo": {
+            "urgent": 8,
+            "todo": 5,
+            "valuable": 3,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "valuable": {
+            "urgent": 3,
+            "todo": 9,
+            "valuable": 4,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "noise": {
+            "urgent": 6,
+            "todo": 4,
+            "valuable": 6,
+            "noise": 0,
+            "ERROR": 0
+          }
+        },
+        "timing": {
+          "n": 192,
+          "p50_ms": 150.52629148704,
+          "p95_ms": 204.05529358540662,
+          "mean_ms": 148.1816864012823,
+          "definition": "Client end-to-end wall clock, excluding warmup; p95 uses linear interpolation."
+        },
+        "total_requests": 192,
+        "failed_requests": 0,
+        "repeat_consistency": {
+          "complete_cases": 64,
+          "same_label_all_three": 64
+        },
+        "by_family": {
+          "conditional": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1875,
+            "false_action_count": 1,
+            "nonaction_denominator": 4,
+            "missed_action_count": 3,
+            "action_denominator": 4,
+            "urgent_recalled": 0,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "cross_chat": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.25,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "knowledge": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.24285714285714285,
+            "false_action_count": 1,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "lifecycle": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.16666666666666666,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "ownership": {
+            "n": 8,
+            "correct": 4,
+            "accuracy": 0.5,
+            "errors": 0,
+            "macro_f1": 0.41666666666666663,
+            "false_action_count": 2,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "thread_context": {
+            "n": 8,
+            "correct": 1,
+            "accuracy": 0.125,
+            "errors": 0,
+            "macro_f1": 0.07142857142857142,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 1,
+            "action_denominator": 4,
+            "urgent_recalled": 0,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "untrusted_content": {
+            "n": 8,
+            "correct": 1,
+            "accuracy": 0.125,
+            "errors": 0,
+            "macro_f1": 0.125,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 2,
+            "action_denominator": 4,
+            "urgent_recalled": 1,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "urgency": {
+            "n": 8,
+            "correct": 4,
+            "accuracy": 0.5,
+            "errors": 0,
+            "macro_f1": 0.43452380952380953,
+            "false_action_count": 2,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          }
+        },
+        "truncation": {
+          "state_truncated": 0,
+          "instructions_truncated": 0
+        },
+        "quality_without_truncation": {
+          "n": 64,
+          "correct": 20,
+          "accuracy": 0.3125,
+          "errors": 0,
+          "macro_f1": 0.2569444444444444,
+          "false_action_count": 22,
+          "nonaction_denominator": 32,
+          "missed_action_count": 6,
+          "action_denominator": 32,
+          "urgent_recalled": 11,
+          "urgent_denominator": 16,
+          "confusion_matrix": {
+            "urgent": {
+              "urgent": 11,
+              "todo": 2,
+              "valuable": 3,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "todo": {
+              "urgent": 8,
+              "todo": 5,
+              "valuable": 3,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "valuable": {
+              "urgent": 3,
+              "todo": 9,
+              "valuable": 4,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "noise": {
+              "urgent": 6,
+              "todo": 4,
+              "valuable": 6,
+              "noise": 0,
+              "ERROR": 0
+            }
+          }
+        },
+        "choice_probability_diagnostics": {
+          "n": 64,
+          "multiclass_brier_sum": 0.83056985515625,
+          "ece_10_equal_width_bins": 0.2614046875,
+          "caution": "Descriptive only; 64 synthetic labels, no calibration fitting or general calibration claim."
+        }
+      },
+      "four_noul": {
+        "n": 64,
+        "correct": 18,
+        "accuracy": 0.28125,
+        "errors": 0,
+        "macro_f1": 0.16245270037839696,
+        "false_action_count": 30,
+        "nonaction_denominator": 32,
+        "missed_action_count": 0,
+        "action_denominator": 32,
+        "urgent_recalled": 16,
+        "urgent_denominator": 16,
+        "confusion_matrix": {
+          "urgent": {
+            "urgent": 16,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "todo": {
+            "urgent": 15,
+            "todo": 1,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "valuable": {
+            "urgent": 13,
+            "todo": 1,
+            "valuable": 1,
+            "noise": 1,
+            "ERROR": 0
+          },
+          "noise": {
+            "urgent": 16,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          }
+        },
+        "timing": {
+          "n": 192,
+          "p50_ms": 414.9067710095551,
+          "p95_ms": 513.9156187360638,
+          "mean_ms": 397.33676019720104,
+          "definition": "Client end-to-end wall clock, excluding warmup; p95 uses linear interpolation."
+        },
+        "total_requests": 192,
+        "failed_requests": 0,
+        "repeat_consistency": {
+          "complete_cases": 64,
+          "same_label_all_three": 64
+        },
+        "by_family": {
+          "conditional": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "cross_chat": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "knowledge": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "lifecycle": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.25,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "ownership": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.29166666666666663,
+            "false_action_count": 2,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 1,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "thread_context": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "untrusted_content": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "urgency": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          }
+        },
+        "truncation": {
+          "state_truncated": 0,
+          "instructions_truncated": 0
+        },
+        "quality_without_truncation": {
+          "n": 64,
+          "correct": 18,
+          "accuracy": 0.28125,
+          "errors": 0,
+          "macro_f1": 0.16245270037839696,
+          "false_action_count": 30,
+          "nonaction_denominator": 32,
+          "missed_action_count": 0,
+          "action_denominator": 32,
+          "urgent_recalled": 16,
+          "urgent_denominator": 16,
+          "confusion_matrix": {
+            "urgent": {
+              "urgent": 16,
+              "todo": 0,
+              "valuable": 0,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "todo": {
+              "urgent": 15,
+              "todo": 1,
+              "valuable": 0,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "valuable": {
+              "urgent": 13,
+              "todo": 1,
+              "valuable": 1,
+              "noise": 1,
+              "ERROR": 0
+            },
+            "noise": {
+              "urgent": 16,
+              "todo": 0,
+              "valuable": 0,
+              "noise": 0,
+              "ERROR": 0
+            }
+          }
+        }
+      },
+      "exact_repeat_groups": {
+        "identical": 128,
+        "total": 128
+      }
+    },
+    "veya": {
+      "choice": {
+        "n": 64,
+        "correct": 20,
+        "accuracy": 0.3125,
+        "errors": 0,
+        "macro_f1": 0.2569444444444444,
+        "false_action_count": 22,
+        "nonaction_denominator": 32,
+        "missed_action_count": 6,
+        "action_denominator": 32,
+        "urgent_recalled": 11,
+        "urgent_denominator": 16,
+        "confusion_matrix": {
+          "urgent": {
+            "urgent": 11,
+            "todo": 2,
+            "valuable": 3,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "todo": {
+            "urgent": 8,
+            "todo": 5,
+            "valuable": 3,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "valuable": {
+            "urgent": 3,
+            "todo": 9,
+            "valuable": 4,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "noise": {
+            "urgent": 6,
+            "todo": 4,
+            "valuable": 6,
+            "noise": 0,
+            "ERROR": 0
+          }
+        },
+        "timing": {
+          "n": 192,
+          "p50_ms": 397.8586499579251,
+          "p95_ms": 438.78752502496354,
+          "mean_ms": 400.0108937513384,
+          "definition": "Client end-to-end wall clock, excluding warmup; p95 uses linear interpolation."
+        },
+        "total_requests": 192,
+        "failed_requests": 0,
+        "repeat_consistency": {
+          "complete_cases": 64,
+          "same_label_all_three": 64
+        },
+        "by_family": {
+          "conditional": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1875,
+            "false_action_count": 1,
+            "nonaction_denominator": 4,
+            "missed_action_count": 3,
+            "action_denominator": 4,
+            "urgent_recalled": 0,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "cross_chat": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.25,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "knowledge": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.24285714285714285,
+            "false_action_count": 1,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 2,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "lifecycle": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.16666666666666666,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "ownership": {
+            "n": 8,
+            "correct": 4,
+            "accuracy": 0.5,
+            "errors": 0,
+            "macro_f1": 0.41666666666666663,
+            "false_action_count": 2,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "thread_context": {
+            "n": 8,
+            "correct": 1,
+            "accuracy": 0.125,
+            "errors": 0,
+            "macro_f1": 0.07142857142857142,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 1,
+            "action_denominator": 4,
+            "urgent_recalled": 0,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 0,
+                "todo": 1,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "untrusted_content": {
+            "n": 8,
+            "correct": 1,
+            "accuracy": 0.125,
+            "errors": 0,
+            "macro_f1": 0.125,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 2,
+            "action_denominator": 4,
+            "urgent_recalled": 1,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 0,
+                "todo": 2,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "urgency": {
+            "n": 8,
+            "correct": 4,
+            "accuracy": 0.5,
+            "errors": 0,
+            "macro_f1": 0.43452380952380953,
+            "false_action_count": 2,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 1,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          }
+        },
+        "truncation": {
+          "state_truncated": 0,
+          "instructions_truncated": 0
+        },
+        "quality_without_truncation": {
+          "n": 64,
+          "correct": 20,
+          "accuracy": 0.3125,
+          "errors": 0,
+          "macro_f1": 0.2569444444444444,
+          "false_action_count": 22,
+          "nonaction_denominator": 32,
+          "missed_action_count": 6,
+          "action_denominator": 32,
+          "urgent_recalled": 11,
+          "urgent_denominator": 16,
+          "confusion_matrix": {
+            "urgent": {
+              "urgent": 11,
+              "todo": 2,
+              "valuable": 3,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "todo": {
+              "urgent": 8,
+              "todo": 5,
+              "valuable": 3,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "valuable": {
+              "urgent": 3,
+              "todo": 9,
+              "valuable": 4,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "noise": {
+              "urgent": 6,
+              "todo": 4,
+              "valuable": 6,
+              "noise": 0,
+              "ERROR": 0
+            }
+          }
+        },
+        "choice_probability_diagnostics": {
+          "n": 64,
+          "multiclass_brier_sum": 0.83056975828125,
+          "ece_10_equal_width_bins": 0.2614015625,
+          "caution": "Descriptive only; 64 synthetic labels, no calibration fitting or general calibration claim."
+        }
+      },
+      "four_noul": {
+        "n": 64,
+        "correct": 18,
+        "accuracy": 0.28125,
+        "errors": 0,
+        "macro_f1": 0.16245270037839696,
+        "false_action_count": 30,
+        "nonaction_denominator": 32,
+        "missed_action_count": 0,
+        "action_denominator": 32,
+        "urgent_recalled": 16,
+        "urgent_denominator": 16,
+        "confusion_matrix": {
+          "urgent": {
+            "urgent": 16,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "todo": {
+            "urgent": 15,
+            "todo": 1,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          },
+          "valuable": {
+            "urgent": 13,
+            "todo": 1,
+            "valuable": 1,
+            "noise": 1,
+            "ERROR": 0
+          },
+          "noise": {
+            "urgent": 16,
+            "todo": 0,
+            "valuable": 0,
+            "noise": 0,
+            "ERROR": 0
+          }
+        },
+        "timing": {
+          "n": 192,
+          "p50_ms": 1115.6821999466047,
+          "p95_ms": 1234.93693000637,
+          "mean_ms": 1132.375355729285,
+          "definition": "Client end-to-end wall clock, excluding warmup; p95 uses linear interpolation."
+        },
+        "total_requests": 192,
+        "failed_requests": 0,
+        "repeat_consistency": {
+          "complete_cases": 64,
+          "same_label_all_three": 64
+        },
+        "by_family": {
+          "conditional": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "cross_chat": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "knowledge": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "lifecycle": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.25,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 1,
+                "todo": 1,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "ownership": {
+            "n": 8,
+            "correct": 3,
+            "accuracy": 0.375,
+            "errors": 0,
+            "macro_f1": 0.29166666666666663,
+            "false_action_count": 2,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 0,
+                "todo": 0,
+                "valuable": 1,
+                "noise": 1,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "thread_context": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "untrusted_content": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          },
+          "urgency": {
+            "n": 8,
+            "correct": 2,
+            "accuracy": 0.25,
+            "errors": 0,
+            "macro_f1": 0.1,
+            "false_action_count": 4,
+            "nonaction_denominator": 4,
+            "missed_action_count": 0,
+            "action_denominator": 4,
+            "urgent_recalled": 2,
+            "urgent_denominator": 2,
+            "confusion_matrix": {
+              "urgent": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "todo": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "valuable": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              },
+              "noise": {
+                "urgent": 2,
+                "todo": 0,
+                "valuable": 0,
+                "noise": 0,
+                "ERROR": 0
+              }
+            }
+          }
+        },
+        "truncation": {
+          "state_truncated": 0,
+          "instructions_truncated": 0
+        },
+        "quality_without_truncation": {
+          "n": 64,
+          "correct": 18,
+          "accuracy": 0.28125,
+          "errors": 0,
+          "macro_f1": 0.16245270037839696,
+          "false_action_count": 30,
+          "nonaction_denominator": 32,
+          "missed_action_count": 0,
+          "action_denominator": 32,
+          "urgent_recalled": 16,
+          "urgent_denominator": 16,
+          "confusion_matrix": {
+            "urgent": {
+              "urgent": 16,
+              "todo": 0,
+              "valuable": 0,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "todo": {
+              "urgent": 15,
+              "todo": 1,
+              "valuable": 0,
+              "noise": 0,
+              "ERROR": 0
+            },
+            "valuable": {
+              "urgent": 13,
+              "todo": 1,
+              "valuable": 1,
+              "noise": 1,
+              "ERROR": 0
+            },
+            "noise": {
+              "urgent": 16,
+              "todo": 0,
+              "valuable": 0,
+              "noise": 0,
+              "ERROR": 0
+            }
+          }
+        }
+      },
+      "exact_repeat_groups": {
+        "identical": 128,
+        "total": 128
+      }
+    }
+  },
+  "source_sha256": {
+    "research/benchmarks/feishu_zh/results/v1/jev/metadata.json": "9135a8924bb45ac0dc16b8a768540d5b6bd821e8e2dcecaa8749a3001e14f3f4",
+    "research/benchmarks/feishu_zh/results/v1/jev/raw.jsonl": "a1dfd4de1819117cbd1470a187e2e8dd8f4cce7469c9c3c98befe1a282beab23",
+    "research/benchmarks/feishu_zh/results/v1/laya/metadata.json": "999851aa84a713ebd983d3d05ca074eadc5d2fe70af6dfa0efc546582607c40a",
+    "research/benchmarks/feishu_zh/results/v1/laya/raw.jsonl": "1c8dab17062f9244888f580907b62a845cf1e7b199e7041810a9301bd55c28e0",
+    "research/results/matched_feishu_veya_cpu_20261107/metadata.json": "5e7d4a4ef2a967c92fe936cc13b7d1f836cca468fbb879bc58487ae518061ed7",
+    "research/results/matched_feishu_veya_cpu_20261107/raw.jsonl": "ad46b1b880481b5ae8da4f8cd4f0a918fb2506f7057c9553ee4da139c01728a0",
+    "research/benchmarks/feishu_zh/results/v1/environment_check.json": "f8b75b7ac5fbe5b1f298542b217e5d7b6d43407b5542ff816256d8ff5c21711a",
+    "research/scripts/summarize_matched_quality.py": "a31a622d71f358b3335abcb571f332360c71f0fe9fbb624816533071c3e923a1",
+    "research/benchmarks/feishu_zh/audit.py": "9a77e49d4b4d82fd3675073958b56a863d8d06b790daf31335d96c7c25a3a387",
+    "research/benchmarks/feishu_zh/metrics.py": "d39371a59c1c3e7793228e186ab68dad59530fb942823dc6a9000ac8e7a4a182",
+    "research/benchmarks/feishu_zh/prompts.py": "65a0919ccc3f080a7bb71a1b45f60a918db66ac427eefa74475cc48adc555889"
+  },
+  "same_request_hashes": true,
+  "same_laya_veya_weights_sha256": "9d628fd971b700382ac6f65920a86f149777b2e748e0c955fb3b19695aa8f204",
+  "paired_label_changes_laya_vs_veya": {
+    "choice": 0,
+    "four_noul": 0
+  },
+  "method": "64 frozen synthetic Chinese cases, two modes, three repeats, fixed first-repeat quality. Recorded Jev/Laya calls from September 2026; Veya measured November 2026. Same prompts and scoring, pinned identical Laya/Veya weights; different hardware/dates. No cross-engine speed ranking or general multilingual accuracy claim."
+}
