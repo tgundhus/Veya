@@ -9,6 +9,16 @@ retention, replay across devices and precision modes, and optimizations around i
 The pretrained models remain upstream Laya checkpoints; the fork maintains its own code,
 SDKs, documentation and measurements.
 
+![Jev, Laya and Veya: recorded accuracy, repeatability and cache results](https://raw.githubusercontent.com/tgundhus/Veya/main/assets/decision_engine_comparison.png)
+
+All three panels use the same 64-case Chinese diagnostic, two question modes and scoring rules.
+Veya's new run uses the same pinned multilingual weights as Laya: **20/64 choice** and
+**18/64 four-binary labels**, unchanged from Laya. Jev's recorded calls scored 64/64 and
+63/64. Jev/Laya were measured in September; Veya in November. Different hardware and dates
+prevent a three-way latency ranking. These synthetic cases do not establish general accuracy.
+[Chart data and source hashes](https://github.com/tgundhus/Veya/blob/main/research/results/readme_comparison_sources_20261107.json) ·
+[Benchmark protocol](https://github.com/tgundhus/Veya/blob/main/research/benchmarks/feishu_zh/README.md).
+
 Selected upstream changes are reviewed through Laya 0.4.18, with a
 [5 November comparison](https://github.com/tgundhus/Veya/blob/main/docs/reports/decision-engines-2026-11-05.md)
 covering newer Laya changes and four related decision engines. Review coverage
@@ -189,6 +199,27 @@ for three questions, and **0.056 ms** for a repeated three-question memory-cache
 counts matched the pre-rename code exactly. These are warm local calls on one Windows
 workstation; they do not establish accuracy or a speedup from renaming.
 [Current measurements, before/after and limits](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#current-cpu-refresh--7-november-2026).
+
+![Veya inference versus cached replay, with measured Laya precision changes versus retained answers](https://raw.githubusercontent.com/tgundhus/Veya/main/assets/veya_inference_and_replay.png)
+
+The left panel shows current Veya CPU timings; the right shows precision/replay
+experiments measured in September 2026. Cache hits retain an earlier answer and do not establish better accuracy.
+Jev has no matching measurements in these artifacts.
+[Regenerate the figures](https://github.com/tgundhus/Veya/blob/main/research/scripts/make_readme_comparisons.py) with
+`python research/scripts/make_readme_comparisons.py` (Matplotlib required for authoring).
+
+![FIFO, LRU and LFU cache eviction, with real-model forward passes](https://raw.githubusercontent.com/tgundhus/Veya/main/assets/veya_cache_eviction.png)
+
+In the real-model workload, LRU used **58 instead of 63 forward passes** per 128
+requests (**7.94% fewer**) and reduced median total time from **24.585 to 22.722 s**.
+All returned answer payloads matched the uncached reference.
+
+Bounded memory caches can opt into `DecisionCache(maxsize=1024, eviction="lru")`.
+LRU promotes live hits without renewing their TTL. FIFO remains the default; SQLite and
+custom stores keep their existing policies. The comparison reports avoided forward
+passes and store-operation costs, including an all-unique workload with no hit-rate benefit.
+[Matched quality and cache measurements](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md) ·
+[Real-model cache workload](https://github.com/tgundhus/Veya/blob/main/research/results/cache_workflow_real_20261107.json).
 
 On a pinned real English CPU checkpoint, bounded loading reduced peak working set by
 764 MiB (28%), with unchanged steady memory and inference time. The standalone ONNX
