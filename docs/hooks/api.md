@@ -1,11 +1,11 @@
 # API reference
 
-Everything on this page is importable from `laya` (the common names) or `laya.hooks` (the
+Everything on this page is importable from `veya` (the common names) or `veya.hooks` (the
 whole surface).
 
 ```python
-from laya import PredictContext, PredictHook, Hook
-from laya.hooks import HOOK_EVENTS, normalise_hooks, dispatch, aggregate_usage
+from veya import PredictContext, PredictHook, Hook
+from veya.hooks import HOOK_EVENTS, normalise_hooks, dispatch, aggregate_usage
 ```
 
 - [PredictContext](#predictcontext)
@@ -88,7 +88,7 @@ def cache_write(ctx):
     for i, result in enumerate(ctx.results or []):
         CACHE[key(ctx, i)] = result
 
-laya.load("convaiinnovations/laya", on_predict_start=cache_read, on_predict_end=cache_write)
+veya.load("convaiinnovations/laya", on_predict_start=cache_read, on_predict_end=cache_write)
 ```
 
 `tests/test_hooks_api.py` execs this block, `examples/hooks/cache.py`, and the caching blocks of
@@ -131,7 +131,7 @@ If a hook defines one of the six as a non-callable, configuration fails fast (se
 Subclass it and override only the events you need.
 
 ```python
-from laya import BaseHook
+from veya import BaseHook
 
 class Audit(BaseHook):
     def on_predict_end(self, ctx):
@@ -170,12 +170,12 @@ the block raises.
 
 ## Process-wide defaults
 
-`laya.hooks` keeps a small process-wide registry, so a tracer, metrics hook or tenant tagger does
+`veya.hooks` keeps a small process-wide registry, so a tracer, metrics hook or tenant tagger does
 not have to be threaded through every `Agent` and `Router`. Defaults run **first**, then the
 hooks installed on the instance, then per-call hooks.
 
 ```python
-from laya import hooks
+from veya import hooks
 
 hooks.set_default_hooks(hooks=[Tracer()])          # replaces the set, accepts the hooks= arguments
 hooks.add_default_hook(Metrics())                  # appends
@@ -195,13 +195,13 @@ An event may be a coroutine. Wrap the hook in `AsyncHook` and its `async def` me
 completion in the sync core:
 
 ```python
-from laya import AsyncHook
+from veya import AsyncHook
 
 class Remote:
     async def on_predict_end(self, ctx):
         await ship(ctx.results)
 
-agent = laya.load("convaiinnovations/laya", hooks=[AsyncHook(Remote())])
+agent = veya.load("convaiinnovations/laya", hooks=[AsyncHook(Remote())])
 ```
 
 A plain async callable passed to `on_predict_start=` / `on_predict_end=` also works, because
@@ -315,7 +315,7 @@ router.loaded               # list of resident checkpoint names
 ### ONNXAgent
 
 ```python
-ONNXAgent(model_id_or_path, onnx_path="laya.onnx", subfolder=None,
+ONNXAgent(model_id_or_path, onnx_path="veya.onnx", subfolder=None,
           hooks=None, on_predict_start=None, on_predict_end=None,
           hooks_raise=True, hooks_concurrent=True, hooks_timeout=None)
 
@@ -390,7 +390,7 @@ completion from sync code, on the caller's loop if it is free, or on a backgroun
 caller already has one. `aggregate_usage` sums per-state usage blocks.
 
 ```python
-from laya.hooks import normalise_hooks, dispatch, PredictContext
+from veya.hooks import normalise_hooks, dispatch, PredictContext
 
 hooks = normalise_hooks(on_predict_start=[log, redact])
 ctx = PredictContext(states=["..."], questions={...})

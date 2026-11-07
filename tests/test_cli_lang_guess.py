@@ -7,7 +7,7 @@ from contextlib import redirect_stderr, redirect_stdout
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import cli  # noqa: E402
+from veya import cli  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -48,7 +48,7 @@ class BatchRouter:
 
     def predict_batch(self, requests, batch_size=None, **extra):
         self.predict_batch_calls.append((requests, batch_size, extra))
-        return [{"model": "laya-rl", "answers": {"difficulty": {"score": float(i)}}, "usage": {}}
+        return [{"model": "veya-rl", "answers": {"difficulty": {"score": float(i)}}, "usage": {}}
                 for i in range(len(requests))]
 
     def route_batch(self, requests):
@@ -103,7 +103,7 @@ check("parse: omitted means no hint (None), not '' or 'auto'",
 # `--lang` forces a language and skips detection; `--lang-guess` is the soft sibling that
 # participates in routing. Two different parameters with two different contracts, so the flag
 # must drive the one core names `lang_guess` -- and the names are core's, not a copy.
-from laya.router import Router as _CoreRouter  # noqa: E402
+from veya.router import Router as _CoreRouter  # noqa: E402
 
 check("core: Router.route really takes lang_guess",
       "lang_guess" in inspect.signature(_CoreRouter.route).parameters,
@@ -179,12 +179,12 @@ check("batch predict: unset hint is absent, not sent as None",
       str([sorted(r) for r in requests]))
 
 # ------------------------------------------------------------------ drift guard vs the serve surface
-# `laya.serve` forwards lang_guess as a per-call body control. The CLI is the same wrapper class,
+# `veya.serve` forwards lang_guess as a per-call body control. The CLI is the same wrapper class,
 # so the routing hints it can send should cover the ones the HTTP surface can send. If core ever
 # renames or drops lang_guess from that set, this fails rather than the CLI quietly going stale.
-from laya import serve as _serve  # noqa: E402
+from veya import serve as _serve  # noqa: E402
 
-check("parity: lang_guess is a laya.serve body control",
+check("parity: lang_guess is a veya.serve body control",
       "lang_guess" in _serve.BODY_CONTROLS, str(_serve.BODY_CONTROLS))
 parsed = parse_value(["t"])
 namespace_keys = set(vars(parsed)) if parsed is not None else set()

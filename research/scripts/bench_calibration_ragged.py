@@ -18,12 +18,12 @@ sys.path.insert(0, str(ROOT))
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
-from laya import calibrate  # noqa: E402
+from veya import calibrate  # noqa: E402
 
 
 def baseline_fitter(ref):
     source = subprocess.check_output(["git", "show", ref + ":laya/calibrate.py"], cwd=ROOT)
-    namespace = {"__name__": "laya._calibration_benchmark_baseline", "__package__": "laya"}
+    namespace = {"__name__": "veya._calibration_benchmark_baseline", "__package__": "laya"}
     exec(compile(source, "<baseline-calibrate>", "exec"), namespace)
     return namespace["fit_one_temperature"], hashlib.sha256(source).hexdigest()
 
@@ -110,7 +110,7 @@ def main():
             measurement["true_nll"] = true_nll(rows, fitted)
             measurement["median_ms"] = statistics.median(measurement["samples_ms"])
         outputs[name] = {"rows": len(rows), "widths": sorted({len(logits) for logits, _ in rows}), **measured}
-    current_hash = hashlib.sha256((ROOT / "laya/calibrate.py").read_bytes()).hexdigest()
+    current_hash = hashlib.sha256((ROOT / "veya/calibrate.py").read_bytes()).hexdigest()
     result = {
         "baseline_ref": subprocess.check_output(["git", "rev-parse", args.baseline_ref], cwd=ROOT, text=True).strip(),
         "baseline_calibrate_sha256": before_hash,

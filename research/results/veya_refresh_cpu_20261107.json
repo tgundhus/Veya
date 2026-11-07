@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-07",
+  "baseline": "a5477bdc4d63647c5d5bd740ab989c6ffa11bfe6",
+  "checkpoint_revision": "7b928d828b7b0e022f929d9bd2e44165aa270148",
+  "device": "cpu",
+  "threads": 2,
+  "repeats": 15,
+  "warmup": 3,
+  "cached_samples": 50,
+  "limits": "Sequential workstation runs with uncontrolled load. No speedup, accuracy or GPU qualification claim. Baseline records summary statistics; the refreshed run also records individual samples.",
+  "answers_identical": true,
+  "answers_compared": 17,
+  "latency": [
+    {
+      "workload": "english ticket, 1 question",
+      "before_median_ms": 179.146,
+      "after_median_ms": 171.993,
+      "change_percent": -3.99
+    },
+    {
+      "workload": "english ticket, 3 questions",
+      "before_median_ms": 511.658,
+      "after_median_ms": 509.616,
+      "change_percent": -0.4
+    },
+    {
+      "workload": "english ticket, 10 questions",
+      "before_median_ms": 1615.797,
+      "after_median_ms": 1609.739,
+      "change_percent": -0.37
+    },
+    {
+      "workload": "english email, 3 questions",
+      "before_median_ms": 2435.051,
+      "after_median_ms": 2480.429,
+      "change_percent": 1.86
+    },
+    {
+      "workload": "english ticket, 3 questions, DecisionCache hit",
+      "before_median_ms": 0.058,
+      "after_median_ms": 0.056,
+      "change_percent": -3.45
+    },
+    {
+      "workload": "english email, 3 questions, DecisionCache hit",
+      "before_median_ms": 0.059,
+      "after_median_ms": 0.059,
+      "change_percent": 0.0
+    }
+  ],
+  "artifacts": {
+    "veya_rename_before_cpu_20261107.json": "cb961b4cf80ed1571ea500bcd8f844b876c66a948726d2470ea6c9defe1e582a",
+    "veya_rename_after_cpu_20261107.json": "3d35fd4d5952abfd7008f7a626d82ea717e5de2357edabd2d0c73967816351b4",
+    "veya_rename_parity_cpu_20261107.json": "86df523564cb81cd42d2e0969c8f26098811e797ae21da06408fe2395ddf7872"
+  },
+  "cpu": "13th Gen Intel Core i9-13900KF"
+}

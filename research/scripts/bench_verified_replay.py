@@ -79,10 +79,10 @@ def child(mode, checkpoint, database, manifest, store_id):
                     denied.append(fullname)
                     raise AssertionError("verified replay imported " + fullname)
         sys.meta_path.insert(0, NoInference())
-    from laya import DecisionCache, Router
+    from veya import DecisionCache, Router
     forwards = 0
     if mode == "ordinary":
-        from laya.agent import Agent
+        from veya.agent import Agent
         original = Agent._forward
         def counted(*args, **kwargs):
             nonlocal forwards
@@ -129,7 +129,7 @@ def main():
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32",
                       OMP_NUM_THREADS="4", MKL_NUM_THREADS="4")
     source_hashes = sources()
-    from laya import DecisionCache, Router
+    from veya import DecisionCache, Router
     import torch
     torch.set_num_threads(4)
     with tempfile.TemporaryDirectory(prefix="veya-verified-replay-", dir=ROOT / ".venv") as directory:

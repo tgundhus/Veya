@@ -25,7 +25,7 @@ class HeavyImportForbidden(BaseException):
 
 class NoHeavyImports(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
-        forbidden = {"torch", "transformers", "laya"}
+        forbidden = {"torch", "transformers", "veya"}
         if "--cold-replay" in sys.argv or "--http-replay-server" in sys.argv:
             forbidden.update(("onnx", "onnxruntime", "tokenizers"))
         if fullname.split(".")[0] in forbidden:
@@ -50,23 +50,23 @@ def router_options():
 
 
 def environment(cache, manifest=None, store_id=None):
-    env = {key: value for key, value in os.environ.items() if not key.startswith("LAYA_")}
+    env = {key: value for key, value in os.environ.items() if not key.startswith("VEYA_")}
     env.pop("PYTHONPATH", None)
     options = router_options()
-    env.update(LAYA_PRELOAD="0", LAYA_MODELS="english", LAYA_DEVICE="cpu", LAYA_MAX_LOADED="1",
-               LAYA_EXTRA_MODELS=json.dumps(options["models"]), LAYA_ONNX_PATHS=json.dumps(options["onnx_paths"]),
-               LAYA_CACHE_PATH=str(cache), LAYA_CACHE_TTL="none", LAYA_CACHE_MAXSIZE="none",
-               LAYA_CACHE_REQUIRED="1", LAYA_CACHE_FINGERPRINT=POLICY,
+    env.update(VEYA_PRELOAD="0", VEYA_MODELS="english", VEYA_DEVICE="cpu", VEYA_MAX_LOADED="1",
+               VEYA_EXTRA_MODELS=json.dumps(options["models"]), VEYA_ONNX_PATHS=json.dumps(options["onnx_paths"]),
+               VEYA_CACHE_PATH=str(cache), VEYA_CACHE_TTL="none", VEYA_CACHE_MAXSIZE="none",
+               VEYA_CACHE_REQUIRED="1", VEYA_CACHE_FINGERPRINT=POLICY,
                HF_HUB_OFFLINE="1", TOKENIZERS_PARALLELISM="false")
     if manifest is not None:
-        env.update(LAYA_REPLAY_MANIFEST=str(manifest), LAYA_CACHE_REQUIRE_EXISTING="1",
-                   LAYA_CACHE_EXPECTED_STORE_ID=store_id)
+        env.update(VEYA_REPLAY_MANIFEST=str(manifest), VEYA_CACHE_REQUIRE_EXISTING="1",
+                   VEYA_CACHE_EXPECTED_STORE_ID=store_id)
     return env
 
 
 def cold_replay(cache_path, manifest, store_id):
-    from laya_onnx import DecisionCache
-    from laya_onnx._runtime.router import Router
+    from veya_onnx import DecisionCache
+    from veya_onnx._runtime.router import Router
 
     assert not {"onnx", "onnxruntime", "tokenizers"} & set(sys.modules), "cold replay imported model tooling"
     cache = DecisionCache(str(cache_path), required=True, fingerprint=POLICY,
@@ -90,8 +90,8 @@ def cold_replay(cache_path, manifest, store_id):
 
 
 def prepare_replay(root):
-    from laya_onnx import DecisionCache, DecisionCacheError
-    from laya_onnx._runtime.router import Router
+    from veya_onnx import DecisionCache, DecisionCacheError
+    from veya_onnx._runtime.router import Router
 
     cache_path, manifest = root / "decisions.sqlite", root / "replay.json"
     cache = DecisionCache(str(cache_path), required=True, fingerprint=POLICY, maxsize=None)
@@ -124,9 +124,9 @@ def prepare_replay(root):
 
 
 def local_code_contract(cache_path, manifest, store_id, expected):
-    from laya_onnx import DecisionCache
-    from laya_onnx.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner
-    from laya_onnx._runtime.router import Router
+    from veya_onnx import DecisionCache
+    from veya_onnx.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner
+    from veya_onnx._runtime.router import Router
 
     cache = DecisionCache(str(cache_path), required=True, fingerprint=POLICY, maxsize=None,
                           require_existing=True, expected_store_id=store_id)
@@ -167,9 +167,9 @@ def local_code_contract(cache_path, manifest, store_id, expected):
 
 
 def public_agent_code_contract(expected):
-    from laya_onnx import DecisionCache, ONNXAgent
-    from laya_onnx.mcp.code_mode import CodeModeRunner
-    from laya_onnx._runtime.router import Router
+    from veya_onnx import DecisionCache, ONNXAgent
+    from veya_onnx.mcp.code_mode import CodeModeRunner
+    from veya_onnx._runtime.router import Router
 
     agent = ONNXAgent(str(FIXTURE), str(FIXTURE / "model.onnx"), performance_mode=1)
     cache = DecisionCache(required=True, fingerprint=POLICY, maxsize=None)
@@ -188,9 +188,9 @@ def public_agent_code_contract(expected):
 
 
 def public_decision_policy_contract():
-    from laya_onnx import ONNXAgent
-    from laya_onnx.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner
-    from laya_onnx._runtime.router import Router
+    from veya_onnx import ONNXAgent
+    from veya_onnx.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner
+    from veya_onnx._runtime.router import Router
 
     questions = dict(QUESTIONS, priority={"type": "score", "instructions": "Rate priority",
                                          "criteria": ["low", "medium", "high"]})
@@ -246,9 +246,9 @@ def http_replay_contract(cache_path, manifest, store_id, expected):
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
-    env.update(LAYA_HOST="127.0.0.1", LAYA_PORT=str(port), LAYA_LOG_LEVEL="warning",
-               LAYA_API_KEY="installed-replay-contract", LAYA_MICROBATCH_MAX_STATES="8",
-               LAYA_MICROBATCH_WAIT_MS="200")
+    env.update(VEYA_HOST="127.0.0.1", VEYA_PORT=str(port), VEYA_LOG_LEVEL="warning",
+               VEYA_API_KEY="installed-replay-contract", VEYA_MICROBATCH_MAX_STATES="8",
+               VEYA_MICROBATCH_WAIT_MS="200")
     base = "http://127.0.0.1:%d" % port
 
     def request(path, payload=None):
@@ -350,7 +350,7 @@ def main():
     public_agent_code_contract(expected)
     public_decision_policy_contract()
     asyncio.run(mcp_code_contract(cache_path, manifest, store_id, expected))
-    assert not any(name.split(".")[0] in ("torch", "transformers", "laya") for name in sys.modules)
+    assert not any(name.split(".")[0] in ("torch", "transformers", "veya") for name in sys.modules)
     print("PASS installed required store identity, model-free replay and sandboxed local MCP code")
 
 
@@ -364,7 +364,7 @@ if __name__ == "__main__":
     elif "--cold-replay" in sys.argv:
         cold_replay(Path(sys.argv[3]), Path(sys.argv[4]), sys.argv[5])
     elif "--http-replay-server" in sys.argv:
-        from laya_onnx.serve import main as serve_main
+        from veya_onnx.serve import main as serve_main
 
         def stop_on_parent_exit():
             sys.stdin.buffer.read()
@@ -375,7 +375,7 @@ if __name__ == "__main__":
         threading.Thread(target=stop_on_parent_exit, daemon=True).start()
         serve_main(["--performance-mode", "1"])
     elif "--mcp-code-server" in sys.argv:
-        from laya_onnx.mcp.server import main as mcp_main
+        from veya_onnx.mcp.server import main as mcp_main
 
         mcp_main(["--performance-mode", "1", "--mode", "code"])
     else:

@@ -20,9 +20,9 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from bench_microbatch import QUESTIONS, count_agent, fixture_agent, percentile  # noqa: E402
-from laya import DecisionCache, Router  # noqa: E402
-from laya.checkpoint import _checkpoint_signature  # noqa: E402
-from laya.serve import create_app  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
+from veya.checkpoint import _checkpoint_signature  # noqa: E402
+from veya.serve import create_app  # noqa: E402
 
 
 def sources():
@@ -141,7 +141,7 @@ def main():
         if not (checkpoint / "model.safetensors").is_file():
             parser.error("checkpoint must contain existing local weights")
         import torch
-        from laya import Agent
+        from veya import Agent
         torch.set_num_threads(4)
         torch.set_num_interop_threads(1)
         actual = Agent(str(checkpoint), device="cpu", backend="eager", performance_mode="default")

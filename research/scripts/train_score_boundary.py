@@ -41,9 +41,9 @@ def main():
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32")
     import torch
     from safetensors.torch import load_file, save_file
-    from laya.agent import Agent
-    from laya.common import DecisionModel
-    from laya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
+    from veya.agent import Agent
+    from veya.common import DecisionModel
+    from veya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
 
     if not torch.cuda.is_available():
         parser.error("this research trainer requires local CUDA-enabled PyTorch")

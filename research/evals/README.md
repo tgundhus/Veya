@@ -1,6 +1,6 @@
 # research/evals
 
-Datasets, baselines and thresholds for the `laya-evals` harness and its CI gate.
+Datasets, baselines and thresholds for the `veya-evals` harness and its CI gate.
 
 - `fixture.jsonl`: a tiny hand-written set that exercises `choice`, `score` and `noul`
   across a few tags. It exists to prove the format and to run the harness in tests. It is
@@ -8,12 +8,12 @@ Datasets, baselines and thresholds for the `laya-evals` harness and its CI gate.
 - `dataset.template.jsonl`: the format, with comments. Start here.
 - `thresholds.json`: the tolerances the scheduled gate allows against the committed
   baselines in `research/results/`.
-- `check_regression.py`: adapts a `research/eval/laya_eval.py` report into
-  `laya.evals.EvalReport` and compares it to a committed baseline.
+- `check_regression.py`: adapts a `research/eval/veya_eval.py` report into
+  `veya.evals.EvalReport` and compares it to a committed baseline.
 - `act_head_eval.py`: scores `answer.action.act_probability` against labelled
   decisions in a report, as the bar a future act-head retraining has to beat.
-  Pure arithmetic over a report `laya-evals run --json` already wrote: no second
-  model load, and no change to model, routing or `laya.evals` code. The current
+  Pure arithmetic over a report `veya-evals run --json` already wrote: no second
+  model load, and no change to model, routing or `veya.evals` code. The current
   checkpoints never learned a useful act head, so this measures, it does not
   fix, and a number here is not a claim the signal is informative today.
 - `test_act_head_eval.py`: weight-free tests for the above. Like the
@@ -26,7 +26,7 @@ One JSON object per line (JSONL). Blank lines and lines starting with `#` are ig
 | field | required | meaning |
 |---|---|---|
 | `state` | yes | the text, email, ticket or JSON document to decide on |
-| `questions` | yes | a Laya question dict, exactly as `Router.predict` accepts |
+| `questions` | yes | a Veya question dict, exactly as `Router.predict` accepts |
 | `expected` | yes | ground truth keyed by question id: a label for `choice`, a number for `score`, `true`/`false` for `noul` |
 | `tags` | no | strings to slice by |
 | `language` | no | BCP-47-ish code, to slice by language |
@@ -35,13 +35,13 @@ One JSON object per line (JSONL). Blank lines and lines starting with `#` are ig
 ## Use
 
 ```bash
-laya-evals validate research/evals/fixture.jsonl
-laya-evals run data.jsonl --model english --min-accuracy 0.8 --max-ece 0.05 --slice language
-laya-evals run data.jsonl --baseline baseline.json --tolerance choice_accuracy=0.02 --json out.json
+veya-evals validate research/evals/fixture.jsonl
+veya-evals run data.jsonl --model english --min-accuracy 0.8 --max-ece 0.05 --slice language
+veya-evals run data.jsonl --baseline baseline.json --tolerance choice_accuracy=0.02 --json out.json
 ```
 
 `run` exits non-zero when a threshold or a baseline tolerance fails, so it drops into CI
-unchanged. `laya eval ...` is the same thing through the main CLI.
+unchanged. `veya eval ...` is the same thing through the main CLI.
 
 Adding a dataset: point `--baseline` at a report you have reviewed, keep the tolerances in
 `thresholds.json`, and commit both beside the dataset, so a quality change is a reviewable
@@ -50,7 +50,7 @@ diff.
 ## Act-head diagnostic
 
 ```bash
-laya-evals run data.jsonl --model english --json report.json
+veya-evals run data.jsonl --model english --json report.json
 python research/evals/act_head_eval.py report.json --markdown act.md
 ```
 
@@ -75,5 +75,5 @@ reporting a failure and reporting 0.5 as if it were a measurement.
 The maintainer's 396-decision English set and the 51-language sweep are the authoritative
 numbers. They are not committed here yet; drop a JSONL in this directory and a baseline
 report beside it and the gate will pick both up. The scheduled workflow currently runs the
-MASSIVE English suite through `research/eval/laya_eval.py` against
+MASSIVE English suite through `research/eval/veya_eval.py` against
 `research/results/eval_english_51_languages.json`.

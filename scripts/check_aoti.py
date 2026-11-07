@@ -1,6 +1,6 @@
 """Offline AOTInductor packaging/parity check and CUDA forward benchmark.
 
-Run with --model pointing at a local Laya checkpoint. Without it, use a tiny
+Run with --model pointing at a local Veya checkpoint. Without it, use a tiny
 random ModernBERT (no downloads). Outputs and compiler caches belong outside git.
 """
 import argparse
@@ -34,7 +34,7 @@ def main():
     if not torch.cuda.is_available() or not shutil.which("g++"):
         print("SKIP: CUDA and a C++ compiler are required")
         return
-    from laya.common import DecisionModel, QTYPES, build_sequence
+    from veya.common import DecisionModel, QTYPES, build_sequence
 
     outdir = Path(args.output_dir)
     outdir.mkdir(parents=True, exist_ok=True)
@@ -46,7 +46,7 @@ def main():
     if args.model:
         if not Path(args.model).is_dir():
             ap.error("--model must be an existing local checkpoint directory")
-        from laya.agent import Agent
+        from veya.agent import Agent
         agent = Agent(args.model, device="cuda", compile=False)
         model = agent.model.eval()
     else:

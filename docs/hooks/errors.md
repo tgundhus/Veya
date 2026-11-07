@@ -28,10 +28,10 @@ three agents: `Agent.predict_batch`, `Agent.system_one`, `Agent.predict_long`, `
 
 ```python
 # strict: a broken audit hook fails the request
-laya.load("convaiinnovations/laya", on_predict_end=audit, hooks_raise=True)
+veya.load("convaiinnovations/laya", on_predict_end=audit, hooks_raise=True)
 
 # lenient: telemetry must never take down a served request
-laya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_raise=False)
+veya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_raise=False)
 ```
 
 `dispatch` catches `Exception`. Anything that is not an `Exception` (see
@@ -121,7 +121,7 @@ With `hooks_raise=False`, each failing hook emits one `RuntimeWarning` naming th
 event:
 
 ```
-laya: hook Metrics.on_predict_end failed: connection reset
+veya: hook Metrics.on_predict_end failed: connection reset
 ```
 
 The warning is emitted once per failure, not once per hook definition, so a flaky hook under
@@ -134,7 +134,7 @@ as a hook failure: `TimeoutError` when `hooks_raise=True`, a `RuntimeWarning` wh
 (the default) means no limit.
 
 ```python
-laya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_timeout=2.0)
+veya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_timeout=2.0)
 ```
 
 It can be set per instance or overridden per call on every public per-call surface of the three

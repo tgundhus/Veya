@@ -14,10 +14,10 @@ import pytest
 pytest.importorskip("fastapi")
 httpx = pytest.importorskip("httpx")
 
-from laya import DecisionCache, Router
-from laya import serve
-from laya.errors import DecisionCacheError
-from laya.onnx_agent import _NativeONNXAgent
+from veya import DecisionCache, Router
+from veya import serve
+from veya.errors import DecisionCacheError
+from veya.onnx_agent import _NativeONNXAgent
 
 
 QUESTIONS = {"q": {"type": "noul", "instructions": "Is this urgent?"}}
@@ -90,17 +90,17 @@ async def drive(app, requests):
 
 @pytest.fixture(autouse=True)
 def environment(monkeypatch):
-    for name in ("LAYA_API_KEY", "LAYA_TOURNAMENT_GROUP", "LAYA_JEV_STRICT", "LAYA_IDLE_UNLOAD_SECONDS",
-                 "LAYA_CACHE", "LAYA_CACHE_PATH", "LAYA_CACHE_REQUIRED", "LAYA_CACHE_REQUIRE_EXISTING",
-                 "LAYA_CACHE_EXPECTED_STORE_ID", "LAYA_REPLAY_MANIFEST", "LAYA_HTTP_REPLAY_FAST_PATH"):
+    for name in ("VEYA_API_KEY", "VEYA_TOURNAMENT_GROUP", "VEYA_JEV_STRICT", "VEYA_IDLE_UNLOAD_SECONDS",
+                 "VEYA_CACHE", "VEYA_CACHE_PATH", "VEYA_CACHE_REQUIRED", "VEYA_CACHE_REQUIRE_EXISTING",
+                 "VEYA_CACHE_EXPECTED_STORE_ID", "VEYA_REPLAY_MANIFEST", "VEYA_HTTP_REPLAY_FAST_PATH"):
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.setenv("LAYA_MICROBATCH_MAX_STATES", "8")
-    monkeypatch.setenv("LAYA_MICROBATCH_WAIT_MS", "10")
-    monkeypatch.setenv("LAYA_MAX_CONCURRENT", "16")
+    monkeypatch.setenv("VEYA_MICROBATCH_MAX_STATES", "8")
+    monkeypatch.setenv("VEYA_MICROBATCH_WAIT_MS", "10")
+    monkeypatch.setenv("VEYA_MAX_CONCURRENT", "16")
 
 
 def test_verified_hits_never_enter_collection_or_model(monkeypatch):
-    from laya import _microbatch
+    from veya import _microbatch
 
     original = _microbatch.Microbatcher
     queue_sizes, threads = [], []
@@ -116,14 +116,14 @@ def test_verified_hits_never_enter_collection_or_model(monkeypatch):
         return result(state)
 
     monkeypatch.setattr(_microbatch, "Microbatcher", CacheOnly)
-    monkeypatch.setenv("LAYA_MICROBATCH_WAIT_MS", "1000")
+    monkeypatch.setenv("VEYA_MICROBATCH_WAIT_MS", "1000")
     router, agent = configured_router(probe)
     responses = asyncio.run(drive(serve.create_app(router), [payload()] * 4))
     assert queue_sizes == [16]
     assert all(r.status_code == 200 and r.headers["X-Decision-Cache"] == "hit" for r in responses)
     assert all(r.headers["X-Inference-Time-Ms"] == "0.00" for r in responses)
     assert all(", cache;dur=" in r.headers["Server-Timing"] for r in responses)
-    assert all(name.startswith("laya-replay") for name in threads)
+    assert all(name.startswith("veya-replay") for name in threads)
     assert not agent.calls and not agent.batches
 
 
@@ -179,9 +179,9 @@ def test_unconfigured_router_retains_original_path():
 
 
 def test_replay_queue_cancellation_remains_bounded(monkeypatch):
-    from laya import _microbatch
+    from veya import _microbatch
 
-    monkeypatch.setenv("LAYA_MAX_CONCURRENT", "2")
+    monkeypatch.setenv("VEYA_MAX_CONCURRENT", "2")
     entered, release = threading.Event(), threading.Event()
     queues, calls = [], []
     original = _microbatch.Microbatcher
@@ -238,7 +238,7 @@ def test_lifespan_restart_recreates_cache_worker():
 
 
 def test_auth_and_invalid_body_are_refused_before_storage(monkeypatch):
-    monkeypatch.setenv("LAYA_API_KEY", "secret")
+    monkeypatch.setenv("VEYA_API_KEY", "secret")
     probes = []
     router, _ = configured_router(lambda *a, **kw: probes.append(1))
     app = serve.create_app(router)
@@ -253,31 +253,31 @@ def test_auth_and_invalid_body_are_refused_before_storage(monkeypatch):
     assert probes == []
 
 
-@pytest.mark.parametrize("flag", ["LAYA_CACHE_REQUIRE_EXISTING", "LAYA_CACHE_EXPECTED_STORE_ID"])
+@pytest.mark.parametrize("flag", ["VEYA_CACHE_REQUIRE_EXISTING", "VEYA_CACHE_EXPECTED_STORE_ID"])
 def test_store_guards_need_sqlite_path(monkeypatch, flag):
     monkeypatch.setenv(flag, "1" if flag.endswith("EXISTING") else "store-id")
-    with pytest.raises(ValueError, match="LAYA_CACHE_PATH"):
+    with pytest.raises(ValueError, match="VEYA_CACHE_PATH"):
         serve._configure_decision_cache(Router())
 
 
 def test_invalid_store_guard_boolean_fails_startup(monkeypatch):
-    monkeypatch.setenv("LAYA_CACHE_REQUIRE_EXISTING", "tru")
-    with pytest.raises(ValueError, match="LAYA_CACHE_REQUIRE_EXISTING"):
+    monkeypatch.setenv("VEYA_CACHE_REQUIRE_EXISTING", "tru")
+    with pytest.raises(ValueError, match="VEYA_CACHE_REQUIRE_EXISTING"):
         serve._configure_decision_cache(Router())
 
 
 @pytest.mark.parametrize("memory_enabled", [False, True])
 def test_replay_manifest_requires_persistent_sqlite_cache(monkeypatch, memory_enabled):
-    monkeypatch.setenv("LAYA_REPLAY_MANIFEST", "policy.json")
+    monkeypatch.setenv("VEYA_REPLAY_MANIFEST", "policy.json")
     if memory_enabled:
-        monkeypatch.setenv("LAYA_CACHE", "1")
-    with pytest.raises(ValueError, match="LAYA_REPLAY_MANIFEST"):
+        monkeypatch.setenv("VEYA_CACHE", "1")
+    with pytest.raises(ValueError, match="VEYA_REPLAY_MANIFEST"):
         serve._configure_decision_cache(Router())
 
 
 @pytest.mark.parametrize("raw", ["0", "false", "NO", " off "])
 def test_http_fast_path_can_be_disabled_independently(monkeypatch, raw):
-    monkeypatch.setenv("LAYA_HTTP_REPLAY_FAST_PATH", raw)
+    monkeypatch.setenv("VEYA_HTTP_REPLAY_FAST_PATH", raw)
     router, agent = configured_router(lambda *a, **kw: (_ for _ in ()).throw(AssertionError("unexpected HTTP probe")))
     response, = asyncio.run(drive(serve.create_app(router), [payload("one")]))
     assert response.status_code == 200 and "X-Decision-Cache" not in response.headers
@@ -285,13 +285,13 @@ def test_http_fast_path_can_be_disabled_independently(monkeypatch, raw):
 
 
 def test_invalid_http_fast_path_flag_fails_startup(monkeypatch):
-    monkeypatch.setenv("LAYA_HTTP_REPLAY_FAST_PATH", "tru")
-    with pytest.raises(ValueError, match="LAYA_HTTP_REPLAY_FAST_PATH"):
+    monkeypatch.setenv("VEYA_HTTP_REPLAY_FAST_PATH", "tru")
+    with pytest.raises(ValueError, match="VEYA_HTTP_REPLAY_FAST_PATH"):
         serve.create_app(Router())
 
 
 def test_tournament_mode_keeps_original_path_and_reports_fast_path_disabled(monkeypatch):
-    monkeypatch.setenv("LAYA_TOURNAMENT_GROUP", "2")
+    monkeypatch.setenv("VEYA_TOURNAMENT_GROUP", "2")
     router, agent = configured_router(lambda *a, **kw: (_ for _ in ()).throw(AssertionError("unexpected HTTP probe")))
     app = serve.create_app(router)
 
@@ -308,7 +308,7 @@ def test_tournament_mode_keeps_original_path_and_reports_fast_path_disabled(monk
 
 def approved_store(tmp_path, ttl=None):
     onnx = pytest.importorskip("onnx")
-    from laya.checkpoint import _checkpoint_signature
+    from veya.checkpoint import _checkpoint_signature
 
     checkpoint = tmp_path / "checkpoint"
     checkpoint.mkdir()
@@ -355,20 +355,20 @@ def test_deployment_replay_and_store_guard_flags_are_forwarded(tmp_path, monkeyp
     import json
 
     options, manifest, identity, _ = approved_store(tmp_path)
-    monkeypatch.setenv("LAYA_BACKEND", "onnx")
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
-    monkeypatch.setenv("LAYA_EXTRA_MODELS", json.dumps(options["models"]))
-    monkeypatch.setenv("LAYA_ONNX_PATHS", json.dumps(options["onnx_paths"]))
-    monkeypatch.setenv("LAYA_REPLAY_MANIFEST", " " + str(manifest) + " ")
-    monkeypatch.setenv("LAYA_CACHE_PATH", str(tmp_path / "decisions.sqlite"))
-    monkeypatch.setenv("LAYA_CACHE_REQUIRED", "1")
-    monkeypatch.setenv("LAYA_CACHE_REQUIRE_EXISTING", "true")
-    monkeypatch.setenv("LAYA_CACHE_EXPECTED_STORE_ID", identity["store_id"])
-    monkeypatch.setenv("LAYA_CACHE_FINGERPRINT", "http-policy-v1")
+    monkeypatch.setenv("VEYA_BACKEND", "onnx")
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
+    monkeypatch.setenv("VEYA_EXTRA_MODELS", json.dumps(options["models"]))
+    monkeypatch.setenv("VEYA_ONNX_PATHS", json.dumps(options["onnx_paths"]))
+    monkeypatch.setenv("VEYA_REPLAY_MANIFEST", " " + str(manifest) + " ")
+    monkeypatch.setenv("VEYA_CACHE_PATH", str(tmp_path / "decisions.sqlite"))
+    monkeypatch.setenv("VEYA_CACHE_REQUIRED", "1")
+    monkeypatch.setenv("VEYA_CACHE_REQUIRE_EXISTING", "true")
+    monkeypatch.setenv("VEYA_CACHE_EXPECTED_STORE_ID", identity["store_id"])
+    monkeypatch.setenv("VEYA_CACHE_FINGERPRINT", "http-policy-v1")
     router = serve.build_router()
     try:
         assert router.replay_manifest == str(manifest.resolve())
-        assert router._laya_decision_cache.require_existing is True
+        assert router._veya_decision_cache.require_existing is True
         response, = asyncio.run(drive(serve.create_app(router), [payload()]))
         assert response.status_code == 200 and response.headers["X-Decision-Cache"] == "hit"
         assert router.loaded == []
@@ -382,8 +382,8 @@ def test_builder_rejects_manifest_store_mismatch_and_closes_installed_cache(tmp_
     import sqlite3
 
     options, manifest, _, _ = approved_store(tmp_path)
-    monkeypatch.setenv("LAYA_CACHE_PATH", str(tmp_path / "different.sqlite"))
-    monkeypatch.setenv("LAYA_CACHE_FINGERPRINT", "http-policy-v1")
+    monkeypatch.setenv("VEYA_CACHE_PATH", str(tmp_path / "different.sqlite"))
+    monkeypatch.setenv("VEYA_CACHE_FINGERPRINT", "http-policy-v1")
     router = Router(replay_manifest=str(manifest), **options)
     added, original = [], router.add_hook
 
@@ -400,7 +400,7 @@ def test_builder_rejects_manifest_store_mismatch_and_closes_installed_cache(tmp_
 
 
 def test_custom_hook_chain_has_no_dedicated_cache_worker(tmp_path):
-    from laya.checkpoint import _checkpoint_signature
+    from veya.checkpoint import _checkpoint_signature
 
     options, manifest, _, _ = approved_store(tmp_path)
     cache = DecisionCache(str(tmp_path / "decisions.sqlite"), required=True,
@@ -471,10 +471,10 @@ def test_verified_replay_keeps_invalid_routing_controls_as_client_errors(tmp_pat
 
 
 def test_verified_http_hit_survives_idle_model_unload(tmp_path, monkeypatch):
-    from laya.checkpoint import _checkpoint_signature
+    from veya.checkpoint import _checkpoint_signature
 
     options, manifest, _, initial = approved_store(tmp_path)
-    monkeypatch.setenv("LAYA_IDLE_UNLOAD_SECONDS", "0.05")
+    monkeypatch.setenv("VEYA_IDLE_UNLOAD_SECONDS", "0.05")
     cache = DecisionCache(str(tmp_path / "decisions.sqlite"), required=True,
                           maxsize=None, fingerprint="http-policy-v1")
     router = Router(hooks=[cache], replay_manifest=str(manifest), **options)
@@ -504,7 +504,7 @@ def test_verified_http_hit_survives_idle_model_unload(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("renew_failure", [False, True])
 def test_http_verified_replay_preserves_retention_renewal(tmp_path, monkeypatch, renew_failure):
-    import laya.consistency as consistency
+    import veya.consistency as consistency
 
     clock = [100.0]
     monkeypatch.setattr(consistency, "_now", lambda: clock[0])
@@ -582,10 +582,10 @@ def test_shutdown_settles_active_and_queued_cache_requests():
 
 @pytest.mark.parametrize("microbatch", [False, True])
 def test_replay_miss_resuming_during_shutdown_cannot_start_model_work(tmp_path, monkeypatch, microbatch):
-    from laya import _microbatch
-    from laya.checkpoint import _checkpoint_signature
+    from veya import _microbatch
+    from veya.checkpoint import _checkpoint_signature
 
-    monkeypatch.setenv("LAYA_MICROBATCH_MAX_STATES", "8" if microbatch else "0")
+    monkeypatch.setenv("VEYA_MICROBATCH_MAX_STATES", "8" if microbatch else "0")
     options, manifest, _, _ = approved_store(tmp_path)
     cache = DecisionCache(str(tmp_path / "decisions.sqlite"), required=True,
                           maxsize=None, fingerprint="http-policy-v1")
@@ -634,48 +634,48 @@ def test_replay_miss_resuming_during_shutdown_cannot_start_model_work(tmp_path, 
 
 
 def test_deferred_runtime_captures_device_and_thread_values(monkeypatch):
-    from laya.mcp.device import env_device
+    from veya.mcp.device import env_device
 
-    monkeypatch.setenv("LAYA_REPLAY_MANIFEST", "approved.json")
-    monkeypatch.setenv("LAYA_THREADS", "3")
-    monkeypatch.setenv("LAYA_DEVICE", " CPU ")
+    monkeypatch.setenv("VEYA_REPLAY_MANIFEST", "approved.json")
+    monkeypatch.setenv("VEYA_THREADS", "3")
+    monkeypatch.setenv("VEYA_DEVICE", " CPU ")
     calls = []
     fake_torch = SimpleNamespace(device=lambda value: calls.append(("device", value)) or value,
                                  set_num_threads=lambda value: calls.append(("threads", value)))
     monkeypatch.setitem(sys.modules, "torch", fake_torch)
     device, prepare = serve._router_runtime_setup("torch", None)
     assert device == "cpu" and calls == [] and env_device(validate=False) == "cpu"
-    monkeypatch.setenv("LAYA_THREADS", "9")
-    monkeypatch.setenv("LAYA_DEVICE", "cuda:258")
+    monkeypatch.setenv("VEYA_THREADS", "9")
+    monkeypatch.setenv("VEYA_DEVICE", "cuda:258")
     prepare()
     assert calls == [("device", "cpu"), ("threads", 3)]
 
 
 def test_deferred_runtime_still_refuses_torch_device_rewrites(monkeypatch):
-    monkeypatch.setenv("LAYA_REPLAY_MANIFEST", "approved.json")
-    monkeypatch.setenv("LAYA_DEVICE", "cuda:258")
-    monkeypatch.setenv("LAYA_THREADS", "3")
+    monkeypatch.setenv("VEYA_REPLAY_MANIFEST", "approved.json")
+    monkeypatch.setenv("VEYA_DEVICE", "cuda:258")
+    monkeypatch.setenv("VEYA_THREADS", "3")
     device, prepare = serve._router_runtime_setup("torch", None)
     assert device == "cuda:258"
     fake_torch = SimpleNamespace(device=lambda value: "cuda:2",
                                  set_num_threads=lambda value: pytest.fail("invalid device applied threads"))
     monkeypatch.setitem(sys.modules, "torch", fake_torch)
-    with pytest.raises(ValueError, match="LAYA_DEVICE"):
+    with pytest.raises(ValueError, match="VEYA_DEVICE"):
         prepare()
 
 
 @pytest.mark.parametrize("raw", ["0", "-1", "2.5", "many"])
 def test_deferred_runtime_refuses_invalid_threads_before_model_load(monkeypatch, raw):
-    monkeypatch.setenv("LAYA_REPLAY_MANIFEST", "approved.json")
-    monkeypatch.setenv("LAYA_THREADS", raw)
-    with pytest.raises(ValueError, match="LAYA_THREADS"):
+    monkeypatch.setenv("VEYA_REPLAY_MANIFEST", "approved.json")
+    monkeypatch.setenv("VEYA_THREADS", raw)
+    with pytest.raises(ValueError, match="VEYA_THREADS"):
         serve._router_runtime_setup("torch", None)
 
 
 @pytest.mark.parametrize("mode", ["default", "2"])
 def test_http_builder_and_health_do_not_import_ml_libraries_for_verified_hits(tmp_path, mode):
-    from laya import Agent
-    from laya.checkpoint import _checkpoint_signature
+    from veya import Agent
+    from veya.checkpoint import _checkpoint_signature
 
     directory = tmp_path / "torch-checkpoint"
     directory.mkdir()
@@ -705,7 +705,7 @@ class DenyML(importlib.abc.MetaPathFinder):
         if fullname.split('.')[0] in ('torch','transformers','onnx','onnxruntime','tokenizers','safetensors'):
             raise AssertionError('ML dependency import during verified HTTP replay: ' + fullname)
 sys.meta_path.insert(0, DenyML())
-from laya import serve
+from veya import serve
 import httpx
 router = serve.build_router()
 app = serve.create_app(router)
@@ -725,11 +725,11 @@ finally:
 print('verified cold HTTP replay without ML imports')
 """
     environment = os.environ.copy()
-    environment.update(LAYA_BACKEND="torch", LAYA_PRELOAD="0", LAYA_DEVICE=" CPU ", LAYA_THREADS="2",
-                       LAYA_PERFORMANCE_MODE=mode, LAYA_CACHE_PATH=str(cache_path), LAYA_CACHE_REQUIRED="1",
-                       LAYA_CACHE_FINGERPRINT="cold-http-v1", LAYA_CACHE_REQUIRE_EXISTING="1",
-                       LAYA_CACHE_EXPECTED_STORE_ID=approval["store_id"], LAYA_REPLAY_MANIFEST=str(manifest),
-                       LAYA_EXTRA_MODELS=json.dumps({"english": str(directory)}), HF_HUB_OFFLINE="1")
+    environment.update(VEYA_BACKEND="torch", VEYA_PRELOAD="0", VEYA_DEVICE=" CPU ", VEYA_THREADS="2",
+                       VEYA_PERFORMANCE_MODE=mode, VEYA_CACHE_PATH=str(cache_path), VEYA_CACHE_REQUIRED="1",
+                       VEYA_CACHE_FINGERPRINT="cold-http-v1", VEYA_CACHE_REQUIRE_EXISTING="1",
+                       VEYA_CACHE_EXPECTED_STORE_ID=approval["store_id"], VEYA_REPLAY_MANIFEST=str(manifest),
+                       VEYA_EXTRA_MODELS=json.dumps({"english": str(directory)}), HF_HUB_OFFLINE="1")
     root = Path(__file__).resolve().parents[1]
     process = subprocess.run([sys.executable, "-c", program, str(root), json.dumps(payload())],
                              env=environment, cwd=root, capture_output=True, text=True, timeout=20)

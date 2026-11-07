@@ -22,7 +22,7 @@ def main():
     parser.add_argument("--mode", default=None)
     args = parser.parse_args()
     import torch
-    from laya import Agent
+    from veya import Agent
 
     def smi():
         print(subprocess.check_output(["nvidia-smi"], text=True), flush=True)
@@ -46,7 +46,7 @@ def main():
         root = os.environ.get("XDG_CACHE_HOME", "")
         if not os.path.isabs(root):
             root = os.path.expanduser("~/.cache")
-        expected = initial_cache or os.path.join(root, "laya", "torchinductor")
+        expected = initial_cache or os.path.join(root, "veya", "torchinductor")
         assert os.environ["TORCHINDUCTOR_CACHE_DIR"] == expected
         assert os.path.isdir(expected)
     print("load_s", load_s, "cache", os.environ.get("TORCHINDUCTOR_CACHE_DIR"), flush=True)

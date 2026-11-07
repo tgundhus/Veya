@@ -1,4 +1,4 @@
-"""Training-side helpers: the scoring rules Laya is trained against, and the metrics around them.
+"""Training-side helpers: the scoring rules Veya is trained against, and the metrics around them.
 
 `proper_reward` is the reward the model is optimised for, so its *properness* is a correctness
 property, not a detail: if the reward were maximised by something other than the true
@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
 
-from laya.common import (  # noqa: E402
+from veya.common import (  # noqa: E402
     QTYPES,
     QTYPE_NAMES,
     amp_dtype,
@@ -245,14 +245,14 @@ check("ece/bins=5 as np.int64 matches int",
       ece_score(*_mis, bins=np.int64(5)), ece_score(*_mis, bins=5))
 close("ece/bins=1 is the mean gap over the whole range", ece_score(*_mis, bins=1), 0.49, tol=1e-9)
 
-# laya.evals.ece delegates here, so the CLI's gate inherits the refusal
-from laya.evals import ece as _evals_ece  # noqa: E402
+# veya.evals.ece delegates here, so the CLI's gate inherits the refusal
+from veya.evals import ece as _evals_ece  # noqa: E402
 
 try:
     _evals_ece([0.99] * 10, [True] * 5 + [False] * 5, bins=0)
-    FAIL.append("ece/laya.evals.ece inherits the refusal: returned instead of raising")
+    FAIL.append("ece/veya.evals.ece inherits the refusal: returned instead of raising")
 except ValueError as exc:
-    check_true("ece/laya.evals.ece inherits the refusal", _ECE_REFUSAL in str(exc), str(exc))
+    check_true("ece/veya.evals.ece inherits the refusal", _ECE_REFUSAL in str(exc), str(exc))
 
 
 # =============================================================== confidence_from_probs

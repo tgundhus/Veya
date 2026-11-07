@@ -1,12 +1,12 @@
 # Questions and answers
 
-A Laya question is a typed decision, and the type decides both what you ask and what you get
+A Veya question is a typed decision, and the type decides both what you ask and what you get
 back. There are three, and one state can carry all of them in a single forward pass:
 
 ```python
-import laya
+import veya
 
-agent = laya.load("convaiinnovations/laya")
+agent = veya.load("convaiinnovations/laya")
 
 questions = {
     "dept": {"type": "choice", "instructions": "Which team should handle this?",
@@ -27,7 +27,7 @@ result["answers"]["severity"]["score"]     # 2.9046
 
 One forward pass answers all three. That is the point of the typed interface: a `noul` question
 is not a `choice` with two options that happen to be "yes" and "no" — it is a different head
-with a different output shape, and the type tells Laya which to use.
+with a different output shape, and the type tells Veya which to use.
 
 ## The three types
 
@@ -125,12 +125,12 @@ calibrated as shipped**: the property usually attributed to it — that of the a
 confidence *c*, about *c* of them are right — holds only once temperatures have been fitted and
 validated on **held-out data for your checkpoint at your option count**. The shipped checkpoints
 are over-confident and how far depends on the option count, so an untuned threshold can select
-below the model's own accuracy (Laya issue #394).
+below the model's own accuracy (Veya issue #394).
 
 ```python
 # THRESHOLD is a number you measured on your own held-out data, not one the model ships.
 # Fit and validate the temperatures first — the fine-tuning notebook has the loop:
-#   notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb
+#   notebooks/veya_finetune_typed_decisions_2xT4_kaggle.ipynb
 ans = result["answers"]["dept"]
 if ans["answer_confidence"] >= THRESHOLD:
     ...
@@ -173,7 +173,7 @@ Five ready-made question sets, so the common cases do not need hand-written crit
 `router_questions`. Each returns the same `{field: question}` dict shape the SDK takes.
 
 ```python
-from laya import triage_questions, guard_questions, moderation_questions
+from veya import triage_questions, guard_questions, moderation_questions
 
 agent.system_one(ticket, triage_questions())
 ```
@@ -187,7 +187,7 @@ Because option order is positional and the option text is what the model reads, 
 able to see exactly what was sent:
 
 ```python
-from laya import render_options
+from veya import render_options
 
 render_options({"t": "choice", "crit": {"billing": None, "sales": "pricing"}})
 # ['billing', 'sales: pricing']
@@ -231,10 +231,10 @@ That mirrors what the library does for a `choice` question written as a list of 
 
 - **Confidence is not a correctness guarantee at high option counts.** On a 20-option question the
   distributions for right and wrong answers overlap heavily, and a threshold can end up selecting
-  *below* the model's own accuracy. See Laya issue #394.
+  *below* the model's own accuracy. See Veya issue #394.
 - **Negation is not reliably handled in forced-choice questions.** A cancellation question can
   return the cancellation label for a state that says *not* to cancel, with high confidence, on
-  both checkpoints. See Laya issue #377.
+  both checkpoints. See Veya issue #377.
 - **`noul` can follow its labels rather than the state**, so validate any relabelling.
 - **More options is not free.** Past roughly 20 the model degrades quickly; use the shortlist
   helper to reduce a large label space before asking, or split it into a coarse and a fine

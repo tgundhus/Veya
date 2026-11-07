@@ -7,9 +7,9 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya.lang import ROUTING_CONTRACT_VERSION, analyse, latin_profile, state_text  # noqa: E402
-from laya._routing_unicode import TABLE_SHA256, VERSION  # noqa: E402
-from laya.router import Router  # noqa: E402
+from veya.lang import ROUTING_CONTRACT_VERSION, analyse, latin_profile, state_text  # noqa: E402
+from veya._routing_unicode import TABLE_SHA256, VERSION  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 
 NOTE = "Please check the attached invoice and let me know what happened. "

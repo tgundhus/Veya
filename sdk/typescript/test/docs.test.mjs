@@ -16,7 +16,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { Laya } from 'veya-client';
+import { Veya } from 'veya-client';
 
 const PAGE = fileURLToPath(new URL('../../../docs/typescript-sdk.md', import.meta.url));
 const DECLARATION = new URL('../dist/esm/client.d.ts', import.meta.url);
@@ -33,11 +33,11 @@ const RESULT = {
 /** The request body the client would send for `options`, minus `state` and `questions`. */
 async function controls(options) {
   let body;
-  const laya = new Laya({ fetch: async (url, init) => {
+  const veya = new Veya({ fetch: async (url, init) => {
     body = JSON.parse(init.body);
     return new Response(JSON.stringify(RESULT), { headers: { 'content-type': 'application/json' } });
   } });
-  await laya.predict('the state', QUESTIONS, options);
+  await veya.predict('the state', QUESTIONS, options);
   const { state, questions, ...rest } = body;
   assert.deepEqual([state, Object.keys(questions)], ['the state', ['single']],
     'a request must always carry the state and the questions it was given');
@@ -126,6 +126,6 @@ test('the endpoint surface the page describes is the one the client declares',
     }
     // The page's negative claim, on the code side: there is no standalone routing call to make.
     for (const absent of ['route', 'decide', 'classify']) {
-      assert.equal(Laya.prototype[absent], undefined, `Laya unexpectedly exposes ${absent}()`);
+      assert.equal(Veya.prototype[absent], undefined, `Veya unexpectedly exposes ${absent}()`);
     }
   });

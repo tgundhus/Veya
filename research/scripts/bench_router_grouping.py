@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from laya.router import Router  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 
 Q = {"intent": {"type": "noul", "instructions": "Relevant?"}}
@@ -37,7 +37,7 @@ def measure(items, capacity, delay, grouped):
         def system_one(self, state, questions):
             return {"model": "stub", "answers": {"seen": state}, "usage": {}}
 
-    with patch("laya.agent.Agent", StubAgent):
+    with patch("veya.agent.Agent", StubAgent):
         router = Router(max_loaded=capacity)
         original_evict = router._evict
 

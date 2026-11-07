@@ -1,10 +1,20 @@
 # Benchmarks and known limits
 
-Laya's results depend on the checkpoint, task, question wording, option count and hardware. Use
+Veya's results depend on the checkpoint, task, question wording, option count and hardware. Use
 the [full benchmark tables](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md)
 to find a comparable run before choosing a checkpoint or a confidence threshold. The
 [research directory](https://github.com/tgundhus/Veya/tree/main/research) holds the scripts
 and result files behind the main tables.
+
+## Latest refresh
+
+The [7 November CPU run](reports/veya-migration-2026-11-07.md) uses Veya imports and
+commands, real cached English weights, two threads and eager fp32. A three-question
+ticket measured 509.616 ms warm and 0.056 ms on a memory-cache repeat. All 17 answers
+and token counts matched the pre-rename code; no task-accuracy or GPU claim follows.
+
+The [latest ordinal continuation](reports/ordinal-continuation-2026-11-06.md) remains
+experimental: fresh score and choice results still fail their qualification gates.
 
 ## Find the relevant measurement
 
@@ -73,7 +83,7 @@ and the run index at the top of `BENCHMARKS.md`. `research/scripts/bench_local.p
 `research/scripts/build_benchmark_nb.py`; edit the generator when changing that benchmark.
 
 For a new deployment, keep a held-out set with the same states, questions and expected answers
-for every checkpoint you compare. Record the checkpoint revision, Laya and library versions,
+for every checkpoint you compare. Record the checkpoint revision, Veya and library versions,
 device, question count, option count and token budget with each run. Include a simple baseline
 for accuracy and report latency after warm-up as well as first-use load time. This makes your
 result comparable to the published runs and lets you revisit it after an upgrade.

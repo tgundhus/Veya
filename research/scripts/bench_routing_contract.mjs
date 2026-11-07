@@ -1,7 +1,7 @@
 // Optional native-SDK half of bench_routing_contract.py; inputs and raw measurements are JSON.
 import { readFileSync } from "node:fs";
 import { stripTypeScriptTypes } from "node:module";
-import * as after from "../../laya-ts/dist/lang.js";
+import * as after from "../../veya-ts/dist/lang.js";
 import { expandFixture } from "../../tests/routing_parity_support.mjs";
 
 const input = JSON.parse(readFileSync(0, "utf8"));

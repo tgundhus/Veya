@@ -3,7 +3,7 @@
 For a versioned local backend/precision matrix, measured boundary coverage and reviewed
 baseline comparisons, use [release qualification](release-qualification.md).
 
-`laya.evals` turns a labelled dataset into a repeatable score, and a baseline into a
+`veya.evals` turns a labelled dataset into a repeatable score, and a baseline into a
 pass/fail gate, so a quality change is a reviewable diff instead of a hand-check.
 
 The metric math and the dataset parser are pure Python plus numpy and never import torch, so
@@ -18,18 +18,18 @@ that keyword. Unsupported pins fail before prediction, including with `on_error=
 
 ```bash
 # check the format without a model
-laya-evals validate research/evals/fixture.jsonl
+veya-evals validate research/evals/fixture.jsonl
 
 # score a labelled set on one checkpoint, with thresholds and a baseline
-laya-evals run data.jsonl --model english --device cpu \
+veya-evals run data.jsonl --model english --device cpu \
     --min-accuracy 0.8 --max-ece 0.05 --score-within 0.25 --slice language \
     --json report.json --markdown report.md
 
 # compare a saved report to a baseline
-laya-evals compare report.json --baseline baseline.json --tolerance choice_accuracy=0.02
+veya-evals compare report.json --baseline baseline.json --tolerance choice_accuracy=0.02
 ```
 
-`laya eval ...` is the same thing through the main CLI, so `laya eval validate data.jsonl`
+`veya eval ...` is the same thing through the main CLI, so `veya eval validate data.jsonl`
 works too.
 
 Exit codes: `0` on success, `1` when a threshold or a baseline tolerance fails, `2` on a
@@ -44,7 +44,7 @@ an independent teacher repeat against one fixed reference teacher observation.
 It takes three saved runs and needs no model weights or teacher service:
 
 ```bash
-laya-evals agreement reference.json repeat.json student.json \
+veya-evals agreement reference.json repeat.json student.json \
     --bootstrap-samples 2000 --seed 0 --json agreement.json
 ```
 
@@ -56,7 +56,7 @@ Each input is a JSON object with the following shape:
 
 ```json
 {
-  "schema": "laya-agreement-run/1",
+  "schema": "veya-agreement-run/1",
   "run_id": "teacher-reference",
   "provenance": {
     "model": "teacher-checkpoint",
@@ -93,22 +93,22 @@ outside it. Other metadata, such as the dataset revision and generation script,
 is preserved. Record immutable model revisions when available; explicitly use
 `null` when unknown. The report flags unknown revisions but cannot verify that
 the recorded provenance is accurate or that the teacher calls were independent.
-Input object order is significant, matching Laya's serialization of structured
+Input object order is significant, matching Veya's serialization of structured
 states and questions; keep it identical across the runs.
 
 To run a local student after validating the teacher records:
 
 ```python
 import json
-import laya
-from laya.evals import evaluate_agreement
+import veya
+from veya.evals import evaluate_agreement
 
 with open("reference.json", encoding="utf-8") as handle:
     reference = json.load(handle)
 with open("repeat.json", encoding="utf-8") as handle:
     repeat = json.load(handle)
 revision = "YOUR_CHECKPOINT_COMMIT"
-with laya.Router(device="cpu", revision=revision) as runner:
+with veya.Router(device="cpu", revision=revision) as runner:
     report = evaluate_agreement(
         runner, reference, repeat, model="english",
         student_provenance={
@@ -120,14 +120,14 @@ print(report["overall"])
 ```
 
 The runner uses the same `predict(state, questions)` protocol as the labelled harness.
-A supplied `model` requires keyword support (for example, `laya.Router`); a direct
+A supplied `model` requires keyword support (for example, `veya.Router`); a direct
 Agent uses its loaded checkpoint when no model is named. Language and tags are slice metadata;
 configure the runner's language policy and record it in student provenance. Inputs are
 copied before inference. Runner failures propagate; invalid or incomplete outputs
 raise `EvalError`. A choice flagged `abstention="abstained"` becomes a null
 observation, while its underlying choice must still be a valid label.
 
-The separate `laya-agreement-report/1` report records provenance, input hashes,
+The separate `veya-agreement-report/1` report records provenance, input hashes,
 individual paired decisions and rates sliced by question ID, language and tag.
 For every decision, teacher repeat agreement is `repeat == reference`, student
 agreement is `student == reference`, and the paired delta is their difference.
@@ -147,24 +147,24 @@ for correctness or calibration claims.
 
 [`examples/evals/teacher_agreement.py`](https://github.com/tgundhus/Veya/blob/main/examples/evals/teacher_agreement.py)
 replays two published teacher observations from a pinned public dataset against
-a local Laya checkpoint, saving the three runs and their report. Its small fixed
+a local Veya checkpoint, saving the three runs and their report. Its small fixed
 sample demonstrates the workflow, not deployment readiness.
 
 ## Attributing shortlist errors
 
-For a labelled high-cardinality choice set, `laya.evals_shortlist.evaluate_shortlist`
+For a labelled high-cardinality choice set, `veya.evals_shortlist.evaluate_shortlist`
 uses the existing `predict_shortlist` path and the regular evaluation harness. It
-answers two separate questions: did retrieval keep the gold label, and did Laya
+answers two separate questions: did retrieval keep the gold label, and did Veya
 choose it when it was present? This is an opt-in Python API for choice labels;
-ordinary `laya-evals run` reports are unchanged.
+ordinary `veya-evals run` reports are unchanged.
 
 ```python
-import laya
-from laya.evals import Dataset
-from laya.evals_shortlist import evaluate_shortlist
-from laya.shortlist import embed_fn_from_agent
+import veya
+from veya.evals import Dataset
+from veya.evals_shortlist import evaluate_shortlist
+from veya.shortlist import embed_fn_from_agent
 
-agent = laya.load()
+agent = veya.load()
 dataset_path = "intents.jsonl"
 dataset = Dataset.from_jsonl(dataset_path)
 report = evaluate_shortlist(
@@ -190,7 +190,7 @@ latency includes embedding and the decision call; the report does not isolate
 stage timings. With `k >= n`, the original question passes through and retrieval
 recall is 1 without calling the embedder.
 
-This does not reproduce the BANKING77 results in Laya issue #102:
+This does not reproduce the BANKING77 results in Veya issue #102:
 those numbers depend on its dataset, checkpoint and bi-encoder. This API makes the
 same kind of diagnosis repeatable on a caller's own labelled set.
 
@@ -201,8 +201,8 @@ Router, so an ONNX deployment (including an INT8 copy from `scripts/export_onnx.
 gets gated by the same thresholds and baselines as the torch path:
 
 ```bash
-python scripts/export_onnx.py --model convaiinnovations/laya --output laya.onnx --quantize
-laya-evals run data.jsonl --onnx laya.int8.onnx --max-ece 0.05
+python scripts/export_onnx.py --model convaiinnovations/laya --output veya.onnx --quantize
+veya-evals run data.jsonl --onnx veya.int8.onnx --max-ece 0.05
 ```
 
 `--model` names the checkpoint the export came from — a Hub id or local path, not a Router
@@ -238,7 +238,7 @@ These checks run before prediction.
 | field | required | meaning |
 |---|---|---|
 | `state` | yes | text, email, ticket or JSON document to decide on |
-| `questions` | yes | a Laya question dict, exactly as `Router.predict` accepts |
+| `questions` | yes | a Veya question dict, exactly as `Router.predict` accepts |
 | `expected` | yes | ground truth keyed by question id: a label for `choice`, a number for `score`, `true`/`false` for `noul` |
 | `tags` | no | strings to slice by |
 | `language` | no | a code to slice by |
@@ -256,7 +256,7 @@ Each metric is computed per answer where it applies and aggregated over the data
 | `noul_accuracy` | `noul` | fraction whose boolean (probability >= 0.5) matches |
 | `score_mae` | `score` | mean absolute error |
 | `score_within_<tol>` | `score` | fraction within an absolute tolerance |
-| `ece` | any answer with a confidence | expected calibration error, 15 bins, computed on the column `laya.evals._answer_confidence` reads -- `answer["answer_confidence"]` where the answer carries it, and a fallback where it does not; see [which confidence a metric reads](#which-confidence-a-metric-reads) |
+| `ece` | any answer with a confidence | expected calibration error, 15 bins, computed on the column `veya.evals._answer_confidence` reads -- `answer["answer_confidence"]` where the answer carries it, and a fallback where it does not; see [which confidence a metric reads](#which-confidence-a-metric-reads) |
 | `brier` | any answer with a confidence and a known label | Brier score of confidence as P(correct), `mean((confidence - correct)**2)`; lower is better |
 | `aurc` | any answer with a confidence and a known label | area under the risk--coverage curve: one risk value per distinct confidence level, each weighted by the answers that level spans; lower is better, and rewards a confidence that *ranks* right from wrong rather than just being calibrated |
 | `selective_accuracy@50`, `selective_accuracy@80` | any answer with a confidence and a known label | accuracy over the answers a confidence threshold at the 50% / 80% coverage point accepts -- what abstaining on the least-confident tail buys. A threshold cannot split a group of equal confidences, so this can cover more than the named fraction; see [coverage cuts](#coverage-cuts-and-ties) |
@@ -267,7 +267,7 @@ Each metric is computed per answer where it applies and aggregated over the data
 ### Which confidence a metric reads
 
 Every row above that takes a confidence (`ece`, `brier`, `aurc`, both `selective_accuracy@*`,
-`mean_confidence`) gets its column from `laya.evals._answer_confidence`, which prefers
+`mean_confidence`) gets its column from `veya.evals._answer_confidence`, which prefers
 `answer["answer_confidence"]` -- the probability of the answer being reported, the quantity temperature
 scaling fits. It is not a claim that the number is right as shipped: both base checkpoints are
 over-confident and `laya-multilingual` ships no fitted temperatures at all -- see
@@ -280,8 +280,8 @@ and `score` the `confidence` field is normalized entropy, which moves with the o
 rather than with how right the answer is; `max(probabilities)` is the mass on the top option, equal to
 the reported answer's probability only when the reported answer is the argmax.
 
-The shape that actually arrives without the field is the strict Jev wire contract: `LAYA_JEV_STRICT`
-drops `answer_confidence` from every answer (`laya/serve.py::_project_jev_strict`, and the flag's row
+The shape that actually arrives without the field is the strict Jev wire contract: `VEYA_JEV_STRICT`
+drops `answer_confidence` from every answer (`veya/serve.py::_project_jev_strict`, and the flag's row
 in [the HTTP API page](http-api.md)), so a report run over recorded strict responses calibrates the
 entropy number. Measured on three labelled rows -- `choice` carrying `answer_confidence` 0.95 against
 an entropy `confidence` of 0.7887, `score` 0.90 against 0.6410, `noul` 0.87 -- the same dataset scores
@@ -300,7 +300,7 @@ count the gate prints (`n=` in a rule's failure message) is the slice's size, no
 so a very wide group is not visible from the message alone.
 
 Ties are the normal case rather than a corner: a fitted temperature can leave a bucket reporting a
-point mass, which `laya.common.answer_confidence` records of the shipped `choice:11+`, and a real
+point mass, which `veya.common.answer_confidence` records of the shipped `choice:11+`, and a real
 checkpoint produced a six-row group at exactly 1.0 out of twelve answers. Cutting at a row index
 instead made both metrics depend on the order the dataset arrived in -- the same rows, shuffled,
 moved `selective_accuracy@50` between 0.000 and 1.000.
@@ -321,7 +321,7 @@ Two consequences worth planning for:
   produced a report. Comparing a coverage metric across two definitions is refused on **both** the
   gates that subtract a baseline -- `--baseline --tolerance` (`EvalReport.compare`) and a relative
   rule (`max_drop` / `max_increase`) under `--gate-policy` -- and on **either** side being stale,
-  not just the baseline: a candidate produced by an older `laya` carries a row-order artifact that
+  not just the baseline: a candidate produced by an older `veya` carries a row-order artifact that
   can read *better* than the truth, so gating it against a correctly regenerated baseline would
   pass a regression that the correctly scored report fails. Without that refusal a
   stale baseline hides a real regression: a slice recorded at 0.033 under the old definition reads
@@ -334,7 +334,7 @@ always been -- bit-identical, not merely close.
 
 Add `ScoreWithin(0.25)` to the evaluator list for a tolerance metric; the default set is
 `choice_accuracy`, `noul_accuracy`, `score_mae`, `mean_confidence`, plus `ece`. From the CLI the
-same thing is one flag: `laya-evals run data.jsonl --score-within 0.25` reports `score_within_0.25`
+same thing is one flag: `veya-evals run data.jsonl --score-within 0.25` reports `score_within_0.25`
 beside the defaults, and the flag repeats, so `--score-within 0.25 --score-within 0.5` reports both.
 
 A tolerance metric needs a `score` answer with a numeric label, so on a dataset without one it has
@@ -360,7 +360,7 @@ requests were served fast, not whether the run was cheap. With no `--batch-size`
 timing noise. What the harness actually did -- the batch size asked for, the runner shape it
 resolved to, how many rows shared a call, and the largest chunk -- is recorded in the report's
 `config.timing`, because the flag alone does not say whether anything was batched. Those counters
-record the calls issued, not the calls that returned: with `laya-evals run --on-error skip`, a
+record the calls issued, not the calls that returned: with `veya-evals run --on-error skip`, a
 chunk whose call raised still counts in `rows_grouped` and `max_chunk`, next to its entries in
 `config.errored`. The default is `--on-error fail`, which re-raises instead of publishing a report
 whose metrics cover only the calls that came back. The two `*_ms` metrics count only the calls that
@@ -395,7 +395,7 @@ keys, so every accuracy, calibration and coverage number -- `ece`, `brier`, `aur
 `config.timing.min_confidence` and `config.timing.min_confidence_sent`, and any caller who acts
 on the flag downstream of the harness.
 
-The accepted range is core's `laya.confidence.check_min_confidence` -- `[0.0, 1.0]`, finite, not
+The accepted range is core's `veya.confidence.check_min_confidence` -- `[0.0, 1.0]`, finite, not
 a bool -- rather than a copy here, so a value the gate itself would reject fails as a usage error
 (exit 2) before any checkpoint loads. `0.0` is a legal ask: it is the control arm for an
 abstention sweep and the threshold at which `flag_low_confidence` marks no answer, so a check
@@ -433,9 +433,9 @@ one reviewed slice a CI requirement, save a JSON policy such as `gates.json`:
 ```
 
 ```bash
-laya-evals run data.jsonl --baseline baseline.json --tolerance choice_accuracy=0.02 \
+veya-evals run data.jsonl --baseline baseline.json --tolerance choice_accuracy=0.02 \
     --gate-policy gates.json --json report.json
-laya-evals compare report.json --baseline baseline.json \
+veya-evals compare report.json --baseline baseline.json \
     --tolerance choice_accuracy=0.02 --gate-policy gates.json
 ```
 
@@ -464,11 +464,11 @@ is reviewable on its own:
 
 | key | meaning |
 |---|---|
-| `schema` | the report shape, `laya-evals-report/1`, so a consumer can refuse one it cannot read |
+| `schema` | the report shape, `veya-evals-report/1`, so a consumer can refuse one it cannot read |
 | `dataset` | the path as typed -- a name, not a hash |
 | `dataset_sha256` | the sha256 of the dataset bytes that were parsed |
 | `questions_sha256` | a fingerprint of every question's id, type, `instructions`, `labels`, `criteria` and explicit `option_order`, over the whole dataset |
-| `laya_version` | the `laya` that computed the numbers |
+| `veya_version` | the `veya` that computed the numbers |
 | `coverage_metric_definition` | which definition of `aurc` / `selective_accuracy@*` produced this report (see [coverage cuts](#coverage-cuts-and-ties)). A relative gate rule on either refuses a baseline recorded under a different one, rather than subtracting numbers that do not mean the same thing |
 | `thresholds` | the gate this run applied: `min`, `max` and `baseline_tolerance` |
 | `gate_policy` | the optional slice gate policy applied by `run --gate-policy` |
@@ -485,7 +485,7 @@ Question sets without that field retain their existing fingerprints.
 
 It covers `instructions` too, because the instruction text is the prompt. `build_sequence` renders
 `"<type> question: <instructions>"` into the tokenized head, `Agent` refuses a question without one
-("add the text the model should answer"), and Laya's own question identity already counts it:
+("add the text the model should answer"), and Veya's own question identity already counts it:
 `Router._question_schema` and this harness's batch grouping both key on the whole questions dict,
 and `tests/test_router_batch.py` pins that rewording `instructions` alone moves a row into its own
 batch group. So does a reworded instruction still compare equal to a baseline? No -- and that is
@@ -505,15 +505,15 @@ use has one.
 Nothing time-bearing is recorded, so a report is still byte-reproducible for a fixed runner.
 
 `REPORT_SCHEMA`, `questions_fingerprint(dataset)` and `file_fingerprint(path)` are public, so a
-caller driving `laya.evals.evaluate` directly gets the same identity a CLI run does.
+caller driving `veya.evals.evaluate` directly gets the same identity a CLI run does.
 
 ## Baseline and CI gate
 
 - Keep the dataset, a baseline report (`--json` output you have reviewed), and the tolerances
   together, committed, so a change is a reviewable diff. `--tolerance METRIC=VALUE` is the
   maximum absolute drift allowed for that metric.
-- `laya-evals run ... --baseline baseline.json --tolerance ...` exits non-zero on drift, so it
-  drops into CI unchanged. `laya.evals.EvalReport.compare` and `assert_regression` expose the
+- `veya-evals run ... --baseline baseline.json --tolerance ...` exits non-zero on drift, so it
+  drops into CI unchanged. `veya.evals.EvalReport.compare` and `assert_regression` expose the
   same logic for tests.
 
 Reports and baselines must contain metric names mapped to numbers; booleans, strings, nulls
@@ -556,7 +556,7 @@ actually loaded from. `--revision <SHA>` pins that commit for every checkpoint t
 wants, since the three checkpoints are three repositories and one commit cannot exist in all of
 them. Left unpinned, the run takes the checkpoint's default branch and the report still says which
 commit answered, so a baseline drift can be attributed to the weights or to the code.
-`laya/revisions.py` publishes reviewed commit SHAs in `PINNED_REVISIONS` for callers who want to
+`veya/revisions.py` publishes reviewed commit SHAs in `PINNED_REVISIONS` for callers who want to
 opt in. With `--onnx`, only a bare `--revision <SHA>` applies, to the config and tokenizer download.
 
 Both routes write the `revisions` block. Without `--model`, the ONNX source key defaults
@@ -577,18 +577,18 @@ what evidence exists, what is missing, and what is insufficient. It loads no mod
 does not require torch.
 
 ```bash
-laya-evals evidence --checkpoint ./my-checkpoint [--report report.json]
+veya-evals evidence --checkpoint ./my-checkpoint [--report report.json]
 ```
 
 A checkpoint directory must contain `rl_agent_config.json`. Calibration evidence is derived from
-the persisted `training.laya_train_calibration` block: a legacy checkpoint with no training
+the persisted `training.veya_train_calibration` block: a legacy checkpoint with no training
 metadata is `UNKNOWN`; a question type with zero items is `MISSING`; a type whose entry records
 any upstream `issues` text (not fitted, below `MIN_TYPE_N`/`CALIB_WARN_N`, clamped, unchanged
 fit) is `INSUFFICIENT`; a clean fit is `PRESENT`. The helper trusts the persisted `issues`
 written by #933 instead of keeping a second numeric threshold source.
 
-The eval report's identity fields (`schema`, `dataset_sha256`, `questions_sha256`, `laya_version`)
+The eval report's identity fields (`schema`, `dataset_sha256`, `questions_sha256`, `veya_version`)
 are reported with the same semantics as `run`. The checkpoint↔report relationship is claimed only
 as a deterministic conflict: if both artifacts expose the same `dataset_sha256`/`questions_sha256`
-with different values, it is `INCOMPARABLE`. Everything else is `UNKNOWN` — matching `laya_version`
-alone never proves a match, and differing `laya_version` alone never proves a conflict.
+with different values, it is `INCOMPARABLE`. Everything else is `UNKNOWN` — matching `veya_version`
+alone never proves a match, and differing `veya_version` alone never proves a conflict.

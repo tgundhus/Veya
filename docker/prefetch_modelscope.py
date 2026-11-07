@@ -1,4 +1,4 @@
-"""Bake Laya checkpoints into a Hugging Face cache from ModelScope, during an image build.
+"""Bake Veya checkpoints into a Hugging Face cache from ModelScope, during an image build.
 
 The runtime resolves a repo id through `huggingface_hub.snapshot_download`, which reads its
 local cache. With `HF_HUB_OFFLINE=1` -- or a network that cannot reach huggingface.co -- that
@@ -6,7 +6,7 @@ resolution is purely local: `refs/<revision>` names a commit and an existing
 `snapshots/<sha>` directory is returned as it is, with no repo listing at all
 (`huggingface_hub/_snapshot_download.py`). A mirror therefore only has to lay the files out the
 way the Hub would have, and every code path that names a checkpoint keeps its ids and its
-revision handling: `Agent(...)`, the `Router` laya-serve builds, `laya.cli`, the integrations.
+revision handling: `Agent(...)`, the `Router` veya-serve builds, `veya.cli`, the integrations.
 
 Only the standard library is used, because an image build has no reason to install the
 ModelScope SDK for a handful of HTTP calls. Every file is streamed with resume and its size is
@@ -38,7 +38,7 @@ from typing import Dict
 
 FILES_API = "https://modelscope.cn/api/v1/models/{repo}/repo/files"
 FILE_API = "https://modelscope.cn/api/v1/models/{repo}/repo"
-# What a Laya checkpoint needs: the same set laya/agent.py hands snapshot_download, so a baked
+# What a Veya checkpoint needs: the same set veya/agent.py hands snapshot_download, so a baked
 # snapshot carries exactly the files a load would have fetched and none of its siblings.
 NEEDED = ("rl_agent_config.json", "model.safetensors")
 FOLDERS = ("tokenizer/", "encoder/")
@@ -51,7 +51,7 @@ TIMEOUT = 60
 DEFAULT_BRANCH = "main"
 
 # A checkpoint type and the path it means inside the bundled repository. These are the paths the
-# `Router` and the one-shot quickstart load by default (laya/router.py: DEFAULT_MODELS), which is
+# `Router` and the one-shot quickstart load by default (veya/router.py: DEFAULT_MODELS), which is
 # why a type bakes them rather than the standalone repositories of the same checkpoints: a baked
 # image then serves the default configuration with no change at all.
 TYPES = {
@@ -59,9 +59,9 @@ TYPES = {
     "multilingual": ["convaiinnovations/laya:multilingual"],
     "typed-decisions": ["convaiinnovations/laya:typed-decisions"],
 }
-# The spellings laya/router.py accepts for the same three checkpoints, so an operator who copies a
+# The spellings veya/router.py accepts for the same three checkpoints, so an operator who copies a
 # name out of that mapping is not told it is unknown here.
-ALIASES = {"en": "english", "laya": "english", "default": "english",
+ALIASES = {"en": "english", "veya": "english", "default": "english",
            "multi": "multilingual", "ml": "multilingual",
            "typed": "typed-decisions", "decisions": "typed-decisions"}
 
@@ -75,7 +75,7 @@ def expand_model(value: str):
     """
     parts = [part for part in re.split(r"[,\s]+", (value or "").strip()) if part]
     if not parts:
-        raise SystemExit("laya: --model is empty; expected a checkpoint type (%s) or a "
+        raise SystemExit("veya: --model is empty; expected a checkpoint type (%s) or a "
                          "repo[:subfolder] spec" % ", ".join(sorted(TYPES) + ["all"]))
     specs = []
     for part in parts:
@@ -88,7 +88,7 @@ def expand_model(value: str):
         elif name in TYPES:
             specs += TYPES[name]
         else:
-            raise SystemExit("laya: unknown checkpoint type %r; choose one of %s, all, or a "
+            raise SystemExit("veya: unknown checkpoint type %r; choose one of %s, all, or a "
                              "repo[:subfolder] spec" % (part, sorted(TYPES)))
     return specs
 
@@ -137,9 +137,9 @@ def list_repo(repo: str, revision: str, subfolder: str):
                                         timeout=TIMEOUT) as r:
                 payload = json.loads(r.read().decode("utf-8"))
         except (urllib.error.URLError, urllib.error.HTTPError, ValueError, OSError) as exc:
-            raise SystemExit("laya: cannot list %s at revision %r: %s" % (repo, revision, exc))
+            raise SystemExit("veya: cannot list %s at revision %r: %s" % (repo, revision, exc))
         if not payload.get("Success"):
-            raise SystemExit("laya: ModelScope returned %r for %s -- check the repo id and revision"
+            raise SystemExit("veya: ModelScope returned %r for %s -- check the repo id and revision"
                              % (payload.get("Message"), repo))
         data = payload.get("Data") or {}
         tip = tip or ((data.get("LatestCommitter") or {}).get("Revision") or "").strip()
@@ -171,7 +171,7 @@ def snapshot_commit(tip: str, entries: list) -> str:
     weights sit on is not a repository-wide key -- and one repository has to bake *one* snapshot
     directory, because `refs/<revision>` names a single commit that every checkpoint in that
     repository resolves through. The tip is that key. It is printed at build time, and it is what
-    a caller pins with `revision=` or `LAYA_REVISION` to get exactly these bytes.
+    a caller pins with `revision=` or `VEYA_REVISION` to get exactly these bytes.
     """
     return tip or max((entry["revision"] for entry in entries if entry["revision"]), default="")
 
@@ -205,7 +205,7 @@ def download(repo: str, revision: str, entry: dict, dest: Path) -> None:
         if entry["size"] and on_disk == entry["size"]:
             break
         if attempt == RETRIES:
-            raise SystemExit("laya: %s: %d of %d bytes after %d attempts -- check the connection "
+            raise SystemExit("veya: %s: %d of %d bytes after %d attempts -- check the connection "
                              "to modelscope.cn" % (entry["path"], on_disk, entry["size"], RETRIES))
         time.sleep(BACKOFF * attempt)
 
@@ -217,7 +217,7 @@ def download(repo: str, revision: str, entry: dict, dest: Path) -> None:
                 break
             digest.update(chunk)
     if entry["sha256"] and digest.hexdigest() != entry["sha256"]:
-        raise SystemExit("laya: %s: sha256 mismatch -- the repository reports %s, the download "
+        raise SystemExit("veya: %s: sha256 mismatch -- the repository reports %s, the download "
                          "has %s" % (entry["path"], entry["sha256"], digest.hexdigest()))
 
 
@@ -258,10 +258,10 @@ def prefetch(specs: list, revision: str, cache: Path) -> None:
         entries += [entry for entry in items if entry["path"] not in
                     {other["path"] for other in entries}]
     if not entries:
-        raise SystemExit("laya: %s holds no checkpoint files at revision %r" % (repo, revision))
+        raise SystemExit("veya: %s holds no checkpoint files at revision %r" % (repo, revision))
     commit = snapshot_commit(tip, entries)
     if not commit:
-        raise SystemExit("laya: %s names no commit at revision %r, so there is nothing to key the "
+        raise SystemExit("veya: %s names no commit at revision %r, so there is nothing to key the "
                          "baked snapshot by" % (repo, revision))
     repo_dir = cache / repo_folder(repo)
     staging = repo_dir / "snapshots" / (".staging-" + str(os.getpid()))

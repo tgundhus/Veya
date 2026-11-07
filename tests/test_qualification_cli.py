@@ -6,7 +6,7 @@ import runpy
 
 import pytest
 
-from laya import evals_cli, qualification
+from veya import evals_cli, qualification
 
 
 FIXTURE = Path(__file__).resolve().parents[1] / "research/evals/qualification-v1.json"

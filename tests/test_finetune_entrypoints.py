@@ -11,15 +11,15 @@ sys.path.insert(0, str(ROOT))
 import research.scripts.finetune_single_device as single  # noqa: E402
 
 mps_spec = importlib.util.spec_from_file_location(
-    "laya_finetune_typed_decisions_mps",
-    ROOT / "notebooks" / "laya_finetune_typed_decisions_mps.py",
+    "veya_finetune_typed_decisions_mps",
+    ROOT / "notebooks" / "veya_finetune_typed_decisions_mps.py",
 )
 mps = importlib.util.module_from_spec(mps_spec)
-sys.modules["laya_finetune_typed_decisions_mps"] = mps
+sys.modules["veya_finetune_typed_decisions_mps"] = mps
 mps_spec.loader.exec_module(mps)
 
 
-def test_single_device_main_delegates_to_laya_train(tmp_path):
+def test_single_device_main_delegates_to_veya_train(tmp_path):
     calls = {}
     def fake_finetune(**kwargs):
         calls.update(kwargs)
@@ -59,7 +59,7 @@ def test_single_device_main_delegates_to_laya_train(tmp_path):
     assert calls["device"] == "cpu"
 
 
-def test_mps_train_delegates_to_laya_train(tmp_path):
+def test_mps_train_delegates_to_veya_train(tmp_path):
     out = tmp_path / "out"
     out.mkdir()
     (out / "rl_agent_config.json").write_text(json.dumps({"max_len": 1024}), encoding="utf-8")
@@ -81,7 +81,7 @@ def test_mps_train_delegates_to_laya_train(tmp_path):
         no_checkpointing=False,
         device="cpu",
     )
-    with mock.patch("laya.train.finetune", side_effect=fake_finetune):
+    with mock.patch("veya.train.finetune", side_effect=fake_finetune):
         mps.train(args, str(tmp_path / "model"), str(tmp_path / "rows.jsonl"), None)
     cfg = calls["config"]
     assert cfg.epochs == 3
@@ -99,7 +99,7 @@ def test_single_wrapper_zero_vs_low_count_temperature_and_pops_bucket_map(tmp_pa
         (out / "rl_agent_config.json").write_text(json.dumps({
             "temperature": [1.0, 1.0, 1.0],
             "temperature_by_options": {"choice:2": 1.3},
-            "training": {"laya_train_calibration": {"choice": {"items": 0, "issues": []}}},
+            "training": {"veya_train_calibration": {"choice": {"items": 0, "issues": []}}},
         }), encoding="utf-8")
         return {
             "train_items": 1,
@@ -116,7 +116,7 @@ def test_single_wrapper_zero_vs_low_count_temperature_and_pops_bucket_map(tmp_pa
     assert cfg["temperature"] == [1.2, 1.0, 1.2]
     assert cfg["temperature_by_options"] if "temperature_by_options" in cfg else True
     assert "temperature_by_options" not in cfg
-    assert cfg["training"]["laya_train_calibration"]["choice"]["items"] == 0
+    assert cfg["training"]["veya_train_calibration"]["choice"]["items"] == 0
 
 
 def test_mps_train_wrapper_config_parity_and_bucket_map_removed(tmp_path):
@@ -125,7 +125,7 @@ def test_mps_train_wrapper_config_parity_and_bucket_map_removed(tmp_path):
     ckpt = out / "checkpoint_latest"
     ckpt.mkdir()
     def make_cfg():
-        return {"fine_tuned": True, "temperature": [1.0, 1.0, 1.0], "temperature_by_options": {"score:4": 1.1}, "training": {"laya_train_calibration": {"score": {"items": 0, "issues": []}}}}
+        return {"fine_tuned": True, "temperature": [1.0, 1.0, 1.0], "temperature_by_options": {"score:4": 1.1}, "training": {"veya_train_calibration": {"score": {"items": 0, "issues": []}}}}
     (out / "rl_agent_config.json").write_text(json.dumps(make_cfg()), encoding="utf-8")
     (ckpt / "rl_agent_config.json").write_text(json.dumps(make_cfg()), encoding="utf-8")
     def fake_finetune(**kwargs):
@@ -133,20 +133,20 @@ def test_mps_train_wrapper_config_parity_and_bucket_map_removed(tmp_path):
         (ckpt / "rl_agent_config.json").write_text(json.dumps(make_cfg()), encoding="utf-8")
         return {"train_items": 1, "calibration_items": 0, "temperature": [1.0, 1.0, 1.0], "output_dir": str(out), "calibration": {"choice": {"items": 0}, "score": {"items": 0}, "noul": {"items": 12}}}
     args = argparse.Namespace(epochs=1, micro_batch=2, grad_accum=16, calib_max=400, output_dir=str(out), no_checkpointing=False, device="cpu")
-    with mock.patch("laya.train.finetune", side_effect=fake_finetune):
+    with mock.patch("veya.train.finetune", side_effect=fake_finetune):
         mps.train(args, str(tmp_path/"model"), str(tmp_path/"rows.jsonl"), None)
     for path in [out / "rl_agent_config.json", ckpt / "rl_agent_config.json"]:
         cfg = json.loads(path.read_text())
         assert cfg["temperature"] == [1.2, 1.2, 1.0]
         assert "temperature_by_options" not in cfg
-        assert cfg["training"]["laya_train_calibration"]["score"]["items"] == 0
+        assert cfg["training"]["veya_train_calibration"]["score"]["items"] == 0
         assert cfg["model_name"] == "laya-typed-decisions"
         assert cfg["max_tokens_per_batch"] == 2048
 
 
 def test_no_duplicated_fitter_or_training_loop_remains():
     single_text = (ROOT / "research" / "scripts" / "finetune_single_device.py").read_text(encoding="utf-8")
-    mps_text = (ROOT / "notebooks" / "laya_finetune_typed_decisions_mps.py").read_text(encoding="utf-8")
+    mps_text = (ROOT / "notebooks" / "veya_finetune_typed_decisions_mps.py").read_text(encoding="utf-8")
     assert "fit_one_temp" not in single_text
     assert "fit_temperature(" not in mps_text
     assert "def preprocess" not in single_text

@@ -43,10 +43,10 @@ sys.path.insert(0, HERE)
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
-from laya import DecisionCache, Router, decision_margins  # noqa: E402
-from laya.agent import Agent  # noqa: E402
-from laya.router import _split  # noqa: E402
+import veya  # noqa: E402
+from veya import DecisionCache, Router, decision_margins  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.router import _split  # noqa: E402
 from bench_cpu_fast_path import decision, encoder_int8, onnx_agent, probabilities  # noqa: E402
 from request_sets import load  # noqa: E402
 
@@ -114,7 +114,7 @@ def accuracy(requests, results):
 
 def mps_policy(agent, mode):
     """Set an MPS agent's autocast policy: 'default', 'fp32' or 'fp16'."""
-    from laya.agent import _mps_amp_min_rows
+    from veya.agent import _mps_amp_min_rows
 
     agent.dtype = torch.float16
     agent.amp_enabled = mode != "fp32"
@@ -140,7 +140,7 @@ def main():
     by_model = {}
     for r in requests:
         by_model.setdefault(router.route(r["state"], r["questions"]).model, []).append(r)
-    report = {"meta": {"laya": laya.__version__, "torch": torch.__version__, "platform": platform.platform(),
+    report = {"meta": {"laya": veya.__version__, "torch": torch.__version__, "platform": platform.platform(),
                        "machine": platform.machine(), "cpus": os.cpu_count(), "torch_threads": torch.get_num_threads(),
                        "mps": mps, "requests": os.path.basename(args.requests), "batch_company": BATCH_COMPANY,
                        "load_average": os.getloadavg(),

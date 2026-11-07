@@ -33,7 +33,7 @@ def _answer(question, probabilities):
 
 
 def _summary(cases, results):
-    from laya import qualification
+    from veya import qualification
     rows, errors, boundaries = [], [], []
     for case, result in zip(cases, results):
         answers = qualification._answers(result, case["questions"])
@@ -91,15 +91,15 @@ def main():
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32")
     import numpy as np
     import torch
-    from laya import qualification
-    from laya.agent import Agent
-    from laya.decision_policy import CONTENT_FREE_PROBES, MAX_BALANCED_OPTIONS, _correct
-    from laya.inference import _option_count
+    from veya import qualification
+    from veya.agent import Agent
+    from veya.decision_policy import CONTENT_FREE_PROBES, MAX_BALANCED_OPTIONS, _correct
+    from veya.inference import _option_count
     torch.set_num_threads(args.threads)
     torch.set_num_interop_threads(1)
     def identities():
         script = Path(__file__).resolve()
-        sources = {"laya/" + name: digest for name, digest in qualification._source_identity().items()}
+        sources = {"veya/" + name: digest for name, digest in qualification._source_identity().items()}
         sources[script.relative_to(ROOT).as_posix()] = qualification._file_sha(script)
         return {"source_sha256": sources, "corpus_file_sha256": qualification._file_sha(corpus_path),
                 "artifacts": qualification._artifact_identity(checkpoint)}

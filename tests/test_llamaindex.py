@@ -1,4 +1,4 @@
-"""Unit tests for Laya LlamaIndex integration.
+"""Unit tests for Veya LlamaIndex integration.
 
 Tests verify single/multi-selector logic, confidence threshold fallback gating,
 query router dispatch, and LlamaIndex schema conventions without requiring
@@ -10,11 +10,11 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.integrations.llamaindex import (
-    LayaLowConfidenceError,
-    LayaMultiSelector,
-    LayaQueryRouter,
-    LayaSingleSelector,
+from veya.integrations.llamaindex import (
+    VeyaLowConfidenceError,
+    VeyaMultiSelector,
+    VeyaQueryRouter,
+    VeyaSingleSelector,
     QueryBundle,
     ToolMetadata,
     _extract_query_str,
@@ -39,7 +39,7 @@ def check_true(name, cond, detail=""):
 
 
 # --------------------------------------------------------------- Mock Agent
-class MockLayaAgent:
+class MockVeyaAgent:
     """Mock agent returning deterministic responses for testing."""
 
     def __init__(self, response_fn):
@@ -99,7 +99,7 @@ check(
 )
 
 
-# --------------------------------------------------------------- 2. LayaSingleSelector
+# --------------------------------------------------------------- 2. VeyaSingleSelector
 def mock_single_selector_response(state, questions):
     text = str(state).lower()
     if "sql" in text or "table" in text or "database" in text:
@@ -124,15 +124,15 @@ def mock_single_selector_response(state, questions):
     }
 
 
-mock_agent = MockLayaAgent(mock_single_selector_response)
-single_selector = LayaSingleSelector(agent=mock_agent)
+mock_agent = MockVeyaAgent(mock_single_selector_response)
+single_selector = VeyaSingleSelector(agent=mock_agent)
 
 # Standard selection for choice_0
 res0 = single_selector.select(tools, "Search for quarterly 10-K report")
 check("single/index_0", res0.selections[0].index, 0)
 check_true(
     "single/reason_0",
-    "Selected 'vector_store' via Laya System 1 decision" in res0.selections[0].reason,
+    "Selected 'vector_store' via Veya System 1 decision" in res0.selections[0].reason,
 )
 
 # Standard selection for choice_1 (sql)
@@ -140,11 +140,11 @@ res1 = single_selector.select(tools, QueryBundle(query_str="Query the SQL databa
 check("single/index_1", res1.selections[0].index, 1)
 check_true(
     "single/reason_1",
-    "Selected 'sql_db' via Laya System 1 decision" in res1.selections[0].reason,
+    "Selected 'sql_db' via Veya System 1 decision" in res1.selections[0].reason,
 )
 
 # Confidence threshold with fallback
-gated_selector = LayaSingleSelector(
+gated_selector = VeyaSingleSelector(
     agent=mock_agent,
     confidence_threshold=0.80,
     fallback_index=2,
@@ -157,7 +157,7 @@ check_true(
 )
 
 # Confidence threshold with raise_on_low_confidence
-raising_selector = LayaSingleSelector(
+raising_selector = VeyaSingleSelector(
     agent=mock_agent,
     confidence_threshold=0.80,
     raise_on_low_confidence=True,
@@ -165,7 +165,7 @@ raising_selector = LayaSingleSelector(
 try:
     raising_selector.select(tools, "lowconf query here")
     check("single/raise_error", False, True)
-except LayaLowConfidenceError as e:
+except VeyaLowConfidenceError as e:
     check("single/raise_error", True, True)
     check("single/error_conf", e.confidence, 0.42)
     check("single/error_thresh", e.threshold, 0.80)
@@ -187,7 +187,7 @@ async def run_async_single():
 asyncio.run(run_async_single())
 
 
-# --------------------------------------------------------------- 3. LayaMultiSelector
+# --------------------------------------------------------------- 3. VeyaMultiSelector
 def mock_multi_selector_response(state, questions):
     text = str(state).lower()
     if "compare" in text or "both" in text:
@@ -211,8 +211,8 @@ def mock_multi_selector_response(state, questions):
     }
 
 
-mock_multi_agent = MockLayaAgent(mock_multi_selector_response)
-multi_selector = LayaMultiSelector(
+mock_multi_agent = MockVeyaAgent(mock_multi_selector_response)
+multi_selector = VeyaMultiSelector(
     agent=mock_multi_agent,
     probability_threshold=0.30,
 )
@@ -224,7 +224,7 @@ check("multi/idx_0", res_multi.selections[0].index, 0)
 check("multi/idx_1", res_multi.selections[1].index, 1)
 
 # Multi-select with max_outputs limit
-limited_selector = LayaMultiSelector(
+limited_selector = VeyaMultiSelector(
     agent=mock_multi_agent,
     probability_threshold=0.30,
     max_outputs=1,
@@ -248,7 +248,7 @@ async def run_async_multi():
 asyncio.run(run_async_multi())
 
 
-# --------------------------------------------------------------- 4. LayaQueryRouter
+# --------------------------------------------------------------- 4. VeyaQueryRouter
 class MockQueryEngine:
     def __init__(self, name):
         self.name = name
@@ -294,8 +294,8 @@ def mock_router_dispatcher(state, questions):
     }
 
 
-router_agent = MockLayaAgent(mock_router_dispatcher)
-laya_qr = LayaQueryRouter(
+router_agent = MockVeyaAgent(mock_router_dispatcher)
+veya_qr = VeyaQueryRouter(
     query_engines=engines,
     descriptions={
         "vector": "Semantic search over documentation",
@@ -308,21 +308,21 @@ laya_qr = LayaQueryRouter(
 )
 
 # Route direct
-check("router/route_sql", laya_qr.route("Run a query on the SQL table"), "sql")
-check("router/route_summary", laya_qr.route("Provide an executive summary"), "summary")
-check("router/route_vector", laya_qr.route("How does authentication work?"), "vector")
+check("router/route_sql", veya_qr.route("Run a query on the SQL table"), "sql")
+check("router/route_summary", veya_qr.route("Provide an executive summary"), "summary")
+check("router/route_vector", veya_qr.route("How does authentication work?"), "vector")
 
 # Confidence fallback
-check("router/route_fallback", laya_qr.route("lowconf request"), "vector")
+check("router/route_fallback", veya_qr.route("lowconf request"), "vector")
 
 # Execute query()
-res_q = laya_qr.query("Run a query on the SQL table")
+res_q = veya_qr.query("Run a query on the SQL table")
 check("router/query_exec", res_q, "Result from SqlEngine for: Run a query on the SQL table")
 
 
 # Async query
 async def run_async_router():
-    res_aq = await laya_qr.aquery("Provide an executive summary")
+    res_aq = await veya_qr.aquery("Provide an executive summary")
     check("router/aquery_exec", res_aq, "Async result from SummaryEngine for: Provide an executive summary")
 
 
@@ -334,9 +334,9 @@ callable_engines = {
     "calc": lambda q: f"Calculated: {q}",
     "search": lambda q: f"Searched: {q}",
 }
-callable_qr = LayaQueryRouter(
+callable_qr = VeyaQueryRouter(
     query_engines=callable_engines,
-    agent=MockLayaAgent(
+    agent=MockVeyaAgent(
         lambda s, q: {"answers": {"route": {"choice": "calc", "answer_confidence": 0.99}}}
     ),
 )
@@ -379,7 +379,7 @@ with patch("urllib.request.build_opener") as mock_build_opener:
     mock_opener.open.return_value = DummyHTTPResponse(remote_response)
     mock_build_opener.return_value = mock_opener
 
-    remote_selector = LayaSingleSelector(
+    remote_selector = VeyaSingleSelector(
         base_url="http://localhost:8000",
         api_key="sk-test-token",
     )
@@ -395,14 +395,14 @@ with patch("urllib.request.build_opener") as mock_build_opener:
 
 # --------------------------------------------------------------- 5b. Non-Object Remote Response
 #
-# A remote laya-serve body is arbitrary JSON: a gateway, a mis-pointed `base_url`, or a proxy error
+# A remote veya-serve body is arbitrary JSON: a gateway, a mis-pointed `base_url`, or a proxy error
 # page can answer with a top-level array, string, number or `true`/`null`. `json.loads` accepts each
 # of those and the consumers read the result with `res.get("answers", …)` (the selector and route
 # lookups), so before the guard a non-object leaked `AttributeError: 'list' object has no attribute
 # 'get'` past the fail-closed path instead of the `RuntimeError` every other remote failure raises
 # here. `_call_remote` and the public `select()` are both driven so a regression at either layer is
 # caught.
-from laya.integrations.llamaindex import _call_remote as _llama_call_remote
+from veya.integrations.llamaindex import _call_remote as _llama_call_remote
 
 _LLAMA_NON_OBJECT_BODIES = [
     ([], "list"),
@@ -425,7 +425,7 @@ for _body, _label in _LLAMA_NON_OBJECT_BODIES:
             check_true("nonobj/%s/_call_remote raises" % _label, False, type(exc).__name__)
 
         try:
-            LayaSingleSelector(base_url="http://localhost:8000", api_key="k").select(
+            VeyaSingleSelector(base_url="http://localhost:8000", api_key="k").select(
                 tools, "Query via remote server")
             check_true("nonobj/%s/select raises" % _label, False, "no error raised")
         except RuntimeError as exc:
@@ -438,7 +438,7 @@ for _body, _label in _LLAMA_NON_OBJECT_BODIES:
 with patch("urllib.request.build_opener") as _m:
     _m.return_value.open.return_value = DummyHTTPResponse(remote_response)
     check("nonobj/object still selects",
-          LayaSingleSelector(base_url="http://localhost:8000").select(
+          VeyaSingleSelector(base_url="http://localhost:8000").select(
               tools, "Query via remote server").selections[0].index, 1)
 
 
@@ -452,7 +452,7 @@ with patch("urllib.request.build_opener") as _m:
 # different answer keys are driven here, and the multi selector shares the single one's line. A body
 # without `answers`, or with `answers` as an object (even an empty one), is a no-decision response
 # rather than a malformed one, and has to keep selecting and routing exactly as it does today.
-from laya.integrations.llamaindex import _call_remote as _llama_call_remote
+from veya.integrations.llamaindex import _call_remote as _llama_call_remote
 
 _LLAMA_BAD_ANSWERS = [
     (["boom"], "list"),
@@ -474,10 +474,10 @@ for _answers, _label in _LLAMA_BAD_ANSWERS:
             check_true("badans/%s/_call_remote raises" % _label, False, type(_exc).__name__)
 
         for _entry, _run in (
-            ("select", lambda: LayaSingleSelector(base_url="http://localhost:8000",
+            ("select", lambda: VeyaSingleSelector(base_url="http://localhost:8000",
                                                   api_key="k").select(
                                                      tools, "Query via remote server")),
-            ("route", lambda: LayaQueryRouter(query_engines=engines, base_url="http://localhost:8000",
+            ("route", lambda: VeyaQueryRouter(query_engines=engines, base_url="http://localhost:8000",
                                               api_key="k").route("Query via remote server")),
         ):
             try:
@@ -504,30 +504,30 @@ for _body, _label in (({"model": "laya-multilingual"}, "answers absent"),
     with patch("urllib.request.build_opener") as _m:
         _m.return_value.open.return_value = DummyHTTPResponse(_body)
         try:
-            LayaSingleSelector(base_url="http://localhost:8000").select(tools, "Query via remote server")
+            VeyaSingleSelector(base_url="http://localhost:8000").select(tools, "Query via remote server")
             check_true("badans/%s selector refuses" % _label, False)
         except ValueError:
             check_true("badans/%s selector refuses" % _label, True)
         check("badans/%s still routes" % _label,
-              LayaQueryRouter(query_engines=engines, base_url="http://localhost:8000").route(
+              VeyaQueryRouter(query_engines=engines, base_url="http://localhost:8000").route(
                   "Query via remote server"), next(iter(engines)))
 
 
 # --------------------------------------------------------------- 6. Per-call decision controls
 #
-# `laya.integrations.langchain` has forwarded `max_len` / `head_max_len` and the five hook
+# `veya.integrations.langchain` has forwarded `max_len` / `head_max_len` and the five hook
 # arguments since #530 / #532; this surface forwarded only `model`, so a RAG pipeline choosing
 # between more tools than the default head budget fits could not widen its own window. The rule
 # now lives in one module the three integrations import, and the lists below are read out of it
 # rather than written out again here -- a control added to `._controls` without reaching this file
 # fails here. Three classes, three `_execute_decision` call sites, so every surface is driven.
 import inspect
-from laya.agent import Agent
-from laya.integrations import _controls
-from laya.integrations import crewai as crewai_module
-from laya.integrations import langchain as langchain_module
-from laya.integrations import llamaindex as llamaindex_module
-from laya.router import Router
+from veya.agent import Agent
+from veya.integrations import _controls
+from veya.integrations import crewai as crewai_module
+from veya.integrations import langchain as langchain_module
+from veya.integrations import llamaindex as llamaindex_module
+from veya.router import Router
 
 CONTROLS = (tuple(_controls.PREDICT_CONTROLS) + tuple(_controls.DECISION_CONTROLS)
             + tuple(_controls.HOOK_CONTROLS))
@@ -562,7 +562,7 @@ for _c in ROUTER_HINTS:
     check_true("routing/%s accepted by Router.predict" % _c, _c in _router_params)
     check_true("routing/%s rejected by Agent.predict" % _c, _c not in _agent_params)
 
-for cls in (LayaSingleSelector, LayaMultiSelector, LayaQueryRouter):
+for cls in (VeyaSingleSelector, VeyaMultiSelector, VeyaQueryRouter):
     for _c in CONTROLS + ROUTER_HINTS:
         check_true("controls/%s takes %s" % (cls.__name__, _c), _c in _params(cls.__init__))
 check("controls/_execute_decision takes every control",
@@ -603,11 +603,11 @@ ALL_CONTROLS = {"max_len": 1024, "head_max_len": 512, "lang": "fr", "min_confide
 
 # One entry per class that can take a decision here: (label, class, constructor extras, one call).
 SURFACES = [
-    ("single", LayaSingleSelector, {},
+    ("single", VeyaSingleSelector, {},
      lambda s: s.select(tools, "Run a query on the SQL table")),
-    ("multi", LayaMultiSelector, {},
+    ("multi", VeyaMultiSelector, {},
      lambda s: s.select(tools, "Run a query on the SQL table")),
-    ("query_router", LayaQueryRouter, {"query_engines": engines},
+    ("query_router", VeyaQueryRouter, {"query_engines": engines},
      lambda s: s.route("Run a query on the SQL table")),
 ]
 
@@ -667,7 +667,7 @@ for _label, _cls, _extra, _run in SURFACES:
           [k for k in remote_body(_cls, _extra, _run) if k in _controls.PREDICT_CONTROLS], [])
     check("controls/%s remote body keeps a zero" % _label,
           remote_body(_cls, _extra, _run, head_max_len=0).get("head_max_len"), 0)
-    # `lang` / `min_confidence` are laya-serve `BODY_CONTROLS`, so the same override reaches the
+    # `lang` / `min_confidence` are veya-serve `BODY_CONTROLS`, so the same override reaches the
     # remote node -- and an unset one stays out of the body rather than shadowing the deployment.
     check("controls/%s remote body carries the decision controls" % _label,
           {k: v for k, v in remote_body(_cls, _extra, _run, lang="es", min_confidence=0.3).items()
@@ -684,7 +684,7 @@ for _label, _cls, _extra, _run in SURFACES:
             check_true("controls/%s remote refuses %s" % (_label, _c), False, "no error raised")
         except ValueError as exc:
             check_true("controls/%s remote refuses %s" % (_label, _c),
-                       _c in str(exc) and "laya-serve" in str(exc))
+                       _c in str(exc) and "veya-serve" in str(exc))
         except Exception as exc:
             check_true("controls/%s remote refuses %s" % (_label, _c), False, type(exc).__name__)
 
@@ -693,7 +693,7 @@ for _label, _cls, _extra, _run in SURFACES:
 # the rest of the run.
 _sentinel_hooks = [RecordingAgent()]
 _ident_agent = RecordingAgent()
-LayaSingleSelector(agent=_ident_agent, hooks=_sentinel_hooks).select(
+VeyaSingleSelector(agent=_ident_agent, hooks=_sentinel_hooks).select(
     tools, "Run a query on the SQL table")
 _seen_hooks = _ident_agent.calls[0].get("hooks")
 check_true("controls/forwards the caller's objects",
@@ -702,7 +702,7 @@ check_true("controls/forwards the caller's objects",
 
 # --------------------------------------------------------------- Confidence source
 # Every gate in this module reads the same number: the calibrated `answer_confidence`
-# core gates on, never the entropy `confidence` (see `laya.confidence`). The two are on
+# core gates on, never the entropy `confidence` (see `veya.confidence`). The two are on
 # different scales, so they must not be interchangeable here.
 
 
@@ -730,16 +730,16 @@ def _disagree(choice_answer):
 
 # Below the calibrated threshold but above the entropy one: gates on the calibrated number.
 low_agent = _disagree({"confidence": 0.95, "answer_confidence": 0.4})
-low_sel = LayaSingleSelector(agent=low_agent, confidence_threshold=0.80, fallback_index=1).select(
+low_sel = VeyaSingleSelector(agent=low_agent, confidence_threshold=0.80, fallback_index=1).select(
     tools, "anything")
 check("gate/reads calibrated not entropy",
       low_sel.selections[0].index if hasattr(low_sel, "selections") else low_sel, 1)
 try:
-    LayaSingleSelector(agent=_disagree({"confidence": 0.95, "answer_confidence": 0.4}),
+    VeyaSingleSelector(agent=_disagree({"confidence": 0.95, "answer_confidence": 0.4}),
                        confidence_threshold=0.80,
                        raise_on_low_confidence=True).select(tools, "anything")
     check_true("gate/raises on the calibrated number", False, "no error raised")
-except LayaLowConfidenceError as err:
+except VeyaLowConfidenceError as err:
     check("gate/error carries the calibrated number", err.confidence, 0.4)
 
 # An answer with no usable confidence keeps the old behaviour: treated as fully confident.
@@ -749,7 +749,7 @@ def _silent_selector(state, questions):
                         "route": {"choice": "sql", "confidence": 0.9, "answer_confidence": 0.9}}}
 
 
-kept = LayaSingleSelector(agent=DisagreeingSelectorAgent(_silent_selector)).select(tools, "anything")
+kept = VeyaSingleSelector(agent=DisagreeingSelectorAgent(_silent_selector)).select(tools, "anything")
 check("gate/missing confidence still passes",
       kept.selections[0].index if hasattr(kept, "selections") else kept, 2)
 # ------------------------------------------------- 6b. The two Router-only routing hints
@@ -836,7 +836,7 @@ for _label, _cls, _extra, _run in SURFACES:
             check_true("routing/%s refuses %s at a runner that cannot route" % (_label, _c),
                        False, type(exc).__name__)
 
-    # Both hints ride in the laya-serve body -- `BODY_CONTROLS` there -- and a blank one stays.
+    # Both hints ride in the veya-serve body -- `BODY_CONTROLS` there -- and a blank one stays.
     check("routing/%s remote body carries both hints" % _label,
           {k: v for k, v in remote_body(_cls, _extra, _run, task="typed_decisions",
                                         lang_guess="de").items() if k in ROUTER_HINTS},
@@ -853,7 +853,7 @@ for _label, _cls, _extra, _run in SURFACES:
                    "no error raised")
     except ValueError as exc:
         check_true("routing/%s remote refuses a callable lang_guess" % _label,
-                   "lang_guess" in str(exc) and "laya-serve" in str(exc))
+                   "lang_guess" in str(exc) and "veya-serve" in str(exc))
     except Exception as exc:
         check_true("routing/%s remote refuses a callable lang_guess" % _label, False,
                    type(exc).__name__)
@@ -864,19 +864,19 @@ for _invalid_choice in (None, "unknown", "choice_-1", "choice_999", "choice_1_ex
     def _invalid_response(state, questions, choice=_invalid_choice):
         return {"answers": {"selector": {"choice": choice, "confidence": 0.95}}}
     try:
-        LayaSingleSelector(agent=MockLayaAgent(_invalid_response)).select(tools, "anything")
+        VeyaSingleSelector(agent=MockVeyaAgent(_invalid_response)).select(tools, "anything")
         check_true("choice/rejects %r" % (_invalid_choice,), False, "no error raised")
     except ValueError as err:
         check_true("choice/rejects %r" % (_invalid_choice,), "selector choice" in str(err))
 
 for _invalid_index in (-1, len(tools), True, 0.5, "1"):
     try:
-        LayaSingleSelector(agent=_disagree({}), fallback_index=_invalid_index).select(tools, "anything")
+        VeyaSingleSelector(agent=_disagree({}), fallback_index=_invalid_index).select(tools, "anything")
         check_true("fallback/rejects %r" % (_invalid_index,), False, "no error raised")
     except ValueError as err:
         check_true("fallback/rejects %r" % (_invalid_index,), "fallback_index" in str(err))
 
-abstained = LayaSingleSelector(agent=_disagree({"choice": None, "answer_confidence": 0.1}),
+abstained = VeyaSingleSelector(agent=_disagree({"choice": None, "answer_confidence": 0.1}),
                               confidence_threshold=0.8, fallback_index=1).select(tools, "anything")
 check("fallback/abstention can use configured tool", abstained.selections[0].index, 1)
 
@@ -893,12 +893,12 @@ print(f"PASS: {len(PASS)}")
 with patch("urllib.request.build_opener") as _m:
     _m.return_value.open.return_value = DummyHTTPResponse({"answers": []})
     for _what, _call in (
-        ("single", lambda: LayaSingleSelector(base_url="http://localhost:8000").select(
+        ("single", lambda: VeyaSingleSelector(base_url="http://localhost:8000").select(
             tools, "Query via remote server")),
-        ("multi", lambda: LayaMultiSelector(base_url="http://localhost:8000",
+        ("multi", lambda: VeyaMultiSelector(base_url="http://localhost:8000",
                                             probability_threshold=0.3).select(
             tools, "Compare both vector docs")),
-        ("router", lambda: LayaQueryRouter(
+        ("router", lambda: VeyaQueryRouter(
             query_engines=engines,
             descriptions={"vector": "Semantic search", "sql": "Relational SQL"},
             base_url="http://localhost:8000").route("Run a query")),
@@ -923,12 +923,12 @@ _LLAMA_NESTED = [
 ]
 for _body, _surface, _label in _LLAMA_NESTED:
     _surfaces = {
-        "single": lambda: LayaSingleSelector(base_url="http://localhost:8000").select(
+        "single": lambda: VeyaSingleSelector(base_url="http://localhost:8000").select(
             tools, "Query via remote server"),
-        "multi": lambda: LayaMultiSelector(base_url="http://localhost:8000",
+        "multi": lambda: VeyaMultiSelector(base_url="http://localhost:8000",
                                            probability_threshold=0.3).select(
             tools, "Compare both vector docs"),
-        "router": lambda: LayaQueryRouter(
+        "router": lambda: VeyaQueryRouter(
             query_engines=engines,
             descriptions={"vector": "Semantic search", "sql": "Relational SQL"},
             base_url="http://localhost:8000").route("Run a query"),
@@ -946,7 +946,7 @@ for _body, _surface, _label in _LLAMA_NESTED:
 # A `choice` may name an index the caller's list does not have. `chosen_key` is remote JSON and
 # `choices` is the caller's, and `choice_N` was parsed straight into `choices[N]`: `choice_9` raised
 # a bare IndexError out of the selection and `choice_-1` wrapped to the LAST tool -- a selection no
-# caller asked for and nothing in the decision names. `LayaQueryRouter.route` in this module already
+# caller asked for and nothing in the decision names. `VeyaQueryRouter.route` in this module already
 # treats a name outside its engines as no match, so the single selector now checks the range too.
 _LLAMA_CHOICE_INDEX = ["choice_4", "choice_9", "choice_-1", "choice_-99"]
 for _choice in _LLAMA_CHOICE_INDEX:
@@ -954,7 +954,7 @@ for _choice in _LLAMA_CHOICE_INDEX:
         _m.return_value.open.return_value = DummyHTTPResponse(
             {"answers": {"selector": {"choice": _choice, "answer_confidence": 0.95}}})
         try:
-            _r = LayaSingleSelector(base_url="http://localhost:8000").select(
+            _r = VeyaSingleSelector(base_url="http://localhost:8000").select(
                 tools, "Query via remote server")
             check_true("choice-index/%s/select raises" % _choice, False,
                        "no error raised (selected index %r)" % (_r.selections[0].index,))
@@ -971,7 +971,7 @@ with patch("urllib.request.build_opener") as _m:
     _m.return_value.open.return_value = DummyHTTPResponse(
         {"answers": {"selector": {"choice": "choice_3", "answer_confidence": 0.95}}})
     check("choice-index/last choice still selects",
-          LayaSingleSelector(base_url="http://localhost:8000").select(
+          VeyaSingleSelector(base_url="http://localhost:8000").select(
               tools, "Query via remote server").selections[0].index, 3)
 
 print(f"FAIL: {len(FAIL)}")

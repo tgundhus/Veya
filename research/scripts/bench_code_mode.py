@@ -20,9 +20,9 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya import DecisionCache, Router  # noqa: E402
-from laya.mcp import tools  # noqa: E402
-from laya.mcp.code_mode import CodeModeRunner, code_mode_description  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
+from veya.mcp import tools  # noqa: E402
+from veya.mcp.code_mode import CodeModeRunner, code_mode_description  # noqa: E402
 
 
 QUESTIONS = {"urgent": {"type": "noul", "instructions": "Does this request need immediate attention?"}}
@@ -56,7 +56,7 @@ def sources():
 
 
 def catalog_sizes():
-    from laya.mcp.server import create_code_server, server
+    from veya.mcp.server import create_code_server, server
     runner = CodeModeRunner()
     try:
         code_server = create_code_server(runner)
@@ -147,7 +147,7 @@ def main():
         parser.error("use an existing local model.safetensors checkpoint, 1..64 requests and positive repeats")
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32")
     import torch
-    from laya import Agent
+    from veya import Agent
     torch.set_num_threads(4)
     torch.set_num_interop_threads(1)
     agent = Agent(str(path), device="cpu", backend="eager", performance_mode="default")

@@ -4,7 +4,7 @@ This is the *other* evidence surface of Step 4, and it is measurement-only on pu
 original issue names `massive_intent.en` at 20 options as the order-stability surface; the
 typed-decisions benchmark is 4-option `choice` and must not be reused for a 20-option claim.
 
-GuilhermeFusari already posted seed-0/1 numbers for this surface, produced by `laya.train` at
+GuilhermeFusari already posted seed-0/1 numbers for this surface, produced by `veya.train` at
 `8a6e132` (soft-CE, 4 epochs, effective batch 64, `max_len` 512 / `head_max_len` 256, shuffle vs
 no shuffle). The option-order code path has not changed semantically since then (only the
 `parallel` layout argument was threaded through, and `shuffle_options` still defaults to off), so
@@ -60,9 +60,9 @@ def permute(qdef: Dict[str, Any], rng: random.Random) -> Dict[str, Any]:
 
 def measure(checkpoint: str, n: int, n_opts: int, permutations: int, seed: int,
             device: str) -> Dict[str, Any]:
-    import laya
+    import veya
 
-    agent = laya.load(checkpoint, device=device)
+    agent = veya.load(checkpoint, device=device)
     cases, golds = build_cases(n, n_opts, seed)
     rng = random.Random(seed + 1)
     flips = compared = 0

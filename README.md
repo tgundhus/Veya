@@ -35,14 +35,19 @@ python -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 python -m pip install "veya[serve,mcp] @ git+https://github.com/tgundhus/Veya.git"
 ```
 
-Python 3.10–3.13. The distribution is `veya`; imports and commands remain `laya`
-for compatibility. The HTTP client distributions are `veya-client`, and the
-lightweight inference distribution is `veya-onnx`. Native SDK import names remain compatible.
-Install it separately from upstream `laya`, since both provide that import.
-When upgrading an existing environment, uninstall the former `laya-pro`,
-`laya-pro-client` or `laya-pro-onnx` distribution before installing its renamed
-replacement. Pip treats these as different projects even though their import
-paths overlap; uninstalling the old package afterward can remove the new files.
+Python 3.10–3.13. Use `from veya import Router` and the `veya`, `veya-serve`,
+`veya-mcp-server`, `veya-evals`, `veya-replay` and `veya-train` commands.
+The HTTP clients use `veya_client.VeyaClient` (Python) and `Veya` from `veya-client`
+(TypeScript). Local runtimes use `veya_onnx`, `veya-ts`, `com.convaiinnovations.veya`
+and `Veya.Onnx` / the `Veya` .NET namespace.
+
+Legacy `laya`, `laya_client`, `laya_onnx` Python imports and console commands remain
+aliases. `VEYA_*` environment variables take precedence over legacy `LAYA_*` names,
+including when the Veya variable is explicitly empty. Native Java and .NET consumers
+must update their package and namespace references. Keep a separate environment for
+upstream `laya`, which owns the legacy import name. When upgrading, uninstall the
+former `laya-pro`, `laya-pro-client` or `laya-pro-onnx` distribution before installing
+its renamed replacement; uninstalling overlapping packages afterward can remove files.
 Source installation is supported until a Veya registry release is published.
 For reproducible deployment, append a reviewed commit SHA to the Git URL.
 
@@ -55,11 +60,11 @@ download checkpoints beforehand and pass their directories to the Router.
 [Installation and platform notes](https://github.com/tgundhus/Veya/blob/main/docs/guide.md#installation).
 
 For an exported ONNX model, the separate `veya-onnx` distribution uses the
-`laya_onnx` import and runs without PyTorch or Transformers. Install from a checkout
+`veya_onnx` import and runs without PyTorch or Transformers. Install from a checkout
 with `python -m pip install ./runtime/onnx`; it has not been published to a registry.
 Optional HTTP and local MCP services are available with
 `python -m pip install "./runtime/onnx[serve,mcp]"`. Start them with
-`laya-onnx-serve` or `laya-onnx-mcp`; configure local checkpoint and exported graph
+`veya-onnx-serve` or `veya-onnx-mcp`; configure local checkpoint and exported graph
 pairs as described below. The full package remains the export toolchain and keeps
 its current default backend.
 [Lightweight ONNX setup](https://tgundhus.github.io/Veya/onnx-runtime/).
@@ -67,7 +72,7 @@ its current default backend.
 ## First decision
 
 ```python
-from laya import DecisionCache, Router, decision_margins
+from veya import DecisionCache, Router, decision_margins
 
 questions = {
     "department": {
@@ -132,10 +137,10 @@ wrong. [Cache behavior and retention](https://github.com/tgundhus/Veya/blob/main
 | Application | Interface |
 |---|---|
 | Python, in process | `Router`, `Agent`, `ONNXAgent`, typed schemas and prediction hooks |
-| JavaScript / TypeScript, HTTP | [HTTP client](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) for your own `laya-serve` |
-| JavaScript / TypeScript, in process | [ONNX SDK](https://github.com/tgundhus/Veya/blob/main/laya-ts/README.md) |
-| Java, in process | [Java SDK](https://github.com/tgundhus/Veya/blob/main/laya-java/README.md) |
-| .NET, in process | [.NET SDK](https://github.com/tgundhus/Veya/blob/main/laya-dotnet/README.md) |
+| JavaScript / TypeScript, HTTP | [HTTP client](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) for your own `veya-serve` |
+| JavaScript / TypeScript, in process | [ONNX SDK](https://github.com/tgundhus/Veya/blob/main/veya-ts/README.md) |
+| Java, in process | [Java SDK](https://github.com/tgundhus/Veya/blob/main/veya-java/README.md) |
+| .NET, in process | [.NET SDK](https://github.com/tgundhus/Veya/blob/main/veya-dotnet/README.md) |
 | Editor or agent tools | [MCP over stdio](https://github.com/tgundhus/Veya/blob/main/docs/cli-mcp.md), local inference or your own HTTP server |
 | Agent frameworks | [LangChain / LangGraph](https://github.com/tgundhus/Veya/blob/main/docs/langchain.md), [LlamaIndex](https://github.com/tgundhus/Veya/blob/main/docs/llamaindex.md), [CrewAI](https://github.com/tgundhus/Veya/blob/main/docs/crewai.md) |
 
@@ -143,26 +148,26 @@ The SDKs have different capabilities. Veya's persistent decision cache runs in t
 HTTP clients and MCP can use that engine's cache. Native SDKs do not implement the same
 persistence policy. [Capability table and examples](https://github.com/tgundhus/Veya/blob/main/docs/integration.md).
 
-Start a local HTTP server with `laya-serve`, then call `POST /v1/systemone` or
+Start a local HTTP server with `veya-serve`, then call `POST /v1/systemone` or
 `POST /v1/systemone/batch`. Set these variables in the server's environment for a
 persistent decision policy without expiry or capacity eviction:
 
 ```text
-LAYA_CACHE_PATH=decisions.sqlite
-LAYA_CACHE_TTL=none
-LAYA_CACHE_MAXSIZE=none
-LAYA_CACHE_FINGERPRINT=support-policy-v1
-LAYA_CACHE_REQUIRED=1
+VEYA_CACHE_PATH=decisions.sqlite
+VEYA_CACHE_TTL=none
+VEYA_CACHE_MAXSIZE=none
+VEYA_CACHE_FINGERPRINT=support-policy-v1
+VEYA_CACHE_REQUIRED=1
 ```
 
-The same cache variables apply to `laya-mcp-server`. Authentication, request bounds,
+The same cache variables apply to `veya-mcp-server`. Authentication, request bounds,
 concurrency and offline setup are covered in the [deployment guide](https://github.com/tgundhus/Veya/blob/main/docs/production.md).
 
 For retained answers without loading models after restart, prepare a
 [replay manifest and pin the SQLite store identity](https://github.com/tgundhus/Veya/blob/main/docs/replay.md).
 Approved HTTP hits can then use the [separate cache worker](https://github.com/tgundhus/Veya/blob/main/docs/cache-fast-path.md).
 To compose several operations in one local MCP call, install the `codemode` extra
-and start `laya-mcp-server --mode code`; see the
+and start `veya-mcp-server --mode code`; see the
 [Code Mode guide](https://github.com/tgundhus/Veya/blob/main/docs/mcp-code-mode.md) for its limits.
 Before changing a model, precision or batching policy, run
 [release qualification](https://github.com/tgundhus/Veya/blob/main/docs/release-qualification.md)
@@ -170,13 +175,20 @@ on reviewed deployment cases. The
 [routing contract](https://github.com/tgundhus/Veya/blob/main/docs/routing-parity.md)
 documents supported Python/TypeScript parity and migration costs.
 
-Use `Router(performance_mode=2)`, `laya --performance-mode 2`, or
-`LAYA_PERFORMANCE_MODE=2` in the engine's environment to choose a resource budget.
+Use `Router(performance_mode=2)`, `veya --performance-mode 2`, or
+`VEYA_PERFORMANCE_MODE=2` in the engine's environment to choose a resource budget.
 Explicit settings override profile values; `performance_mode="default"` ignores the environment
 for an instance. Modes keep the same model and precision. Higher modes are not necessarily
 faster on your hardware. [Mode budgets and measurements](https://github.com/tgundhus/Veya/blob/main/docs/performance-modes.md).
 
 ## Measurements
+
+The 7 November CPU refresh measured **172 ms** for a one-question ticket, **510 ms**
+for three questions, and **0.056 ms** for a repeated three-question memory-cache hit
+(two threads, eager fp32, real English checkpoint). All 17 typed answers and token
+counts matched the pre-rename code exactly. These are warm local calls on one Windows
+workstation; they do not establish accuracy or a speedup from renaming.
+[Current measurements, before/after and limits](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#current-cpu-refresh--7-november-2026).
 
 On a pinned real English CPU checkpoint, bounded loading reduced peak working set by
 764 MiB (28%), with unchanged steady memory and inference time. The standalone ONNX
@@ -189,7 +201,7 @@ inference was 571.5 ms; a SQLite repeat was 0.148 ms. All 12 answers agreed betw
 grouped batch execution. Workstation load was uncontrolled and this small check does not
 measure accuracy. [Current results and methods](https://github.com/tgundhus/Veya/blob/main/docs/reports/production-review.md).
 
-These archived results used published checkpoints on an Apple M4 Max in September 2026,
+These September 2026 measurements used published checkpoints on an Apple M4 Max in September 2026,
 against Laya 0.3.20/0.3.21. They describe those runs, not a guarantee for newer versions or
 another machine. [Method and raw results](https://github.com/tgundhus/Veya/blob/main/docs/reports/real-checkpoints-m4-max.md).
 
@@ -206,7 +218,7 @@ New requests are dominated by inference; cache speed depends on repeat frequency
 Earlier parity checks covered 841 requests in 11 languages. Precision changes can change
 decisions, so validate fp16, bf16 or int8 on your own data before adopting them.
 The [October review](https://github.com/tgundhus/Veya/blob/main/docs/reports/production-review.md) records current checks, fixes,
-measurements and verification limits separately from these archived results.
+measurements and verification limits separately from these September measurements.
 
 ## Limits and version policy
 
@@ -227,6 +239,6 @@ See [measured limits](https://github.com/tgundhus/Veya/blob/main/docs/limits.md)
 documentation builds. Changes should include a runnable regression check and measured evidence
 when they alter performance or numerical behavior.
 
-Laya was created by Nandakishor M and developed by Convai Innovations. Veya's additions
+Veya was created by Nandakishor M and developed by Convai Innovations. Veya's additions
 are maintained by Tobias Gundhus. The engine, checkpoints and fork are licensed under
 [Apache 2.0](https://github.com/tgundhus/Veya/blob/main/LICENSE). Veya is an independent fork, with no endorsement implied.

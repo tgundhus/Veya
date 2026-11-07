@@ -81,8 +81,8 @@ def child(args):
     import numpy as np
     import torch
     import transformers
-    from laya.agent import Agent
-    module = importlib.import_module("laya.agent")
+    from veya.agent import Agent
+    module = importlib.import_module("veya.agent")
     torch.manual_seed(29018)
     started = time.perf_counter()
     agent = Agent(str(args.model), device="cpu", backend="eager", performance_mode=args.mode)
@@ -197,7 +197,7 @@ def main():
                        "weights_sha256": weights_hash,
                        "config_sha256": hashlib.sha256((args.model / "rl_agent_config.json").read_bytes()).hexdigest()},
         "source_sha256": {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in (
-            "laya/agent.py", "laya/performance.py", "research/scripts/bench_performance_modes.py")},
+            "veya/agent.py", "veya/performance.py", "research/scripts/bench_performance_modes.py")},
         "questions": QUESTIONS, "cases": CASES, "configurations": []}
     env = dict(os.environ, HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", TOKENIZERS_PARALLELISM="false", USE_TF="0")
     for key in ("LAYA_PERFORMANCE_MODE", "LAYA_THREADS", "LAYA_CPU_AMP", "LAYA_CACHE", "LAYA_CACHE_PATH",

@@ -65,9 +65,9 @@ sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from bench_stages import EMAIL, TEN  # noqa: E402
-from laya.agent import Agent, _amp_context  # noqa: E402
-from laya.common import QTYPES, build_sequence, collate_items, encode_text, render_options  # noqa: E402
-from laya.common import _question_head  # noqa: E402
+from veya.agent import Agent, _amp_context  # noqa: E402
+from veya.common import QTYPES, build_sequence, collate_items, encode_text, render_options  # noqa: E402
+from veya.common import _question_head  # noqa: E402
 
 STATE_LENGTHS = (20, 100, 300, 800)
 QUESTION_COUNTS = (1, 3, 10)

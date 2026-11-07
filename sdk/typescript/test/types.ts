@@ -1,7 +1,7 @@
-import { Laya, defineQuestions, emailQuestions, triageQuestions, type Questions, type Answer,
+import { Veya, defineQuestions, emailQuestions, triageQuestions, type Questions, type Answer,
   type Usage, type LanguageDetection, type ChoiceAnswer, type MinConfidenceMap } from 'veya-client';
 
-const client = new Laya();
+const client = new Veya();
 client.predictBatch(['first', { message: 'second' }], { q: { type: 'noul', instructions: '?',
   labels: { false: 'Reject', true: 'Approve' } } }, { batchSize: 4, sortByLength: true });
 // @ts-expect-error The HTTP server requires a state; null is not a request.
@@ -95,7 +95,7 @@ client.predict('hello', questions, { minConfidence: { 'foo:2': 0.9 } });
 // A map assembled at run time is still accepted: Record<string, number> stays assignable.
 const dynamicThresholds: MinConfidenceMap = Object.fromEntries([['choice:2', 0.4]]);
 client.predict('hello', questions, { minConfidence: dynamicThresholds });
-new Laya({ model: 'english' });
+new Veya({ model: 'english' });
 // @ts-expect-error A score answer has no choice field.
 result.answers.priority.choice;
 const jevChoiceConfidence: number | undefined = result.answers.team.x_jev_confidence;

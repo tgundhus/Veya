@@ -2,7 +2,7 @@ import inspect
 import re
 import unittest
 import numpy as np
-from laya.shortlist import _cosine, predict_shortlist, shortlist_choice
+from veya.shortlist import _cosine, predict_shortlist, shortlist_choice
 
 class ShortlistCosineTests(unittest.TestCase):
     def test_cosine_identical_vectors(self):

@@ -12,7 +12,7 @@
 
 ```bash
 python tests/test_router.py
-ruff check laya/ --select=E9,F63,F7,F82,F401,F811 --line-length=120
+ruff check veya/ --select=E9,F63,F7,F82,F401,F811 --line-length=120
 ```
 
 ## Checklist

@@ -24,7 +24,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.common import answer_confidence, confidence_from_probs, ece_score  # noqa: E402
+from veya.common import answer_confidence, confidence_from_probs, ece_score  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -109,7 +109,7 @@ for probs, k in (([0.1, 0.9], 2), ([0.25] * 4, 4), ([0.7, 0.2, 0.1], 3)):
                close(confidence_from_probs(p, k), float(np.clip(1 - ent / math.log(k), 0.0, 1.0))))
 
 # --------------------------------------------------------------- min_confidence validation & abstention (#361)
-from laya.confidence import check_min_confidence, flag_low_confidence  # noqa: E402
+from veya.confidence import check_min_confidence, flag_low_confidence  # noqa: E402
 
 # check_min_confidence validates [0.0, 1.0] and rejects non-floats and bools
 for valid in (0.0, 0.5, 1.0, 0, 1, 0.85):
@@ -165,7 +165,7 @@ check("flag/zero preserves raw answers", reused[0]["answers"]["q_low"]["score"],
 # the payload it always returned, rather than growing a field every existing caller would then have
 # to read. The two cases are told apart by the presence of `abstention`, which is why the vocabulary
 # has no "not configured" member to read out of the field.
-from laya.confidence import (  # noqa: E402
+from veya.confidence import (  # noqa: E402
     GATE_ABSTAINED,
     GATE_PASSED,
     GATE_STATES,
@@ -316,9 +316,9 @@ check_true("stale/unusable conf clears stale low_conf", "low_confidence" not in 
 
 # --------------------------------------------------------------- the operator's three questions
 # End to end through a real call site, weight-free. `decide` forwards to any runner with a
-# `predict`, so this exercises `laya/structured.py`'s own gate call site rather than the helper
+# `predict`, so this exercises `veya/structured.py`'s own gate call site rather than the helper
 # in isolation -- the six call sites are where the state used to be skipped entirely.
-from laya.structured import decide  # noqa: E402
+from veya.structured import decide  # noqa: E402
 
 _GATE_Q = {"type": "choice", "instructions": "Pick one.",
            "criteria": {"a": "alpha", "b": "beta"}}
@@ -378,37 +378,37 @@ check("workflow/return_details carries the state",
       detailed.answers["low"]["abstention"], GATE_ABSTAINED)
 
 # --------------------------------------------------------------- exported
-import laya  # noqa: E402
+import veya  # noqa: E402
 
-check_true("export/answer_confidence is importable from laya", hasattr(laya, "answer_confidence"))
-check_true("export/answer_confidence is in __all__", "answer_confidence" in laya.__all__)
-check_true("export/answer_confidence is in dir()", "answer_confidence" in dir(laya))
-check_true("export/check_min_confidence is importable from laya", hasattr(laya, "check_min_confidence"))
-check_true("export/check_min_confidence is in __all__", "check_min_confidence" in laya.__all__)
-check_true("export/check_min_confidence is in dir()", "check_min_confidence" in dir(laya))
-check_true("export/flag_low_confidence is importable from laya", hasattr(laya, "flag_low_confidence"))
-check_true("export/flag_low_confidence is in __all__", "flag_low_confidence" in laya.__all__)
-check_true("export/flag_low_confidence is in dir()", "flag_low_confidence" in dir(laya))
-check_true("export/apply_confidence_gate is importable from laya", hasattr(laya, "apply_confidence_gate"))
-check_true("export/apply_confidence_gate is in __all__", "apply_confidence_gate" in laya.__all__)
-check_true("export/apply_confidence_gate is in dir()", "apply_confidence_gate" in dir(laya))
-check_true("export/GATE_STATES is importable from laya", hasattr(laya, "GATE_STATES"))
-check_true("export/GATE_STATES is in __all__", "GATE_STATES" in laya.__all__)
-check_true("export/GATE_STATES is in dir()", "GATE_STATES" in dir(laya))
+check_true("export/answer_confidence is importable from veya", hasattr(veya, "answer_confidence"))
+check_true("export/answer_confidence is in __all__", "answer_confidence" in veya.__all__)
+check_true("export/answer_confidence is in dir()", "answer_confidence" in dir(veya))
+check_true("export/check_min_confidence is importable from veya", hasattr(veya, "check_min_confidence"))
+check_true("export/check_min_confidence is in __all__", "check_min_confidence" in veya.__all__)
+check_true("export/check_min_confidence is in dir()", "check_min_confidence" in dir(veya))
+check_true("export/flag_low_confidence is importable from veya", hasattr(veya, "flag_low_confidence"))
+check_true("export/flag_low_confidence is in __all__", "flag_low_confidence" in veya.__all__)
+check_true("export/flag_low_confidence is in dir()", "flag_low_confidence" in dir(veya))
+check_true("export/apply_confidence_gate is importable from veya", hasattr(veya, "apply_confidence_gate"))
+check_true("export/apply_confidence_gate is in __all__", "apply_confidence_gate" in veya.__all__)
+check_true("export/apply_confidence_gate is in dir()", "apply_confidence_gate" in dir(veya))
+check_true("export/GATE_STATES is importable from veya", hasattr(veya, "GATE_STATES"))
+check_true("export/GATE_STATES is in __all__", "GATE_STATES" in veya.__all__)
+check_true("export/GATE_STATES is in dir()", "GATE_STATES" in dir(veya))
 # The three values are reached through GATE_STATES rather than exported one by one: iterating the
-# vocabulary is the whole use, and every `laya.__all__` name has to earn a documented entry
+# vocabulary is the whole use, and every `veya.__all__` name has to earn a documented entry
 # (`tests/test_packaging.py` enforces that).
-import laya.confidence as _confidence  # noqa: E402
+import veya.confidence as _confidence  # noqa: E402
 
 check("export/GATE_STATES is the vocabulary a caller iterates", list(GATE_STATES),
       [_confidence.GATE_PASSED, _confidence.GATE_ABSTAINED, _confidence.GATE_UNEVALUATED])
-check("export/laya re-exports the same tuple", laya.GATE_STATES, _confidence.GATE_STATES)
+check("export/veya re-exports the same tuple", veya.GATE_STATES, _confidence.GATE_STATES)
 
 # --------------------------------- the two doc pages must attribute confidence per question type
 # `docs/structured.md` and `docs/questions-and-answers.md` each opened their confidence section with
 # "`confidence` is normalized entropy". Neither agent writes that for every type:
-# `Agent._decode_answers` (`laya/agent.py:1367-1404`) and `OnnxAgent._decode_answers`
-# (`laya/onnx_agent.py:682-727`) put `confidence_from_probs(p, k)` = `1 - H(p) / log(k)` in the
+# `Agent._decode_answers` (`veya/agent.py:1367-1404`) and `OnnxAgent._decode_answers`
+# (`veya/onnx_agent.py:682-727`) put `confidence_from_probs(p, k)` = `1 - H(p) / log(k)` in the
 # `choice` and `score` answers and `max(p_true, 1 - p_true)` in the `noul` one. Each page printed a
 # `noul` in the very block its sentence introduces, so the sentence was falsifiable from the page
 # alone: the Q&A page's sample answer is `{"type": "noul", "noul": 0.8727, "confidence": 0.8727}`,
@@ -421,13 +421,13 @@ check("export/laya re-exports the same tuple", laya.GATE_STATES, _confidence.GAT
 import ast as _ast  # noqa: E402  (`ast` itself is imported again further down)
 import re as _re  # noqa: E402  (same reason: this section must not rebind `re`)
 
-from laya.structured import questions_from_json_schema  # noqa: E402
+from veya.structured import questions_from_json_schema  # noqa: E402
 
 DOC_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOC_STRUCTURED = os.path.join(DOC_ROOT, "docs", "structured.md")
 DOC_QA = os.path.join(DOC_ROOT, "docs", "questions-and-answers.md")
-DOC_AGENT_PY = os.path.join(DOC_ROOT, "laya", "agent.py")
-DOC_ONNX_PY = os.path.join(DOC_ROOT, "laya", "onnx_agent.py")
+DOC_AGENT_PY = os.path.join(DOC_ROOT, "veya", "agent.py")
+DOC_ONNX_PY = os.path.join(DOC_ROOT, "veya", "onnx_agent.py")
 
 ATTRIBUTED = {"entropy": ["choice", "score"], "maxp": ["noul"]}
 
@@ -723,7 +723,7 @@ for _fn in (test_no_page_calls_confidence_one_formula,
         PASS.append("doc-pages/%s" % _fn.__name__)
 
 # ------------------------------------------------- a preset page's conclusions follow their numbers
-# `examples/28_presets_moderation.py` prints a summary over `laya.moderation_questions()` answers,
+# `examples/28_presets_moderation.py` prints a summary over `veya.moderation_questions()` answers,
 # and the version this section replaces hardcoded three of its conclusions:
 #   * `benign -> every flag 0.000, severity 0.24 / 3` printed `toxic` alone, while the same page's
 #     table showed the benign post reading 0.066 on `spam`;
@@ -798,7 +798,7 @@ def _a(toxic, harassment, threat, spam, severity):
 
 def test_preset_is_four_flags_and_one_rubric():
     """The docstring and the example's banner both claim this shape; nothing asserted it."""
-    mq = laya.moderation_questions()
+    mq = veya.moderation_questions()
     assert list(mq) == ["toxic", "harassment", "threat", "spam", "severity"], list(mq)
     assert {k: q["type"] for k, q in mq.items()} == {
         "toxic": "noul", "harassment": "noul", "threat": "noul", "spam": "noul",
@@ -841,7 +841,7 @@ def _fn_node(name):
 
 def test_flag_line_prints_every_flag():
     ns = _helpers28()
-    flags = ns["noul_flags"](laya.moderation_questions())
+    flags = ns["noul_flags"](veya.moderation_questions())
     assert flags == ["toxic", "harassment", "threat", "spam"], flags
     line = ns["flag_line"](_a(0.0, 0.0, 0.0, 0.066, 0.24), flags)
     assert "0.066" in line, "the non-zero flag vanished: %r" % line
@@ -852,7 +852,7 @@ def test_flag_line_prints_every_flag():
 def test_past_half_uses_describes_cut():
     """`_common.describe` labels a noul true at `> 0.5`; the page must agree with it exactly."""
     ns = _helpers28()
-    flags = ns["noul_flags"](laya.moderation_questions())
+    flags = ns["noul_flags"](veya.moderation_questions())
     assert ns["past_half"](_a(0.0, 0.0, 0.0, 0.066, 0.24), flags) == []
     assert ns["past_half"](_a(0.587, 0.662, 0.142, 0.049, 1.34), flags) == ["toxic", "harassment"]
     assert ns["past_half"](_a(0.5, 0.5, 0.5, 0.5, 1.0), flags) == [], "0.5 reads false, not true"
@@ -861,7 +861,7 @@ def test_past_half_uses_describes_cut():
 def test_gaps_names_the_widest_separators():
     """The old page said harassment and threat; on these numbers it is harassment and spam."""
     ns = _helpers28()
-    flags = ns["noul_flags"](laya.moderation_questions())
+    flags = ns["noul_flags"](veya.moderation_questions())
     tgt, gen = _a(0.587, 0.662, 0.142, 0.049, 1.34), _a(0.584, 0.144, 0.088, 0.242, 1.05)
     g = ns["gaps"](tgt, gen, flags)
     assert [k for k, _ in g] == ["harassment", "spam", "threat", "toxic"], g
@@ -917,7 +917,7 @@ def test_page_qualifies_the_banner_and_derives_its_numbers():
 # `examples/03_reading_the_result.py` is the page a reader comes back to "when writing your own
 # glue code", and its field tour closed with "`confidence` is 1 minus normalised entropy -- a scale
 # that moves with the option count on the same answer". `Agent._decode_answers` runs two formulas
-# and picks by question type (`laya/agent.py:1366-1402`):
+# and picks by question type (`veya/agent.py:1366-1402`):
 #   * `choice` and `score`  ->  `round(confidence_from_probs(p, k), 4)` = `1 - H(p) / log(k)`
 #   * `noul`                ->  `round(max(float(p[1]), 1.0 - float(p[1])), 4)`
 # The page calls all three types in one `predict()`, so no single sentence covers `confidence` --
@@ -928,8 +928,8 @@ def test_page_qualifies_the_banner_and_derives_its_numbers():
 # that still carry the blanket sentence (`docs/structured.md`, `docs/questions-and-answers.md`) are
 # left for a follow-up.
 EXAMPLE_03 = os.path.join(ROOT, "examples", "03_reading_the_result.py")
-AGENT_PY = os.path.join(ROOT, "laya", "agent.py")
-ONNX_PY = os.path.join(ROOT, "laya", "onnx_agent.py")
+AGENT_PY = os.path.join(ROOT, "veya", "agent.py")
+ONNX_PY = os.path.join(ROOT, "veya", "onnx_agent.py")
 
 # The wording this section bans, as it ships on main. Every ban below is witnessed against it, and
 # every positive rule below is witnessed by showing that it does not satisfy the rule.
@@ -1040,7 +1040,7 @@ def test_page_names_the_formulas_the_agents_build():
 
 
 def test_page_cites_the_numbers_the_repo_functions_produce():
-    """The earned-numbers arm: the pairs the page prints must be what `laya.common` returns."""
+    """The earned-numbers arm: the pairs the page prints must be what `veya.common` returns."""
     text = _printed_text(EXAMPLE_03)
     for p_true in (0.60, 0.90):
         p = np.array([1.0 - p_true, p_true])
@@ -1129,7 +1129,7 @@ for _fn in (test_preset_is_four_flags_and_one_rubric, test_helpers_are_live_and_
 
 # --------------------------------------------- example 40 must not call a raw softmax calibrated
 # `examples/40_caching_and_monitoring.py` gates 15 tickets on `answer_confidence`. On main it calls
-# that field "the calibrated probability of the answer Laya reports" in both its banner and its
+# that field "the calibrated probability of the answer Veya reports" in both its banner and its
 # closing paragraph, and its `bucket()` docstring reads "application policy over a calibrated
 # number". `answer_confidence` is max(p) -- the quantity temperature scaling fits and ECE measures
 # -- but the README's own Calibration section says that reading holds *only* after temperatures are
@@ -1141,7 +1141,7 @@ for _fn in (test_preset_is_four_flags_and_one_rubric, test_helpers_are_live_and_
 # No weights are loaded here: the four helpers are pulled from the example's AST and exec'd against
 # a fabricated agent, and `scale_for`'s lookup is checked against core's own `temp_bucket`, so the
 # gate drives the code the page runs instead of re-reading its prose.
-from laya.common import QTYPES as _QTYPES40, temp_bucket as _temp_bucket  # noqa: E402
+from veya.common import QTYPES as _QTYPES40, temp_bucket as _temp_bucket  # noqa: E402
 
 EXAMPLE_40 = os.path.join(ROOT, "examples", "40_caching_and_monitoring.py")
 HELPERS_40 = ("option_count", "scale_for", "clamped_buckets", "entropy_confidence")
@@ -1154,7 +1154,7 @@ CORE_GLOBALS_40 = {"temp_bucket", "QTYPES", "math"}
 OLD_PAGE_40 = '''
     the triage preset and gates on `answer_confidence`, the calibrated probability of the
     """Our thresholds, not the model's: application policy over a calibrated number."""
-   The monitor gates on `answer_confidence`: the calibrated probability of the answer Laya
+   The monitor gates on `answer_confidence`: the calibrated probability of the answer Veya
    distribution has H/log(k) = %.2f, so `confidence` is %.2f while
    """ % (entropy, 1 - entropy, vague["intent"]["answer_confidence"]))
 '''
@@ -1248,7 +1248,7 @@ def test_scale_for_replays_core_lookup():
 
 def test_option_count_matches_the_shipped_preset():
     ns = _helpers40()
-    counts = {qid: ns["option_count"](q) for qid, q in laya.triage_questions().items()}
+    counts = {qid: ns["option_count"](q) for qid, q in veya.triage_questions().items()}
     assert counts == {"intent": 6, "is_urgent": 2, "frustration": 4,
                       "refund_requested": 2, "churn_risk": 2}, counts
 
@@ -1346,8 +1346,8 @@ def _gate_gate_comment(rel_path):
     return ""
 
 
-_agent_comment = _gate_gate_comment(os.path.join("laya", "agent.py"))
-_onnx_comment = _gate_gate_comment(os.path.join("laya", "onnx_agent.py"))
+_agent_comment = _gate_gate_comment(os.path.join("veya", "agent.py"))
+_onnx_comment = _gate_gate_comment(os.path.join("veya", "onnx_agent.py"))
 
 for _label, _comment in (("agent.py", _agent_comment), ("onnx_agent.py", _onnx_comment)):
     check_true("gate/comment/%s exists" % _label, len(_comment) > 0, "no comment found")
@@ -1373,30 +1373,30 @@ check("gate/live None adds no abstention key", "abstention" in _witness["answers
 
 # --------------------------------------------- example 18 must not call the threshold a measurement
 # `examples/18_confidence_gating.py` is the intro-level gating pattern: it picks a 0.85 cutoff on
-# `answer_confidence` and acts on it. On main it calls the field "the calibrated probability Laya
-# puts on the answer it reports" and its module docstring says it "branches on Laya's calibrated
+# `answer_confidence` and acts on it. On main it calls the field "the calibrated probability Veya
+# puts on the answer it reports" and its module docstring says it "branches on Veya's calibrated
 # confidence". The README's Calibration section (line 1586) says the opposite about the shipped
-# state: mean ECE on `laya` is 0.466 as shipped, dropping to 0.081 only after refitting one
+# state: mean ECE on `veya` is 0.466 as shipped, dropping to 0.081 only after refitting one
 # temperature per (question type, option-count) bucket on held-out data, and both shipped
 # checkpoints are over-confident. `answer_confidence` is the field temperature scaling fits and
 # the abstention gate reads -- but "calibrated" is a property a fit earns, not a property of the
 # field, and the loader emits `RuntimeWarning: ... Treat confidence from the affected entries as
 # uncalibrated.` on this very checkpoint. The page now reads back the temperature it actually
 # applies to each of its two questions and states the calibration claim as conditional.
-from laya.common import QTYPES as _QTYPES18, temp_bucket as _temp_bucket18  # noqa: E402
+from veya.common import QTYPES as _QTYPES18, temp_bucket as _temp_bucket18  # noqa: E402
 
 EXAMPLE_18 = os.path.join(ROOT, "examples", "18_confidence_gating.py")
 HELPERS_18 = ("option_count", "scale_for")
 CORE_GLOBALS_18 = {"temp_bucket", "QTYPES", "math"}
 
 OLD_PAGE_18 = '''
-Answers a batch of support emails and branches on Laya\'s calibrated confidence: act
+Answers a batch of support emails and branches on Veya\'s calibrated confidence: act
     The production pattern from the README. Gate on `answer_confidence`: the calibrated
-    probability Laya puts on the answer it reports, defined the same way on every question
+    probability Veya puts on the answer it reports, defined the same way on every question
 '''
 
 UNQUALIFIED_CALIBRATION_18 = re.compile(
-    r"the\s+calibrated\s+probability|Laya['’]s\s+calibrated\s+confidence", re.I)
+    r"the\s+calibrated\s+probability|Veya['’]s\s+calibrated\s+confidence", re.I)
 DERIVES_SCALING_18 = re.compile(r"temp_bucket\(")
 NAMES_CONDITION_18 = re.compile(r"over-confident", re.I)
 HARDCODED_BUCKET_18 = re.compile(r"[\"'](choice|score|noul):[0-9]")
@@ -1517,7 +1517,7 @@ for _fn in (test_page18_helpers_are_live_and_defer_to_core,
 # `examples/30_custom_schema_design.py` teaches the `score` answer type on the page. Main's
 # version asserted -- in prose, with nothing to check it against -- that "`confidence` on a
 # score is normalised entropy, so a wide-but-ordered distribution looks unconfident". That is
-# the inverse of the repo's own definition: `laya.common.confidence_from_probs` returns
+# the inverse of the repo's own definition: `veya.common.confidence_from_probs` returns
 # `1 - H(p) / log(k)`, examples 18/28/40 all describe it as "1 minus normalised entropy", and
 # the sentence was self-contradictory in place -- if confidence were the entropy itself, a wide
 # distribution would read as HIGH confidence, not "unconfident".
@@ -1651,20 +1651,20 @@ for _fn in (test_page30_helpers_are_live_and_pure,
 
 # -------------------------------- evals' --min-confidence wording must match the gate's effect
 #
-# `laya/evals_cli.py`, `laya/evals.py`, `docs/evals.md`, `tests/test_evals.py` and
+# `veya/evals_cli.py`, `veya/evals.py`, `docs/evals.md`, `tests/test_evals.py` and
 # `tests/test_evals_api.py` each describe the abstention gate's role in a scored run. Their
 # previous wording claimed the threshold changes what scores: "answers below it come back
 # abstained", "an abstention overwrites a low-confidence choice", "the run scores the policy
 # at that threshold, not the raw argmax", "a `precision@coverage` figure for a policy that
 # never ran". But `apply_confidence_gate` in this module writes `low_confidence` and
 # `abstention` state fields and leaves `answer["choice"]/["noul"]/["score"]` untouched, and
-# every `Evaluator.score` and `_correct` in `laya/evals.py` reads only those value keys. So the
+# every `Evaluator.score` and `_correct` in `veya/evals.py` reads only those value keys. So the
 # metrics -- accuracy, ece, brier, aurc, selective_accuracy@NN -- are identical at every
 # threshold; what changes is `report.config["timing"]["min_confidence"]` and `min_confidence_sent`,
 # which the wording below must describe as claims about the run, not claims about the answers.
 
-_EVALS_CLI_PATH = os.path.join(ROOT, "laya", "evals_cli.py")
-_EVALS_PY_PATH = os.path.join(ROOT, "laya", "evals.py")
+_EVALS_CLI_PATH = os.path.join(ROOT, "veya", "evals_cli.py")
+_EVALS_PY_PATH = os.path.join(ROOT, "veya", "evals.py")
 _EVALS_MD_PATH = os.path.join(ROOT, "docs", "evals.md")
 _TEST_EVALS_PATH = os.path.join(ROOT, "tests", "test_evals.py")
 _TEST_EVALS_API_PATH = os.path.join(ROOT, "tests", "test_evals_api.py")
@@ -1763,7 +1763,7 @@ _OLD_MD2 = ("Silently dropping a scoring control is the class of lie this harnes
             "prevent: the report would publish a `precision@coverage` figure for a policy "
             "that never ran.")
 _OLD_T1 = ("That is a scoring control: an answer below the threshold is not the same decision "
-           "as one above. A `laya-evals run` that could not pass it through had no way to "
+           "as one above. A `veya-evals run` that could not pass it through had no way to "
            "measure `precision@coverage` at any threshold")
 _OLD_T2 = ("Silently dropping a scoring control would report `precision@coverage` for a "
            "policy that never ran.")
@@ -1802,7 +1802,7 @@ def test_abstention_wording_names_the_state_fields():
     docstring above it still names the field.
     """
     help_text = _cli_help_of(_EVALS_CLI_PATH, "--min-confidence")
-    assert help_text, "no `help=` string on the --min-confidence argument in laya/evals_cli.py"
+    assert help_text, "no `help=` string on the --min-confidence argument in veya/evals_cli.py"
     assert _SAYS_LOW_CONFIDENCE.search(help_text), \
         "evals_cli's --min-confidence help does not name the `low_confidence` field"
     assert _SAYS_ABSTENTION_FIELD.search(help_text), \
@@ -1810,11 +1810,11 @@ def test_abstention_wording_names_the_state_fields():
 
     for func_name in ("_takes_min_confidence", "evaluate"):
         doc = _docstring_of(_EVALS_PY_PATH, func_name)
-        assert doc, "no docstring on laya/evals.py::%s" % func_name
+        assert doc, "no docstring on veya/evals.py::%s" % func_name
         assert _SAYS_LOW_CONFIDENCE.search(doc), \
-            "laya/evals.py::%s docstring does not name the `low_confidence` field" % func_name
+            "veya/evals.py::%s docstring does not name the `low_confidence` field" % func_name
         assert _SAYS_ABSTENTION_FIELD.search(doc), \
-            "laya/evals.py::%s docstring does not name `abstention: \"abstained\"`" % func_name
+            "veya/evals.py::%s docstring does not name `abstention: \"abstained\"`" % func_name
 
     md = _read_text(_EVALS_MD_PATH)
     assert _SAYS_LOW_CONFIDENCE.search(md), \
@@ -1870,7 +1870,7 @@ for _fn in (test_abstention_wording_bans_have_teeth,
 # ------------------------------------------ example 26's banner must count the primitives triage_questions() returns
 # `examples/26_presets_triage.py` opened with "`triage_questions()` is a ready-made schema for
 # inbound support: five questions ... a multi-way choice, two yes/no probabilities, and an ordinal
-# score". `laya.triage_questions()` ships three `noul` fields -- `is_urgent`, `refund_requested`,
+# score". `veya.triage_questions()` ships three `noul` fields -- `is_urgent`, `refund_requested`,
 # `churn_risk` -- plus the choice and the score, so the banner's own arithmetic read 1 + 2 + 1 = 4
 # against its stated "five questions", and the example's own print block already prints all three
 # `noul` values two paragraphs later. A reader counting primitives against the schema could not
@@ -1896,7 +1896,7 @@ def _src26():
 
 
 def _triage_type_counts():
-    from laya.presets import triage_questions
+    from veya.presets import triage_questions
     q = triage_questions()
     by_type = {}
     for spec in q.values():
@@ -1962,9 +1962,9 @@ for _fn in (test_triage_preset_is_one_choice_three_noul_one_score,
         PASS.append("page-26/%s" % _fn.__name__)
 
 # ------------------------------------------- tl_kernels' docstring must name the caller's real padding policy
-# `laya/tl_kernels.py`'s module docstring said "M must be a multiple of 16 (the caller pads);
+# `veya/tl_kernels.py`'s module docstring said "M must be a multiple of 16 (the caller pads);
 # out-of-bounds rows are predicated by TileLang". The caller pads two dimensions, not one:
-# `laya/backends/base.py::bucket_rows` pads the batch dim to the next power of two (1, 2, 4, 8,
+# `veya/backends/base.py::bucket_rows` pads the batch dim to the next power of two (1, 2, 4, 8,
 # 16, 32, ...) and `bucket_tokens` pads the sequence dim to a 16-token bucket up to
 # `DYNAMIC_MAX_L` and a 64-token bucket beyond. M is the flattened `rows * tokens`, so the
 # multiple-of-16 came from the token dim, never from the row dim. A reader who took the
@@ -1972,7 +1972,7 @@ for _fn in (test_triage_preset_is_one_choice_three_noul_one_score,
 # every batch of 1, 2, 4, or 8 questions -- and the shipped `pad_batch` tests already pin those
 # shapes: `tests/test_backends.py:86` "pad_batch/one row stays one row" is (1, 16), and
 # `:89` "pad_batch/five rows pad to eight" is (8, 16).
-TL_KERNELS = os.path.join(ROOT, "laya", "tl_kernels.py")
+TL_KERNELS = os.path.join(ROOT, "veya", "tl_kernels.py")
 OLD_TL_DOCSTRING = (
     "GPU kernels take 16-bit activations (bf16 by default, fp16 with dtype=\"float16\"), accumulate in fp32.  Row count M is a runtime\n"
     "symbol so one compiled kernel serves every batch/sequence bucket; M must be a\n"
@@ -1989,7 +1989,7 @@ _NAMED_BUCKET_TOKENS = re.compile(r"\bbucket_tokens\b")
 
 
 def _tl_docstring():
-    """Return `laya/tl_kernels.py`'s module docstring via `ast`, so the gate reads what a
+    """Return `veya/tl_kernels.py`'s module docstring via `ast`, so the gate reads what a
     reader reads -- not whatever happens to appear in a comment."""
     with open(TL_KERNELS, encoding="utf-8") as fh:
         src = fh.read()
@@ -2003,7 +2003,7 @@ def test_tl_kernels_drops_the_wrong_row_claim():
     doc = _tl_docstring()
     assert doc, "the tl_kernels module docstring was removed -- the gate has nothing to read"
     assert not _BAN_ROW_MULT_16.search(doc), (
-        "`laya/tl_kernels.py` again says M must be a multiple of 16 because the caller pads; "
+        "`veya/tl_kernels.py` again says M must be a multiple of 16 because the caller pads; "
         "the caller pads rows to a power of two (1, 2, 4, 8, ...). A reader who trusts the "
         "claim asserts `M % 16 == 0` at the call site and breaks every small batch.")
     # The second ban catches the mis-attribution (claiming the 16-multiple comes from rows).
@@ -2031,7 +2031,7 @@ def test_bucket_rows_stays_a_power_of_two_below_16():
     # The witness: rows below 16 really do stay at 1, 2, 4, 8, so the pre-fix claim
     # ("M must be a multiple of 16 (the caller pads)") was false for them. If `bucket_rows`
     # ever starts rounding to 16, the docstring fix needs review and this test says so.
-    from laya.backends.base import bucket_rows
+    from veya.backends.base import bucket_rows
     for n, want in ((1, 1), (2, 2), (3, 4), (4, 4), (5, 8), (7, 8), (8, 8), (9, 16),
                     (15, 16), (17, 32), (24, 32), (33, 64)):
         got = bucket_rows(n)
@@ -2061,9 +2061,9 @@ for _fn in (test_tl_kernels_drops_the_wrong_row_claim,
         PASS.append("tl-kernels/%s" % _fn.__name__)
 
 # --------------------------------------- DecisionResult's docstring must split confidence by question type
-# `laya/structured.py`'s `DecisionResult` closed with "confidence keeps the **normalized-entropy
+# `veya/structured.py`'s `DecisionResult` closed with "confidence keeps the **normalized-entropy
 # value** it has always had, because that is a different quantity on a scale that depends on the
-# label count". `Agent._decode_answers` (`laya/agent.py:1349-1402`) uses two different formulas:
+# label count". `Agent._decode_answers` (`veya/agent.py:1349-1402`) uses two different formulas:
 #   * `choice` and `score`  ->  `confidence_from_probs(p, k)` = `1 - H(p) / log(k)`
 #   * `noul`                ->  `max(p_true, 1 - p_true)`  (its own comment: "identical here:
 #                               over two options `max(p_true, 1 - p_true)` is `max(p)`")
@@ -2073,7 +2073,7 @@ for _fn in (test_tl_kernels_drops_the_wrong_row_claim,
 # `DecisionResult.confidence` is per-type -- the docstring's blanket "normalized-entropy"
 # claim is false for every boolean field a caller projects. Same defect class as examples 18/40
 # (#972, #973) but in the public docstring rather than in an example banner.
-STRUCTURED = os.path.join(ROOT, "laya", "structured.py")
+STRUCTURED = os.path.join(ROOT, "veya", "structured.py")
 OLD_DECISIONRESULT_DOC = """The detailed result of `decide(..., return_details=True)`.
 
     `confidence` keeps the normalized-entropy value it has always had, because that is a
@@ -2090,7 +2090,7 @@ _NAMED_NOT_ENTROPY = re.compile(r"not an\s+entropy", re.I)
 
 def _decisionresult_doc():
     """Return the `DecisionResult` class docstring via `ast`, so the gate reads what a caller
-    reads at `help(laya.structured.DecisionResult)` time."""
+    reads at `help(veya.structured.DecisionResult)` time."""
     with open(STRUCTURED, encoding="utf-8") as fh:
         src = fh.read()
     for node in ast.walk(ast.parse(src)):
@@ -2105,7 +2105,7 @@ def test_decisionresult_drops_the_uniform_entropy_claim():
     doc = _decisionresult_doc()
     assert doc, "the DecisionResult class docstring was removed -- the gate has nothing to read"
     assert not _BAN_ENTROPY_UNIFORM.search(doc), (
-        "`laya/structured.py`'s `DecisionResult` again claims `confidence` is uniformly the "
+        "`veya/structured.py`'s `DecisionResult` again claims `confidence` is uniformly the "
         "normalized entropy. `noul` fields carry `max(p_true, 1 - p_true)`, a probability, "
         "which is not an entropy and does not scale with the label count.")
 
@@ -2158,13 +2158,13 @@ for _fn in (test_decisionresult_drops_the_uniform_entropy_claim,
     else:
         PASS.append("structured-doc/%s" % _fn.__name__)
 
-# --------------------------------------- `docs/questions-and-answers.md` must count what `laya` exports
+# --------------------------------------- `docs/questions-and-answers.md` must count what `veya` exports
 # The Presets section opens with "Three ready-made question sets" and its example imports three
-# names, but `laya/__init__.py` re-exports five `*_questions` helpers -- `triage_questions`,
+# names, but `veya/__init__.py` re-exports five `*_questions` helpers -- `triage_questions`,
 # `email_questions`, `guard_questions`, `moderation_questions`, `router_questions` -- and every one
-# is in `laya.__all__`. A caller who reads "three" and picks from the shipped list misses two of
+# is in `veya.__all__`. A caller who reads "three" and picks from the shipped list misses two of
 # the five; the doc drifts silently as presets get added because nothing ties the number to the
-# exports. This gate reads the actual `laya.__all__` inventory so any future preset -- e.g. the
+# exports. This gate reads the actual `veya.__all__` inventory so any future preset -- e.g. the
 # Swedish sets on #729 -- fails the doc until the doc is updated alongside the export.
 DOC_QA = os.path.join(ROOT, "docs", "questions-and-answers.md")
 OLD_PRESET_INTRO = "Three ready-made question sets, so the common cases do not need hand-written criteria:"
@@ -2173,13 +2173,13 @@ _NUMBER_WORDS = {1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five",
 
 
 def _preset_exports():
-    """The names `laya` publicly exports that end in `_questions`.
+    """The names `veya` publicly exports that end in `_questions`.
 
-    Read via `laya.__all__`, not `dir(laya)` -- a helper that exists but is not in the export
+    Read via `veya.__all__`, not `dir(veya)` -- a helper that exists but is not in the export
     tuple is an internal name and does not need a doc mention.
     """
-    import laya
-    return sorted(n for n in laya.__all__ if n.endswith("_questions"))
+    import veya
+    return sorted(n for n in veya.__all__ if n.endswith("_questions"))
 
 
 def _doc_preset_section():
@@ -2208,7 +2208,7 @@ def test_presets_page_drops_the_three_set_claim():
     actual = len(_preset_exports())
     expected_word = _NUMBER_WORDS.get(actual)
     assert word == expected_word, (
-        "docs/questions-and-answers.md's Presets section says %r but `laya.__all__` exports "
+        "docs/questions-and-answers.md's Presets section says %r but `veya.__all__` exports "
         "%d `*_questions` helpers (%s). Update the doc's number word to %r (or, if it has "
         "grown past the mapped words, extend `_NUMBER_WORDS`)." %
         (word, actual, ", ".join(_preset_exports()), expected_word))
@@ -2217,7 +2217,7 @@ def test_presets_page_drops_the_three_set_claim():
 def test_presets_page_names_every_exported_preset():
     section = _doc_preset_section()
     exports = _preset_exports()
-    assert exports, "`laya.__all__` has no `*_questions` names -- either the exports moved or " \
+    assert exports, "`veya.__all__` has no `*_questions` names -- either the exports moved or " \
                     "this gate is checking the wrong thing"
     missing = [n for n in exports if ("`" + n + "`") not in section]
     assert not missing, (
@@ -2232,7 +2232,7 @@ def test_presets_page_no_three_claim_witness():
     section = _doc_preset_section()
     assert "Three ready-made question sets" not in section, (
         "`docs/questions-and-answers.md` again says \"Three ready-made question sets\". As of "
-        "this PR `laya.__all__` exports five `*_questions` helpers; if the number has since "
+        "this PR `veya.__all__` exports five `*_questions` helpers; if the number has since "
         "changed, update the doc's number word AND this ban's literal together.")
 
 
@@ -2248,10 +2248,10 @@ for _fn in (test_presets_page_drops_the_three_set_claim,
     else:
         PASS.append("docs-presets/%s" % _fn.__name__)
 
-# --- jev_confidence: Jev's `confidence` formula, reported beside Laya's own (#302) ----------
+# --- jev_confidence: Jev's `confidence` formula, reported beside Veya's own (#302) ----------
 # The vectors are TypeSafe's own (system-one-adapter-python, tests/utils/test_confidence_metrics.py)
 # plus the two answers in the jevcompat spec's example response.
-from laya.confidence import jev_confidence  # noqa: E402
+from veya.confidence import jev_confidence  # noqa: E402
 
 
 def _choice(*p):

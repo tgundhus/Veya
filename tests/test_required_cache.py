@@ -12,12 +12,12 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from laya import DecisionCache, Router  # noqa: E402
-from laya.consistency import _MemoryStore  # noqa: E402
-from laya.errors import DecisionCacheError  # noqa: E402
-from laya.hooks import AsyncHook, PredictContext, dispatch  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
-import laya.consistency as consistency  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
+from veya.consistency import _MemoryStore  # noqa: E402
+from veya.errors import DecisionCacheError  # noqa: E402
+from veya.hooks import AsyncHook, PredictContext, dispatch  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
+import veya.consistency as consistency  # noqa: E402
 
 
 QUESTIONS = {"keep": {"type": "noul", "instructions": "Keep this?"}}

@@ -10,12 +10,12 @@ import pytest
 
 pytest.importorskip("quickjs")
 
-from laya import DecisionCache, Router
-from laya.errors import DecisionCacheError
-from laya.mcp import tools
-from laya.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner, code_mode_description
-from laya.mcp.remote import RemoteError
-from laya.onnx_agent import ONNXAgent
+from veya import DecisionCache, Router
+from veya.errors import DecisionCacheError
+from veya.mcp import tools
+from veya.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner, code_mode_description
+from veya.mcp.remote import RemoteError
+from veya.onnx_agent import ONNXAgent
 
 
 QUESTIONS = {"urgent": {"type": "noul", "instructions": "Is this urgent?"}}
@@ -276,7 +276,7 @@ def test_tool_declarations_follow_existing_signatures():
     assert "preset_builder:" not in description
     for name in ("predict", "predict_batch", "route", "route_batch", "shortlist", "tournament", "predict_long", "preset", "decide", "status"):
         assert name + "(args" in description
-        for key in inspect.signature(getattr(tools, "laya_" + name)).parameters:
+        for key in inspect.signature(getattr(tools, "veya_" + name)).parameters:
             if key not in ("router", "agent", "preset_builder", "embed_fn", "loaded", "preload", "performance_mode", "backend", "hooks_timeout"):
                 assert key + ":" in description or key + "?:" in description
 
@@ -322,7 +322,7 @@ def test_failed_process_allocation_releases_admission(runtime, monkeypatch, allo
 def test_parent_interruption_keeps_host_admission_until_work_finishes(runtime, monkeypatch):
     runner, router, _ = runtime
     entered, release = threading.Event(), threading.Event()
-    original_wait = __import__("laya.mcp.code_mode", fromlist=["wait_futures"]).wait_futures
+    original_wait = __import__("veya.mcp.code_mode", fromlist=["wait_futures"]).wait_futures
 
     def slow(*args, **kwargs):
         entered.set()
@@ -335,7 +335,7 @@ def test_parent_interruption_keeps_host_admission_until_work_finishes(runtime, m
         return original_wait(*args, **kwargs)
 
     monkeypatch.setattr(runner, "_invoke", slow)
-    monkeypatch.setattr("laya.mcp.code_mode.wait_futures", interrupted)
+    monkeypatch.setattr("veya.mcp.code_mode.wait_futures", interrupted)
     try:
         with pytest.raises(KeyboardInterrupt):
             runner.execute("async()=>await veya.status({})", router=router)
@@ -349,7 +349,7 @@ def test_parent_interruption_keeps_host_admission_until_work_finishes(runtime, m
 
 def test_single_tool_mcp_mode_calls_existing_validated_operations(runtime, monkeypatch):
     pytest.importorskip("mcp")
-    from laya.mcp import server
+    from veya.mcp import server
     runner, router, _ = runtime
     monkeypatch.setattr(server, "_ROUTER", router)
     application = server.create_code_server(runner)
@@ -361,14 +361,14 @@ def test_single_tool_mcp_mode_calls_existing_validated_operations(runtime, monke
         response = await application.call_tool("veya_execute", {
             "code": "async input => (await veya.predict(input)).answers.urgent.noul", "input": request()})
         assert any("0.51" in block.text for block in response.content)
-        assert len(await server.server.list_tools()) == 10
+        assert len(await server.server.list_tools()) == 20
 
     asyncio.run(exercise())
 
 
 def test_embedded_server_owns_only_its_own_runner_and_supports_lifespan_restart(monkeypatch):
     pytest.importorskip("mcp")
-    from laya.mcp import server
+    from veya.mcp import server
 
     class Spy:
         _closed = False
@@ -383,7 +383,7 @@ def test_embedded_server_owns_only_its_own_runner_and_supports_lifespan_restart(
         created.append(runner)
         return runner
 
-    monkeypatch.setattr("laya.mcp.code_mode.CodeModeRunner", construct)
+    monkeypatch.setattr("veya.mcp.code_mode.CodeModeRunner", construct)
     owned = server.create_code_server()
     external = Spy()
     borrowed = server.create_code_server(external)
@@ -407,8 +407,8 @@ def test_embedded_server_owns_only_its_own_runner_and_supports_lifespan_restart(
     (["--mode", "code", "--code-cpu-seconds", "nan"], "classic"), ([], "typo")])
 def test_bad_code_cli_configuration_refuses_startup_before_model_load(monkeypatch, args, mode):
     pytest.importorskip("mcp")
-    from laya.mcp import server
-    monkeypatch.setenv("LAYA_MCP_MODE", mode)
+    from veya.mcp import server
+    monkeypatch.setenv("VEYA_MCP_MODE", mode)
     monkeypatch.setattr(server, "_ensure_router", lambda: pytest.fail("configuration must fail before loading"))
     with pytest.raises(SystemExit) as error:
         server.main(args)
@@ -517,7 +517,7 @@ def test_foreign_runtime_public_agent_does_not_bypass_local_hook_namespace(runti
     foreign.cfg, foreign.hooks = Predictor.cfg, ()
     foreign.system_one = lambda *args, **kwargs: pytest.fail("foreign hook namespace must not enter inference")
     router.attach("english", foreign)
-    monkeypatch.setitem(__import__("sys").modules, "laya_onnx", SimpleNamespace(ONNXAgent=ForeignAgent))
+    monkeypatch.setitem(__import__("sys").modules, "veya_onnx", SimpleNamespace(ONNXAgent=ForeignAgent))
     with pytest.raises(CodeModeError) as error:
         runner.execute("async input => await veya.predict(input)", request(), router=router)
     assert error.value.code == "code_resource_limit"

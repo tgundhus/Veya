@@ -21,12 +21,12 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-import laya  # noqa: E402
-import laya.consistency as consistency  # noqa: E402
-from laya import DecisionCache, Router, decision_margins  # noqa: E402
-from laya.agent import Agent, _checkpoint_signature  # noqa: E402
-from laya.errors import DecisionCacheError  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+import veya  # noqa: E402
+import veya.consistency as consistency  # noqa: E402
+from veya import DecisionCache, Router, decision_margins  # noqa: E402
+from veya.agent import Agent, _checkpoint_signature  # noqa: E402
+from veya.errors import DecisionCacheError  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -58,7 +58,7 @@ def check_raises(name, exc, fn):
 
 
 class Clock:
-    """Stands in for `laya.consistency._now` so expiry is tested without sleeping."""
+    """Stands in for `veya.consistency._now` so expiry is tested without sleeping."""
 
     def __init__(self, t=1_000_000.0):
         self.t = t
@@ -117,7 +117,7 @@ class CountingAgent:
 
     def predict_batch(self, states, questions, batch_size=None, **overrides):
         self.calls.append((list(states), overrides))
-        return [{"model": "laya-rl-agent",
+        return [{"model": "veya-rl-agent",
                  "answers": {q: {"type": "noul", "noul": self.answer} for q in questions},
                  "usage": {"input_tokens": len(str(s)), "output_tokens": 0}} for s in states]
 
@@ -554,7 +554,7 @@ class OnnxLike(CountingAgent):
 
 
 cache = DecisionCache()
-keys = [cache._keys(laya.PredictContext(states=[STATE], questions=Q, model="english", agent=agent_cls()),
+keys = [cache._keys(veya.PredictContext(states=[STATE], questions=Q, model="english", agent=agent_cls()),
                     [STATE], False)[0] for agent_cls in (CountingAgent, Int8, OnnxLike)]
 check("backends/fp32, int8 and ONNX of one checkpoint share a key", len(set(keys)), 1)
 r_fp32, fp32, _ = router_with(cache, english=CountingAgent(0.7))
@@ -610,7 +610,7 @@ def make_fake():
 
     def _encode_state(state, ids, internal, **overrides):
         fake.encoded.append(state)
-        # The per-row truncation report `predict_batch` reads (laya 0.3.29); nothing is cut here.
+        # The per-row truncation report `predict_batch` reads (veya 0.3.29); nothing is cut here.
         stats = {"state_tokens": 3, "state_tokens_used": 3, "state_tokens_dropped": 0, "truncated": False}
         return [{"ids": [1, 2, 3], "markers": [0, 1], "qtype": 2, "state": state, "state_stats": stats}
                 for _ in ids]
@@ -1183,12 +1183,12 @@ check("memory/the rest stay", len(store), 5)
 
 # --------------------------------------------------------------- exports
 for name in ("DecisionCache", "DecisionStore", "decision_margins"):
-    check_true("export/%s is in __all__" % name, name in laya.__all__)
+    check_true("export/%s is in __all__" % name, name in veya.__all__)
 
 # --------------------------------------------------------------- the archived Feishu runs
-# research/benchmarks/feishu_zh keeps three repeats of 64 cases for Jev and Laya. An answer that
+# research/benchmarks/feishu_zh keeps three repeats of 64 cases for Jev and Veya. An answer that
 # changed side between Jev's runs must sit inside a 0.1 margin in every run, while that band
-# flags only a few percent of all answers; Laya's repeats must be identical.
+# flags only a few percent of all answers; Veya's repeats must be identical.
 ARCHIVE = os.path.join(ROOT, "research", "benchmarks", "feishu_zh", "results", "v1")
 THRESHOLDS = {"related": 0.5, "action": 0.5, "urgent": 0.75, "value": 0.5}
 for backend in ("jev", "laya"):
@@ -1223,8 +1223,8 @@ for backend in ("jev", "laya"):
         # `confidence`, which Jev computes below the precision it prints probabilities at.
         check("archive/jev responses identical across three runs", identical, 29)
     else:
-        check("archive/laya never changed an answer", unstable, 0)
-        check("archive/laya responses identical across three runs", identical, len(groups))
+        check("archive/veya never changed an answer", unstable, 0)
+        check("archive/veya responses identical across three runs", identical, len(groups))
 
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:

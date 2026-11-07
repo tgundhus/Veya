@@ -1,27 +1,27 @@
 # HTTP API
 
-`laya-serve` exposes Laya over the TypeSafe Jev `/v1/systemone` wire protocol. A client written
+`veya-serve` exposes Veya over the TypeSafe Jev `/v1/systemone` wire protocol. A client written
 against Jev -- `hs-jev`, `typesafe-sdk`, or your own -- can point its base URL at this server and
-keep working: Laya's `predict()` output is already schema-compatible, and the server adds only the
+keep working: Veya's `predict()` output is already schema-compatible, and the server adds only the
 HTTP surface: one decision route, a health probe, an optional bearer check and request limits.
 
-A client that targets `laya-serve` rather than the Jev API exists for PHP:
-[`marcreichel/laya-php`](https://github.com/marcreichel/laya-php) is a Composer SDK (PHP 8.4+)
+A client that targets `veya-serve` rather than the Jev API exists for PHP:
+[`marcreichel/veya-php`](https://github.com/marcreichel/veya-php) is a Composer SDK (PHP 8.4+)
 that maps a class of enums and attributes onto questions and returns an instance, reads `GET /health`
 for a deploy check, and ships a test fake so callers can unit-test without a running server.
 
 ```bash
 pip install "veya[serve] @ git+https://github.com/tgundhus/Veya.git"
-laya-serve            # http://0.0.0.0:8000
+veya-serve            # http://0.0.0.0:8000
 ```
 
-The same entry point runs embedded in any ASGI server: `laya.serve.create_app()` builds the FastAPI
+The same entry point runs embedded in any ASGI server: `veya.serve.create_app()` builds the FastAPI
 app, optionally with a `Router` you inject (`create_app(router)`) instead of one built from the
 environment.
 
 For a smaller installation without Torch or Transformers, install
-`"./runtime/onnx[serve]"` from this checkout and run `laya-onnx-serve`.
-The full package also accepts `laya-serve --backend onnx`. Both need local checkpoint
+`"./runtime/onnx[serve]"` from this checkout and run `veya-onnx-serve`.
+The full package also accepts `veya-serve --backend onnx`. Both need local checkpoint
 and exported graph pairs; see [Lightweight ONNX runtime](onnx-runtime.md#http-and-local-mcp).
 The full package's default remains Torch.
 
@@ -32,59 +32,59 @@ Configure the server through environment variables. The `--backend` and
 
 | env var | meaning | default |
 |---|---|---|
-| `LAYA_HOST` | bind address | `0.0.0.0` |
-| `LAYA_PORT` | bind port | `8000` |
-| `LAYA_ROOT_PATH` | public URL prefix when served behind a reverse proxy | empty |
-| `LAYA_BACKEND` | inference backend, `torch` or `onnx`; the lightweight distribution supports ONNX only | `torch` in full package; `onnx` in lightweight |
-| `LAYA_ONNX_PATHS` | JSON map of checkpoint names to exported graph files; ONNX requires matching local `LAYA_EXTRA_MODELS` registrations | none |
-| `LAYA_DEVICE` | torch device for every checkpoint | auto |
-| `LAYA_PERFORMANCE_MODE` | opt-in resource profile `1`–`5`, or `default` to retain existing defaults; explicit settings override profile values | unset |
-| `LAYA_MAX_LOADED` | maximum resident checkpoints; overrides a profile's model cap | Router default |
-| `LAYA_PRELOAD` | build the checkpoints at startup, not lazily | `1` |
-| `LAYA_MODELS` | comma list to preload (`english,multilingual,typed-decisions`); empty = all | all |
-| `LAYA_THREADS` | cap torch intra-op threads on CPU; keep it <= physical cores -- oversubscribing logical cores is a large regression | torch default |
-| `LAYA_AUTO_TASK` | auto-route to the typed-decisions checkpoint | `0` |
-| `LAYA_IDLE_UNLOAD_SECONDS` | unload resident checkpoints after this many idle seconds; the next request loads its checkpoint again. Zero disables unloading | `0` |
-| `LAYA_DEFAULT_MODEL` | checkpoint a state with no language evidence falls back to; aliases such as `ml` resolve the way core resolves them, and an unresolvable name stops the server at startup | `english` |
-| `LAYA_API_KEY` | require `Authorization: Bearer <key>` for decisions; interactive docs and OpenAPI routes are disabled | none |
-| `LAYA_EXTRA_MODELS` | JSON map of checkpoint names to local paths or model IDs, registered at startup | none |
-| `LAYA_CACHE` | enable an in-memory decision cache | `0` |
-| `LAYA_CACHE_PATH` | SQLite decision cache file; a path enables the cache | none |
-| `LAYA_CACHE_TTL` | retention seconds, or `none` for indefinite retention | `86400` |
-| `LAYA_CACHE_MAXSIZE` | maximum stored decisions | `10000` |
-| `LAYA_CACHE_REQUIRED` | require successful replay or commit; failure returns sanitized 503 | `0` |
-| `LAYA_CACHE_REQUIRE_EXISTING` | refuse to create a missing SQLite decision database | `0` |
-| `LAYA_CACHE_EXPECTED_STORE_ID` | require an existing database with this store identity | none |
-| `LAYA_REPLAY_MANIFEST` | verified policy metadata for model-free replay and the cache fast path | none |
-| `LAYA_DECISION_POLICY` | select `canonical` or `context-balanced-v1` for [local inference](decision-policy.md) | checkpoint default |
-| `LAYA_HTTP_REPLAY_FAST_PATH` | let verified hits bypass inference queues when a manifest is configured | `1` |
-| `LAYA_CACHE_RENEW_ON_HIT` | renew expiry on use | `0` |
-| `LAYA_LOG_LEVEL` | uvicorn log level | `info` |
-| `LAYA_MAX_CONCURRENT` | requests admitted past auth at once; excess gets `503` | `16` |
-| `LAYA_BODY_READ_TIMEOUT` | maximum seconds to receive a request body; timeout answers `408` and releases admission | `10` |
-| `LAYA_MAX_BATCH_TOKENS` | tokens one `/v1/systemone/batch` FORWARD PASS may collate (`states` x questions x row width); a larger batch is split into several passes, not refused | `131072` |
-| `LAYA_MICROBATCH_MAX_STATES` | Opt-in collection of compatible single HTTP requests; 0 disables, otherwise 2–64 | `0` |
-| `LAYA_MICROBATCH_WAIT_MS` | Finite nonnegative collection window in milliseconds; see [microbatching](microbatch.md) | `1` |
-| `LAYA_JEV_STRICT` | serve the strict Jev wire contract: no root `routing`, no per-answer `action` / `answer_confidence`, no `confidence` on noul answers, and `usage` reduced to `input_tokens` + `output_tokens`. For clients that validate the response against the Jev contract with no extra fields | `0` |
-| `LAYA_TOURNAMENT_GROUP` | Opt-in choice elimination on both decision endpoints; integer group size 2–100, otherwise disabled | `0` |
+| `VEYA_HOST` | bind address | `0.0.0.0` |
+| `VEYA_PORT` | bind port | `8000` |
+| `VEYA_ROOT_PATH` | public URL prefix when served behind a reverse proxy | empty |
+| `VEYA_BACKEND` | inference backend, `torch` or `onnx`; the lightweight distribution supports ONNX only | `torch` in full package; `onnx` in lightweight |
+| `VEYA_ONNX_PATHS` | JSON map of checkpoint names to exported graph files; ONNX requires matching local `VEYA_EXTRA_MODELS` registrations | none |
+| `VEYA_DEVICE` | torch device for every checkpoint | auto |
+| `VEYA_PERFORMANCE_MODE` | opt-in resource profile `1`–`5`, or `default` to retain existing defaults; explicit settings override profile values | unset |
+| `VEYA_MAX_LOADED` | maximum resident checkpoints; overrides a profile's model cap | Router default |
+| `VEYA_PRELOAD` | build the checkpoints at startup, not lazily | `1` |
+| `VEYA_MODELS` | comma list to preload (`english,multilingual,typed-decisions`); empty = all | all |
+| `VEYA_THREADS` | cap torch intra-op threads on CPU; keep it <= physical cores -- oversubscribing logical cores is a large regression | torch default |
+| `VEYA_AUTO_TASK` | auto-route to the typed-decisions checkpoint | `0` |
+| `VEYA_IDLE_UNLOAD_SECONDS` | unload resident checkpoints after this many idle seconds; the next request loads its checkpoint again. Zero disables unloading | `0` |
+| `VEYA_DEFAULT_MODEL` | checkpoint a state with no language evidence falls back to; aliases such as `ml` resolve the way core resolves them, and an unresolvable name stops the server at startup | `english` |
+| `VEYA_API_KEY` | require `Authorization: Bearer <key>` for decisions; interactive docs and OpenAPI routes are disabled | none |
+| `VEYA_EXTRA_MODELS` | JSON map of checkpoint names to local paths or model IDs, registered at startup | none |
+| `VEYA_CACHE` | enable an in-memory decision cache | `0` |
+| `VEYA_CACHE_PATH` | SQLite decision cache file; a path enables the cache | none |
+| `VEYA_CACHE_TTL` | retention seconds, or `none` for indefinite retention | `86400` |
+| `VEYA_CACHE_MAXSIZE` | maximum stored decisions | `10000` |
+| `VEYA_CACHE_REQUIRED` | require successful replay or commit; failure returns sanitized 503 | `0` |
+| `VEYA_CACHE_REQUIRE_EXISTING` | refuse to create a missing SQLite decision database | `0` |
+| `VEYA_CACHE_EXPECTED_STORE_ID` | require an existing database with this store identity | none |
+| `VEYA_REPLAY_MANIFEST` | verified policy metadata for model-free replay and the cache fast path | none |
+| `VEYA_DECISION_POLICY` | select `canonical` or `context-balanced-v1` for [local inference](decision-policy.md) | checkpoint default |
+| `VEYA_HTTP_REPLAY_FAST_PATH` | let verified hits bypass inference queues when a manifest is configured | `1` |
+| `VEYA_CACHE_RENEW_ON_HIT` | renew expiry on use | `0` |
+| `VEYA_LOG_LEVEL` | uvicorn log level | `info` |
+| `VEYA_MAX_CONCURRENT` | requests admitted past auth at once; excess gets `503` | `16` |
+| `VEYA_BODY_READ_TIMEOUT` | maximum seconds to receive a request body; timeout answers `408` and releases admission | `10` |
+| `VEYA_MAX_BATCH_TOKENS` | tokens one `/v1/systemone/batch` FORWARD PASS may collate (`states` x questions x row width); a larger batch is split into several passes, not refused | `131072` |
+| `VEYA_MICROBATCH_MAX_STATES` | Opt-in collection of compatible single HTTP requests; 0 disables, otherwise 2–64 | `0` |
+| `VEYA_MICROBATCH_WAIT_MS` | Finite nonnegative collection window in milliseconds; see [microbatching](microbatch.md) | `1` |
+| `VEYA_JEV_STRICT` | serve the strict Jev wire contract: no root `routing`, no per-answer `action` / `answer_confidence`, no `confidence` on noul answers, and `usage` reduced to `input_tokens` + `output_tokens`. For clients that validate the response against the Jev contract with no extra fields | `0` |
+| `VEYA_TOURNAMENT_GROUP` | Opt-in choice elimination on both decision endpoints; integer group size 2–100, otherwise disabled | `0` |
 
 [Performance modes](performance-modes.md) provide coordinated thread, batch, resident-model,
 preload, padded-token and admission budgets. The defaults in this table apply when no profile
-is selected. `LAYA_THREADS`, `LAYA_MAX_LOADED`, `LAYA_PRELOAD`, `LAYA_MAX_CONCURRENT` and
-`LAYA_MAX_BATCH_TOKENS` take precedence over corresponding profile values. Profiles keep the
+is selected. `VEYA_THREADS`, `VEYA_MAX_LOADED`, `VEYA_PRELOAD`, `VEYA_MAX_CONCURRENT` and
+`VEYA_MAX_BATCH_TOKENS` take precedence over corresponding profile values. Profiles keep the
 same checkpoints, precision, token windows and decision-cache policy. Torch threads are
 process-global; select the profile before starting inference.
-ONNX uses per-session threads and CPU execution; set `LAYA_DEVICE=cpu` or leave it unset.
-Without `LAYA_MODELS`, ONNX preloads only graph-configured checkpoints.
+ONNX uses per-session threads and CPU execution; set `VEYA_DEVICE=cpu` or leave it unset.
+Without `VEYA_MODELS`, ONNX preloads only graph-configured checkpoints.
 
-For a deployment published under a prefix such as `/laya`, set `LAYA_ROOT_PATH=/laya`.
+For a deployment published under a prefix such as `/veya`, set `VEYA_ROOT_PATH=/veya`.
 FastAPI uses it when generating OpenAPI and Swagger UI URLs. Configure the reverse proxy to
-strip `/laya` before forwarding requests to Laya; the app's routes remain `/health` and
+strip `/veya` before forwarding requests to Veya; the app's routes remain `/health` and
 `/v1/systemone` internally.
 
 For containers, including CUDA and ARM64 images, see [Docker quickstart](docker.md).
 
-For bursty local use, set `LAYA_IDLE_UNLOAD_SECONDS=300`. Inference and unload run on the same
+For bursty local use, set `VEYA_IDLE_UNLOAD_SECONDS=300`. Inference and unload run on the same
 worker, and the idle window starts again when a single or batch forward pass finishes, including
 failed requests. The next prediction pays a cold load. Unloading releases model references and
 device caches, including Metal; the process allocator may retain RAM pages, so process RSS need
@@ -96,11 +96,11 @@ not fall by the size of the checkpoint.
 
 Liveness is always open (no auth), and stays responsive during inference because the CPU-bound
 forward pass runs on its own worker, not the event loop. The fields below liveness are not open on
-a deployment that set `LAYA_API_KEY`: without the bearer, `/health` answers `{"status": "ok"}` and
+a deployment that set `VEYA_API_KEY`: without the bearer, `/health` answers `{"status": "ok"}` and
 nothing else, because the rest names resident checkpoints, their exact revision SHAs, the device
 state and each checkpoint's last fallback reason, which quotes host hardware. A probe needs only
 the 200, so a healthcheck is unaffected and a wrong bearer is still a 200 rather than a 401. With
-no `LAYA_API_KEY` set, every caller gets the full payload shown here.
+no `VEYA_API_KEY` set, every caller gets the full payload shown here.
 
 ```json
 {"status": "ok", "loaded": ["english", "multilingual"], "revisions": {"english": "...", "multilingual": "..."},
@@ -127,11 +127,11 @@ Health probes do not reset that clock. An empty `loaded` list is normal after an
 - `model_free_replay` reports whether a replay manifest is configured and whether verified
   HTTP hits can bypass inference queues. It does not expose the manifest path.
 - `loaded` lists the checkpoints resident in memory. It is empty until a request builds one, which is
-  what `LAYA_PRELOAD=0` leaves the process doing.
+  what `VEYA_PRELOAD=0` leaves the process doing.
 - `revisions` is the artifact revision each resident checkpoint was loaded from, keyed by the same
   names as `loaded`, so a deployment can confirm what it is actually serving.
 - `device` is the device a resident checkpoint really computes on, which is not always what
-  `LAYA_DEVICE` asked for: a checkpoint that wants a GPU it cannot get falls back to CPU silently and
+  `VEYA_DEVICE` asked for: a checkpoint that wants a GPU it cannot get falls back to CPU silently and
   still answers correctly. With nothing resident it is the configured preference instead.
 - `device_is_preference` is `true` exactly while nothing is resident, and `false` as soon as the
   handler can measure. That is the difference between a server reporting its configuration and a
@@ -169,7 +169,7 @@ curl -s localhost:8000/v1/systemone -H 'content-type: application/json' -d '{
 | `task` | no | forces a checkpoint by workflow name instead of letting routing decide; an unknown name is a `422` naming it |
 | `lang` | no | a language code (`de`, `en-US`) that skips detection when it names a language; a blank or unrecognised code falls through to detection |
 | `lang_guess` | no | a language code from the client's own identifier, consulted after `lang` and before detection; any non-English code routes to the multilingual checkpoint |
-| `max_len` | no | total token window for this request, capped by `LAYA_MAX_TOKEN_BUDGET` |
+| `max_len` | no | total token window for this request, capped by `VEYA_MAX_TOKEN_BUDGET` |
 | `head_max_len` | no | token window the option prompt shares, same cap; see [Widening the Token Budget](langchain.md) for when a question needs it |
 | `min_confidence` | no | abstention threshold in `[0.0, 1.0]`; an answer whose `answer_confidence` falls below it comes back marked `low_confidence`, and the answer itself is kept |
 
@@ -180,7 +180,7 @@ hook arguments `predict` also takes -- `hooks`, `on_predict_start`, `on_predict_
 `hooks_raise`, `hooks_timeout` -- are refused with a `422` rather than dropped: a hook is a callable
 that runs inside the server process, and the last two say how the hooks a deployment installed
 execute, so no value a caller sends has a meaning here. The same five are refused client-side by a
-LangChain node with a `base_url` (`laya.integrations.langchain`), so a chain and a raw HTTP client
+LangChain node with a `base_url` (`veya.integrations.langchain`), so a chain and a raw HTTP client
 now get the same answer.
 
 `model` is accepted so a Jev client can keep sending one. The public Hugging Face ids
@@ -196,7 +196,7 @@ hide that. The detail is the same `unknown model` text core raises, plus the rem
 
 ### Large choices
 
-Set `LAYA_TOURNAMENT_GROUP=16` to answer large choices by elimination. Each round reads groups
+Set `VEYA_TOURNAMENT_GROUP=16` to answer large choices by elimination. Each round reads groups
 of labels; the group winners meet in a final prediction. This admits up to 255 options on the
 single and batch endpoints. Batch elimination runs separately for each state. Generated calls contain at most
 64 questions. More rounds cost more inference; benchmark representative questions before enabling it.
@@ -216,7 +216,7 @@ retains the 100-option cap. An oversized request is refused before inference.
 
 ```json
 {
-  "model": "laya-rl-agent",
+  "model": "veya-rl-agent",
   "answers": {
     "queue": {"type": "choice", "choice": "billing",
               "probabilities": {"billing": 0.9519, "tech": 0.0327, "other": 0.0154},
@@ -288,7 +288,7 @@ caller sizing states by character count cannot see the cut anywhere else in the 
 | `model` | the checkpoint that answered: `english`, `multilingual` or `typed-decisions` |
 | `repo` | its public Hugging Face id |
 | `reason` | the sentence for the choice, naming the evidence it acted on |
-| `detection` | `laya.lang.analyse()` on the state -- `script`, `script_profile`, `language`, `is_english`, `language_undecided`, `diacritic_rate`, `non_latin_fraction`, `mixed_segment` -- or `null` when the route decided before reading the text |
+| `detection` | `veya.lang.analyse()` on the state -- `script`, `script_profile`, `language`, `is_english`, `language_undecided`, `diacritic_rate`, `non_latin_fraction`, `mixed_segment` -- or `null` when the route decided before reading the text |
 | `workflow` | the typed-decisions workflow the question ids match, or `null` |
 
 `detection` is `null` on every path that decides without reading the state: one forced by `model` or
@@ -311,15 +311,15 @@ before the question ids are read.
   level for score. It is omitted on noul answers and invalid distributions.
 
 Use each field with thresholds fitted for that measure. A Jev confidence threshold can be
-compared with `x_jev_confidence`; Laya's `min_confidence` gate continues to use `answer_confidence`.
+compared with `x_jev_confidence`; Veya's `min_confidence` gate continues to use `answer_confidence`.
 
-### Strict Jev contract: `LAYA_JEV_STRICT`
+### Strict Jev contract: `VEYA_JEV_STRICT`
 
-The payload above is the full Laya payload. The Jev contract a client may hold it to defines
+The payload above is the full Veya payload. The Jev contract a client may hold it to defines
 less: three top-level fields (`model`, `answers`, `usage`), the contracted keys on each answer
 and nothing else, and a `usage` of the two token counts. A client that validates the response
 against that contract with no extra fields -- OpenClaw's TypeSafe provider plugin is one --
-rejects the full payload, so `LAYA_JEV_STRICT=1` projects the response onto the contract before
+rejects the full payload, so `VEYA_JEV_STRICT=1` projects the response onto the contract before
 answering, on both `/v1/systemone` and `/v1/systemone/batch`:
 
 - the root keeps `model`, `answers` and `usage` only; `routing` is not sent;
@@ -336,7 +336,7 @@ the ones the full payload reports. The default stays the full payload, and a dep
 turns the flag on loses the truncation visibility `usage` provides -- a cut state is then
 visible in the logs, not in the response. Score `criteria` should stay plain strings under the
 strict contract: a strict client compares the returned `legend` against the criteria it sent,
-and Laya renders a structured criterion with Python's JSON, which a JavaScript caller that
+and Veya renders a structured criterion with Python's JSON, which a JavaScript caller that
 stringifies its own criteria may not match byte for byte.
 
 Successful responses also carry `Server-Timing: inference;dur=<ms>` and `X-Inference-Time-Ms`.
@@ -355,7 +355,7 @@ nothing but the bytes it read. Every one of them is a `413`; the `detail` says w
 | options per `choice` question | 100 |
 | levels per `score` question | 32 |
 | options across all questions | 512 |
-| concurrent admitted requests | `LAYA_MAX_CONCURRENT` (16) |
+| concurrent admitted requests | `VEYA_MAX_CONCURRENT` (16) |
 
 `/v1/systemone/batch` is bounded differently, and not by a refusal. It tokenizes each state once per
 question and collates every row into a single tensor, so the field caps multiply: 64 states of 64
@@ -363,7 +363,7 @@ questions is 4096 rows, which every other limit on this page permits. What a row
 and `max_len` is itself a request field, so the cost of a batch is `states x questions x width`.
 
 Rather than refuse a large batch, the endpoint **splits** it: when that product exceeds
-`LAYA_MAX_BATCH_TOKENS` (131,072 by default) it chooses a `batch_size` so each forward pass stays
+`VEYA_MAX_BATCH_TOKENS` (131,072 by default) it chooses a `batch_size` so each forward pass stays
 inside the budget, and `Router.predict_batch` runs the batch in several passes. Every state is still
 answered and the response is unchanged. A request whose rows already fit is passed no `batch_size` at
 all, so it behaves exactly as before -- which matters because batch shape can move floating-point
@@ -372,7 +372,7 @@ results. A caller's `batch_size` may shrink a pass; it is capped at the server's
 At the default, 256 rows go through in one pass -- 64 states of 4 questions, or 8 of 32. Larger
 batches are split, and raising `max_len` makes each pass narrower rather than costing 16 times the
 work. What this does not bound is how long one request occupies the server; that is
-`LAYA_MAX_CONCURRENT` and the single inference worker, and is already true of one `/v1/systemone`
+`VEYA_MAX_CONCURRENT` and the single inference worker, and is already true of one `/v1/systemone`
 request over a 50,000-character state.
 
 The option caps are HTTP-only amplification guards; the model itself fits option tokens into a
@@ -385,11 +385,11 @@ requests in-process without the HTTP layer.
 | status | when | body `detail` |
 |---|---|---|
 | `400` | body is not valid JSON, not an object, has no `questions`, `state` is missing or `null`, `questions` is not an object, or a string anywhere in the body holds an unpaired `\udXXX` surrogate escape | what is wrong |
-| `401` | `LAYA_API_KEY` is set and the bearer token is missing or wrong | `invalid or missing bearer token` |
+| `401` | `VEYA_API_KEY` is set and the bearer token is missing or wrong | `invalid or missing bearer token` |
 | `413` | any limit above | which limit and by how much |
-| `422` | the question is well-formed JSON but invalid to Laya (unknown type, options over the head budget), or a request control (`lang`, `min_confidence`, a hook argument) is not in the form this endpoint accepts | names the question or the field and what to fix |
+| `422` | the question is well-formed JSON but invalid to Veya (unknown type, options over the head budget), or a request control (`lang`, `min_confidence`, a hook argument) is not in the form this endpoint accepts | names the question or the field and what to fix |
 | `500` | inference failed for any other reason | `inference failed` -- always this string, so paths, weights and memory state never leak; the cause is in the server log |
-| `503` | `LAYA_MAX_CONCURRENT` requests are already in flight | `server busy, try again later` |
+| `503` | `VEYA_MAX_CONCURRENT` requests are already in flight | `server busy, try again later` |
 
 The unpaired-surrogate `400` is the one that looks unusual. `\udXXX` with no pair is legal JSON, but
 the character it names cannot be UTF-8 encoded, so the tokenizer raises `TypeError` on it -- the
@@ -407,7 +407,7 @@ cannot starve `/health`, and a retry can take the slot a refused client left.
 Inference is a synchronous torch call that takes hundreds of milliseconds to seconds on CPU, so it
 never runs on the event loop: requests are handed to a single-worker executor, which means one
 forward pass at a time -- the shape a single checkpoint on one device wants. Admission (the
-`LAYA_MAX_CONCURRENT` semaphore) is checked before any body byte is read and held through
+`VEYA_MAX_CONCURRENT` semaphore) is checked before any body byte is read and held through
 inference; the inference gate is joined only after the body is complete, so a slow client holds an
 admission slot but never an inference slot.
 
@@ -419,5 +419,5 @@ other route is `POST /v1/systemone/batch`, which answers one `questions` set ove
 `states`. Its request shape is in the guide's [HTTP server](guide.md#http-server-jev-compatible) section,
 and every check above applies to it as it does to `POST /v1/systemone`: the same shape
 `400`s, the same unpaired-surrogate refusal, the same auth, admission, size limits, body-control
-validation and `500` mapping. The `laya` CLI and MCP server cover local use -- see the
+validation and `500` mapping. The `veya` CLI and MCP server cover local use -- see the
 [command line](guide.md#command-line) and the [MCP server](guide.md#mcp-server).

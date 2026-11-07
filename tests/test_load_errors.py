@@ -1,7 +1,7 @@
 """The load-time and budget errors a user actually hits.
 
 Every branch here was reachable but never executed by any suite in CI, measured with
-`sys.settrace` over all 15 of them: `laya/agent.py` lines 126, 146, 154, 165 and 350 had
+`sys.settrace` over all 15 of them: `veya/agent.py` lines 126, 146, 154, 165 and 350 had
 zero hits. They are the messages a user sees when a checkpoint is wrong or a question is
 too large, so a regression in one is a regression in the only diagnostic they get.
 
@@ -39,8 +39,8 @@ from tokenizers.models import WordLevel  # noqa: E402
 from tokenizers.pre_tokenizers import Whitespace  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
 
-from laya import Agent, load  # noqa: E402
-from laya.common import DecisionModel  # noqa: E402
+from veya import Agent, load  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -64,7 +64,7 @@ REPO = Path(TMP.name) / "repo"
 
 
 def build_checkpoint(root, max_len=64, head_max_len=32, vocab=("hello",)):
-    """A loadable Laya checkpoint, small enough to build in-process."""
+    """A loadable Veya checkpoint, small enough to build in-process."""
     words = {"[PAD]": 0, "[UNK]": 1, "[CLS]": 2, "[SEP]": 3, "[MASK]": 4}
     for i, word in enumerate(vocab):
         words[word] = 5 + i
@@ -135,7 +135,7 @@ check_true("present subfolder/loads", load_error(sub, subfolder="multilingual") 
 
 
 # --------------------------------------------------- 3. missing rl_agent_config.json
-# This is the file that makes a directory a Laya checkpoint rather than a bare encoder,
+# This is the file that makes a directory a Veya checkpoint rather than a bare encoder,
 # so the message has to point at the training run that would have written it.
 no_cfg = Path(TMP.name) / "no-config"
 shutil.copytree(REPO, no_cfg)
@@ -255,7 +255,7 @@ import _common  # noqa: E402 -- the helpers the example imports
 EXAMPLE = Path(__file__).resolve().parents[1] / "examples" / "39_error_handling.py"
 SOURCE = EXAMPLE.read_text(encoding="utf-8")
 TREE = ast.parse(SOURCE)
-AGENT_SRC = (Path(__file__).resolve().parents[1] / "laya" / "agent.py").read_text(encoding="utf-8")
+AGENT_SRC = (Path(__file__).resolve().parents[1] / "veya" / "agent.py").read_text(encoding="utf-8")
 
 ERR_TOKEN = re.compile(r"\b[A-Z][A-Za-z]+(?:Error|Exception)\b")
 # what a section shows it was given: the line the page prints from `type(e).__name__`, or from its
@@ -434,7 +434,7 @@ check("39/the exception-name rule still rejects a type the run never showed",
 
 # ------------------------------------------- 8. a device fallback warns instead of printing
 # Asking for a device this machine does not have falls back to CPU with a note. That note used
-# to be a bare `print`, so it landed on stdout -- where `laya --json` and `laya --batch --json`
+# to be a bare `print`, so it landed on stdout -- where `veya --json` and `veya --batch --json`
 # write their records and where the MCP server speaks JSON-RPC. A warning goes to stderr and a
 # caller can filter it; a print breaks the stream and cannot be silenced.
 _stdout = io.StringIO()
@@ -457,7 +457,7 @@ del _fallback
 # and dies later in `.to()` with a bare CUDA error. The ordinal is validated up front
 # instead, with the same warn-and-CPU shape as section 8. "auto" (any case or
 # surrounding whitespace) means "decide yourself", the way the serve layer already
-# treats LAYA_DEVICE. A driver that reports CUDA but cannot answer the capability
+# treats VEYA_DEVICE. A driver that reports CUDA but cannot answer the capability
 # query gets safe fp16 defaults rather than a crash in the amp policy.
 with warnings.catch_warnings(record=True) as caught, \
         patch("torch.cuda.is_available", return_value=True), \
@@ -494,7 +494,7 @@ del _no_probe
 for _precision in ("fp32", " Float32 "):
     for _capability in ((7, 0), (8, 0), RuntimeError("no driver")):
         _probe = {"side_effect": _capability} if isinstance(_capability, Exception) else {"return_value": _capability}
-        with patch.dict(os.environ, {"LAYA_CUDA_AMP": _precision}), \
+        with patch.dict(os.environ, {"VEYA_CUDA_AMP": _precision}), \
                 patch("torch.cuda.is_available", return_value=True), \
                 patch("torch.cuda.device_count", return_value=1), \
                 patch("torch.cuda.get_device_capability", **_probe) as _query, \
@@ -510,7 +510,7 @@ for _precision in ("fp32", " Float32 "):
             _constructed.append(kwargs)
             return SimpleNamespace(forward=lambda *args, **kwargs: None)
         _forward = _fp32.model.forward
-        with patch.dict(sys.modules, {"laya.fast": SimpleNamespace(FastLaya=_fast_ctor)}), \
+        with patch.dict(sys.modules, {"veya.fast": SimpleNamespace(FastVeya=_fast_ctor)}), \
                 warnings.catch_warnings(record=True) as _fast_warnings:
             warnings.simplefilter("always")
             check("cuda fp32/fast path stays off", _fp32.accelerate(), False)
@@ -530,7 +530,7 @@ for _precision, _capability, _dtype in (("fp16", (8, 0), torch.float16),
                                        ("bf16", (7, 0), torch.float16),
                                        ("bf16", RuntimeError("no driver"), torch.float16)):
     _probe = {"side_effect": _capability} if isinstance(_capability, Exception) else {"return_value": _capability}
-    with patch.dict(os.environ, {"LAYA_CUDA_AMP": _precision}), \
+    with patch.dict(os.environ, {"VEYA_CUDA_AMP": _precision}), \
             patch("torch.cuda.is_available", return_value=True), \
             patch("torch.cuda.device_count", return_value=1), \
             patch("torch.cuda.get_device_capability", **_probe), \
@@ -543,7 +543,7 @@ for _precision, _capability, _dtype in (("fp16", (8, 0), torch.float16),
 
 for _capability in ((7, 0), (8, 0), RuntimeError("no driver")):
     _probe = {"side_effect": _capability} if isinstance(_capability, Exception) else {"return_value": _capability}
-    with patch.dict(os.environ, {"LAYA_CUDA_AMP": "int8"}), \
+    with patch.dict(os.environ, {"VEYA_CUDA_AMP": "int8"}), \
             patch("torch.cuda.is_available", return_value=True), \
             patch("torch.cuda.device_count", return_value=1), \
             patch("torch.cuda.get_device_capability", **_probe), \
@@ -554,7 +554,7 @@ for _capability in ((7, 0), (8, 0), RuntimeError("no driver")):
         except ValueError as exc:
             _invalid_error = str(exc)
     check_true("cuda precision/%r rejects invalid env value" % (_capability,),
-               _invalid_error is not None and "LAYA_CUDA_AMP" in _invalid_error)
+               _invalid_error is not None and "VEYA_CUDA_AMP" in _invalid_error)
 
 
 TMP.cleanup()

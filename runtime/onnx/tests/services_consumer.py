@@ -22,7 +22,7 @@ class HeavyImportForbidden(BaseException):
 
 class NoHeavyImports(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
-        if fullname.split(".")[0] in ("torch", "transformers", "laya"):
+        if fullname.split(".")[0] in ("torch", "transformers", "veya"):
             raise HeavyImportForbidden("light service imported " + fullname)
 
 
@@ -40,14 +40,14 @@ PAYLOAD = {"state": STATE, "questions": QUESTIONS, "model": "english"}
 
 
 def service_environment(cache):
-    env = {key: value for key, value in os.environ.items() if not key.startswith("LAYA_")}
+    env = {key: value for key, value in os.environ.items() if not key.startswith("VEYA_")}
     env.pop("PYTHONPATH", None)
-    env.update({"LAYA_PRELOAD": "0", "LAYA_MODELS": "english", "LAYA_DEVICE": " CPU ",
-                "LAYA_MAX_LOADED": "1", "LAYA_EXTRA_MODELS": json.dumps({
+    env.update({"VEYA_PRELOAD": "0", "VEYA_MODELS": "english", "VEYA_DEVICE": " CPU ",
+                "VEYA_MAX_LOADED": "1", "VEYA_EXTRA_MODELS": json.dumps({
                     "english": str(FIXTURE), "multilingual": str(FIXTURE)}),
-                "LAYA_ONNX_PATHS": json.dumps({name: str(FIXTURE / "model.onnx")
+                "VEYA_ONNX_PATHS": json.dumps({name: str(FIXTURE / "model.onnx")
                                                for name in ("english", "multilingual")}),
-                "LAYA_CACHE_PATH": str(cache), "LAYA_CACHE_TTL": "none",
+                "VEYA_CACHE_PATH": str(cache), "VEYA_CACHE_TTL": "none",
                 "HF_HUB_OFFLINE": "1", "TOKENIZERS_PARALLELISM": "false"})
     return env
 
@@ -76,9 +76,9 @@ def http_contract(cache):
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
-    env.update({"LAYA_HOST": "127.0.0.1", "LAYA_PORT": str(port),
-                "LAYA_API_KEY": "offline-contract-key", "LAYA_LOG_LEVEL": "warning",
-                "LAYA_IDLE_UNLOAD_SECONDS": "0.8"})
+    env.update({"VEYA_HOST": "127.0.0.1", "VEYA_PORT": str(port),
+                "VEYA_API_KEY": "offline-contract-key", "VEYA_LOG_LEVEL": "warning",
+                "VEYA_IDLE_UNLOAD_SECONDS": "0.8"})
     base = "http://127.0.0.1:%s" % port
 
     def request(path, payload=None, *, auth=True):
@@ -168,8 +168,8 @@ async def mcp_contract(cache):
         async with ClientSession(read, write, read_timeout_seconds=20) as session:
             await session.initialize()
             listed = await session.list_tools()
-            assert {"laya_predict", "laya_predict_batch", "laya_route", "laya_status", "laya_preset",
-                    "laya_decide", "laya_predict_long", "laya_shortlist", "laya_tournament"} <= {
+            assert {"veya_predict", "veya_predict_batch", "veya_route", "veya_status", "veya_preset",
+                    "veya_decide", "veya_predict_long", "veya_shortlist", "veya_tournament"} <= {
                         tool.name for tool in listed.tools}
 
             async def call(name, arguments=None, *, error=False):
@@ -181,35 +181,35 @@ async def mcp_contract(cache):
                 # MCP can prepend framework context to a tool error's JSON message.
                 return {"message": text} if error else json.loads(text)
 
-            status = await call("laya_status")
+            status = await call("veya_status")
             assert status["backend"] == "onnx" and status["loaded"] == [], status
             assert status["device"] == "cpu" and status["device_is_preference"], status
-            route = await call("laya_route", PAYLOAD)
+            route = await call("veya_route", PAYLOAD)
             assert route["model"] == "english", route
-            assert_status(await call("laya_status"), [])
-            invalid = await call("laya_predict", {**PAYLOAD, "max_len": -1}, error=True)
+            assert_status(await call("veya_status"), [])
+            invalid = await call("veya_predict", {**PAYLOAD, "max_len": -1}, error=True)
             assert "invalid_max_len" in invalid["message"], invalid
-            first = await call("laya_predict", PAYLOAD)
+            first = await call("veya_predict", PAYLOAD)
             assert_answers(first)
             assert first["device"] == "cpu", first
-            assert (await call("laya_predict", PAYLOAD))["answers"] == first["answers"]
-            status = await call("laya_status")
+            assert (await call("veya_predict", PAYLOAD))["answers"] == first["answers"]
+            status = await call("veya_status")
             assert_status(status, ["english"])
             assert status["decision_cache"]["hits"] >= 1, status
-            batch = await call("laya_predict_batch", {"requests": [PAYLOAD, PAYLOAD]})
+            batch = await call("veya_predict_batch", {"requests": [PAYLOAD, PAYLOAD]})
             assert len(batch["requests"]) == 2, batch
             for result in batch["requests"]:
                 assert_answers(result)
-            decided = await call("laya_decide", {"state": STATE, "model": "english", "schema": {
+            decided = await call("veya_decide", {"state": STATE, "model": "english", "schema": {
                 "type": "object", "properties": {"urgent": {"type": "boolean"}}}})
             assert isinstance(decided["values"]["urgent"], bool), decided
-            preset = await call("laya_preset", {"preset": "guard", "state": STATE, "lang": "en"})
+            preset = await call("veya_preset", {"preset": "guard", "state": STATE, "lang": "en"})
             assert preset["answers"], preset
-            scanned = await call("laya_predict_long", {**PAYLOAD,
+            scanned = await call("veya_predict_long", {**PAYLOAD,
                 "state": {"message": "hello billing help " * 30}, "window": 16, "stride": 8})
             assert scanned["windows"] > 1, scanned
             assert all("window" in answer for answer in scanned["answers"].values()), scanned
-            tournament = await call("laya_tournament", {"state": STATE, "model": "english", "group_size": 2,
+            tournament = await call("veya_tournament", {"state": STATE, "model": "english", "group_size": 2,
                 "questions": {"team": {"type": "choice", "instructions": "Which team?",
                                        "criteria": {str(i): "billing help" for i in range(5)}}}})
             finalists = tournament["tournament"]["team"]
@@ -217,10 +217,10 @@ async def mcp_contract(cache):
             assert tournament["answers"]["team"]["choice"] in finalists["labels"], tournament
             assert tournament["device"] == "cpu", tournament
             # Encoder embeddings are absent from exported decision graphs: reject clearly.
-            unsupported = await call("laya_shortlist", {**PAYLOAD, "k": 1}, error=True)
+            unsupported = await call("veya_shortlist", {**PAYLOAD, "k": 1}, error=True)
             assert "ONNX" in unsupported["message"], unsupported
-            await call("laya_predict", {**PAYLOAD, "state": {"message": "other"}, "model": "multilingual"})
-            assert_status(await call("laya_status"), ["multilingual"])
+            await call("veya_predict", {**PAYLOAD, "state": {"message": "other"}, "model": "multilingual"})
+            assert_status(await call("veya_status"), ["multilingual"])
 
 
 def main():
@@ -234,13 +234,13 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         http_contract(Path(tmp) / "http.sqlite")
         asyncio.run(mcp_contract(Path(tmp) / "mcp.sqlite"))
-    assert not any(name.split(".")[0] in ("torch", "transformers", "laya") for name in sys.modules)
+    assert not any(name.split(".")[0] in ("torch", "transformers", "veya") for name in sys.modules)
     print("PASS installed HTTP and MCP stdio protocols, native ONNX inference and service lifecycle")
 
 
 if __name__ == "__main__":
     if "--http-server" in sys.argv:
-        from laya_onnx.serve import main as serve_main
+        from veya_onnx.serve import main as serve_main
 
         def stop_on_parent_exit():
             # Invoke uvicorn's installed shutdown handler after stdin closes. Windows
@@ -253,7 +253,7 @@ if __name__ == "__main__":
         threading.Thread(target=stop_on_parent_exit, daemon=True).start()
         serve_main(["--performance-mode", "1"])
     elif "--mcp-server" in sys.argv:
-        from laya_onnx.mcp.server import main as mcp_main
+        from veya_onnx.mcp.server import main as mcp_main
 
         mcp_main(["--performance-mode", "1"])
     else:

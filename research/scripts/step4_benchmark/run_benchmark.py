@@ -9,7 +9,7 @@ Two gates, kept separate on purpose:
   single-seed soft-ce win is not enough to recommend changing a shipped default, so Gate D is
   only designed and run after Gate R passes.
 
-This calls the CLI as a subprocess: it does not import `laya.train`, so it cannot depend on the
+This calls the CLI as a subprocess: it does not import `veya.train`, so it cannot depend on the
 training internals #967/#968/#982 are still changing.
 
 Usage:
@@ -54,7 +54,7 @@ GATES: Dict[str, List[Tuple[str, int]]] = {
 def build_command(data: str, out_dir: str, loss: str, seed: int, base: str, device: str,
                   hyper: Dict[str, Any]) -> List[str]:
     return [
-        sys.executable, "-m", "laya.train_cli",
+        sys.executable, "-m", "veya.train_cli",
         "--data", data,
         "--out", out_dir,
         "--base", base,

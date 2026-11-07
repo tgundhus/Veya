@@ -1,0 +1,720 @@
+{
+  "created_utc": "2026-11-07T12:35:13.646264+00:00",
+  "baseline": "a5477bdc4d63647c5d5bd740ab989c6ffa11bfe6",
+  "device": "cpu",
+  "torch_threads": 2,
+  "cases": [
+    {
+      "name": "english ticket, 1 question",
+      "state": "Hi, we were billed twice for March. Please refund the duplicate today or we will cancel our plan.",
+      "questions": {
+        "billing": {
+          "type": "noul",
+          "instructions": "Is this about billing?"
+        }
+      }
+    },
+    {
+      "name": "english ticket, 3 questions",
+      "state": "Hi, we were billed twice for March. Please refund the duplicate today or we will cancel our plan.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Which department should handle this?",
+          "criteria": {
+            "billing": "invoices, payments, refunds",
+            "technical": "bugs, outages, system errors",
+            "other": "everything else"
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "instructions": "How urgent is this?",
+          "criteria": [
+            "not urgent",
+            "soon",
+            "blocking"
+          ]
+        },
+        "churn_risk": {
+          "type": "noul",
+          "instructions": "Does the user threaten to cancel or leave?"
+        }
+      }
+    },
+    {
+      "name": "english ticket, 10 questions",
+      "state": "Hi, we were billed twice for March. Please refund the duplicate today or we will cancel our plan.",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Which department should handle this?",
+          "criteria": {
+            "billing": "invoices, payments, refunds",
+            "technical": "bugs, outages, system errors",
+            "other": "everything else"
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "instructions": "How urgent is this?",
+          "criteria": [
+            "not urgent",
+            "soon",
+            "blocking"
+          ]
+        },
+        "churn_risk": {
+          "type": "noul",
+          "instructions": "Does the user threaten to cancel or leave?"
+        },
+        "refund": {
+          "type": "noul",
+          "instructions": "Does the user ask for a refund?"
+        },
+        "login": {
+          "type": "noul",
+          "instructions": "Does the user report a login problem?"
+        },
+        "angry": {
+          "type": "noul",
+          "instructions": "Is the tone angry or hostile?"
+        },
+        "invoice": {
+          "type": "noul",
+          "instructions": "Does the message reference an invoice number?"
+        },
+        "deadline": {
+          "type": "noul",
+          "instructions": "Does the user mention a deadline?"
+        },
+        "sentiment": {
+          "type": "choice",
+          "instructions": "Overall sentiment?",
+          "criteria": {
+            "positive": "",
+            "neutral": "",
+            "negative": ""
+          }
+        },
+        "language": {
+          "type": "choice",
+          "instructions": "Which language is the message in?",
+          "criteria": {
+            "english": "",
+            "spanish": "",
+            "other": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "english email, 3 questions",
+      "state": "Subject: Duplicate charge on invoice INV-2291 and a login problem\n\nHello support team,\n\nI am writing about our company account (Acme Logistics, account 88213). On 3 March we were charged twice for the same monthly subscription: two identical payments of $49 appear on our card statement, both referencing invoice INV-2291. Our finance department has asked me to get the duplicate refunded before the end of the month, because it breaks our reconciliation and we cannot close the books with an unexplained charge.\n\nSeparately, since yesterday two of our dispatchers cannot log in to the web dashboard. They see an error saying their session expired immediately after entering the one-time code, and clearing the browser cache did not help. This is slowing down our morning shift, since they have to ask a colleague to assign routes for them.\n\nCould you please (1) refund the duplicate charge and send a corrected invoice, and (2) look into the login issue? If the refund cannot be done this week we will need to reconsider whether to renew our annual plan in April.\n\nThank you,\nMaria Jensen\nOperations Manager, Acme Logistics\n",
+      "questions": {
+        "department": {
+          "type": "choice",
+          "instructions": "Which department should handle this?",
+          "criteria": {
+            "billing": "invoices, payments, refunds",
+            "technical": "bugs, outages, system errors",
+            "other": "everything else"
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "instructions": "How urgent is this?",
+          "criteria": [
+            "not urgent",
+            "soon",
+            "blocking"
+          ]
+        },
+        "churn_risk": {
+          "type": "noul",
+          "instructions": "Does the user threaten to cancel or leave?"
+        }
+      }
+    }
+  ],
+  "passed": true,
+  "answers_compared": 17,
+  "candidate_source_sha256": {
+    "veya/__init__.py": "7338a16454e422d3b7616846bd04e99dde7bfe39e23c4947ff247be9f59afbcb",
+    "veya/_agreement.py": "d5ae738d406444c65ecaa8da4aa1598c2899b7a19b76377e8e53e5651d681df9",
+    "veya/_compat.py": "30f8b819eb56b8bd6b4c5c83a084abe65f97dd0ce957f2cf532a70d389bb6157",
+    "veya/_compile.py": "c513c540e3b456fa0379aa9a87220475681d8639d0689c3c264fded94bef58ee",
+    "veya/_env.py": "7efd193fd11b88b3aba004fe49c59820b7b4c2c99b8ac5d3e69c2d69a1ed8401",
+    "veya/_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "veya/_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "veya/_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "veya/_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "veya/agent.py": "c2768e4aa3f542c6df12869edd82750dbcc66a0d111efeeff5e4f5011631481f",
+    "veya/backends/__init__.py": "f61ba23afec8b4defc386efc06a8ed7b5cf99be54c216d608415b047e778306c",
+    "veya/backends/base.py": "2659e527410472232ea8264f0fcc40dc943a6578d066db64ffe1d8e3407c00fb",
+    "veya/backends/compile.py": "a948f3b58eee86ec29edd2287ff41ddb16ef8ff0f3f57606d3b280b4d2aca560",
+    "veya/backends/eager.py": "d09814ffaf163497cd3233d9220742575324d4f745675e172638a6fa48e48628",
+    "veya/backends/tilelang.py": "6b1752b94cad7ec90aaf386bc0cdc2f52179a3edc477cd7dacc507bbacafb42f",
+    "veya/calibrate.py": "715e667c7ff2074fd9549fdc829a769f657269fa022de9756e8316032bdc9820",
+    "veya/calibration.py": "930ff25967d8bd82dc3ef8808b338c5a4e77fd8ad66a7a8ec3f26c549d5a391c",
+    "veya/checkpoint.py": "c945dcc70116a92a2bb325b1a3de6c3692e4d9de76d229d865a4327d15ff1b75",
+    "veya/cli.py": "b2110b7431d67b02273047cec8473feb64b2a6f4865a24e4bf99d28a2f24f72a",
+    "veya/common.py": "f6e768a17269b376d371d0006ffbb1d7574f3e59e014c4faed5015ac5d1f5761",
+    "veya/compaction.py": "1b86511fd4e5b5f2cec452306f81a71f642e18eb709dbeaf8cdbc045d103a975",
+    "veya/confidence.py": "b786ee6ba45a2704523a48e57de7247d727107fb1a2274ac13ddb801908e9a91",
+    "veya/consistency.py": "d7322d80d3191bd4f4b2e670e672a748bdd3badf6814b026448ad952337e7caa",
+    "veya/decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "veya/email.py": "b24256b9b40aae521bb67b74af47d70cf26a1c0bc6ba2ffc6110ec1b58474c31",
+    "veya/errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "veya/evals.py": "a437ae6b767b90194dea173e1d05477c22a64ed87aeb3164519b6ff3c4040257",
+    "veya/evals_cli.py": "7b8ce6c1ac35e01df69b3f80ee3f762f1e87886e90f94938d6e774e7d5856f14",
+    "veya/evals_shortlist.py": "0d462431b1ce9fe983b1cf6eb3454aae1d5010fbbd24a531c1cfd38fcc2b4008",
+    "veya/evidence.py": "1cb94e02dcda91ba5496536779da0790c78d8c08079d4668bf35957984569c7c",
+    "veya/fast.py": "43504fd94ca3787997432070c2b16e056a292dbe185d207d8c75582eecaadb94",
+    "veya/hooks.py": "2cd940636168913871f63f0f423f6e3fb71284c7c1530ce9b01a1c2f4a52e8b7",
+    "veya/inference.py": "3f00aedf774f94fee361bec1e83e1f4d6791bb1cec28e91d86ddf49101842698",
+    "veya/inference_common.py": "15f23ed74faaa7cd0f37a28b1777d11fb4ebdf8a168da3a111bc11cff2b1810d",
+    "veya/integrations/__init__.py": "6dfc8d601c56e2367317a4500f085b71a13f887f1eeeaccb5e64ac30c74dc8a0",
+    "veya/integrations/_controls.py": "149e24a9c87482aaf3af9b2dbc13e2e7bf1e8ff5f846d8ead130af0c48d613a9",
+    "veya/integrations/_errors.py": "5996ee31fc4ad80e2057177270afd13f48bf5cf513c72fa8b0a238df2f31beaa",
+    "veya/integrations/_guard.py": "c7e65b5a3e478acba5592b9dc822fda197b31f414a9eeabcda26f368a128c8b4",
+    "veya/integrations/agno.py": "34c7079be449559a6cc5d33ec2a1685582413ec5d0dba8fbe6841e971b74966a",
+    "veya/integrations/crewai.py": "f2d67151968deb52e038daa059f8472d61f192548e4adb11b453a04c288415aa",
+    "veya/integrations/langchain.py": "4b48f91afcab42359672e9349a165c407ae2a5479658d5919d778079dd7279d8",
+    "veya/integrations/llamaindex.py": "0e3701f3adc69e4a6002338caede907e78fb7f142978c7bd08824c48b3c918c2",
+    "veya/lang.py": "680613b46515c15602ed818472ad660dc4255bbb4321f36f79c1c736fcb759d6",
+    "veya/mcp/__init__.py": "7d20c81a908f9ea71f715e9e4fa7d14e37ea248613d33570af46d4256062baed",
+    "veya/mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "veya/mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "veya/mcp/code_mode.py": "da8211746cf77fba45f48b2ea30e20dbb181cf85034a9ea020e35058c7ce77b7",
+    "veya/mcp/device.py": "7c75e605dfafc7cbedac90f0e56f8e37749ba070a54fd9e746f23bec1741ede1",
+    "veya/mcp/remote.py": "91feac33c26c7e971bfa4a71a172c5270ea17069e9549d4958732fc850dcf676",
+    "veya/mcp/server.py": "de8a3c957bcfe2b17f2d960f67387ea1c4105010e1d2889ede9ff9720ba00728",
+    "veya/mcp/tools.py": "94134c7627dcb598e2864652fb016337931c4e0a1410ac01663cf74f02260dad",
+    "veya/onnx_agent.py": "db4ab7b15a4d7046a032c3b7ffe79ee39055a075a2d7318b75c206ad9343ebbf",
+    "veya/performance.py": "93735cd2ba13f566ac71db2216eb3b56ad0776441cfbca45c0dc7b63ae8240d2",
+    "veya/presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "veya/qualification.py": "f4669cb9686704dde1fc0eed0ce326bda4b6f08a263048b4048091394fa32cdd",
+    "veya/replay.py": "a2df27f7e311e8066d1df5e4f3d61c718710a6c5157e47ef3ef3c53a08f5b4cb",
+    "veya/revisions.py": "8f9d0528be48549cd9059d0332e7e8599bb29aded49a18aabad4b7928d5ed695",
+    "veya/router.py": "c68c918298fb17a8ebe4664da559c405ded807c954464a303c6b2ebfdb3fc88a",
+    "veya/serve.py": "bdc2a30da9c3e630be3fcde641171cf5e31e67b5e0f904d533994d082085fe08",
+    "veya/shortlist.py": "b3c1f0869e574a344c5833d37d4dad593f77de908843e4ebc707b41d33429d16",
+    "veya/structured.py": "d47e7bf96abf60041ccf88b9047880565a254996808b7c4fb29712c42dba6a78",
+    "veya/tl_kernels.py": "252965dcbd8af26748b54917d7de67b7c7922d118dbd950f0a0a031d9083b09e",
+    "veya/train.py": "c466a89adeb0a38c205e939f5bec7c839d8e08b7ae397e289c8bade37066dedd",
+    "veya/train_cli.py": "03e1cb5ed77fcbc0ea9a5b4ebaac616ef17ef15817f85fce6c1a6641c15d83f2"
+  },
+  "before": {
+    "revision": "7b928d828b7b0e022f929d9bd2e44165aa270148",
+    "torch": "2.14.1+cpu",
+    "answers": [
+      {
+        "billing": {
+          "type": "noul",
+          "noul": 0.9681,
+          "confidence": 0.9681,
+          "answer_confidence": 0.9681,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      },
+      {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.9865,
+            "technical": 0.008,
+            "other": 0.0055
+          },
+          "confidence": 0.9267,
+          "answer_confidence": 0.9865,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "score": 1.7722,
+          "legend": {
+            "0": "not urgent",
+            "1": "soon",
+            "2": "blocking"
+          },
+          "probabilities": {
+            "0": 0.0389,
+            "1": 0.15,
+            "2": 0.8111
+          },
+          "confidence": 0.4714,
+          "answer_confidence": 0.8111,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "churn_risk": {
+          "type": "noul",
+          "noul": 0.879,
+          "confidence": 0.879,
+          "answer_confidence": 0.879,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      },
+      {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.9865,
+            "technical": 0.008,
+            "other": 0.0055
+          },
+          "confidence": 0.9267,
+          "answer_confidence": 0.9865,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "score": 1.7722,
+          "legend": {
+            "0": "not urgent",
+            "1": "soon",
+            "2": "blocking"
+          },
+          "probabilities": {
+            "0": 0.0389,
+            "1": 0.15,
+            "2": 0.8111
+          },
+          "confidence": 0.4714,
+          "answer_confidence": 0.8111,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "churn_risk": {
+          "type": "noul",
+          "noul": 0.879,
+          "confidence": 0.879,
+          "answer_confidence": 0.879,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "refund": {
+          "type": "noul",
+          "noul": 0.9419,
+          "confidence": 0.9419,
+          "answer_confidence": 0.9419,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "login": {
+          "type": "noul",
+          "noul": 0.0992,
+          "confidence": 0.9008,
+          "answer_confidence": 0.9008,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "angry": {
+          "type": "noul",
+          "noul": 0.4282,
+          "confidence": 0.5718,
+          "answer_confidence": 0.5718,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "invoice": {
+          "type": "noul",
+          "noul": 0.5285,
+          "confidence": 0.5285,
+          "answer_confidence": 0.5285,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "deadline": {
+          "type": "noul",
+          "noul": 0.2928,
+          "confidence": 0.7072,
+          "answer_confidence": 0.7072,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "sentiment": {
+          "type": "choice",
+          "choice": "negative",
+          "probabilities": {
+            "positive": 0.0045,
+            "neutral": 0.0096,
+            "negative": 0.9859
+          },
+          "confidence": 0.9244,
+          "answer_confidence": 0.9859,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "language": {
+          "type": "choice",
+          "choice": "english",
+          "probabilities": {
+            "english": 0.8302,
+            "spanish": 0.0567,
+            "other": 0.1131
+          },
+          "confidence": 0.4868,
+          "answer_confidence": 0.8302,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      },
+      {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.8725,
+            "technical": 0.1021,
+            "other": 0.0254
+          },
+          "confidence": 0.5946,
+          "answer_confidence": 0.8725,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "score": 1.4386,
+          "legend": {
+            "0": "not urgent",
+            "1": "soon",
+            "2": "blocking"
+          },
+          "probabilities": {
+            "0": 0.1001,
+            "1": 0.3611,
+            "2": 0.5388
+          },
+          "confidence": 0.1521,
+          "answer_confidence": 0.5388,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "churn_risk": {
+          "type": "noul",
+          "noul": 0.0148,
+          "confidence": 0.9852,
+          "answer_confidence": 0.9852,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      }
+    ],
+    "usage": [
+      {
+        "input_tokens": 52,
+        "output_tokens": 0,
+        "state_tokens": 21,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      },
+      {
+        "input_tokens": 164,
+        "output_tokens": 0,
+        "state_tokens": 21,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      },
+      {
+        "input_tokens": 516,
+        "output_tokens": 0,
+        "state_tokens": 21,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      },
+      {
+        "input_tokens": 839,
+        "output_tokens": 0,
+        "state_tokens": 246,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      }
+    ]
+  },
+  "after": {
+    "revision": "7b928d828b7b0e022f929d9bd2e44165aa270148",
+    "torch": "2.14.1+cpu",
+    "answers": [
+      {
+        "billing": {
+          "type": "noul",
+          "noul": 0.9681,
+          "confidence": 0.9681,
+          "answer_confidence": 0.9681,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      },
+      {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.9865,
+            "technical": 0.008,
+            "other": 0.0055
+          },
+          "confidence": 0.9267,
+          "answer_confidence": 0.9865,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "score": 1.7722,
+          "legend": {
+            "0": "not urgent",
+            "1": "soon",
+            "2": "blocking"
+          },
+          "probabilities": {
+            "0": 0.0389,
+            "1": 0.15,
+            "2": 0.8111
+          },
+          "confidence": 0.4714,
+          "answer_confidence": 0.8111,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "churn_risk": {
+          "type": "noul",
+          "noul": 0.879,
+          "confidence": 0.879,
+          "answer_confidence": 0.879,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      },
+      {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.9865,
+            "technical": 0.008,
+            "other": 0.0055
+          },
+          "confidence": 0.9267,
+          "answer_confidence": 0.9865,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "score": 1.7722,
+          "legend": {
+            "0": "not urgent",
+            "1": "soon",
+            "2": "blocking"
+          },
+          "probabilities": {
+            "0": 0.0389,
+            "1": 0.15,
+            "2": 0.8111
+          },
+          "confidence": 0.4714,
+          "answer_confidence": 0.8111,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "churn_risk": {
+          "type": "noul",
+          "noul": 0.879,
+          "confidence": 0.879,
+          "answer_confidence": 0.879,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "refund": {
+          "type": "noul",
+          "noul": 0.9419,
+          "confidence": 0.9419,
+          "answer_confidence": 0.9419,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "login": {
+          "type": "noul",
+          "noul": 0.0992,
+          "confidence": 0.9008,
+          "answer_confidence": 0.9008,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "angry": {
+          "type": "noul",
+          "noul": 0.4282,
+          "confidence": 0.5718,
+          "answer_confidence": 0.5718,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "invoice": {
+          "type": "noul",
+          "noul": 0.5285,
+          "confidence": 0.5285,
+          "answer_confidence": 0.5285,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "deadline": {
+          "type": "noul",
+          "noul": 0.2928,
+          "confidence": 0.7072,
+          "answer_confidence": 0.7072,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "sentiment": {
+          "type": "choice",
+          "choice": "negative",
+          "probabilities": {
+            "positive": 0.0045,
+            "neutral": 0.0096,
+            "negative": 0.9859
+          },
+          "confidence": 0.9244,
+          "answer_confidence": 0.9859,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "language": {
+          "type": "choice",
+          "choice": "english",
+          "probabilities": {
+            "english": 0.8302,
+            "spanish": 0.0567,
+            "other": 0.1131
+          },
+          "confidence": 0.4868,
+          "answer_confidence": 0.8302,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      },
+      {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.8725,
+            "technical": 0.1021,
+            "other": 0.0254
+          },
+          "confidence": 0.5946,
+          "answer_confidence": 0.8725,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "urgency": {
+          "type": "score",
+          "score": 1.4386,
+          "legend": {
+            "0": "not urgent",
+            "1": "soon",
+            "2": "blocking"
+          },
+          "probabilities": {
+            "0": 0.1001,
+            "1": 0.3611,
+            "2": 0.5388
+          },
+          "confidence": 0.1521,
+          "answer_confidence": 0.5388,
+          "action": {
+            "act_probability": 1.0
+          }
+        },
+        "churn_risk": {
+          "type": "noul",
+          "noul": 0.0148,
+          "confidence": 0.9852,
+          "answer_confidence": 0.9852,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      }
+    ],
+    "usage": [
+      {
+        "input_tokens": 52,
+        "output_tokens": 0,
+        "state_tokens": 21,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      },
+      {
+        "input_tokens": 164,
+        "output_tokens": 0,
+        "state_tokens": 21,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      },
+      {
+        "input_tokens": 516,
+        "output_tokens": 0,
+        "state_tokens": 21,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      },
+      {
+        "input_tokens": 839,
+        "output_tokens": 0,
+        "state_tokens": 246,
+        "state_tokens_dropped": 0,
+        "truncated": false,
+        "truncated_questions": []
+      }
+    ]
+  }
+}

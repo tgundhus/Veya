@@ -1,12 +1,12 @@
 """Every autocast-dtype override the runtime reads has to be reachable from the shipped Compose
 deployment.
 
-`laya/agent.py` picks the dtype a forward runs in from the environment, and the deployment that
+`veya/agent.py` picks the dtype a forward runs in from the environment, and the deployment that
 selects the device drops those names:
 
-    $ LAYA_CUDA_AMP=fp16 docker compose -f compose.yaml -f compose.cuda.yaml config | grep LAYA_
-          LAYA_DEVICE: cuda
-          LAYA_DEVICE: cuda
+    $ VEYA_CUDA_AMP=fp16 docker compose -f compose.yaml -f compose.cuda.yaml config | grep VEYA_
+          VEYA_DEVICE: cuda
+          VEYA_DEVICE: cuda
 
 The operator exported the variable, Compose saw it, and neither service's environment carries it,
 so the image serves the checkpoint's own `amp_dtype` no matter what was set. That is not a
@@ -17,9 +17,9 @@ deployment could not turn it.
 
 Why the names are derived rather than transcribed: the same three-way drift (package, markdown,
 Compose) is what hid them, and a literal list in this file goes stale the moment the core reads
-another one. So the set is read out of `laya/agent.py` -- the names it consumes *near a dtype
+another one. So the set is read out of `veya/agent.py` -- the names it consumes *near a dtype
 decision* -- and the rest of the file checks the deployment and the page against it, in both
-directions. `LAYA_MPS_AMP_MIN_ROWS` is read by the same module and is deliberately not required
+directions. `VEYA_MPS_AMP_MIN_ROWS` is read by the same module and is deliberately not required
 here, because no image in this repo can select MPS; check 5 keeps that reason falsifiable instead
 of freezing it in a comment.
 
@@ -43,11 +43,11 @@ NOTES: List[str] = []
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COMPOSE_FILES = ("compose.yaml", "compose.cuda.yaml", "compose.spark.yaml", "compose.http.yaml",
                  "compose.modelscope.yaml")
-NAME = re.compile(r"\bLAYA_[A-Z0-9_]+\b")
+NAME = re.compile(r"\bVEYA_[A-Z0-9_]+\b")
 # The dtype decision itself: a torch dtype object or the checkpoint's `amp_dtype` field. Prose
 # that merely names a precision ("MPS fp16 autocast") is not a decision site.
 DTYPE_SITE = re.compile(r"torch\.(?:float16|bfloat16|float32)\b|\bamp_dtype\b")
-ENVIRON_GET = re.compile(r'os\.environ\.get\("(LAYA_[A-Z0-9_]+)"')
+ENVIRON_GET = re.compile(r'getenv\("(VEYA_[A-Z0-9_]+)"')
 
 
 def check(what: str, got: object, want: object) -> None:
@@ -70,8 +70,8 @@ def read(rel: str) -> str:
 
 
 def dtype_names() -> List[str]:
-    """Names `laya/agent.py` reads from the environment within a few lines of a dtype decision."""
-    lines = read(os.path.join("laya", "agent.py")).splitlines()
+    """Names `veya/agent.py` reads from the environment within a few lines of a dtype decision."""
+    lines = read(os.path.join("veya", "agent.py")).splitlines()
     out = []
     for i, line in enumerate(lines):
         match = ENVIRON_GET.search(line)
@@ -87,21 +87,21 @@ def dtype_names() -> List[str]:
 # passthrough with an empty default -- `"${NAME:-}"` -- hands the container `""`, not an absent
 # variable, so a reader that supplies a real default would take a decision away from an operator
 # who set nothing. These are the only shapes that keep the empty string meaning "as before", and
-# they are all in `laya/`: `os.environ.get("NAME", "")`, a falsy test on the same line, and the
+# they are all in `veya/`: `os.environ.get("NAME", "")`, a falsy test on the same line, and the
 # `raw = os.environ.get("NAME")` / `if not raw: return DEFAULT` resolver in the server module.
-EMPTY_GET = 'os.environ.get("{name}", "")'
-EMPTY_OR = 'os.environ.get("{name}") or '
+EMPTY_GET = 'getenv("{name}", "")'
+EMPTY_OR = 'getenv("{name}") or '
 # A resolver that returns its own default from the empty string: the read, then a falsy test on
 # the next line, then the value it hands back. Only the first two lines are looked at, so a
 # reader that ignores an empty value and keeps going is still reported.
-EMPTY_RESOLVER = (r'os\.environ\.get\("{name}"(,\s*""\s*)?\)\s*\n'
+EMPTY_RESOLVER = (r'getenv\("{name}"(,\s*""\s*)?\)\s*\n'
                   r'\s*if (not \w+|\w+ is None or not \w+)\b')
 
 
 def empty_unsafe_reads(name: str) -> List[str]:
     """Every read of ``name`` in the package an empty value would not survive."""
     out: List[str] = []
-    for _dirpath, _dirs, _files in os.walk(os.path.join(ROOT, "laya")):
+    for _dirpath, _dirs, _files in os.walk(os.path.join(ROOT, "veya")):
         for _filename in _files:
             if not _filename.endswith(".py"):
                 continue
@@ -170,11 +170,11 @@ def env_blocks(text: str) -> Dict[str, Dict[str, str]]:
 names = dtype_names()
 
 # 1. the derived set is what this PR is about, so it must not be silently empty or renamed away.
-check_true("core/derives dtype names from laya/agent.py", len(names) >= 2, names)
-check("core/derives the CUDA and CPU dtype overrides", names, ["LAYA_CPU_AMP", "LAYA_CUDA_AMP"])
+check_true("core/derives dtype names from veya/agent.py", len(names) >= 2, names)
+check("core/derives the CUDA and CPU dtype overrides", names, ["VEYA_CPU_AMP", "VEYA_CUDA_AMP"])
 for name in names:
     check_true("core/%s is read with os.environ.get" % name,
-               'os.environ.get("%s"' % name in read(os.path.join("laya", "agent.py")),
+               'getenv("%s"' % name in read(os.path.join("veya", "agent.py")),
                "the name this file is enforcing is no longer how the core reads it")
 
 # 2. every Compose file that selects a device forwards every derived name, in every service.
@@ -182,8 +182,8 @@ for rel in COMPOSE_FILES:
     text = read(rel)
     blocks = env_blocks(text)
     check_true("compose/%s parses into services" % rel, bool(blocks), sorted(blocks))
-    if "LAYA_DEVICE" not in text:
-        NOTES.append("%s: no LAYA_DEVICE, so nothing to forward" % rel)
+    if "VEYA_DEVICE" not in text:
+        NOTES.append("%s: no VEYA_DEVICE, so nothing to forward" % rel)
         continue
     for service, env in sorted(blocks.items()):
         for name in names:
@@ -204,8 +204,8 @@ for rel in COMPOSE_FILES:
 # 3. an empty host default has to mean "not asked for", which is what these images shipped before
 #    any of this. Widened from the two dtype names to every name any Compose file forwards in the
 #    `"${NAME:-}"` form, because the form is the deployment's promise and the promise is only kept
-#    by the reader: an unset `LAYA_REVISION` has to leave the download on the Hub's default branch
-#    the way `laya/revisions.py` says it does, and an unset `LAYA_MAX_CONCURRENT` has to leave the
+#    by the reader: an unset `VEYA_REVISION` has to leave the download on the Hub's default branch
+#    the way `veya/revisions.py` says it does, and an unset `VEYA_MAX_CONCURRENT` has to leave the
 #    server on 16. A reader that swaps in its own non-empty default when the container hands it
 #    `""` silently outranks an operator who set nothing, so each read site is parsed, not trusted.
 for rel in COMPOSE_FILES:
@@ -233,7 +233,7 @@ for name in names:
 #     changes no device and forwards no dtype, so leaving it out of *that* loop is right. It was
 #     also leaving it out of every loop, which is how a fifth file could ship a default the page
 #     contradicts: its own header says it is for "request, checkpoint and secret-file mounts", and
-#     it pinned `LAYA_MODEL` to `english` where the row prints `auto`. `examples/docker/quickstart.py`
+#     it pinned `VEYA_MODEL` to `english` where the row prints `auto`. `examples/docker/quickstart.py`
 #     reads that name, treats anything but `auto` as an explicit alias, and refuses it the moment
 #     the operator enables the local-checkpoint mount the same file shows -- so the one line nobody
 #     annotated both silences language routing and breaks the mount the file exists to demonstrate.
@@ -316,13 +316,13 @@ def pins(text: str) -> List[tuple]:
 # failure on its own -- an override that bakes weights and names no device joins neither sweep --
 # while a hypothetical `compose.tpu.yaml` that pinned a device without joining the sweep would drop
 # every dtype passthrough in it, which is the bug this whole file was written because of.
-_devices = {v for _s, n, v, _a in pins(read("compose.yaml")) if n == "LAYA_DEVICE"}
+_devices = {v for _s, n, v, _a in pins(read("compose.yaml")) if n == "VEYA_DEVICE"}
 check_true("compose/base file pins a device to compare against", _devices != set(),
-           "compose.yaml has no LAYA_DEVICE default; retarget this if that changes")
+           "compose.yaml has no VEYA_DEVICE default; retarget this if that changes")
 check("compose/every file that selects a device the base file does not is in the dtype sweep",
       [rel for rel in ALL_COMPOSE
        if rel != "compose.yaml"
-       and any(n == "LAYA_DEVICE" and v not in _devices for _s, n, v, _a in pins(read(rel)))
+       and any(n == "VEYA_DEVICE" and v not in _devices for _s, n, v, _a in pins(read(rel)))
        and rel not in COMPOSE_FILES], [])
 NOTES.append("compose/files outside the dtype sweep: %s"
              % sorted(set(ALL_COMPOSE) - set(COMPOSE_FILES)))
@@ -385,58 +385,58 @@ NOTES.append("compose/%d of %d pinned defaults are off-row and cleared by a comm
 # 5. the exclusion this file relies on stays falsifiable: MPS's row gate is not forwarded because
 #    no Compose file here can select MPS. The day one does, this check fails and the decision has
 #    to be made again rather than quietly missing a name.
-agent_src = read(os.path.join("laya", "agent.py"))
+agent_src = read(os.path.join("veya", "agent.py"))
 # Artifact digests and resource presets do not select precision. The constructor regression
 # in test_performance_modes.py verifies presets retain the checkpoint dtype and backend.
 mps_names = sorted(set(NAME.findall(agent_src)) - set(names)
-                   - {"LAYA_SHA256_DIGESTS", "LAYA_PERFORMANCE_MODE"})
-check_true("core/MPS names are the only runtime names excluded", mps_names == ["LAYA_MPS_AMP_MIN_ROWS"],
+                   - {"VEYA_SHA256_DIGESTS", "VEYA_PERFORMANCE_MODE"})
+check_true("core/MPS names are the only runtime names excluded", mps_names == ["VEYA_MPS_AMP_MIN_ROWS"],
            mps_names)
 devices = set()
 for rel in COMPOSE_FILES:
-    devices.update(re.findall(r'LAYA_DEVICE: "\$\{LAYA_DEVICE:-([a-z0-9]+)\}"', read(rel)))
+    devices.update(re.findall(r'VEYA_DEVICE: "\$\{VEYA_DEVICE:-([a-z0-9]+)\}"', read(rel)))
 check("compose/devices any file defaults to", sorted(devices), ["cpu", "cuda"])
 # The literal is deliberate, and matches how the rest of this repo gates prose: the reason is the
 # thing that goes stale, so it has to be pinned, not just the variable's name.
-mps_reason = re.search(r"`LAYA_MPS_AMP_MIN_ROWS`,[^.]*\.", docker_md, re.S)
+mps_reason = re.search(r"`VEYA_MPS_AMP_MIN_ROWS`,[^.]*\.", docker_md, re.S)
 check_true("docs/docker.md says why MPS is not forwarded",
            mps_reason is not None and "no image here can reach" in mps_reason.group(0),
            "the omission has to be explained where a reader meets it")
 
 # 6. The same drift one level up. `dtype_names()` above is deliberately narrow -- a dtype
 #    decision and the name it reads -- because that is the contract it was written for. The cost
-#    is that a name read by any *other* module is invisible to it: `LAYA_REVISION` is read by
-#    `laya/revisions.py`, it is documented, and it was forwarded by no Compose file at all. So an
+#    is that a name read by any *other* module is invisible to it: `VEYA_REVISION` is read by
+#    `veya/revisions.py`, it is documented, and it was forwarded by no Compose file at all. So an
 #    operator's pin was interpolated, discarded without a warning, and the checkpoints loaded at
 #    whatever the mutable default branch held.
 #
-#    This widens the derivation to every `LAYA_*` the package reads and checks the three-way
+#    This widens the derivation to every `VEYA_*` the package reads and checks the three-way
 #    agreement -- package, docs, deployment -- in both directions, at "forwarded by at least one
-#    file" granularity. Per-service granularity would be wrong the other way: `LAYA_PORT` belongs
-#    to `laya-serve` and must not be demanded of the SDK service.
+#    file" granularity. Per-service granularity would be wrong the other way: `VEYA_PORT` belongs
+#    to `veya-serve` and must not be demanded of the SDK service.
 package_read: set = set()
-for _dirpath, _dirs, _files in os.walk(os.path.join(ROOT, "laya")):
+for _dirpath, _dirs, _files in os.walk(os.path.join(ROOT, "veya")):
     for _filename in _files:
         if not _filename.endswith(".py"):
             continue
         _rel = os.path.relpath(os.path.join(_dirpath, _filename), ROOT)
         package_read |= set(ENVIRON_GET.findall(read(_rel)))
 
-# A row may name two variables in one cell (``LAYA_API_KEY` / `LAYA_API_KEY_FILE`), so collect
+# A row may name two variables in one cell (``VEYA_API_KEY` / `VEYA_API_KEY_FILE`), so collect
 # every name appearing anywhere in a table row as well. Matching only a lone backticked name
 # would report a correctly documented variable as undocumented.
-documented_rows = set(re.findall(r"^\| `(LAYA_[A-Z0-9_]+)` \|", docker_md, re.M))
+documented_rows = set(re.findall(r"^\| `(VEYA_[A-Z0-9_]+)` \|", docker_md, re.M))
 for _row in re.findall(r"^\|.*$", docker_md, re.M):
     documented_rows |= set(NAME.findall(_row))
 
-_mps_doc = re.search(r"`LAYA_MPS_AMP_MIN_ROWS`[^.]*\.", docker_md, re.S)
+_mps_doc = re.search(r"`VEYA_MPS_AMP_MIN_ROWS`[^.]*\.", docker_md, re.S)
 excluded = set(NAME.findall(_mps_doc.group(0))) if _mps_doc else set()
 
-# `LAYA_MAX_CONCURRENT` and `LAYA_MAX_TOKEN_BUDGET` sat in this exclusion for one reason, and the
+# `VEYA_MAX_CONCURRENT` and `VEYA_MAX_TOKEN_BUDGET` sat in this exclusion for one reason, and the
 # reason was dated: `compose.http.yaml` is the only file that can forward them, and three PRs were
 # inserting into that service's `environment:` block at the same time, so the names were left for
 # whoever landed the cluster. The cluster landed -- #528 and #656 both merged 2026-09-29, and
-# #528's `LAYA_SHA256_DIGESTS` is in the block this file now demands -- so the exclusion is empty
+# #528's `VEYA_SHA256_DIGESTS` is in the block this file now demands -- so the exclusion is empty
 # and the two knobs are forwarded by `compose.http.yaml` with the rest of them.
 #
 # The tuple stays rather than disappearing, because an empty exclusion is the shape most likely to
@@ -447,7 +447,7 @@ required = sorted((package_read & documented_rows) - excluded - set(DEFERRED))
 
 check_true("core/the widened set is not empty", len(required) >= 10, required)
 check_true("core/the widened set includes the name this change forwards",
-           "LAYA_REVISION" in required, sorted(required))
+           "VEYA_REVISION" in required, sorted(required))
 check_true("core/nothing is deferred out of the widened set", DEFERRED == (),
            "a deferred name is a documented knob that no shipped deployment can set")
 
@@ -464,7 +464,7 @@ for _name in required:
                for e in env_blocks(read(_r)).values() if _name in e]
     if _values:
         # Starts with `"${NAME:-` and ends with `}"`. The tail is matched loosely on purpose:
-        # LAYA_THREADS nests a second default, `"${LAYA_THREADS:-${OMP_NUM_THREADS:-4}}"`,
+        # VEYA_THREADS nests a second default, `"${VEYA_THREADS:-${OMP_NUM_THREADS:-4}}"`,
         # which is still a host passthrough and is the idiom this file already used.
         check_true("compose/%s is a host passthrough" % _name,
                    all(v.startswith('"${%s:-' % _name) and v.endswith('}"') for v in _values),
@@ -478,16 +478,16 @@ for _name in sorted(forwarded_anywhere - set(required)):
                "the deployment sets it and the page never mentions it")
 
 # 6b. "Forwarded by at least one file" is the right ceiling for a name two services share, and
-#     the wrong floor for one they do not. `LAYA_MAX_CONCURRENT` is read by `laya/serve.py` during
+#     the wrong floor for one they do not. `VEYA_MAX_CONCURRENT` is read by `veya/serve.py` during
 #     request admission, so a file that never starts a server forwarding it satisfies check 6
 #     while the server that needs it still cannot be configured -- which is exactly how these two
-#     knobs survived a merged gate. `compose.yaml`'s `laya` service runs a one-shot quickstart, and
-#     `compose.http.yaml`'s own header says why that is not the same container: "`laya-serve` is a
-#     separate service and overrides for `laya` never reach it".
+#     knobs survived a merged gate. `compose.yaml`'s `veya` service runs a one-shot quickstart, and
+#     `compose.http.yaml`'s own header says why that is not the same container: "`veya-serve` is a
+#     separate service and overrides for `veya` never reach it".
 #
 #     The service a variable belongs to is taken from the page rather than from a literal here,
 #     because the page is the artifact that says which name belongs where: the table under
-#     "Server configuration" opens with "These apply to the `laya-serve` service only."
+#     "Server configuration" opens with "These apply to the `veya-serve` service only."
 server_doc = re.search(r"^### Server configuration\n(.*?)(?=^#{2,3} )", docker_md, re.M | re.S)
 check_true("docs/docker.md has a Server configuration section", server_doc is not None,
            "the derivation below needs the page to own the server variables")
@@ -496,7 +496,7 @@ if server_doc:
     _owner = re.search(r"These apply to the `([a-z0-9-]+)` service only\.", _body)
     check_true("docs/docker.md names the service the server table applies to", _owner is not None,
                _body.splitlines()[:3])
-    server_names = sorted(set(re.findall(r"^\| `(LAYA_[A-Z0-9_]+)` \|", _body, re.M)) & package_read)
+    server_names = sorted(set(re.findall(r"^\| `(VEYA_[A-Z0-9_]+)` \|", _body, re.M)) & package_read)
     check_true("core/the server table is not empty", len(server_names) >= 8, server_names)
     if _owner:
         _service = _owner.group(1)
@@ -526,8 +526,8 @@ if server_doc:
                            "the table applies to `%s` only and this command boots it, so an "
                            "operator's value is interpolated and dropped" % _service)
                 if _name in _merged:
-                    # The same loose tail check 6 uses, so `LAYA_THREADS`'s nested
-                    # `"${LAYA_THREADS:-${OMP_NUM_THREADS:-4}}"` stays a host passthrough.
+                    # The same loose tail check 6 uses, so `VEYA_THREADS`'s nested
+                    # `"${VEYA_THREADS:-${OMP_NUM_THREADS:-4}}"` stays a host passthrough.
                     check_true("compose/%s/%s is a host passthrough" % ("+".join(_pair), _name),
                                _merged[_name].startswith('"${%s:-' % _name)
                                and _merged[_name].endswith('}"'),
@@ -540,9 +540,9 @@ if server_doc:
         _env = env_blocks(read("compose.http.yaml")).get(_service, {})
         check_true("compose/compose.http.yaml defines the %s service" % _service,
                    _service in env_blocks(read("compose.http.yaml")), sorted(_env))
-        for _name in ("LAYA_MAX_CONCURRENT", "LAYA_MAX_TOKEN_BUDGET", "LAYA_REVISION",
-                      "LAYA_EXTRA_MODELS", "LAYA_IDLE_UNLOAD_SECONDS",
-                      "LAYA_MAX_BATCH_TOKENS", "LAYA_JEV_STRICT"):
+        for _name in ("VEYA_MAX_CONCURRENT", "VEYA_MAX_TOKEN_BUDGET", "VEYA_REVISION",
+                      "VEYA_EXTRA_MODELS", "VEYA_IDLE_UNLOAD_SECONDS",
+                      "VEYA_MAX_BATCH_TOKENS", "VEYA_JEV_STRICT"):
             check_true("compose/compose.http.yaml/%s forwards the %s this change adds"
                        % (_service, _name), _name in _env,
                        "it is documented and read by the runtime, and the service that needs it "
@@ -554,10 +554,10 @@ if server_doc:
         #     So each forwarded name is checked against its own row, and an empty default has to
         #     be a value the reader treats as "not asked for": the property check 3 pins for the
         #     dtype names, widened to the server table, where the empty form is the norm.
-        _serve_src = read(os.path.join("laya", "serve.py"))
+        _serve_src = read(os.path.join("veya", "serve.py"))
         _defaults = dict(re.findall(r"^(DEFAULT_[A-Z0-9_]+) = (\S+)$", _serve_src, re.M))
         _const_pinned = 0
-        for _name, _cell in re.findall(r"^\| `(LAYA_[A-Z0-9_]+)` \| ([^|]+) \|", _body, re.M):
+        for _name, _cell in re.findall(r"^\| `(VEYA_[A-Z0-9_]+)` \| ([^|]+) \|", _body, re.M):
             _value = _env.get(_name)
             if not _value or not _value.startswith('"${%s:-' % _name) or not _value.endswith('}"'):
                 continue
@@ -579,14 +579,14 @@ if server_doc:
                 _unsafe = empty_unsafe_reads(_name)
                 check_true("compose/compose.http.yaml/%s empty default is safe" % _name,
                            not _unsafe, _unsafe)
-                _const = "DEFAULT_%s" % _name[len("LAYA_"):]
+                _const = "DEFAULT_%s" % _name[len("VEYA_"):]
                 if _cell.startswith("`") and _const in _defaults:
                     _const_pinned += 1
-                    check("docs/docker.md prints the same %s default as laya/serve.py" % _name,
+                    check("docs/docker.md prints the same %s default as veya/serve.py" % _name,
                           _cell.strip("`"), _defaults[_const])
         check_true("core/knobs this change forwards have a module default to pin",
                    _const_pinned == 4, _const_pinned)
-        for _name in ("LAYA_MAX_CONCURRENT", "LAYA_MAX_TOKEN_BUDGET", "LAYA_MAX_BATCH_TOKENS", "LAYA_BODY_READ_TIMEOUT"):
+        for _name in ("VEYA_MAX_CONCURRENT", "VEYA_MAX_TOKEN_BUDGET", "VEYA_MAX_BATCH_TOKENS", "VEYA_BODY_READ_TIMEOUT"):
             check_true("docs/docker.md keeps the %s row in the server table" % _name,
                        re.search(r"^\| `%s` \|" % _name, _body, re.M) is not None,
                        "the two sections above derive their demand from this table, so a row "
@@ -594,18 +594,18 @@ if server_doc:
 
 # 7. the real renderer, when this machine has one: the rendered environment must carry the value.
 if shutil.which("docker"):
-    env = dict(os.environ, LAYA_CUDA_AMP="fp16")
+    env = dict(os.environ, VEYA_CUDA_AMP="fp16")
     proc = subprocess.run(["docker", "compose", "-f", "compose.yaml", "-f", "compose.cuda.yaml",
                            "config"], cwd=ROOT, env=env, capture_output=True, text=True)
     if proc.returncode == 0:
         rendered = proc.stdout
         blocks = env_blocks(rendered)
-        got = sorted([str(b.get("LAYA_CUDA_AMP", "<absent>")) for b in blocks.values()])
-        check_true("render/both GPU services get LAYA_CUDA_AMP=fp16",
+        got = sorted([str(b.get("VEYA_CUDA_AMP", "<absent>")) for b in blocks.values()])
+        check_true("render/both GPU services get VEYA_CUDA_AMP=fp16",
                    got == ["fp16", "fp16"],
-                   {s: b.get("LAYA_CUDA_AMP") for s, b in blocks.items()})
-        check_true("render/LAYA_MPS_AMP_MIN_ROWS stays out of the rendered environment",
-                   all("LAYA_MPS_AMP_MIN_ROWS" not in b for b in blocks.values()),
+                   {s: b.get("VEYA_CUDA_AMP") for s, b in blocks.items()})
+        check_true("render/VEYA_MPS_AMP_MIN_ROWS stays out of the rendered environment",
+                   all("VEYA_MPS_AMP_MIN_ROWS" not in b for b in blocks.values()),
                    sorted(k for b in blocks.values() for k in b if "MPS" in k))
     else:
         NOTES.append("docker compose config exited %d: %s" % (proc.returncode,
@@ -614,10 +614,10 @@ if shutil.which("docker"):
     # The HTTP file is what this change edits, and an interpolated name that never reaches the
     # container is the failure the textual checks above are reasoning about. Both arms: set, and
     # left alone. The unset arm is the one an operator actually boots, and it must show the empty
-    # default arriving as empty rather than as the literal `${LAYA_MAX_CONCURRENT:-}`.
-    _KN = ("LAYA_MAX_CONCURRENT", "LAYA_MAX_TOKEN_BUDGET", "LAYA_REVISION",
-           "LAYA_EXTRA_MODELS", "LAYA_IDLE_UNLOAD_SECONDS",
-           "LAYA_MAX_BATCH_TOKENS", "LAYA_JEV_STRICT")
+    # default arriving as empty rather than as the literal `${VEYA_MAX_CONCURRENT:-}`.
+    _KN = ("VEYA_MAX_CONCURRENT", "VEYA_MAX_TOKEN_BUDGET", "VEYA_REVISION",
+           "VEYA_EXTRA_MODELS", "VEYA_IDLE_UNLOAD_SECONDS",
+           "VEYA_MAX_BATCH_TOKENS", "VEYA_JEV_STRICT")
     _VALS = ("4", "16384", "reviewed", '{"custom":"./model"}', "30", "65536", "1")
     _arms = [(dict(zip(_KN, _VALS)), dict(zip(_KN, _VALS))),
              ({}, dict.fromkeys(_KN, ""))]
@@ -629,7 +629,7 @@ if shutil.which("docker"):
             NOTES.append("docker compose -f compose.http.yaml config exited %d: %s"
                          % (proc.returncode, proc.stderr.strip()[:200]))
             continue
-        _rendered = env_blocks(proc.stdout).get("laya-serve", {})
+        _rendered = env_blocks(proc.stdout).get("veya-serve", {})
         for _name, _want in sorted(_expect.items()):
             # The renderer re-quotes: `4` comes back as `'4'` and an empty default as `""`.
             # Stripping one layer of quotes is what the container actually receives as a string.

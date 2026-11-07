@@ -54,7 +54,7 @@ def audit(ctx):
         }, sys.stdout)
         sys.stdout.write("\n")
 
-laya.load("convaiinnovations/laya", on_predict_end=audit)
+veya.load("convaiinnovations/laya", on_predict_end=audit)
 ```
 
 A hook fires once per call, and a `predict_batch` call carries every state in it, so the record is
@@ -79,7 +79,7 @@ def redact(ctx):
         for s in ctx.states
     ]
 
-laya.load("convaiinnovations/laya", on_predict_start=redact)
+veya.load("convaiinnovations/laya", on_predict_start=redact)
 ```
 
 A redaction hook is a policy hook: keep `hooks_raise=True`, because a silently broken redactor
@@ -111,7 +111,7 @@ def write(ctx):
     for i, result in enumerate(ctx.results or []):
         CACHE[key(ctx, i)] = result
 
-laya.load("convaiinnovations/laya", on_predict_start=read, on_predict_end=write)
+veya.load("convaiinnovations/laya", on_predict_start=read, on_predict_end=write)
 ```
 
 Hooks fire once per call, so keying on one state is not enough on `predict_batch`: `ctx.skip()`
@@ -126,7 +126,7 @@ sees.
 This sketch keeps every decision forever, answers from the cache only when every state of a call
 hits, keys on the checkpoint's name rather than the model that answered (so a new revision or
 calibration replays old decisions), and hands the stored object to every caller.
-`laya.DecisionCache` is the shipped version: bounded, expiring, optionally persistent, keyed on the
+`veya.DecisionCache` is the shipped version: bounded, expiring, optionally persistent, keyed on the
 model that answered, and it replays per state; see [Decision consistency](../consistency.md).
 
 ### Metrics
@@ -141,7 +141,7 @@ def metrics(ctx):
     if ctx.elapsed_ms is not None:
         LATENCIES.append(ctx.elapsed_ms)
 
-laya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_raise=False)
+veya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_raise=False)
 ```
 
 ### Guardrails
@@ -157,7 +157,7 @@ def guard(ctx):
     if any("ssn" in str(state).lower() for state in ctx.states):
         raise Blocked("possible PII in state")
 
-laya.load("convaiinnovations/laya", on_predict_start=guard)
+veya.load("convaiinnovations/laya", on_predict_start=guard)
 ```
 
 Test it against the state shape. A guard that only reads `ctx.states[0]` blocks a single call and
@@ -176,7 +176,7 @@ def gate(ctx):
             answer["choice"] = "human-review"
             answer["gated"] = True
 
-laya.load("convaiinnovations/laya", on_predict_end=gate)
+veya.load("convaiinnovations/laya", on_predict_end=gate)
 ```
 
 Mutate through `ctx.results`, which holds one dict per state of the call: gating only the first
@@ -187,7 +187,7 @@ one ships every other low-confidence answer unannotated.
 `on_route` may replace `ctx.decision` to pin a checkpoint for a class of traffic.
 
 ```python
-from laya.router import RouteDecision
+from veya.router import RouteDecision
 
 def pin(ctx):
     if "refund" in str(ctx.states[0]).lower():
@@ -229,7 +229,7 @@ def make_audit(tenant):
         ship(tenant, ctx.run_id, ctx.results)
     return audit
 
-agent = laya.load("convaiinnovations/laya", on_predict_end=make_audit("acme"))
+agent = veya.load("convaiinnovations/laya", on_predict_end=make_audit("acme"))
 ```
 
 ### Composition
@@ -240,7 +240,7 @@ scopes, process-wide default hooks come before an instance's hooks, and an insta
 per-call hooks.
 
 ```python
-agent = laya.load(
+agent = veya.load(
     "convaiinnovations/laya",
     hooks=[Metrics(), Guardrail()],     # metrics first, then policy
     on_predict_start=redact,            # convenience callables appended after hooks
@@ -270,7 +270,7 @@ A tracer or metrics hook that every decision should see can be registered once, 
 passed to each `Agent` and `Router`. Defaults run before the instance and per-call hooks.
 
 ```python
-from laya import BaseHook, hooks
+from veya import BaseHook, hooks
 
 class Metrics(BaseHook):
     def on_predict_end(self, ctx):
@@ -293,7 +293,7 @@ or quietly makes the call worse:
   against that: writing a plain number can lower the budget a caller already set.
 * One call answers every question it carries, so size on the widest of them rather than on
   whichever happens to come first.
-* Once the options no longer fit the head, `laya/common.py` gives each of them
+* Once the options no longer fit the head, `veya/common.py` gives each of them
   `max(4, (head_max_len - 16) // k)` tokens. `16 + 4 * k` therefore lands exactly on that floor:
   every label is still cut down to the tokens it shares with the others, which is the collapse the
   hook was written to avoid. `16 + 8 * k` leaves them distinguishable.
@@ -313,21 +313,21 @@ def widen_for_high_cardinality(ctx):
         ctx.head_max_len = need
         ctx.max_len = max(window, need + 8 + 64)   # 8 reserved, then room for the state
 
-agent = laya.load("convaiinnovations/laya", on_predict_start=widen_for_high_cardinality)
+agent = veya.load("convaiinnovations/laya", on_predict_start=widen_for_high_cardinality)
 ```
 
 This does not touch the shared agent config, so concurrent calls are unaffected. The same knobs are
 available per call: `agent.system_one(state, questions, head_max_len=512, max_len=1024)`.
 
 Widening is not free: a longer window means a larger tensor, and the checkpoints were trained at
-512 (`laya`) and 1,024 tokens. Past that, narrowing the candidates with
+512 (`veya`) and 1,024 tokens. Past that, narrowing the candidates with
 [`predict_shortlist`](../reference/helpers.md) beats stretching the budget.
 
 ## Anti-patterns
 
 ### Blocking work
 
-Hooks run on the calling thread, and `laya.serve` uses a single inference worker. A hook that
+Hooks run on the calling thread, and `veya.serve` uses a single inference worker. A hook that
 sleeps, waits on a network round-trip, or calls `input()` stalls every other request behind it.
 
 ```python
@@ -341,7 +341,7 @@ def audit(ctx):
 ```
 
 If you must do slow work, set `hooks_concurrent=False` to at least keep the hook itself from
-overlapping, and run `laya.serve` behind a queue.
+overlapping, and run `veya.serve` behind a queue.
 
 ### Raising from end hooks for control flow
 
@@ -446,10 +446,10 @@ rejected. Use `on_predict_start=` / `on_predict_end=`.
 
 ```python
 # bad: TypeError
-laya.load("convaiinnovations/laya", hooks=[lambda ctx: None])
+veya.load("convaiinnovations/laya", hooks=[lambda ctx: None])
 
 # good
-laya.load("convaiinnovations/laya", on_predict_end=lambda ctx: None)
+veya.load("convaiinnovations/laya", on_predict_end=lambda ctx: None)
 ```
 
 ### Assuming results exist in end hooks

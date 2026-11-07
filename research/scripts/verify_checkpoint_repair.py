@@ -68,9 +68,9 @@ def frozen_weights(base, candidate, *, allow_encoder_update=False, routing_only=
 
 
 def compare_latency(args, cases):
-    from laya.agent import Agent
-    from laya.onnx_agent import _NativeONNXAgent
-    from laya.qualification import _answers, _compare, _percentiles
+    from veya.agent import Agent
+    from veya.onnx_agent import _NativeONNXAgent
+    from veya.qualification import _answers, _compare, _percentiles
 
     sample = []
     for kind in ("choice", "noul", "score"):
@@ -146,7 +146,7 @@ async def stdio_contract(mode, env, payloads, expected, fresh, fresh_answers):
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
 
-    params = StdioServerParameters(command=sys.executable, args=["-m", "laya.mcp.server", "--mode", mode],
+    params = StdioServerParameters(command=sys.executable, args=["-m", "veya.mcp.server", "--mode", mode],
                                   env=env, cwd=str(ROOT))
     async with stdio_client(params) as (read, write):
         async with ClientSession(read, write, read_timeout_seconds=90) as session:
@@ -192,7 +192,7 @@ async def stdio_contract(mode, env, payloads, expected, fresh, fresh_answers):
 
 
 def mcp_smoke(args, cases, artifacts):
-    from laya.serve import _close_decision_cache, build_router
+    from veya.serve import _close_decision_cache, build_router
 
     name = "english-repair"
     if args.onnx.parent != args.candidate:
@@ -247,7 +247,7 @@ def main():
             del os.environ[key]
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32", LAYA_THREADS="4")
     import torch
-    from laya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
+    from veya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
     torch.set_num_threads(4)
     torch.set_num_interop_threads(1)
     def identities():

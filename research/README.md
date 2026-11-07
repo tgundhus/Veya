@@ -1,18 +1,18 @@
 # Research
 
-Benchmark harnesses and raw results for the Laya checkpoints. This branch is the evidence behind
+Benchmark harnesses and raw results for the Veya checkpoints. This branch is the evidence behind
 the numbers quoted in the main README — nothing here is imported by the `laya` package.
 
 ## Evaluation
 
-- [`eval/`](eval/README.md): the independent per-language MASSIVE harness (`laya_eval.py`), the per-case
+- [`eval/`](eval/README.md): the independent per-language MASSIVE harness (`veya_eval.py`), the per-case
   report behind the published numbers, plus the metamorphic and presentation checks.
 - [`evals/`](evals/README.md): the labelled datasets, thresholds and regression gate consumed by
-  `laya.evals` / `laya-evals` and the scheduled `evals` workflow.
+  `veya.evals` / `veya-evals` and the scheduled `evals` workflow.
 
 ## Community diagnostics
 
-- [Chinese workplace decisions (Feishu-style)](benchmarks/feishu_zh/README.md) — 64 synthetic scenarios, paired recorded Laya/Jev responses, English/Chinese cards, and a model-free audit. [中文入口](benchmarks/feishu_zh/README.zh-CN.md). Start with `python research/benchmarks/feishu_zh/audit.py`; no downloads or API keys required. This is a contributed historical snapshot, separate from the upstream sweeps below.
+- [Chinese workplace decisions (Feishu-style)](benchmarks/feishu_zh/README.md) — 64 synthetic scenarios, paired recorded Veya/Jev responses, English/Chinese cards, and a model-free audit. [中文入口](benchmarks/feishu_zh/README.zh-CN.md). Start with `python research/benchmarks/feishu_zh/audit.py`; no downloads or API keys required. This is a contributed historical snapshot, separate from the upstream sweeps below.
 - [Chinese short-command routing](benchmarks/zh_short_commands/README.md) — 18 frozen Chinese voice commands, a seven-rung ablation of the documented prompt guidance on both the six-way `choice` path and the four-question `noul` path, and every per-case decision archived. [中文入口](benchmarks/zh_short_commands/README.zh-CN.md). Start with `python research/benchmarks/zh_short_commands/audit.py`; the audit needs no downloads and the archive records which weights produced the numbers.
 
 ## Scripts
@@ -27,13 +27,13 @@ the numbers quoted in the main README — nothing here is imported by the `laya`
 | `scripts/bench_required_cache.py` | optional versus required memory/SQLite cache latency and retained borderline decisions; controlled predictor, no neural inference |
 | `scripts/bench_microbatch.py` | queue-inclusive HTTP single-request batching comparison, synthetic by default or using an existing local English CPU checkpoint |
 | `scripts/bench_compaction.py` | offline experimental tool-history pruning on 12 synthetic annotated transcripts; reports tokens, evidence retention and timings for existing local checkpoints |
-| `scripts/laya_benchmark_colab.ipynb` | the full head-to-head on a Colab T4: typed-decisions, MASSIVE intent + scenario (14 languages), XNLI (15), English suites, latency, option-order robustness, calibration repair. Writes one JSON. |
+| `scripts/veya_benchmark_colab.ipynb` | the full head-to-head on a Colab T4: typed-decisions, MASSIVE intent + scenario (14 languages), XNLI (15), English suites, latency, option-order robustness, calibration repair. Writes one JSON. |
 | `scripts/build_benchmark_nb.py` | generator for that notebook (edit here, not the `.ipynb`) |
 | `scripts/bench_local.py` | CPU sweep: MASSIVE intent across **all 51 languages**, plus typed-decisions on all three checkpoints |
 | `scripts/bench_apps.py` | the six application workflows (support triage, email + phishing, guardrails, RAG relevance, moderation, model routing) plus the datasets where public Jev numbers exist |
 | `scripts/bench_latency.py` | inference speed including what routing costs: detection overhead, hot path, cold-swap, mixed-language throughput at several `max_loaded` settings |
 | `scripts/bench_length_batching.py` | compare upstream contiguous batches with optional length sorting on synthetic tickets, including output consistency and optional fresh-process memory profiles (`psutil` required for memory mode) |
-| `scripts/bench_nvidia_capacity.py` | `laya` as a dynamically batched HTTP service on one NVIDIA GPU: open-loop Poisson sweep to the highest rate meeting a p99 SLO, 24-hour curve replay, and the ONNX export the TensorRT rows need (TensorRT via ONNX Runtime, not a laya backend). Results: `results/nvidia_capacity_20260925.json` |
+| `scripts/bench_nvidia_capacity.py` | `laya` as a dynamically batched HTTP service on one NVIDIA GPU: open-loop Poisson sweep to the highest rate meeting a p99 SLO, 24-hour curve replay, and the ONNX export the TensorRT rows need (TensorRT via ONNX Runtime, not a veya backend). Results: `results/nvidia_capacity_20260925.json` |
 | `scripts/make_plots.py` | renders `assets/laya_benchmark.png` from the result JSONs |
 | `scripts/bench_long_context.py` | `laya-multilingual` on long documents: 20 support requests in 8 languages, each placed after 0 to 7,000 tokens of unrelated text, scored at the default limit and at `max_len=8192` |
 | `scripts/bench_position_sensitivity.py` | the same 20 requests, filler and question, with the request swept *through* a fixed-length document instead of only appended to it, so the effect of evidence **position** is separable from document **length** |
@@ -44,15 +44,15 @@ installed its abseil runtime can deadlock model construction on macOS/Python 3.9
 
 ## Running the harnesses
 
-The checkpoints come from `LAYA_MODELS` (default `~/laya_models`, a directory holding `laya/`,
+The checkpoints come from `VEYA_MODELS` (default `~/veya_models`, a directory holding `veya/`,
 `laya-multilingual/` and `laya-typed-decisions/`), so a checkout can point them at a local
 `models/` copy:
 
 ```bash
 # from the repository root
-LAYA_MODELS=$PWD/models python research/scripts/bench_local.py --langs 10 --per-lang 60 --skip-b
-LAYA_MODELS=$PWD/models BENCH_N=80 python research/scripts/bench_apps.py
-LAYA_MODELS=$PWD/models python research/scripts/bench_latency.py
+VEYA_MODELS=$PWD/models python research/scripts/bench_local.py --langs 10 --per-lang 60 --skip-b
+VEYA_MODELS=$PWD/models BENCH_N=80 python research/scripts/bench_apps.py
+VEYA_MODELS=$PWD/models python research/scripts/bench_latency.py
 ```
 
 | option | effect |
@@ -66,8 +66,8 @@ LAYA_MODELS=$PWD/models python research/scripts/bench_latency.py
 gitignored — the curated runs live in `results/`. Set `HF_HOME` inside the checkout to keep the
 dataset cache local.
 
-`bench_local.py` and `bench_latency.py` take the model root from `LAYA_MODELS` rather than assuming
-`~/laya_models`, so the harnesses run against a checkout that keeps its weights under `models/`.
+`bench_local.py` and `bench_latency.py` take the model root from `VEYA_MODELS` rather than assuming
+`~/veya_models`, so the harnesses run against a checkout that keeps its weights under `models/`.
 
 ## Length batching
 
@@ -124,8 +124,8 @@ python research/scripts/bench_length_batching.py MODEL_DIR --count 64 --batch-si
 | `results/t4_colab_benchmark.json` | 17,416 questions on one T4, both checkpoints, identical questions per model |
 | `results/long_context_multilingual.json` | the long-document run behind `assets/long_context_8192.png`: every prediction, with device and library versions |
 | `results/cpu_51_language_sweep.json` | 51 languages x 2 checkpoints, MASSIVE intent, 20 options (committed `part_b` covers the English checkpoint only; a rerun of `research/scripts/bench_local.py` writes the gitignored `research/local_benchmark_results.json` and leaves this file untouched) |
-| `results/cpu_51_language_sweep_clamped.json` | the same 51 languages and 5,100 cases re-run after the temperature clamp, raw temperatures and served temperatures side by side (Laya issue #208) |
-| `results/cpu_51_language_sweep_refreshed.json` | both checkpoints with the environment recorded, the superseded committed columns kept beside the new ones. The multilingual half of the committed sweep does not reproduce on current code, so this is what the table in `BENCHMARKS.md` prints (Laya issue #208) |
+| `results/cpu_51_language_sweep_clamped.json` | the same 51 languages and 5,100 cases re-run after the temperature clamp, raw temperatures and served temperatures side by side (Veya issue #208) |
+| `results/cpu_51_language_sweep_refreshed.json` | both checkpoints with the environment recorded, the superseded committed columns kept beside the new ones. The multilingual half of the committed sweep does not reproduce on current code, so this is what the table in `BENCHMARKS.md` prints (Veya issue #208) |
 | `results/app_benchmark_results.json` | Applications run (400 cases per task, seed 13, 2026-09-19); source for the BENCHMARKS Themes / Jev-dataset tables and the README routed AG News / DAIR Emotion cells (a rerun of `research/scripts/bench_apps.py` writes the gitignored `research/app_benchmark_results.json` instead) |
 | `research/latency_benchmark_results.json` | **not committed** (gitignored) — generate with `research/scripts/bench_latency.py`; CPU routing-cost regimes behind the README preload table |
 | `results/position_sensitivity_multilingual.json` | accuracy against evidence position at fixed document length, n=20 per cell, every prediction kept |
@@ -159,7 +159,7 @@ cells is not resolvable. The endpoint-versus-interior gap is well outside that, 
 above are on the same items. Read this as "position is a large effect that the existing sweep does
 not sample", not as a per-cell ranking.*
 
-**Routing takes Laya from 23 to 48 of 51 languages.** On MASSIVE intent (20 options, random =
+**Routing takes Veya from 23 to 48 of 51 languages.** On MASSIVE intent (20 options, random =
 0.050) the English checkpoint macro-averages 0.227 and clears 3x random on 23 of 51 languages;
 the multilingual checkpoint reaches 0.401 and clears it on 48. The multilingual figures are the
 re-run, not the committed sweep — see `results/cpu_51_language_sweep_refreshed.json` above.

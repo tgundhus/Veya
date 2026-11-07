@@ -4,8 +4,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from laya.mcp._code_budget import check_operation_budget
-from laya.mcp.tools import ToolError
+from veya.mcp._code_budget import check_operation_budget
+from veya.mcp.tools import ToolError
 
 
 QUESTIONS = {"urgent": {"type": "noul", "instructions": "Is it urgent?"}}
@@ -167,7 +167,7 @@ def test_scan_work_includes_every_question_in_every_window():
 
 
 def test_decide_huge_ranges_are_refused_before_schema_planning(monkeypatch):
-    from laya import structured
+    from veya import structured
     monkeypatch.setattr(structured, "questions_from_json_schema",
                         lambda *args: pytest.fail("oversized schema reached allocation"))
     schema = {"type": "object", "properties": {"level": {
@@ -177,7 +177,7 @@ def test_decide_huge_ranges_are_refused_before_schema_planning(monkeypatch):
 
 
 def test_decide_local_reference_ranges_are_checked_before_planning(monkeypatch):
-    from laya import structured
+    from veya import structured
     monkeypatch.setattr(structured, "questions_from_json_schema",
                         lambda *args: pytest.fail("oversized referenced schema reached allocation"))
     schema = {"type": "object", "properties": {"level": {"$ref": "#/$defs/Level"}},

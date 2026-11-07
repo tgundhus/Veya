@@ -14,8 +14,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from laya.checkpoint import _NativeTokenizer  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.checkpoint import _NativeTokenizer  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 
 class NativeONNXAgent(ONNXAgent):
@@ -74,7 +74,7 @@ def checkpoint(tmp_path, request):
         encoding="utf-8")
     (tmp_path / "rl_agent_config.json").write_text(json.dumps(
         {"encoder": "must-not-download", "max_len": 96, "head_max_len": 40}), encoding="utf-8")
-    (tmp_path / "laya.onnx").write_bytes(b"test graph")
+    (tmp_path / "veya.onnx").write_bytes(b"test graph")
     return tmp_path
 
 
@@ -96,11 +96,11 @@ def fake_ort():
 
 
 def exercise_native(path):
-    from laya.consistency import DecisionCache
-    from laya.calibration import apply_calibration_payload
+    from veya.consistency import DecisionCache
+    from veya.calibration import apply_calibration_payload
 
     sys.modules["onnxruntime"] = fake_ort()
-    agent = NativeONNXAgent(str(path), str(path / "laya.onnx"))
+    agent = NativeONNXAgent(str(path), str(path / "veya.onnx"))
     results = agent.predict_batch(TEXTS[:3], QUESTIONS, batch_size=2, sort_by_length=True)
     assert [list(r["answers"]) for r in results] == [list(QUESTIONS)] * 3
     assert results[0]["answers"]["category"]["choice"] == "billing"  # reversed slot order
@@ -171,22 +171,22 @@ def test_native_checkpoint_resolution_and_integrity(checkpoint, tmp_path, monkey
     monkeypatch.setitem(sys.modules, "huggingface_hub", types.SimpleNamespace(snapshot_download=download))
     monkeypatch.setenv("HF_HUB_OFFLINE", "1")
     monkeypatch.setenv("HF_TOKEN", "environment-token")
-    monkeypatch.delenv("LAYA_REVISION", raising=False)
-    agent = NativeONNXAgent("owner/private", str(checkpoint / "laya.onnx"))
+    monkeypatch.delenv("VEYA_REVISION", raising=False)
+    agent = NativeONNXAgent("owner/private", str(checkpoint / "veya.onnx"))
     assert agent.revision == "a" * 40
     assert calls[-1][1] == {"token": "environment-token", "allow_patterns": [
         "rl_agent_config.json", "tokenizer/*", "encoder/*"]}
-    NativeONNXAgent("owner/private", str(checkpoint / "laya.onnx"), token="explicit-token", revision="stable")
+    NativeONNXAgent("owner/private", str(checkpoint / "veya.onnx"), token="explicit-token", revision="stable")
     assert calls[-1][1]["token"] == "explicit-token" and calls[-1][1]["revision"] == "stable"
     with pytest.raises(FileNotFoundError, match="Local model path not found"):
-        NativeONNXAgent(str(checkpoint / "missing"), str(checkpoint / "laya.onnx"))
+        NativeONNXAgent(str(checkpoint / "missing"), str(checkpoint / "veya.onnx"))
     cfg = checkpoint / "rl_agent_config.json"
     digest = hashlib.sha256(cfg.read_bytes()).hexdigest()
-    NativeONNXAgent(str(checkpoint), str(checkpoint / "laya.onnx"),
+    NativeONNXAgent(str(checkpoint), str(checkpoint / "veya.onnx"),
                     expected_sha256={"rl_agent_config.json": digest})
     cfg.write_text("invalid json", encoding="utf-8")
     with pytest.raises(ValueError, match="SHA-256 mismatch"):
-        NativeONNXAgent(str(checkpoint), str(checkpoint / "laya.onnx"),
+        NativeONNXAgent(str(checkpoint), str(checkpoint / "veya.onnx"),
                         expected_sha256={"rl_agent_config.json": digest})
 
 
@@ -194,7 +194,7 @@ def test_native_missing_tokenizer_refuses_encoder_fallback(checkpoint, monkeypat
     monkeypatch.setitem(sys.modules, "onnxruntime", fake_ort())
     (checkpoint / "tokenizer" / "tokenizer.json").unlink()
     with pytest.raises(FileNotFoundError, match="native ONNX tokenizer requires"):
-        NativeONNXAgent(str(checkpoint), str(checkpoint / "laya.onnx"))
+        NativeONNXAgent(str(checkpoint), str(checkpoint / "veya.onnx"))
 
 
 def test_native_metadata_precedence_and_left_truncation(checkpoint):
@@ -235,4 +235,4 @@ def test_full_onnx_keeps_auto_tokenizer_default(checkpoint, monkeypatch):
     monkeypatch.setitem(sys.modules, "onnxruntime", fake_ort())
     sentinel = object()
     monkeypatch.setattr(AutoTokenizer, "from_pretrained", lambda path: sentinel)
-    assert ONNXAgent(str(checkpoint), str(checkpoint / "laya.onnx")).tok is sentinel
+    assert ONNXAgent(str(checkpoint), str(checkpoint / "veya.onnx")).tok is sentinel

@@ -10,11 +10,11 @@ the library no longer has.
 """
 import time
 
-from _common import STATE_EN, STATE_HI, banner, heading, laya, router, timed
+from _common import STATE_EN, STATE_HI, banner, heading, veya, router, timed
 
 # The library's default, taken from a `Router` instance. Constructing one loads nothing: agents are
-# built lazily by `load()`, so this line costs no checkpoint and cannot drift from `laya/router.py`.
-DEFAULT_MAX_LOADED = laya.Router().max_loaded
+# built lazily by `load()`, so this line costs no checkpoint and cannot drift from `veya/router.py`.
+DEFAULT_MAX_LOADED = veya.Router().max_loaded
 
 banner("24", "Preload and memory", """
     A cold checkpoint build costs seconds; language detection costs microseconds. `Router` keeps
@@ -49,7 +49,7 @@ heading("1. lazy load: one checkpoint hot")
 en_agent = r.load("english")            # cold build #1
 out = r.predict(STATE_EN, QUESTION)     # first forward also pays MPS kernel compilation
 print("   routed to %r via %r" % (out["routing"]["model"], out["routing"]["reason"]))
-print("   loaded: %r   max_loaded=%d   (pinned here; laya's default is %d)"
+print("   loaded: %r   max_loaded=%d   (pinned here; veya's default is %d)"
       % (r.loaded, r.max_loaded, DEFAULT_MAX_LOADED))
 
 heading("2. a language switch evicts")
@@ -108,7 +108,7 @@ lru.unload()
 print("   lru.unload()              -> %r" % lru.loaded)
 print("""
    Rule of thumb: a service that only ever sees one language can pin `Router(max_loaded=1)`.
-   Anything that alternates languages should `preload`, or raise `max_loaded` -- laya's own
+   Anything that alternates languages should `preload`, or raise `max_loaded` -- veya's own
    default, which this page reads from an instance above, is %d. The cold reload measured in
    section 3 is not quoted from a document: it is %.0f times the route it replaces (%.1f s
    against %.3f ms), both timed here, so the ratio moves with the hardware.

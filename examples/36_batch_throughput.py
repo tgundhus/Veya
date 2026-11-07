@@ -95,5 +95,5 @@ print("   per-answer cost fell from %.1f to %.1f ms (%.1fx); calls fell from %d 
          NS * NQ, NS))
 print("   same %d answers. More questions per call is the lever; `predict` still takes one state."
       % (NS * NQ))
-print("\n   one state, three decisions, one forward pass -- that is the batching Laya exposes:")
+print("\n   one state, three decisions, one forward pass -- that is the batching Veya exposes:")
 describe(agent.predict(STATES[0], QUESTIONS)["answers"])

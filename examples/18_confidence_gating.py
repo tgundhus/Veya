@@ -1,21 +1,21 @@
 """Example 18 -- confidence gating for automated routing.
 
-Answers a batch of support emails and branches on the probability Laya reports for its answer:
+Answers a batch of support emails and branches on the probability Veya reports for its answer:
 act automatically at 0.85 or above, hand the rest to a human -- reading back, per question, the
 temperature that probability was actually scaled by.
 """
 from _common import banner, describe, device_line, heading, load
-from laya.common import QTYPES, temp_bucket
+from veya.common import QTYPES, temp_bucket
 
 banner("18", "Confidence gating", """
-    The production pattern from the README. Gate on `answer_confidence`: the probability Laya
+    The production pattern from the README. Gate on `answer_confidence`: the probability Veya
     puts on the answer it reports, `max(p)`, defined the same way on every question type.
     `confidence` is a different number on `choice` and `score` -- 1 minus normalised entropy, a
     measure of how concentrated the distribution is -- and the README warns against carrying a
     threshold over from it.
 
     Whether `answer_confidence` is a *calibrated* probability is a claim about the temperatures
-    rather than about the field. The README's Calibration section puts mean ECE on `laya` at
+    rather than about the field. The README's Calibration section puts mean ECE on `veya` at
     0.466 as shipped, 0.081 after refitting one temperature per (question type, option-count)
     bucket on held-out data, and warns that both checkpoints are over-confident out of the box.
     The 0.85 threshold below is our policy on the shipped distribution, not a cutoff a

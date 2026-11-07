@@ -17,7 +17,7 @@ import timeit
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya.lang import state_text  # noqa: E402
+from veya.lang import state_text  # noqa: E402
 
 
 def eager_text_leaves(state, depth=0, paths=None, path=()):
@@ -106,7 +106,7 @@ def main():
         "started_utc": datetime.now(timezone.utc).isoformat(), "platform": platform.platform(),
         "python": platform.python_version(), "repeats": args.repeats, "rows": rows,
         "source_sha256": {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-                          for path in (ROOT / "laya/lang.py", Path(__file__))},
+                          for path in (ROOT / "veya/lang.py", Path(__file__))},
         "upstream_inspiration": "https://github.com/NandhaKishorM/laya/commit/9580d43fafe16645ee1a03063d0c479c8f8532d1",
         "limits": "state_text preprocessing only; no model, inference throughput or accuracy measurement. "
                   "Workstation load and filesystem caches were uncontrolled.",

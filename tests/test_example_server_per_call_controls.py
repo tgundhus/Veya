@@ -1,16 +1,16 @@
-"""Regression: examples/server.py must forward the same per-call controls laya.serve does.
+"""Regression: examples/server.py must forward the same per-call controls veya.serve does.
 
-`laya/serve.py::BODY_CONTROLS` is the set of caller-side knobs the shipped `/v1/systemone`
+`veya/serve.py::BODY_CONTROLS` is the set of caller-side knobs the shipped `/v1/systemone`
 validates and forwards to the Router -- `model`, `max_len`, `head_max_len`, `task`, `lang`,
 `lang_guess`, `min_confidence` -- and it refuses `BODY_REFUSALS` (the hook surface that cannot
-cross an HTTP body) rather than silently dropping it. `laya/cli.py`, `laya/mcp/tools.py` and the
-`laya.integrations.*` wrappers each forward that same set.
+cross an HTTP body) rather than silently dropping it. `veya/cli.py`, `veya/mcp/tools.py` and the
+`veya.integrations.*` wrappers each forward that same set.
 
 The demo server did not. Its `PredictRequest` took only `model`/`task`/`lang`, and `BatchRequest`
 added the batch shape but nothing else, so a caller who asked for a per-call token budget, a soft
 language hint, or an abstention threshold got the *same* answer as one who asked for nothing. On a
 deployment that runs `Router(lang_guess=...)` or `Router(min_confidence=...)`, the demo could not
-override it per call; a client who asked for `max_len` past `LAYA_MAX_TOKEN_BUDGET` was served
+override it per call; a client who asked for `max_len` past `VEYA_MAX_TOKEN_BUDGET` was served
 rather than refused; and a body that named `hooks` -- the surface this file has no way to receive
 -- was silently ignored instead of answered with the same 422 the shipped server gives.
 
@@ -22,7 +22,7 @@ reads an absent argument as "inherit what the deployment built with" and a null 
 Router's own `lang_guess`/`min_confidence` with the demo's default.
 
 `min_confidence` is the one asymmetry, and it has a reason: `Router.predict_batch` takes it as a
-call argument, not a per-request key (`laya/router.py:961`), so on `/predict/batch` it rides on the
+call argument, not a per-request key (`veya/router.py:961`), so on `/predict/batch` it rides on the
 call shape rather than the request dicts. The per-state fallback in that endpoint goes through
 `Router.predict`, which does take it as an argument, so on the retry the same value rejoins the
 controls -- the fallback is one call per state and each carries the ask.
@@ -35,8 +35,8 @@ import os
 import sys
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-os.environ.setdefault("LAYA_PRELOAD", "0")
-os.environ.pop("LAYA_MAX_TOKEN_BUDGET", None)
+os.environ.setdefault("VEYA_PRELOAD", "0")
+os.environ.pop("VEYA_MAX_TOKEN_BUDGET", None)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -58,7 +58,7 @@ def main():
     except ImportError as exc:
         if (getattr(exc, "name", None) or "").split(".")[0] not in ("fastapi", "httpx", "starlette"):
             raise
-        print("SKIP: fastapi/httpx not installed -- pip install laya[serve] httpx")
+        print("SKIP: fastapi/httpx not installed -- pip install veya[serve] httpx")
         return 0
     try:
         import server as demo
@@ -66,10 +66,10 @@ def main():
         if (getattr(exc, "name", None) or "").split(".")[0] not in (
                 "fastapi", "httpx", "starlette", "multipart"):
             raise
-        print("SKIP: examples/server.py needs the serve extra -- pip install laya[serve]")
+        print("SKIP: examples/server.py needs the serve extra -- pip install veya[serve]")
         return 0
 
-    from laya.serve import BODY_CONTROLS, BODY_REFUSALS
+    from veya.serve import BODY_CONTROLS, BODY_REFUSALS
 
     class RecordingRouter:
         """Answers like the Router does, and remembers how it was asked."""
@@ -97,14 +97,14 @@ def main():
     client = TestClient(demo.app, raise_server_exceptions=False)
     one = {"a": {"type": "noul", "instructions": "x"}}
 
-    # --- what the two surfaces forward is the same set, drawn from laya.serve ----------
+    # --- what the two surfaces forward is the same set, drawn from veya.serve ----------
     # PredictRequest's public fields must cover BODY_CONTROLS exactly: this file's own claim
     # to be "the demo of the shipped server" fails if it stops accepting a control core takes.
     per_call_set = set(BODY_CONTROLS)
     predict_fields = set(demo.PredictRequest.model_fields) - {"state", "questions"}
     batch_fields = set(demo.BatchRequest.model_fields) - {"states", "questions",
                                                           "batch_size", "sort_by_length"}
-    ok("PredictRequest accepts every key in laya.serve.BODY_CONTROLS",
+    ok("PredictRequest accepts every key in veya.serve.BODY_CONTROLS",
        per_call_set <= predict_fields,
        "BODY_CONTROLS=%r, PredictRequest fields=%r" % (sorted(per_call_set),
                                                         sorted(predict_fields)))
@@ -195,7 +195,7 @@ def main():
        resp.status_code == 422 and not r.batch_calls,
        "%s, batch calls=%d" % (resp.status_code, len(r.batch_calls)))
 
-    # --- max_len is capped by LAYA_MAX_TOKEN_BUDGET, refused before inference ------
+    # --- max_len is capped by VEYA_MAX_TOKEN_BUDGET, refused before inference ------
     cap = demo._resolve_max_token_budget()
     r = new_recorder()
     resp = client.post("/predict", json={"state": "hello", "questions": one,
@@ -210,14 +210,14 @@ def main():
     ok("the same cap covers head_max_len",
        resp.status_code == 422 and not r.predict_calls)
 
-    # The cap is read at call time, so LAYA_MAX_TOKEN_BUDGET actually moves it: the demo
+    # The cap is read at call time, so VEYA_MAX_TOKEN_BUDGET actually moves it: the demo
     # does not carry a copy of the number.
-    os.environ["LAYA_MAX_TOKEN_BUDGET"] = "2048"
+    os.environ["VEYA_MAX_TOKEN_BUDGET"] = "2048"
     try:
         r = new_recorder()
         resp = client.post("/predict", json={"state": "hello", "questions": one,
                                               "max_len": 4096})
-        ok("LAYA_MAX_TOKEN_BUDGET is what caps the request, not a number typed in this file",
+        ok("VEYA_MAX_TOKEN_BUDGET is what caps the request, not a number typed in this file",
            resp.status_code == 422 and not r.predict_calls,
            "%s" % resp.status_code)
         r = new_recorder()
@@ -226,13 +226,13 @@ def main():
                                           "max_len": 1024}).status_code == 200
            and r.predict_calls[0][1]["max_len"] == 1024)
     finally:
-        os.environ.pop("LAYA_MAX_TOKEN_BUDGET", None)
+        os.environ.pop("VEYA_MAX_TOKEN_BUDGET", None)
 
-    # --- type refusals, mirroring laya.serve's validators -------------------------
+    # --- type refusals, mirroring veya.serve's validators -------------------------
     # A JSON `true` where the Router expects a language code would become `"true"` through
     # core's `_english_from_code` -- a real, non-English code that decides the checkpoint.
     # `Optional[str]` in the field type also refuses a bool, so a plain status check cannot
-    # tell the two paths apart; the assertion below requires laya.serve's own wording in
+    # tell the two paths apart; the assertion below requires veya.serve's own wording in
     # the 422 body, which only fires when this file actually calls `_validate_language_param`.
     for key in ("lang", "lang_guess"):
         r = new_recorder()
@@ -241,7 +241,7 @@ def main():
         ok("%s: a JSON bool is refused before the Router is asked" % key,
            resp.status_code == 422 and not r.predict_calls,
            "%s, calls=%d" % (resp.status_code, len(r.predict_calls)))
-        ok("%s: the 422 detail is laya.serve's own wording, not pydantic's field error" % key,
+        ok("%s: the 422 detail is veya.serve's own wording, not pydantic's field error" % key,
            "language code string" in detail, detail[:180])
 
     r = new_recorder()
@@ -266,13 +266,13 @@ def main():
     r = new_recorder()
     resp = client.post("/predict", json={"state": "hello", "questions": one,
                                           "max_len": -1})
-    ok("a non-positive max_len is refused, matching laya.serve._validate_budget_param",
+    ok("a non-positive max_len is refused, matching veya.serve._validate_budget_param",
        resp.status_code == 422 and not r.predict_calls)
 
     # --- /predict/batch forwards the same set -------------------------------------
     # On the batch path the per-request controls ride in each request dict (so `route_batch`
     # and `predict_batch` read them per state), while `min_confidence` is a call-level
-    # argument to `Router.predict_batch` -- see laya/router.py:961.
+    # argument to `Router.predict_batch` -- see veya/router.py:961.
     r = new_recorder()
     states = ["s1", "s2", "s3"]
     client.post("/predict/batch", json={"states": states, "questions": one,
@@ -330,11 +330,11 @@ def main():
        not any("batch_size" in c[1] or "sort_by_length" in c[1] for c in r.predict_calls),
        str([c[1] for c in r.predict_calls][:1]))
 
-    # --- parity with laya.serve's refusal wording ---------------------------------
+    # --- parity with veya.serve's refusal wording ---------------------------------
     # The detail must be the shipped server's, not a paraphrase: a client that reads the
-    # 422 body gets the same "install them where laya-serve runs" guidance from both.
+    # 422 body gets the same "install them where veya-serve runs" guidance from both.
     resp = client.post("/predict", json={"state": "hello", "questions": one, "hooks": []})
-    ok("the 422 detail is laya.serve's own wording, not a copy",
+    ok("the 422 detail is veya.serve's own wording, not a copy",
        resp.status_code == 422
        and "run inside the server process" in str(resp.json().get("detail", "")),
        str(resp.json())[:220])

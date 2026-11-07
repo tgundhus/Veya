@@ -7,8 +7,8 @@ from types import SimpleNamespace
 
 import pytest
 
-import laya.qualification as qualification
-from laya.decision_policy import DECISION_POLICIES, resolve_decision_policy
+import veya.qualification as qualification
+from veya.decision_policy import DECISION_POLICIES, resolve_decision_policy
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,9 +39,9 @@ def test_supported_matrix_policy_is_preserved_without_mutating_input(policy):
 
 def install_fake_cells(monkeypatch, *, checkpoint_default="canonical", ignore_explicit=False):
     torch = pytest.importorskip("torch")
-    import laya.agent as agent_module
-    import laya.onnx_agent as onnx_module
-    import laya.consistency as consistency
+    import veya.agent as agent_module
+    import veya.onnx_agent as onnx_module
+    import veya.consistency as consistency
 
     created = []
     omitted = object()
@@ -165,7 +165,7 @@ def test_explicit_canonical_policy_can_override_a_noncanonical_checkpoint_defaul
 
 @pytest.mark.parametrize("policy", DECISION_POLICIES)
 def test_runtime_policy_value_cannot_change_even_if_the_fingerprint_is_held_constant(monkeypatch, policy):
-    import laya.consistency as consistency
+    import veya.consistency as consistency
 
     install_fake_cells(monkeypatch)
     runner = qualification._build_cell(cell("eager", policy=policy, explicit=True))
@@ -180,7 +180,7 @@ def test_runtime_policy_value_cannot_change_even_if_the_fingerprint_is_held_cons
 
 
 def test_runtime_policy_fingerprint_mutation_is_also_refused(monkeypatch):
-    import laya.consistency as consistency
+    import veya.consistency as consistency
 
     install_fake_cells(monkeypatch)
     runner = qualification._build_cell(cell("eager", policy="context-balanced-v1", explicit=True))
@@ -305,7 +305,7 @@ def test_local_qualification_script_only_adds_policy_when_explicit(monkeypatch, 
     if policy is not None:
         argv.extend(["--decision-policy", policy])
     monkeypatch.setattr(sys, "argv", argv)
-    for name in ("HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE", "LAYA_THREADS"):
+    for name in ("HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE", "VEYA_THREADS"):
         monkeypatch.setenv(name, "fixture-before")
     monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(
         set_num_threads=lambda count: None, set_num_interop_threads=lambda count: None,

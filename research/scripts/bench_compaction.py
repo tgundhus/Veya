@@ -121,7 +121,7 @@ def main():
         parser.error("repeats and threads must be positive")
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", USE_TF="0", LAYA_CPU_AMP="fp32")
     import torch
-    from laya import Agent, ContextCompactor
+    from veya import Agent, ContextCompactor
 
     torch.set_num_threads(args.threads)
     torch.set_num_interop_threads(1)
@@ -130,7 +130,7 @@ def main():
               "python": platform.python_version(), "torch": torch.__version__, "threads": args.threads,
               "repeats": args.repeats, "offline": True, "device": "cpu", "precision": "fp32",
               "source_sha256": {str(p.relative_to(ROOT)): sha256(p) for p in
-                                (ROOT / "laya/compaction.py", Path(__file__))},
+                                (ROOT / "veya/compaction.py", Path(__file__))},
               "fixture_sha256": hashlib.sha256(json.dumps(fixture, sort_keys=True).encode()).hexdigest(),
               "limits": "12 synthetic annotated cases; evidence checks are not downstream agent task success. "
                         "Token counts use each checkpoint tokenizer over canonical JSON, not a provider chat template. "

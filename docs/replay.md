@@ -18,7 +18,7 @@ Only resident models enter the manifest; other registered models keep the ordina
 prediction path.
 
 ```python
-from laya import DecisionCache, Router
+from veya import DecisionCache, Router
 
 models = {"english": "/models/english"}
 with DecisionCache(
@@ -83,34 +83,34 @@ service. Configure the intended SQLite path, policy, checkpoint paths and backen
 first, then run:
 
 ```bash
-python -m laya.replay --output /persistent/support.replay.json --models english
+python -m veya.replay --output /persistent/support.replay.json --models english
 ```
 
-The full distribution also installs `laya-replay`. The standalone ONNX distribution
-installs `laya-onnx-replay` with the same arguments and its ONNX backend default.
+The full distribution also installs `veya-replay`. The standalone ONNX distribution
+installs `veya-onnx-replay` with the same arguments and its ONNX backend default.
 
 Preparation temporarily disables preload and ignores an older replay manifest while
 approving its replacement. Existing-store and expected-identity guards remain active.
-Choose `LAYA_MAX_LOADED` large enough for the explicitly selected preparation models.
+Choose `VEYA_MAX_LOADED` large enough for the explicitly selected preparation models.
 The command closes its owned models/cache and restores process environment overrides.
 
 For deployment:
 
 ```text
-LAYA_CACHE_PATH=/persistent/decisions.sqlite
-LAYA_CACHE_REQUIRED=1
-LAYA_CACHE_TTL=none
-LAYA_CACHE_MAXSIZE=none
-LAYA_CACHE_FINGERPRINT=support-policy-v1
-LAYA_CACHE_EXPECTED_STORE_ID=UUID_FROM_PREPARATION
-LAYA_REPLAY_MANIFEST=/persistent/support.replay.json
-LAYA_PRELOAD=0
+VEYA_CACHE_PATH=/persistent/decisions.sqlite
+VEYA_CACHE_REQUIRED=1
+VEYA_CACHE_TTL=none
+VEYA_CACHE_MAXSIZE=none
+VEYA_CACHE_FINGERPRINT=support-policy-v1
+VEYA_CACHE_EXPECTED_STORE_ID=UUID_FROM_PREPARATION
+VEYA_REPLAY_MANIFEST=/persistent/support.replay.json
+VEYA_PRELOAD=0
 ```
 
 An explicit preload still loads models. Direct Router construction with opt-in replay
 defers automatic profile preload and inference-only thread setup until a model is
 actually needed. HTTP/MCP retain their configured preload behavior; set
-`LAYA_PRELOAD=0` for model-free service startup. Their inference-only thread/device
+`VEYA_PRELOAD=0` for model-free service startup. Their inference-only thread/device
 setup is deferred until a model is needed.
 Approved nonempty `agent_kwargs` are checked against the manifest without importing
 the Agent implementation just to inspect its signature. Preparation validates those

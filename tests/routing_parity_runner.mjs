@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { analyse, latinProfile, stateText } from "../laya-ts/dist/lang.js";
-import { Router } from "../laya-ts/dist/router.js";
+import { analyse, latinProfile, stateText } from "../veya-ts/dist/lang.js";
+import { Router } from "../veya-ts/dist/router.js";
 import { routingSnapshot } from "./routing_parity_support.mjs";
 
 const rows = JSON.parse(readFileSync(0, "utf8"));

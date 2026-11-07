@@ -15,8 +15,8 @@ import unicodedata
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import lang  # noqa: E402
-from laya.lang import (  # noqa: E402
+from veya import lang  # noqa: E402
+from veya.lang import (  # noqa: E402
     _CODE_LINE, _EN_COLLISION_WORDS, _EN_ONLY_WORDS, _IDENTIFIER, _JOINED, _LETTER_RUN,
     _NON_EN_DIACRITICS, _NORDIC_OVERLAP_WORDS, _SCRIPT_RANGES, _SHARED_WORDS, _SHORT_SWEDISH_WORDS,
     _STOP, _WORD, NON_EN_DIACRITIC_RATE, _english_rescued_by_words, _shouted, _shouted_evidence,

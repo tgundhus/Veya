@@ -2,7 +2,7 @@
 import copy
 import math
 
-from laya.hooks import default_hooks, set_default_hooks
+from veya.hooks import default_hooks, set_default_hooks
 
 
 def check_long_attribution(factory, check):

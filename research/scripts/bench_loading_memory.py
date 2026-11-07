@@ -108,12 +108,12 @@ def child(args):
 
     if args.runtime == "torch":
         import torch
-        from laya.agent import Agent
+        from veya.agent import Agent
         torch.set_num_threads(args.threads)
         torch.set_num_interop_threads(1)
         torch.manual_seed(29018)
     elif args.variant == "baseline":
-        from laya.onnx_agent import ONNXAgent as Agent
+        from veya.onnx_agent import ONNXAgent as Agent
     else:
         from laya_onnx import ONNXAgent as Agent
     imported_at = time.perf_counter()

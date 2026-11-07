@@ -2,15 +2,15 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { test } from 'node:test';
 import {
-  Laya, LayaAPIError, LayaAbortError, LayaConnectionError, LayaTimeoutError,
-  LayaValidationError, LayaResponseError, emailQuestions, triageQuestions,
+  Veya, VeyaAPIError, VeyaAbortError, VeyaConnectionError, VeyaTimeoutError,
+  VeyaValidationError, VeyaResponseError, emailQuestions, triageQuestions,
 } from 'veya-client';
 
 const questions = { refund: { type: 'noul', instructions: 'Refund?' } };
 
 test('batch uses one HTTP call and validates every result in order', async () => {
   let calls = 0;
-  const client = new Laya({ fetch: async (url, init) => {
+  const client = new Veya({ fetch: async (url, init) => {
     calls++;
     assert.equal(new URL(url).pathname, '/v1/systemone/batch');
     assert.equal(init.redirect, 'error');
@@ -22,14 +22,14 @@ test('batch uses one HTTP call and validates every result in order', async () =>
     { lang: 'en', batchSize: 8, sortByLength: true });
   assert.equal(result.results.length, 2);
   assert.equal(calls, 1);
-  const malformed = new Laya({ fetch: async () => json({ results: [], total_usage: {} }) });
-  await assert.rejects(malformed.predictBatch(['first'], questions), LayaResponseError);
-  const unsent = new Laya({ fetch: async () => { assert.fail('must not send'); } });
+  const malformed = new Veya({ fetch: async () => json({ results: [], total_usage: {} }) });
+  await assert.rejects(malformed.predictBatch(['first'], questions), VeyaResponseError);
+  const unsent = new Veya({ fetch: async () => { assert.fail('must not send'); } });
   for (const states of [[], [null], ['first', undefined]]) {
-    await assert.rejects(unsent.predictBatch(states, questions), LayaValidationError);
+    await assert.rejects(unsent.predictBatch(states, questions), VeyaValidationError);
   }
   for (const options of [{ batchSize: 0 }, { batchSize: true }, { sortByLength: 'yes' }]) {
-    await assert.rejects(unsent.predictBatch(['first'], questions, options), LayaValidationError);
+    await assert.rejects(unsent.predictBatch(['first'], questions, options), VeyaValidationError);
   }
 });
 
@@ -38,7 +38,7 @@ test('custom checkpoint responses and noul labels work through the HTTP SDK', as
   custom.routing.model = 'refund-v2';
   const labelled = { refund: { type: 'noul', instructions: 'Refund?', labels: { false: 'Reject', true: 'Approve' },
     option_order: [1, 0] } };
-  const client = new Laya({ model: 'refund-v2', fetch: async (_url, init) => {
+  const client = new Veya({ model: 'refund-v2', fetch: async (_url, init) => {
     const body = init.body === undefined ? undefined : JSON.parse(init.body);
     if (body) {
       assert.deepEqual(body.questions, labelled);
@@ -48,83 +48,83 @@ test('custom checkpoint responses and noul labels work through the HTTP SDK', as
   } });
   assert.equal((await client.predict('request', labelled)).routing.model, 'refund-v2');
   assert.deepEqual((await client.health()).loaded, ['refund-v2']);
-  const unsent = new Laya({ fetch: async () => { assert.fail('must not send'); } });
-  await assert.rejects(unsent.predict(null, questions), LayaValidationError);
+  const unsent = new Veya({ fetch: async () => { assert.fail('must not send'); } });
+  await assert.rejects(unsent.predict(null, questions), VeyaValidationError);
   for (const labels of [{ false: 'No' }, { false: 'Yes', true: 'Yes' }, { false: 0, true: 1 }]) {
-    await assert.rejects(unsent.predict('state', { refund: { ...questions.refund, labels } }), LayaValidationError);
+    await assert.rejects(unsent.predict('state', { refund: { ...questions.refund, labels } }), VeyaValidationError);
   }
   for (const option_order of [[0, 0], [2, 1], [0], [true, false]]) {
-    await assert.rejects(unsent.predict('state', { refund: { ...questions.refund, option_order } }), LayaValidationError);
+    await assert.rejects(unsent.predict('state', { refund: { ...questions.refund, option_order } }), VeyaValidationError);
   }
 });
 
 test('credentials are sent only to the configured endpoint without following redirects', async () => {
-  const client = new Laya({ apiKey: 'private-key', fetch: async (_url, init) => {
+  const client = new Veya({ apiKey: 'private-key', fetch: async (_url, init) => {
     assert.equal(init.redirect, 'error');
     return json({ detail: 'Moved' }, 302);
   } });
-  await assert.rejects(client.health(), error => error instanceof LayaAPIError && error.status === 302);
+  await assert.rejects(client.health(), error => error instanceof VeyaAPIError && error.status === 302);
 });
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status });
 const health = { status: 'ok', loaded: [], device: 'auto' };
 const route = { model: 'english', repo: 'convaiinnovations/laya', reason: 'test', detection: null, workflow: null };
 test('HTTP tournament metadata is optional and validated', async () => {
   const questions = { q: { type: 'choice', instructions: 'Pick', criteria: ['a', 'b', 'c'] } };
-  const payload = { model: 'laya-rl-agent', routing: route, usage: { input_tokens: 10, output_tokens: 0 },
+  const payload = { model: 'veya-rl-agent', routing: route, usage: { input_tokens: 10, output_tokens: 0 },
     answers: { q: { type: 'choice', choice: 'b', confidence: 0.5, answer_confidence: 0.8,
       probabilities: { a: 0, b: 0.8, c: 0.2 }, x_tournament: { finalists: ['b', 'c'], rounds: 1 } } } };
-  assert.deepEqual(await new Laya({ fetch: async () => json(payload) }).predict('hello', questions), payload);
+  assert.deepEqual(await new Veya({ fetch: async () => json(payload) }).predict('hello', questions), payload);
   for (const meta of [null, {}, { finalists: [], rounds: 1 }, { finalists: ['b', 'b'], rounds: 1 },
     { finalists: ['unknown'], rounds: 1 }, { finalists: ['c'], rounds: 1 },
     { finalists: ['b'], rounds: 0 }, { finalists: ['b'], rounds: 1.5 }]) {
     const bad = structuredClone(payload);
     bad.answers.q.x_tournament = meta;
-    await assert.rejects(new Laya({ fetch: async () => json(bad) }).predict('hello', questions), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(bad) }).predict('hello', questions), VeyaResponseError);
   }
   const ordinary = structuredClone(payload);
   delete ordinary.answers.q.x_tournament;
-  assert.deepEqual(await new Laya({ fetch: async () => json(ordinary) }).predict('hello', questions), ordinary);
+  assert.deepEqual(await new Veya({ fetch: async () => json(ordinary) }).predict('hello', questions), ordinary);
 });
-const prediction = { model: 'laya-rl-agent', routing: route, usage: { input_tokens: 10, output_tokens: 0 },
+const prediction = { model: 'veya-rl-agent', routing: route, usage: { input_tokens: 10, output_tokens: 0 },
   answers: { refund: { type: 'noul', noul: 0.9, confidence: 0.9, action: { act_probability: 0.8 } } } };
 
 test('bias-correction metadata remains optional, typed and preserved', async () => {
   const corrected = structuredClone(prediction);
   Object.assign(corrected.answers.refund, { decision_policy: 'context-balanced-v1', confidence_calibrated: false });
   Object.assign(corrected.usage, { decision_policy: 'context-balanced-v1', policy_probe_tokens: 12 });
-  assert.deepEqual(await new Laya({ fetch: async () => json(corrected) }).predict('hello', questions), corrected);
-  assert.deepEqual(await new Laya({ fetch: async () => json(prediction) }).predict('hello', questions), prediction);
+  assert.deepEqual(await new Veya({ fetch: async () => json(corrected) }).predict('hello', questions), corrected);
+  assert.deepEqual(await new Veya({ fetch: async () => json(prediction) }).predict('hello', questions), prediction);
   for (const [key, value] of [['decision_policy', 'unknown'], ['decision_policy', null],
     ['decision_policy', false], ['confidence_calibrated', true], ['confidence_calibrated', 0],
     ['confidence_calibrated', 'false'], ['confidence_calibrated', null]]) {
     const bad = structuredClone(corrected);
     bad.answers.refund[key] = value;
-    await assert.rejects(new Laya({ fetch: async () => json(bad) }).predict('hello', questions), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(bad) }).predict('hello', questions), VeyaResponseError);
   }
   for (const [key, value] of [['decision_policy', 'unknown'], ['decision_policy', null],
     ['policy_probe_tokens', true], ['policy_probe_tokens', -1], ['policy_probe_tokens', 0.5],
     ['policy_probe_tokens', null]]) {
     const bad = structuredClone(corrected);
     bad.usage[key] = value;
-    await assert.rejects(new Laya({ fetch: async () => json(bad) }).predict('hello', questions), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(bad) }).predict('hello', questions), VeyaResponseError);
   }
   const noProbes = structuredClone(corrected);
   noProbes.usage.policy_probe_tokens = 0;
-  assert.deepEqual(await new Laya({ fetch: async () => json(noProbes) }).predict('hello', questions), noProbes);
+  assert.deepEqual(await new Veya({ fetch: async () => json(noProbes) }).predict('hello', questions), noProbes);
 });
 
 test('ESM and CommonJS exports can be consumed by ordinary JavaScript', () => {
   const cjs = createRequire(import.meta.url)('veya-client');
-  assert.equal(typeof cjs.Laya, 'function');
+  assert.equal(typeof cjs.Veya, 'function');
   assert.deepEqual(cjs.triageQuestions(), triageQuestions());
 });
 
 test('systemone request preserves Unicode/JSON, auth, model override and proxy prefix', async () => {
   let calls = 0;
-  const client = new Laya({ baseURL: 'https://example.com/laya///', apiKey: 'key', headers: { 'X-App': 'test' },
+  const client = new Veya({ baseURL: 'https://example.com/veya///', apiKey: 'key', headers: { 'X-App': 'test' },
     fetch: async (url, init) => {
       calls++;
-      assert.equal(url, 'https://example.com/laya/v1/systemone');
+      assert.equal(url, 'https://example.com/veya/v1/systemone');
       assert.equal(init.method, 'POST');
       assert.equal(init.headers.get('Authorization'), 'Bearer key');
       assert.equal(init.headers.get('Content-Type'), 'application/json');
@@ -137,26 +137,26 @@ test('systemone request preserves Unicode/JSON, auth, model override and proxy p
 });
 
 test('health accepts the liveness-only answer a locked-down server gives an anonymous probe', async () => {
-  // A server with LAYA_API_KEY set answers an unauthenticated /health with {status: 'ok'} and
+  // A server with VEYA_API_KEY set answers an unauthenticated /health with {status: 'ok'} and
   // withholds loaded/device, because those name resident checkpoints, their revision SHAs and
-  // the host device state. That is a healthy response and must not be a LayaResponseError.
-  const client = new Laya({ fetch: async () => json({ status: 'ok' }) });
+  // the host device state. That is a healthy response and must not be a VeyaResponseError.
+  const client = new Veya({ fetch: async () => json({ status: 'ok' }) });
   assert.deepEqual(await client.health(), { status: 'ok' });
 
   // the detail is still validated whenever the server does send it
-  const bad = new Laya({ fetch: async () => json({ status: 'ok', loaded: ['not/a/name'], device: 'cpu' }) });
-  await assert.rejects(bad.health(), LayaResponseError);
-  const badDevice = new Laya({ fetch: async () => json({ status: 'ok', device: 7 }) });
-  await assert.rejects(badDevice.health(), LayaResponseError);
+  const bad = new Veya({ fetch: async () => json({ status: 'ok', loaded: ['not/a/name'], device: 'cpu' }) });
+  await assert.rejects(bad.health(), VeyaResponseError);
+  const badDevice = new Veya({ fetch: async () => json({ status: 'ok', device: 7 }) });
+  await assert.rejects(badDevice.health(), VeyaResponseError);
   // and a missing or wrong status is still a failure
   for (const payload of [{}, { status: 'degraded' }]) {
-    await assert.rejects(new Laya({ fetch: async () => json(payload) }).health(), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(payload) }).health(), VeyaResponseError);
   }
 });
 
-test('Laya health uses GET and accepts the existing server response', async () => {
+test('Veya health uses GET and accepts the existing server response', async () => {
   const calls = [];
-  const client = new Laya({ fetch: async (url, init) => {
+  const client = new Veya({ fetch: async (url, init) => {
     calls.push([new URL(url).pathname, init.method, init.body]);
     return json(health);
   } });
@@ -179,8 +179,8 @@ const allAnswerPrediction = {
   },
 };
 
-test('default request omits model and supports every Laya answer type', async () => {
-  const client = new Laya({ baseURL: 'http://127.0.0.1:8000', apiKey: 'test-key', fetch: async (url, init) => {
+test('default request omits model and supports every Veya answer type', async () => {
+  const client = new Veya({ baseURL: 'http://127.0.0.1:8000', apiKey: 'test-key', fetch: async (url, init) => {
     assert.equal(url, 'http://127.0.0.1:8000/v1/systemone');
     assert.equal(init.headers.get('Authorization'), 'Bearer test-key');
     assert.deepEqual(JSON.parse(init.body), {
@@ -195,7 +195,7 @@ test('default request omits model and supports every Laya answer type', async ()
 
 test('client model default and prediction overrides select local checkpoints', async () => {
   const models = [];
-  const client = new Laya({ model: 'english', fetch: async (_url, init) => {
+  const client = new Veya({ model: 'english', fetch: async (_url, init) => {
     models.push(JSON.parse(init.body).model);
     return json(prediction);
   } });
@@ -205,7 +205,7 @@ test('client model default and prediction overrides select local checkpoints', a
 });
 
 test('invalid model and control values fail before sending a request', async () => {
-  const client = new Laya({ fetch: async () => { assert.fail('must not send'); } });
+  const client = new Veya({ fetch: async () => { assert.fail('must not send'); } });
   for (const options of [
     { model: '' }, { model: 1 },
     { task: '' }, { task: 12 },
@@ -218,13 +218,13 @@ test('invalid model and control values fail before sending a request', async () 
     { minConfidence: { 'choice:2-5': 0.9 } }, { minConfidence: { 'foo:2': 0.9 } },
     { minConfidence: { 'choice:2': 0.9, 'score:1': 0.5 } },
   ]) {
-    await assert.rejects(client.predict('hello', questions, options), LayaValidationError, JSON.stringify(options));
+    await assert.rejects(client.predict('hello', questions, options), VeyaValidationError, JSON.stringify(options));
   }
-  for (const model of ['', '  ', 1]) assert.throws(() => new Laya({ model }), LayaValidationError);
+  for (const model of ['', '  ', 1]) assert.throws(() => new Veya({ model }), VeyaValidationError);
 });
 
 test('per-request controls reach the wire under their server names', async () => {
-  const client = new Laya({ fetch: async (_url, init) => {
+  const client = new Veya({ fetch: async (_url, init) => {
     assert.deepEqual(JSON.parse(init.body), {
       state: 'hello',
       questions,
@@ -248,7 +248,7 @@ test('a per-bucket threshold map reaches the wire as min_confidence', async () =
   // bucket (#394), so the map must arrive verbatim: re-keying or dropping `default` here
   // would silently change which answers abstain.
   const map = { 'choice:2': 0.9, default: 0.3 };
-  const client = new Laya({ fetch: async (_url, init) => {
+  const client = new Veya({ fetch: async (_url, init) => {
     assert.deepEqual(JSON.parse(init.body).min_confidence, map);
     return json(prediction);
   } });
@@ -257,10 +257,10 @@ test('a per-bucket threshold map reaches the wire as min_confidence', async () =
 
 test('bad JavaScript inputs fail before fetch without lossy serialization', async () => {
   let calls = 0;
-  const client = new Laya({ fetch: async () => { calls++; return json({}); } });
+  const client = new Veya({ fetch: async () => { calls++; return json({}); } });
   const cyclic = {}; cyclic.self = cyclic;
   for (const state of [undefined, 1, true, { n: NaN }, { n: Infinity }, { n: 1n }, { n: undefined }, new Date(), cyclic]) {
-    await assert.rejects(client.predict(state, questions), LayaValidationError);
+    await assert.rejects(client.predict(state, questions), VeyaValidationError);
   }
   for (const q of [{}, { q: { type: 'wat', instructions: 'test' } },
     { q: { type: 'choice', instructions: 'Pick', criteria: [] } },
@@ -268,26 +268,26 @@ test('bad JavaScript inputs fail before fetch without lossy serialization', asyn
     { q: { type: 'score', instructions: 'Score', criteria: [] } },
     { q: { type: 'noul', instructions: 'True?', criteria: { yes: 'yes' } } },
     { q: { type: 'noul', instructions: 'True?', typo: 1 } }]) {
-    await assert.rejects(client.predict('hello', q), LayaValidationError);
+    await assert.rejects(client.predict('hello', q), VeyaValidationError);
   }
   assert.equal(calls, 0);
 });
 
 test('invalid configuration is rejected', () => {
   for (const baseURL of ['oops', 'ftp://example.com', 'https://x/?key=secret', 'https://user:password@x/', 'https://x/#fragment']) {
-    assert.throws(() => new Laya({ baseURL }), LayaValidationError);
+    assert.throws(() => new Veya({ baseURL }), VeyaValidationError);
   }
   for (const timeoutMs of [-1, Infinity, NaN, 2 ** 31]) {
-    assert.throws(() => new Laya({ timeoutMs }), LayaValidationError);
+    assert.throws(() => new Veya({ timeoutMs }), VeyaValidationError);
   }
 });
 
 test('structured API errors keep status, code and validation details; no retries', async () => {
   let calls = 0;
   const details = [{ location: ['questions'], message: 'invalid' }];
-  const client = new Laya({ fetch: async () => { calls++; return json({ error: { message: 'Invalid request', code: 'validation_error', details } }, 422); } });
+  const client = new Veya({ fetch: async () => { calls++; return json({ error: { message: 'Invalid request', code: 'validation_error', details } }, 422); } });
   await assert.rejects(client.predict('Hello', questions), error => {
-    assert.ok(error instanceof LayaAPIError);
+    assert.ok(error instanceof VeyaAPIError);
     assert.equal(error.status, 422);
     assert.equal(error.code, 'validation_error');
     assert.deepEqual(error.details, details);
@@ -300,11 +300,11 @@ test('FastAPI errors preserve detail strings and validation arrays', async () =>
   for (const [status, detail] of [[401, 'invalid or missing bearer token'],
     [422, [{ loc: ['body', 'questions'], msg: 'Field required', type: 'missing' }]],
     [413, 'request body too large'], [500, 'inference failed']]) {
-    await assert.rejects(new Laya({ fetch: async () => json({ detail }, status) }).predict('hello', questions), error => {
-      assert.ok(error instanceof LayaAPIError);
+    await assert.rejects(new Veya({ fetch: async () => json({ detail }, status) }).predict('hello', questions), error => {
+      assert.ok(error instanceof VeyaAPIError);
       assert.equal(error.status, status);
       assert.equal(error.code, 'http_error');
-      assert.equal(error.message, typeof detail === 'string' ? detail : `Laya returned HTTP ${status}`);
+      assert.equal(error.message, typeof detail === 'string' ? detail : `Veya returned HTTP ${status}`);
       assert.deepEqual(error.details, detail);
       return true;
     });
@@ -312,10 +312,10 @@ test('FastAPI errors preserve detail strings and validation arrays', async () =>
 });
 
 test('non-JSON proxy errors remain API errors, malformed successes are response errors', async () => {
-  const client = new Laya({ fetch: async () => new Response('<html>bad gateway</html>', { status: 502 }) });
-  await assert.rejects(client.health(), error => error instanceof LayaAPIError && error.status === 502);
+  const client = new Veya({ fetch: async () => new Response('<html>bad gateway</html>', { status: 502 }) });
+  await assert.rejects(client.health(), error => error instanceof VeyaAPIError && error.status === 502);
   for (const raw of ['<html>success?</html>', 'null', '[]', '{}']) {
-    await assert.rejects(new Laya({ fetch: async () => new Response(raw) }).health(), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => new Response(raw) }).health(), VeyaResponseError);
   }
 });
 
@@ -326,7 +326,7 @@ test('malformed answers cannot masquerade as typed predictions', async () => {
     p => { p.usage.input_tokens = '10'; }]) {
     const payload = structuredClone(prediction);
     mutate(payload);
-    await assert.rejects(new Laya({ fetch: async () => json(payload) }).predict('Hello', questions), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(payload) }).predict('Hello', questions), VeyaResponseError);
   }
 });
 
@@ -337,7 +337,7 @@ test('prediction validation rejects malformed required fields and optional exten
     p => { p.answers.refund.action = { act_probability: 2 }; }, p => { p.routing = null; }]) {
     const payload = structuredClone(allAnswerPrediction);
     mutate(payload);
-    await assert.rejects(new Laya({ fetch: async () => json(payload) }).predict('hello', allAnswerQuestions), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(payload) }).predict('hello', allAnswerQuestions), VeyaResponseError);
   }
 });
 
@@ -345,20 +345,20 @@ test('Jev confidence is optional, preserved and validated for choice and score a
   const payload = structuredClone(allAnswerPrediction);
   payload.answers.team.x_jev_confidence = 0.8;
   payload.answers.urgency.x_jev_confidence = 0.4;
-  const result = await new Laya({ fetch: async () => json(payload) }).predict('hello', allAnswerQuestions);
+  const result = await new Veya({ fetch: async () => json(payload) }).predict('hello', allAnswerQuestions);
   assert.equal(result.answers.team.x_jev_confidence, 0.8);
   assert.equal(result.answers.urgency.x_jev_confidence, 0.4);
   assert.equal(result.answers.refund.x_jev_confidence, undefined);
-  const legacy = await new Laya({ fetch: async () => json(allAnswerPrediction) }).predict('hello', allAnswerQuestions);
+  const legacy = await new Veya({ fetch: async () => json(allAnswerPrediction) }).predict('hello', allAnswerQuestions);
   assert.equal(legacy.answers.team.x_jev_confidence, undefined);
   for (const value of [-0.1, 1.1, NaN, 'high']) {
     const invalid = structuredClone(payload);
     invalid.answers.team.x_jev_confidence = value;
-    await assert.rejects(new Laya({ fetch: async () => json(invalid) }).predict('hello', allAnswerQuestions), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(invalid) }).predict('hello', allAnswerQuestions), VeyaResponseError);
   }
   const invalid = structuredClone(payload);
   invalid.answers.refund.x_jev_confidence = 0.8;
-  await assert.rejects(new Laya({ fetch: async () => json(invalid) }).predict('hello', allAnswerQuestions), LayaResponseError);
+  await assert.rejects(new Veya({ fetch: async () => json(invalid) }).predict('hello', allAnswerQuestions), VeyaResponseError);
 });
 
 // The key set is what a live `/v1/systemone` answer carries: both agents build these six keys for
@@ -371,19 +371,19 @@ const truncationReport = { input_tokens: 43, output_tokens: 0, state_tokens: 120
 test('the truncation report reaches the caller verbatim and is validated when sent', async () => {
   const reported = structuredClone(prediction);
   reported.usage = truncationReport;
-  const client = new Laya({ fetch: async () => json(reported) });
+  const client = new Veya({ fetch: async () => json(reported) });
   assert.deepEqual((await client.predict('Hello', questions)).usage, truncationReport);
 
   const collapsed = structuredClone(reported);
   collapsed.usage.options = { refund: { total: 4, distinct: 1, tokens_per_option: null },
     team: { total: 2, distinct: 1, tokens_per_option: 4 } };
-  const collapseClient = new Laya({ fetch: async () => json(collapsed) });
+  const collapseClient = new Veya({ fetch: async () => json(collapsed) });
   assert.deepEqual((await collapseClient.predict('Hello', questions)).usage.options,
     collapsed.usage.options);
 
   // a server answering only the two keys Jev decodes is still a valid prediction
   const legacy = structuredClone(prediction);
-  const legacyClient = new Laya({ fetch: async () => json(legacy) });
+  const legacyClient = new Veya({ fetch: async () => json(legacy) });
   assert.deepEqual((await legacyClient.predict('Hello', questions)).usage,
     { input_tokens: 10, output_tokens: 0 });
 
@@ -402,13 +402,13 @@ test('the truncation report reaches the caller verbatim and is validated when se
   ]) {
     const bad = structuredClone(reported);
     mutate(bad.usage);
-    await assert.rejects(new Laya({ fetch: async () => json(bad) }).predict('Hello', questions),
-      LayaResponseError, JSON.stringify(bad.usage));
+    await assert.rejects(new Veya({ fetch: async () => json(bad) }).predict('Hello', questions),
+      VeyaResponseError, JSON.stringify(bad.usage));
   }
 });
 
 // A live `/v1/systemone` answer's `routing.detection`, verbatim, for a state whose subject and
-// notes are English but whose customer message is German. Every branch of `laya.lang.analyse()`
+// notes are English but whose customer message is German. Every branch of `veya.lang.analyse()`
 // reports the same eight keys, which is what tests/test_router.py pins on the Python side;
 // `mixed_segment` is the one that names the segment that pulled the state off English (#384).
 const mixedDetection = {
@@ -421,27 +421,27 @@ test('routing detection reports the segment that pulled a mostly-English state o
   const routed = structuredClone(prediction);
   routed.routing = { ...route, detection: mixedDetection,
     reason: 'Latin script, mostly English, but a line or field reads as \'de\'' };
-  const client = new Laya({ fetch: async () => json(routed) });
+  const client = new Veya({ fetch: async () => json(routed) });
   const result = await client.predict('Hello', questions);
   assert.equal(result.routing.detection.mixed_segment, 'Ich möchte meine Bestellung stornieren, danke');
 
   // null is the ordinary answer: the route read the state as one language
   const single = structuredClone(routed);
   single.routing.detection.mixed_segment = null;
-  const singleClient = new Laya({ fetch: async () => json(single) });
+  const singleClient = new Veya({ fetch: async () => json(single) });
   assert.equal((await singleClient.predict('Hello', questions)).routing.detection.mixed_segment, null);
 
   // a deployment predating #384 sends no such key, and one display field must not fail the call
   const older = structuredClone(routed);
   delete older.routing.detection.mixed_segment;
-  const olderClient = new Laya({ fetch: async () => json(older) });
+  const olderClient = new Veya({ fetch: async () => json(older) });
   assert.equal((await olderClient.predict('Hello', questions)).routing.detection.language, 'de');
 
   for (const segment of [7, false, ['Ich'], {}]) {
     const bad = structuredClone(routed);
     bad.routing.detection.mixed_segment = segment;
-    await assert.rejects(new Laya({ fetch: async () => json(bad) }).predict('Hello', questions),
-      LayaResponseError, JSON.stringify(segment));
+    await assert.rejects(new Veya({ fetch: async () => json(bad) }).predict('Hello', questions),
+      VeyaResponseError, JSON.stringify(segment));
   }
 });
 
@@ -455,7 +455,7 @@ const gateQuestions = {
   refund: questions.refund,
 };
 const gateReport = {
-  model: 'laya-rl-agent', usage: { input_tokens: 10, output_tokens: 0 },
+  model: 'veya-rl-agent', usage: { input_tokens: 10, output_tokens: 0 },
   answers: {
     team: { type: 'choice', choice: 'technical', probabilities: { billing: 0.4965, technical: 0.5035 },
       confidence: 0.0, answer_confidence: 0.5035, action: { act_probability: 0.5017 },
@@ -470,7 +470,7 @@ const gateReport = {
 };
 
 test('the confidence an answer was gated on and the gate report reach the caller', async () => {
-  const client = new Laya({ fetch: async () => json(gateReport) });
+  const client = new Veya({ fetch: async () => json(gateReport) });
   const result = await client.predict('hello', gateQuestions);
   assert.deepEqual(result.answers, gateReport.answers);
   assert.equal(result.answers.urgency.low_confidence, true);
@@ -478,10 +478,10 @@ test('the confidence an answer was gated on and the gate report reach the caller
   assert.equal(result.answers.team.abstention, 'passed');
   assert.equal(result.answers.team.abstention_threshold, 0.35);
 
-  // 'unevaluated' is the third state core reports (laya/confidence.py); accepted like the others.
+  // 'unevaluated' is the third state core reports (veya/confidence.py); accepted like the others.
   const unevaluated = structuredClone(gateReport);
   unevaluated.answers.refund.abstention = 'unevaluated';
-  assert.equal((await new Laya({ fetch: async () => json(unevaluated) })
+  assert.equal((await new Veya({ fetch: async () => json(unevaluated) })
     .predict('hello', gateQuestions)).answers.refund.abstention, 'unevaluated');
 
   // An ungated call answers exactly the payload it answered before the gate existed: no abstention,
@@ -492,14 +492,14 @@ test('the confidence an answer was gated on and the gate report reach the caller
     delete answer.abstention;
     delete answer.abstention_threshold;
   }
-  const bare = await new Laya({ fetch: async () => json(ungated) }).predict('hello', gateQuestions);
+  const bare = await new Veya({ fetch: async () => json(ungated) }).predict('hello', gateQuestions);
   assert.equal(bare.answers.urgency.abstention, undefined);
   assert.equal(bare.answers.urgency.low_confidence, undefined);
 
   // A deployment predating `answer_confidence` (#126) still answers, exactly as it did before.
   const older = structuredClone(ungated);
   for (const answer of Object.values(older.answers)) delete answer.answer_confidence;
-  assert.equal((await new Laya({ fetch: async () => json(older) })
+  assert.equal((await new Veya({ fetch: async () => json(older) })
     .predict('hello', gateQuestions)).answers.team.choice, 'technical');
 
   for (const mutate of [
@@ -514,15 +514,15 @@ test('the confidence an answer was gated on and the gate report reach the caller
   ]) {
     const payload = structuredClone(gateReport);
     mutate(payload.answers.urgency);
-    await assert.rejects(new Laya({ fetch: async () => json(payload) })
-      .predict('hello', gateQuestions), LayaResponseError);
+    await assert.rejects(new Veya({ fetch: async () => json(payload) })
+      .predict('hello', gateQuestions), VeyaResponseError);
   }
 });
 
 test('network errors preserve the cause', async () => {
   const cause = new TypeError('fetch failed');
-  await assert.rejects(new Laya({ fetch: async () => { throw cause; } }).health(), error =>
-    error instanceof LayaConnectionError && error.cause === cause);
+  await assert.rejects(new Veya({ fetch: async () => { throw cause; } }).health(), error =>
+    error instanceof VeyaConnectionError && error.cause === cause);
 });
 
 const hangingFetch = async (_url, init) => new Promise((_resolve, reject) => {
@@ -530,28 +530,28 @@ const hangingFetch = async (_url, init) => new Promise((_resolve, reject) => {
 });
 
 test('timeout aborts fetch and per-request override wins', async () => {
-  const client = new Laya({ timeoutMs: 1000, fetch: hangingFetch });
-  await assert.rejects(client.health({ timeoutMs: 10 }), LayaTimeoutError);
+  const client = new Veya({ timeoutMs: 1000, fetch: hangingFetch });
+  await assert.rejects(client.health({ timeoutMs: 10 }), VeyaTimeoutError);
 });
 
 test('timeout includes response body consumption', async () => {
-  const client = new Laya({ timeoutMs: 10, fetch: async (_url, init) => ({
+  const client = new Veya({ timeoutMs: 10, fetch: async (_url, init) => ({
     ok: true, text: () => new Promise((_resolve, reject) => {
       init.signal.addEventListener('abort', () => reject(init.signal.reason), { once: true });
     }),
   }) });
-  await assert.rejects(client.health(), LayaTimeoutError);
+  await assert.rejects(client.health(), VeyaTimeoutError);
 });
 
 test('caller cancellation works during a request and before fetch', async () => {
   const controller = new AbortController();
-  const client = new Laya({ timeoutMs: 0, fetch: hangingFetch });
+  const client = new Veya({ timeoutMs: 0, fetch: hangingFetch });
   const promise = client.health({ signal: controller.signal });
   controller.abort('user cancelled');
-  await assert.rejects(promise, LayaAbortError);
+  await assert.rejects(promise, VeyaAbortError);
   let called = false;
-  await assert.rejects(new Laya({ fetch: async () => { called = true; return json(health); } })
-    .health({ signal: controller.signal }), LayaAbortError);
+  await assert.rejects(new Veya({ fetch: async () => { called = true; return json(health); } })
+    .health({ signal: controller.signal }), VeyaAbortError);
   assert.equal(called, false);
 });
 

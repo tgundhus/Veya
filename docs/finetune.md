@@ -1,25 +1,25 @@
-# Fine-tuning Laya on your own decisions
+# Fine-tuning Veya on your own decisions
 
 On the typed-decisions benchmark the base checkpoints score near chance zero-shot — 0.36 and
 0.35 against a 0.318 random baseline — while the fine-tuned checkpoint reaches **0.766** on the
 same 2,000 decisions, above TypeSafe Jev's published 0.727 and above the 0.735 teacher
 self-agreement ceiling. Fine-tuning is where most of the value is, and the public
-[fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb)
+[fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/veya_finetune_typed_decisions_2xT4_kaggle.ipynb)
 runs the whole loop on Kaggle's free 2xT4 GPUs: build the dataset, train with RLCD, fit
 calibration temperatures, evaluate, and push the result to the Hub. This page walks that
 notebook and points at the parts that stay load-bearing when you swap the data for your own.
 
-The same loop is in the package. `laya-train` runs it on one device from a CSV or a JSONL of
-labelled decisions in one command, and `laya.train.finetune` does the same from Python; both are
+The same loop is in the package. `veya-train` runs it on one device from a CSV or a JSONL of
+labelled decisions in one command, and `veya.train.finetune` does the same from Python; both are
 described first below, before the notebook.
 
 The other worked example — a browser-agent decision head on a single 16 GB GPU with no paid API
-— is at [Fine-tuning Laya as a browser-agent decision head](finetune_browser_agent.md).
+— is at [Fine-tuning Veya as a browser-agent decision head](finetune_browser_agent.md).
 
-## Fine-tune with `laya-train`
+## Fine-tune with `veya-train`
 
-`laya-train` (also `laya train`) builds the training items, fine-tunes, fits calibration
-temperatures on a slice held out before training, and saves a checkpoint `laya.load` opens. It
+`veya-train` (also `veya train`) builds the training items, fine-tunes, fits calibration
+temperatures on a slice held out before training, and saves a checkpoint `veya.load` opens. It
 runs on one device: CUDA, MPS or CPU.
 
 ### From a CSV
@@ -27,7 +27,7 @@ runs on one device: CUDA, MPS or CPU.
 One row per decision, with the text in one column and the correct label in another:
 
 ```bash
-laya-train --data tickets.csv --text-column body --label-column department \
+veya-train --data tickets.csv --text-column body --label-column department \
            --base english --out ./tickets-checkpoint
 ```
 
@@ -37,9 +37,9 @@ appear, with the id given by `--question-id` (default `label`) and the instructi
 fine-tuned model the same question at inference:
 
 ```python
-import json, laya
+import json, veya
 
-agent = laya.load("./tickets-checkpoint")
+agent = veya.load("./tickets-checkpoint")
 questions = json.load(open("./tickets-checkpoint/questions.json"))
 print(agent.predict("We were billed twice for March.", questions)["answers"])
 ```
@@ -60,7 +60,7 @@ read, and a file may mix them:
  "expected": {"department": "billing", "urgent": true}}
 ```
 
-- `expected` holds one answer per question, the format `laya-evals` reads, so the same file can
+- `expected` holds one answer per question, the format `veya-evals` reads, so the same file can
   train a checkpoint and evaluate it: a choice label, `true`/`false` for a noul, and a level for a
   score (a fractional level such as `1.5` splits its weight between levels 1 and 2).
   `--label-smoothing 0.1` moves a tenth of each answer's weight to the other options.
@@ -71,7 +71,7 @@ read, and a file may mix them:
 ### Check the data before a long run
 
 ```bash
-laya-train --data tickets.csv --text-column body --label-column department --dry-run
+veya-train --data tickets.csv --text-column body --label-column department --dry-run
 ```
 
 `--dry-run` builds the training items with the tokenizer and config of `--base`, without loading
@@ -87,17 +87,17 @@ were skipped and why:
 
 ### What a run writes
 
-`--out` gets the layout `laya.load` reads (`model.safetensors`, `encoder/`, `tokenizer/`,
+`--out` gets the layout `veya.load` reads (`model.safetensors`, `encoder/`, `tokenizer/`,
 `rl_agent_config.json`), plus `questions.json` and a `checkpoint_latest/` rewritten after every
 epoch, so a crash costs at most an epoch.
 
 The config records the `max_len` and `head_max_len` the run used, the training settings under
-`training.laya_train`, and a calibration report under `training.laya_train_calibration`: per
+`training.veya_train`, and a calibration report under `training.veya_train_calibration`: per
 question type, how many calibration items the temperature rests on, their accuracy and mean
 confidence, and what to doubt. The same issues are printed as warnings during the run:
 
 ```
-laya.train: choice calibration: not fitted: 2 calibration items, fewer than 10, so the temperature stays 1.0
+veya.train: choice calibration: not fitted: 2 calibration items, fewer than 10, so the temperature stays 1.0
 ```
 
 A warning like that means the checkpoint's confidences were not calibrated; don't gate on
@@ -123,7 +123,7 @@ example), set `amp=False` in `TrainConfig` from Python.
 ### What the options are worth
 
 Full fine-tunes of `convaiinnovations/laya` on one T4 per run, with the notebook's settings, from
-Laya issue #887.
+Veya issue #887.
 
 On typed-decisions (6,000 training decisions, all 2,000 test decisions, one seed):
 
@@ -150,17 +150,17 @@ time. Use it when questions have many options.
 
 ## Fine-tuning from Python
 
-`laya.train.finetune` is what `laya-train` calls:
+`veya.train.finetune` is what `veya-train` calls:
 
 ```python
-import laya
-from laya.train import TrainConfig, finetune
+import veya
+from veya.train import TrainConfig, finetune
 
 report = finetune("train.jsonl", "english", "./my-checkpoint",
                   TrainConfig(loss="soft-ce", shuffle_options=("choice",)))
 print(report["train_items"], report["skipped"], report["calibration"])
 
-agent = laya.load("./my-checkpoint")
+agent = veya.load("./my-checkpoint")
 ```
 
 `TrainConfig()` has the defaults in the table above, plus the settings the command does not
@@ -176,7 +176,7 @@ your own, `train_model` and `calibration_records` are the two halves `finetune` 
 | # | step | what happens |
 |---|---|---|
 | 1 | Environment | asserts both T4 GPUs are visible and allocated |
-| 2 | Install | `laya`, `transformers`, `datasets` and the training dependencies |
+| 2 | Install | `veya`, `transformers`, `datasets` and the training dependencies |
 | 3 | Preprocess | the 1,200 training cases (6,000 typed decisions) become tokenized items with soft targets, written to disk for both DDP ranks |
 | 4 | Train | `train_ddp.py` under `torchrun --nproc_per_node=2`, four epochs |
 | 5 | Calibrate | one temperature per type, fitted on a slice held out before training (inside the training script, after the last epoch) |
@@ -186,7 +186,7 @@ your own, `train_model` and `calibration_records` are the two halves `finetune` 
 | 9 | Report | `benchmark_report.json` with the metrics table and per-workflow accuracy |
 
 Kaggle settings: **Accelerator** `GPU T4 x2`, **Internet** `On`. Outputs land in
-`/kaggle/working/laya_finetuned_typed_decisions`.
+`/kaggle/working/veya_finetuned_typed_decisions`.
 
 ## The training recipe
 
@@ -247,7 +247,7 @@ python tests/test_calibration_persistence.py
 
 The evaluation is a full pass over the official test split: 400 cases, 2,000 decisions across
 Agent Trace Observability, Customer Service, Invoice Processing and Security Incidents. It
-computes accuracy, soft accuracy, Brier, ECE (via `laya.common.ece_score`), score MAE,
+computes accuracy, soft accuracy, Brier, ECE (via `veya.common.ece_score`), score MAE,
 within-one-level and latency percentiles, then builds a head-to-head table whose reference rows
 are fixed:
 
@@ -256,9 +256,9 @@ are fixed:
 | TypeSafe Jev 1.13.0 | general | 0.727 | 0.144 |
 | ModernBERT-base (149M) | specialist | 0.646 | 0.179 |
 | Teacher Self-Agreement | ceiling | 0.735 | — |
-| Laya (published checkpoint) | fine-tuned | 0.766 | — |
+| Veya (published checkpoint) | fine-tuned | 0.766 | — |
 
-The Laya row of your own run is computed the same way — the notebook rebuilds the table from
+The Veya row of your own run is computed the same way — the notebook rebuilds the table from
 the run's own numbers. Two habits worth copying: keep the slices you care about (a language, a
 workflow) inside held-out data, and report calibration next to accuracy, because the training
 signal is a distribution, not just a label. Benchmarks live in `BENCHMARKS.md` at the repository
@@ -279,9 +279,9 @@ The publish cell is the loop's last mile, and it is deliberately boring:
 The result loads like any other checkpoint — there is no fine-tuning-specific API:
 
 ```python
-import laya
+import veya
 
-agent = laya.load("your-org/your-checkpoint")   # the repo you just pushed
+agent = veya.load("your-org/your-checkpoint")   # the repo you just pushed
 result = agent.predict(state, questions)
 ```
 
@@ -297,7 +297,7 @@ costs one epoch rather than the run.
   per-type scalars, not enough to validate against. Hold out your own evaluation data.
 - **Your labels must fit the three primitives.** If your decision is not a choice, a scale or a
   yes/no probability, shape it into one first. Two sharp edges are already documented: high
-  option counts degrade confidence selection (Laya issue #394),
-  and forced-choice negation can follow the question over the state (Laya issue #377).
+  option counts degrade confidence selection (Veya issue #394),
+  and forced-choice negation can follow the question over the state (Veya issue #377).
 - **Ship the config, not just the weights.** The removed `temperature_by_options` is the part
   that silently un-fits a calibration if it survives in a copied config.

@@ -41,7 +41,7 @@ import numpy as np
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, REPO)
 
-from laya.common import answer_confidence, confidence_from_probs, ece_score  # noqa: E402
+from veya.common import answer_confidence, confidence_from_probs, ece_score  # noqa: E402
 
 RESULTS = os.path.join(REPO, "research", "benchmarks", "feishu_zh", "results", "v1")
 OUT = os.path.join(REPO, "research", "results", "confidence_definitions.json")

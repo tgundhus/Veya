@@ -1,4 +1,4 @@
-"""Shared helpers for the Laya examples.
+"""Shared helpers for the Veya examples.
 
 Each example is a standalone script:
 
@@ -13,8 +13,8 @@ source installation of Veya. Loading one takes a few seconds -- plus the first d
 no local copy -- and the first MPS call pays Metal kernel compilation, so anything that reports
 latency warms up first.
 
-This module also imports `laya` for you -- after setting `USE_TF=0`, because a stray TensorFlow
-install can deadlock model loading. Examples therefore do `from _common import laya, ...` rather
+This module also imports `veya` for you -- after setting `USE_TF=0`, because a stray TensorFlow
+install can deadlock model loading. Examples therefore do `from _common import veya, ...` rather
 than importing it themselves first, which would defeat the guard.
 """
 import os
@@ -27,10 +27,10 @@ os.environ.setdefault("USE_TORCH", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)          # repository root; <root>/laya/email.py must not shadow stdlib email
+sys.path.insert(0, ROOT)          # repository root; <root>/veya/email.py must not shadow stdlib email
 
-import laya  # noqa: E402
-from laya.router import Router  # noqa: E402
+import veya  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 BUNDLE_REPO = "convaiinnovations/laya"
 _SUBFOLDER = {
@@ -40,7 +40,7 @@ _SUBFOLDER = {
 }
 
 LOCAL_MODELS = {
-    "english": os.path.join(ROOT, "models", "laya"),
+    "english": os.path.join(ROOT, "models", "veya"),
     "multilingual": os.path.join(ROOT, "models", "laya-multilingual"),
     "typed-decisions": os.path.join(ROOT, "models", "laya-typed-decisions"),
 }
@@ -111,11 +111,11 @@ def banner(number, title, blurb=""):
 def load(name="english", device=None):
     """Load one checkpoint: from `models/` when it is there, else from the Hub.
 
-    `device=None` lets Laya pick: CUDA, then MPS, then CPU.
+    `device=None` lets Veya pick: CUDA, then MPS, then CPU.
     """
     if has_local(name):
-        return laya.load(LOCAL_MODELS[name], device=device)
-    return laya.load(BUNDLE_REPO, subfolder=_SUBFOLDER[name], device=device)
+        return veya.load(LOCAL_MODELS[name], device=device)
+    return veya.load(BUNDLE_REPO, subfolder=_SUBFOLDER[name], device=device)
 
 
 def router(device=None, **kwargs):

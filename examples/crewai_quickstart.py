@@ -1,22 +1,22 @@
-"""Laya System 1 decision engine: CrewAI Integration Quickstart.
+"""Veya System 1 decision engine: CrewAI Integration Quickstart.
 
 Demonstrates:
 1. Sub-35ms task delegation across specialized CrewAI agents (replaces LLM managers).
 2. Calibrated confidence threshold fallback gating to a human supervisor or lead agent.
-3. Pre-execution task guardrails (LayaTaskGuard) screening malicious prompts.
-4. Edge/Serverless deployment against remote laya-serve HTTP instances.
+3. Pre-execution task guardrails (VeyaTaskGuard) screening malicious prompts.
+4. Edge/Serverless deployment against remote veya-serve HTTP instances.
 """
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.integrations.crewai import (
+from veya.integrations.crewai import (
     CrewAgent,
     CrewTask,
-    LayaCrewRouter,
-    LayaTaskGuard,
-    LayaTaskGuardError,
+    VeyaCrewRouter,
+    VeyaTaskGuard,
+    VeyaTaskGuardError,
 )
 
 
@@ -29,7 +29,7 @@ class _DemoAgent:
         if "jailbreak" in questions or "injection" in questions:
             is_bad = "ignore previous instructions" in text or "exploit" in text
             return {
-                "model": "laya-demo",
+                "model": "veya-demo",
                 "answers": {
                     "jailbreak": {"type": "noul", "noul": 0.95 if is_bad else 0.05, "confidence": 0.90},
                     "injection": {"type": "noul", "noul": 0.92 if is_bad else 0.04, "confidence": 0.90},
@@ -48,7 +48,7 @@ class _DemoAgent:
             conf = 0.88
 
         return {
-            "model": "laya-demo",
+            "model": "veya-demo",
             "answers": {
                 q_id: {
                     "choice": chosen,
@@ -61,7 +61,7 @@ class _DemoAgent:
 
 _agent = None
 try:
-    from laya import Router
+    from veya import Router
     r = Router()
     r.predict("test", {"test": {"type": "choice", "instructions": "test", "criteria": {"a": "a"}}})
     _agent = r
@@ -73,7 +73,7 @@ except Exception:  # noqa: BLE001
 # 1. Sub-35ms Task Delegation Router (Replaces LLM Manager)
 # =====================================================================
 # In hierarchical CrewAI crews, manager LLMs spend 2-4 seconds deciding
-# which agent executes a task. LayaCrewRouter delegates in ~33 ms.
+# which agent executes a task. VeyaCrewRouter delegates in ~33 ms.
 
 agents = [
     CrewAgent(
@@ -93,7 +93,7 @@ agents = [
     ),
 ]
 
-router = LayaCrewRouter(
+router = VeyaCrewRouter(
     confidence_threshold=0.80,
     fallback_agent_index=0,  # Fall back to Financial Analyst if ambiguous
     agent=_agent,
@@ -117,12 +117,12 @@ print(f"Task agent assigned: {getattr(task.agent, 'role', task.agent)}")
 
 
 # =====================================================================
-# 2. Pre-Execution Task Guardrails (LayaTaskGuard)
+# 2. Pre-Execution Task Guardrails (VeyaTaskGuard)
 # =====================================================================
 # Screens task specifications and user instructions for prompt injections
 # and policy violations before agents begin tool calls or execution.
 
-guard = LayaTaskGuard(action="raise", agent=_agent)
+guard = VeyaTaskGuard(action="raise", agent=_agent)
 
 safe_task = CrewTask(description="Review software architecture for microservices API.")
 print("\n--- 2. Task Guardrail Screening ---")
@@ -136,15 +136,15 @@ malicious_task = CrewTask(
 print(f"Checking adversarial task: {malicious_task.description}")
 try:
     guard.screen(malicious_task)
-except LayaTaskGuardError as e:
-    print(f"Result: Blocked by LayaTaskGuard! Violations: {e.violations}")
+except VeyaTaskGuardError as e:
+    print(f"Result: Blocked by VeyaTaskGuard! Violations: {e.violations}")
 
 
 # =====================================================================
 # 3. Remote HTTP Server Deployment (Zero Heavy Dependencies)
 # =====================================================================
-# Connects to your self-hosted `laya-serve` instance without requiring PyTorch on edge clients.
-remote_router = LayaCrewRouter(
+# Connects to your self-hosted `veya-serve` instance without requiring PyTorch on edge clients.
+remote_router = VeyaCrewRouter(
     base_url="http://localhost:8080",
     confidence_threshold=0.85,
     fallback_agent_index=0,

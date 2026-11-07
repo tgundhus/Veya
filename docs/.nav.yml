@@ -32,6 +32,7 @@ nav:
       - finetune_browser_agent.md
   - Reports:
       - reports/index.md
+      - reports/veya-migration-2026-11-07.md
       - reports/ordinal-continuation-2026-11-06.md
       - reports/score-boundary-repair-2026-11-06.md
       - reports/routing-repair-2026-11-06.md

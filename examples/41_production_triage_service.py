@@ -1,4 +1,4 @@
-"""Example 41 -- a small production triage service built from Laya.
+"""Example 41 -- a small production triage service built from Veya.
 
 Routes each incoming ticket with `Router`, answers a triage question set in one forward pass, and
 turns the probabilities into an operational decision with an explicit application policy. Four
@@ -6,7 +6,7 @@ tickets (English, German, Hindi) so the policy visibly branches.
 """
 import json
 
-from _common import laya, banner, describe, router
+from _common import veya, banner, describe, router
 
 banner("41", "Production triage service", """
     This is the capstone: everything the earlier examples showed, wired into one call path.
@@ -20,7 +20,7 @@ banner("41", "Production triage service", """
 
     The split matters. The model returns probabilities; the **policy** is ours -- the thresholds,
     the team mapping and the decision to escalate are application code, not model output. Read
-    the JSON record as: `routing` and `answers` come from Laya, `decision` comes from the policy.
+    the JSON record as: `routing` and `answers` come from Veya, `decision` comes from the policy.
     """)
 
 # --- application policy: thresholds and routing rules (ours, not the model's) --------------
@@ -79,7 +79,7 @@ TICKETS = [
                 "कृपया आज ही ठीक करें।"},
 ]
 
-QUESTIONS = laya.triage_questions()
+QUESTIONS = veya.triage_questions()
 r = router(max_loaded=2)          # english + multilingual stay resident after first use
 
 records = []

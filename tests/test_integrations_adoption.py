@@ -5,10 +5,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from laya._eval_policy import load_policy
-from laya.evals import EvalError
-from laya.integrations import agno
-from laya.integrations._controls import require_router_controls
+from veya._eval_policy import load_policy
+from veya.evals import EvalError
+from veya.integrations import agno
+from veya.integrations._controls import require_router_controls
 
 
 @pytest.mark.parametrize("controls", [{"task": "typed-decisions"}, {"lang_guess": "fr"},
@@ -31,7 +31,7 @@ def test_agno_remote_routing_controls_reach_the_wire(monkeypatch, controls):
 def test_agno_rejects_unknown_choices_before_fallback(choice):
     runner = SimpleNamespace(predict=lambda *args, **kwargs: {
         "answers": {"delegation": {"type": "choice", "choice": choice, "confidence": 0.1}}})
-    adapter = agno.LayaAgnoRouter(agent=runner, confidence_threshold=0.9, fallback_agent_index=0)
+    adapter = agno.VeyaAgnoRouter(agent=runner, confidence_threshold=0.9, fallback_agent_index=0)
     with pytest.raises(RuntimeError, match="unknown agent choice"):
         adapter.route("hello", ["first", "second"])
 
@@ -39,7 +39,7 @@ def test_agno_rejects_unknown_choices_before_fallback(choice):
 @pytest.mark.parametrize("index", [True, -1, 2, 1.5])
 def test_agno_checks_fallback_index_before_inference(index):
     runner = SimpleNamespace(predict=lambda *args, **kwargs: pytest.fail("inference must not run"))
-    adapter = agno.LayaAgnoRouter(agent=runner, fallback_agent_index=index)
+    adapter = agno.VeyaAgnoRouter(agent=runner, fallback_agent_index=index)
     with pytest.raises(ValueError, match="fallback_agent_index"):
         adapter.route("hello", ["first", "second"])
 
@@ -57,7 +57,7 @@ def test_routing_controls_refuse_positional_only_runners():
                                     {"type": "noul", "noul": float("nan")}])
 def test_agno_guardrail_refuses_incomplete_or_invalid_answers(answer):
     runner = SimpleNamespace(predict=lambda *args, **kwargs: {"answers": {} if answer is None else {"q": answer}})
-    guard = agno.LayaAgnoGuardrail(agent=runner, questions={"q": {"type": "noul", "instructions": "Unsafe?"}})
+    guard = agno.VeyaAgnoGuardrail(agent=runner, questions={"q": {"type": "noul", "instructions": "Unsafe?"}})
     with pytest.raises(RuntimeError, match="Malformed decision"):
         guard.screen("hello")
 
@@ -71,7 +71,7 @@ def test_agno_guardrail_refuses_invalid_score_distributions(probabilities):
     runner = SimpleNamespace(predict=lambda *args, **kwargs: {"answers": {"q": answer}})
     questions = {"q": {"type": "score", "instructions": "Harm?",
                        "criteria": ["none", "minor", "serious", "severe"]}}
-    guard = agno.LayaAgnoGuardrail(agent=runner, questions=questions)
+    guard = agno.VeyaAgnoGuardrail(agent=runner, questions=questions)
     with pytest.raises(RuntimeError, match="score probabilities|'probabilities'"):
         guard.screen("hello")
 
@@ -83,12 +83,12 @@ def test_agno_guardrail_keeps_score_fallback_and_complete_distributions():
                    {"type": "score", "score": 3.0,
                     "probabilities": {"0": 0.0, "1": 0.0, "2": 0.0, "3": 1.0}}):
         runner = SimpleNamespace(predict=lambda *args, **kwargs: {"answers": {"q": answer}})
-        with pytest.raises(agno.LayaAgnoGuardrailError):
-            agno.LayaAgnoGuardrail(agent=runner, questions=questions).screen("hello")
+        with pytest.raises(agno.VeyaAgnoGuardrailError):
+            agno.VeyaAgnoGuardrail(agent=runner, questions=questions).screen("hello")
 
 
 def test_policy_depth_error_names_the_cli_option(tmp_path, monkeypatch):
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     path = tmp_path / "policy.json"
     path.write_text("[" * 2000 + "]" * 2000, encoding="utf-8")

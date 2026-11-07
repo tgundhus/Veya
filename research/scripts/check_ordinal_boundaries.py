@@ -8,7 +8,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya.qualification import _limits, _saved_observations, _sha, load_document, validate_corpus
+from veya.qualification import _limits, _saved_observations, _sha, load_document, validate_corpus
 
 
 def audit(corpus, report):

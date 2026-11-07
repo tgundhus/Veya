@@ -23,11 +23,11 @@ import warnings
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import laya  # noqa: E402
-from laya import Agent, BaseHook, PredictContext, PredictHook, Router, load  # noqa: E402
-from laya.hooks import HOOK_EVENTS, Hook  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
-from laya.router import _question_schema  # noqa: E402
+import veya  # noqa: E402
+from veya import Agent, BaseHook, PredictContext, PredictHook, Router, load  # noqa: E402
+from veya.hooks import HOOK_EVENTS, Hook  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.router import _question_schema  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -70,10 +70,34 @@ HOOK_KEYS = {
     "hooks_timeout": None,
 }
 
+# Renaming the primary package must preserve one set of classes and hook/cache state.
+import importlib as _importlib  # noqa: E402
+import laya as _legacy  # noqa: E402
+from unittest.mock import patch as _env_patch  # noqa: E402
+from veya._env import getenv as _getenv  # noqa: E402
+
+check_true("migration/legacy root is the canonical package", _legacy is veya)
+for _module_name in ("router", "hooks", "consistency", "mcp.tools"):
+    check_true("migration/shared module/" + _module_name,
+               _importlib.import_module("laya." + _module_name)
+               is _importlib.import_module("veya." + _module_name))
+    _shared_module = _importlib.import_module("veya." + _module_name)
+    check("migration/canonical metadata/" + _module_name,
+          _shared_module.__spec__.parent, _shared_module.__package__)
+check_true("migration/legacy Agent shares its class", _legacy.Agent is Agent)
+with _env_patch.dict(os.environ, {"LAYA_THREADS": "3"}, clear=True):
+    check("migration/legacy environment fallback", _getenv("VEYA_THREADS"), "3")
+    os.environ["VEYA_THREADS"] = "2"
+    check("migration/primary environment wins", _getenv("VEYA_THREADS"), "2")
+    os.environ["VEYA_THREADS"] = ""
+    check("migration/empty primary masks legacy", _getenv("VEYA_THREADS"), "")
+    del os.environ["VEYA_THREADS"]
+    check("migration/environment changes remain live", _getenv("VEYA_THREADS"), "3")
+
 # The lightweight runtime and full package share these inference contracts. Existing imports
 # keep resolving to the canonical functions after the Torch-free extraction.
-from laya import calibration as _calibration, calibrate as _calibrate  # noqa: E402
-from laya import common as _common, inference_common as _inference_common  # noqa: E402
+from veya import calibration as _calibration, calibrate as _calibrate  # noqa: E402
+from veya import common as _common, inference_common as _inference_common  # noqa: E402
 
 for _name in ("build_sequence", "encode_text", "render_options", "answer_confidence",
               "confidence_from_probs", "resolve_lang_temperatures", "window_budget"):
@@ -98,25 +122,25 @@ check_param("Router.__init__", Router.__init__, "max_loaded", None)
 check_param("Router.__init__", Router.__init__, "preload", None)
 check_param("Router.__init__", Router.__init__, "backend", None, inspect.Parameter.KEYWORD_ONLY)
 check_param("Router.__init__", Router.__init__, "onnx_paths", None, inspect.Parameter.KEYWORD_ONLY)
-check("laya/default inference backend", laya.DEFAULT_INFERENCE_BACKEND, "torch")
-from laya.serve import build_router as _build_router, create_app as _create_app  # noqa: E402
-from laya.mcp.tools import laya_status as _laya_status  # noqa: E402
+check("veya/default inference backend", veya.DEFAULT_INFERENCE_BACKEND, "torch")
+from veya.serve import build_router as _build_router, create_app as _create_app  # noqa: E402
+from veya.mcp.tools import veya_status as _veya_status  # noqa: E402
 check_param("serve.build_router", _build_router, "backend", None, inspect.Parameter.KEYWORD_ONLY)
 check_param("serve.create_app", _create_app, "backend", None, inspect.Parameter.KEYWORD_ONLY)
-check_param("mcp.laya_status", _laya_status, "backend", None, inspect.Parameter.KEYWORD_ONLY)
+check_param("mcp.veya_status", _veya_status, "backend", None, inspect.Parameter.KEYWORD_ONLY)
 from types import SimpleNamespace as _StatusNamespace  # noqa: E402
 from unittest.mock import patch as _status_patch  # noqa: E402
 _cold_status_router = _StatusNamespace(backend="torch", device="cpu", loaded=[],
-                                      replay_manifest="approved.json", _laya_server_performance_config=None)
-with _status_patch("laya.mcp.tools.device_report", side_effect=AssertionError("cold replay must not probe Torch")):
-    _cold_status = _laya_status(router=_cold_status_router)
+                                      replay_manifest="approved.json", _veya_server_performance_config=None)
+with _status_patch("veya.mcp.tools.device_report", side_effect=AssertionError("cold replay must not probe Torch")):
+    _cold_status = _veya_status(router=_cold_status_router)
 check("mcp status/cold replay configuration", _cold_status["model_free_replay"], {"enabled": True})
 check("mcp status/deferred device preference", (_cold_status["device"], _cold_status["device_is_preference"]),
       ("cpu", True))
 check("mcp status/unloaded checkpoint policies", _cold_status["checkpoint_policies"], {})
 for _performance_helper in ("parse_performance_mode", "resolve_performance_mode"):
-    check_true("laya/%s exported" % _performance_helper,
-               _performance_helper in laya.__all__ and callable(getattr(laya, _performance_helper, None)))
+    check_true("veya/%s exported" % _performance_helper,
+               _performance_helper in veya.__all__ and callable(getattr(veya, _performance_helper, None)))
 
 for label, fn in (("Agent.__init__", Agent.__init__), ("load", load)):
     check_param(label, fn, "compile_warmup", True)
@@ -149,7 +173,7 @@ check("Router/typo leaves built-in source", _typo_router.models["english"], Rout
 # `agent_kwargs["expected_sha256"]` overlapping a per-checkpoint `sha256_digests` entry on one file
 # name is the ordinary shape, not a contradiction -- `model.safetensors` is the one name every
 # checkpoint uses for a different file. Refusing it here would reject a shared pin plus a
-# per-checkpoint override, and `laya.serve` maps a ValueError out of a load to a 422 about a
+# per-checkpoint override, and `veya.serve` maps a ValueError out of a load to a 422 about a
 # misconfiguration no request caused.
 _OVERLAP = "Router.__init__/a shared pin overlapping a per-checkpoint one constructs"
 try:
@@ -175,13 +199,13 @@ check_true("Agent.backend_object is a property", isinstance(Agent.backend_object
 check_param("ONNXAgent.__init__", ONNXAgent.__init__, "token", None)
 
 # --------------------------------------------------------------- predict surfaces
-from laya.mcp.remote import RemoteRouter  # noqa: E402
-from laya.mcp.remote import _resolve_user_agent  # noqa: E402
-from laya.mcp.tools import laya_status as _mcp_status  # noqa: E402
+from veya.mcp.remote import RemoteRouter  # noqa: E402
+from veya.mcp.remote import _resolve_user_agent  # noqa: E402
+from veya.mcp.tools import veya_status as _mcp_status  # noqa: E402
 
-check_param("mcp.laya_status", _mcp_status, "performance_mode", None, inspect.Parameter.KEYWORD_ONLY)
+check_param("mcp.veya_status", _mcp_status, "performance_mode", None, inspect.Parameter.KEYWORD_ONLY)
 check_true("RemoteRouter/is a Router", issubclass(RemoteRouter, Router))
-check("Veya/default wire identity", _resolve_user_agent(""), "veya/" + laya.__version__)
+check("Veya/default wire identity", _resolve_user_agent(""), "veya/" + veya.__version__)
 check_param("RemoteRouter.__init__", RemoteRouter.__init__, "base_url", inspect.Parameter.empty)
 check_param("RemoteRouter.__init__", RemoteRouter.__init__, "api_key", None)
 check_param("RemoteRouter.__init__", RemoteRouter.__init__, "timeout", None)
@@ -236,11 +260,11 @@ for param in ("max_len", "head_max_len"):
 
 # shortlist_choice returns bare labels by default; return_scores=True also hands back the
 # rank-order cosines, so the flag is keyword-only and defaults to off
-check_param("shortlist_choice", laya.shortlist_choice, "return_scores", False,
+check_param("shortlist_choice", veya.shortlist_choice, "return_scores", False,
             inspect.Parameter.KEYWORD_ONLY)
 
 # predict_tournament splits a choice into groups of 16 labels unless the caller picks a size
-check_param("predict_tournament", laya.predict_tournament, "group_size", 16)
+check_param("predict_tournament", veya.predict_tournament, "group_size", 16)
 
 # A Router-shaped runner resolves the original schema before tournament questions are generated.
 class _TournamentRouteProbe:
@@ -260,7 +284,7 @@ class _TournamentRouteProbe:
 
 _tournament_probe = _TournamentRouteProbe()
 _tournament_questions = {"category": {"type": "choice", "criteria": ["a", "b", "c", "d", "e"]}}
-_tournament_result = laya.predict_tournament(_tournament_probe, "hi", _tournament_questions, group_size=2)
+_tournament_result = veya.predict_tournament(_tournament_probe, "hi", _tournament_questions, group_size=2)
 check("predict_tournament/routes original schema once", _tournament_probe.routes, [_tournament_questions])
 check_true("predict_tournament/pins every round", all(m == "typed-decisions" for m in _tournament_probe.models))
 check("predict_tournament/keeps original workflow", _tournament_result["routing"]["workflow"], "original")
@@ -317,24 +341,24 @@ check_true("PredictHook is callable-typed", callable(PredictHook))
 
 # --------------------------------------------------------------- exports
 for name in ("PredictContext", "PredictHook", "Hook", "BaseHook", "AsyncHook"):
-    check_true("__all__/%s" % name, name in laya.__all__)
-    check_true("laya.%s exists" % name, hasattr(laya, name))
-check_true("laya.hooks/run_coroutine_sync exists",
-           callable(getattr(__import__("laya.hooks", fromlist=["run_coroutine_sync"]),
+    check_true("__all__/%s" % name, name in veya.__all__)
+    check_true("veya.%s exists" % name, hasattr(veya, name))
+check_true("veya.hooks/run_coroutine_sync exists",
+           callable(getattr(__import__("veya.hooks", fromlist=["run_coroutine_sync"]),
                             "run_coroutine_sync", None)))
 # Lazily exported, so `hasattr` is what proves `__getattr__` resolves it and not just that the
-# name sits in `__all__`. It must stay reachable as `laya.PINNED_REVISIONS` for the checkpoint
-# integrity guide; `laya.revisions` is not the documented path.
-check_true("__all__/PINNED_REVISIONS", "PINNED_REVISIONS" in laya.__all__)
-check_true("laya.PINNED_REVISIONS exists", hasattr(laya, "PINNED_REVISIONS"))
-from laya.confidence import jev_confidence as _jev_confidence  # noqa: E402
+# name sits in `__all__`. It must stay reachable as `veya.PINNED_REVISIONS` for the checkpoint
+# integrity guide; `veya.revisions` is not the documented path.
+check_true("__all__/PINNED_REVISIONS", "PINNED_REVISIONS" in veya.__all__)
+check_true("veya.PINNED_REVISIONS exists", hasattr(veya, "PINNED_REVISIONS"))
+from veya.confidence import jev_confidence as _jev_confidence  # noqa: E402
 
-check_true("__all__/jev_confidence", "jev_confidence" in laya.__all__)
-check_true("laya.jev_confidence is the strict helper", laya.jev_confidence is _jev_confidence)
-check("laya.jev_confidence/choice", laya.jev_confidence({"type": "choice", "probabilities": {"a": 0.8, "b": 0.2}}),
+check_true("__all__/jev_confidence", "jev_confidence" in veya.__all__)
+check_true("veya.jev_confidence is the strict helper", veya.jev_confidence is _jev_confidence)
+check("veya.jev_confidence/choice", veya.jev_confidence({"type": "choice", "probabilities": {"a": 0.8, "b": 0.2}}),
       0.6000000000000001)
-check("laya.jev_confidence/rejects boolean probability",
-      laya.jev_confidence({"type": "choice", "probabilities": {"a": True}}), None)
+check("veya.jev_confidence/rejects boolean probability",
+      veya.jev_confidence({"type": "choice", "probabilities": {"a": True}}), None)
 
 # BaseHook is the concrete no-op base class; all six events exist and are callable.
 for event in HOOK_EVENTS:
@@ -343,29 +367,29 @@ for event in HOOK_EVENTS:
 # DecisionCache is a hook object, DecisionStore the protocol its stores follow, decision_margins
 # reads a result. All three are top-level.
 for name in ("DecisionCache", "DecisionStore", "decision_margins"):
-    check_true("__all__/%s" % name, name in laya.__all__)
-    check_true("laya.%s exists" % name, hasattr(laya, name))
-check_param("DecisionCache.__init__", laya.DecisionCache.__init__, "path", None,
+    check_true("__all__/%s" % name, name in veya.__all__)
+    check_true("veya.%s exists" % name, hasattr(veya, name))
+check_param("DecisionCache.__init__", veya.DecisionCache.__init__, "path", None,
             inspect.Parameter.POSITIONAL_OR_KEYWORD)
 for param, default in (("ttl", None), ("maxsize", 100_000), ("fingerprint", None), ("renew_on_hit", False),
                        ("store", None), ("coalesce", True)):
-    check_param("DecisionCache.__init__", laya.DecisionCache.__init__, param, default,
+    check_param("DecisionCache.__init__", veya.DecisionCache.__init__, param, default,
                 inspect.Parameter.KEYWORD_ONLY)
 for method in ("on_predict_start", "on_predict_end", "prune", "cache_info", "cache_clear", "close"):
-    check_true("DecisionCache/%s callable" % method, callable(getattr(laya.DecisionCache, method, None)))
-check("DecisionCache/cache_info keys", list(laya.DecisionCache().cache_info()),
+    check_true("DecisionCache/%s callable" % method, callable(getattr(veya.DecisionCache, method, None)))
+check("DecisionCache/cache_info keys", list(veya.DecisionCache().cache_info()),
       ["size", "maxsize", "hits", "misses", "conflicts", "coalesced", "errors"])
 check_true("DecisionCache/accepted as a hook",
-           len(__import__("laya.hooks", fromlist=["normalise_hooks"]).normalise_hooks([laya.DecisionCache()])) == 1)
+           len(__import__("veya.hooks", fromlist=["normalise_hooks"]).normalise_hooks([veya.DecisionCache()])) == 1)
 
 # A bundle can hold several checkpoints at the same revision. The automatic cache fingerprint
 # distinguishes their subfolders, while a caller's fixed fingerprint keeps its explicit policy.
 _bundle_agent = type("BundledAgent", (), {"model_id": "local/bundle", "revision": "r1", "subfolder": "english"})()
 _bundle_ctx = PredictContext(states=["state"], questions={"q": {"type": "noul", "instructions": "holds?"}},
                              agent=_bundle_agent)
-_bundle_cache = laya.DecisionCache()
+_bundle_cache = veya.DecisionCache()
 _english_key = _bundle_cache._keys(_bundle_ctx, _bundle_ctx.states, False)[0]
-_fixed_cache = laya.DecisionCache(fingerprint="shared-policy")
+_fixed_cache = veya.DecisionCache(fingerprint="shared-policy")
 _fixed_key = _fixed_cache._keys(_bundle_ctx, _bundle_ctx.states, False)[0]
 _bundle_agent.subfolder = "multilingual"
 check_true("DecisionCache/automatic fingerprints distinguish bundled checkpoints",
@@ -379,7 +403,7 @@ _numeric_ctx.questions = {"1": _numeric_ctx.questions[1]}
 check_true("DecisionCache/numeric and string question ids are distinct requests",
            _bundle_cache._keys(_numeric_ctx, _numeric_ctx.states, False)[0] != _numeric_key)
 
-from laya.train import optimizer_updates, update_budget_message  # noqa: E402
+from veya.train import optimizer_updates, update_budget_message  # noqa: E402
 
 for param in ("n_items", "micro_batch", "grad_accum", "epochs"):
     check_param("optimizer_updates", optimizer_updates, param, inspect.Parameter.empty)
@@ -387,20 +411,20 @@ for param in ("n_train", "config"):
     check_param("update_budget_message", update_budget_message, param, inspect.Parameter.empty)
 check("optimizer_updates/counts a final partial accumulation", optimizer_updates(9, 2, 3, 2), 4)
 for method in ("get", "add", "renew", "prune", "__len__", "clear", "close"):
-    check_true("DecisionStore/%s declared" % method, hasattr(laya.DecisionStore, method))
+    check_true("DecisionStore/%s declared" % method, hasattr(veya.DecisionStore, method))
 for method, params in (("get", ["self", "key", "now"]), ("add", ["self", "items", "now"]),
                        ("renew", ["self", "key", "expires_at", "now"]), ("prune", ["self", "now"])):
-    check("DecisionStore.%s parameters" % method, list(sig(getattr(laya.DecisionStore, method))), params)
-check_param("decision_margins", laya.decision_margins, "result", inspect.Parameter.empty)
-check_param("decision_margins", laya.decision_margins, "noul_threshold", 0.5)
+    check("DecisionStore.%s parameters" % method, list(sig(getattr(veya.DecisionStore, method))), params)
+check_param("decision_margins", veya.decision_margins, "result", inspect.Parameter.empty)
+check_param("decision_margins", veya.decision_margins, "noul_threshold", 0.5)
 
-# process-wide default registry lives in laya.hooks (not the top level)
+# process-wide default registry lives in veya.hooks (not the top level)
 for helper in ("default_hooks", "set_default_hooks", "add_default_hook", "clear_default_hooks",
                "compose_hooks", "validate_timeout"):
-    check_true("laya.hooks/%s exists" % helper, callable(getattr(__import__("laya.hooks", fromlist=[helper]), helper, None)))
-check_true("defaults/not exported at top level", not hasattr(laya, "set_default_hooks"))
+    check_true("veya.hooks/%s exists" % helper, callable(getattr(__import__("veya.hooks", fromlist=[helper]), helper, None)))
+check_true("defaults/not exported at top level", not hasattr(veya, "set_default_hooks"))
 
-from laya.hooks import validate_timeout  # noqa: E402
+from veya.hooks import validate_timeout  # noqa: E402
 
 check("validate_timeout/None", validate_timeout(None), None)
 check("validate_timeout/positive float", validate_timeout(1.5), 1.5)
@@ -443,18 +467,18 @@ for label, cls in (("Agent", Agent), ("Router", Router), ("ONNXAgent", ONNXAgent
     with reg.hooks_installed((h1,), h2):
         check("%s/hooks_installed accepts mixed sequence and vararg" % label, tuple(reg.hooks), (h1, h2))
 
-# The LangChain runnables batch: laya.integrations.langchain's own suite checks what
+# The LangChain runnables batch: veya.integrations.langchain's own suite checks what
 # batch() returns, so these lines pin only the caller-visible shape. A rename, or losing
 # the keyword-only return_exceptions, would break LCEL and LangGraph map-reduce silently.
-from laya.integrations.langchain import (  # noqa: E402
-    LayaEvaluator,
-    LayaGuardrail,
-    LayaRouter,
-    LayaTriage,
+from veya.integrations.langchain import (  # noqa: E402
+    VeyaEvaluator,
+    VeyaGuardrail,
+    VeyaRouter,
+    VeyaTriage,
 )
 
-for label, cls in (("LayaRouter", LayaRouter), ("LayaGuardrail", LayaGuardrail),
-                   ("LayaTriage", LayaTriage), ("LayaEvaluator", LayaEvaluator)):
+for label, cls in (("VeyaRouter", VeyaRouter), ("VeyaGuardrail", VeyaGuardrail),
+                   ("VeyaTriage", VeyaTriage), ("VeyaEvaluator", VeyaEvaluator)):
     for method in ("invoke", "batch", "abatch"):
         check_true("langchain/%s.%s exists" % (label, method),
                    callable(getattr(cls, method, None)))
@@ -470,36 +494,36 @@ for label, cls in (("LayaRouter", LayaRouter), ("LayaGuardrail", LayaGuardrail),
           [(p.name, p.kind.name, p.default) for p in sig(cls.batch).values()])
 
 # --------------------------------------------------------------- LangChain decision node
-# `LayaDecision` is the LCEL form of `laya.decide`, so its constructor has to keep accepting the
+# `VeyaDecision` is the LCEL form of `veya.decide`, so its constructor has to keep accepting the
 # same schema argument and runner overrides. The module imports without langchain-core installed
 # (the runnable base falls back to plain object), so these checks hold in every CI lane.
-from laya.integrations.langchain import LayaDecision  # noqa: E402
+from veya.integrations.langchain import VeyaDecision  # noqa: E402
 
 for param, default in (("return_details", False), ("state_key", None), ("agent", None),
                        ("base_url", None), ("api_key", None), ("model", None)):
-    check_param("LayaDecision.__init__", LayaDecision.__init__, param, default)
-check_param("LayaDecision.__init__", LayaDecision.__init__, "decision_schema",
+    check_param("VeyaDecision.__init__", VeyaDecision.__init__, param, default)
+check_param("VeyaDecision.__init__", VeyaDecision.__init__, "decision_schema",
             inspect.Parameter.empty, inspect.Parameter.POSITIONAL_OR_KEYWORD)
-check_true("LayaDecision/invoke exists", callable(getattr(LayaDecision, "invoke", None)))
-check_true("LayaDecision/__all__", "LayaDecision" in laya.__all__)
-check_true("LayaDecision/laya attribute", hasattr(laya, "LayaDecision"))
-check_true("LayaDecision/integrations export",
-           "LayaDecision" in __import__("laya.integrations", fromlist=["__all__"]).__all__)
+check_true("VeyaDecision/invoke exists", callable(getattr(VeyaDecision, "invoke", None)))
+check_true("VeyaDecision/__all__", "VeyaDecision" in veya.__all__)
+check_true("VeyaDecision/veya attribute", hasattr(veya, "VeyaDecision"))
+check_true("VeyaDecision/integrations export",
+           "VeyaDecision" in __import__("veya.integrations", fromlist=["__all__"]).__all__)
 
 
 # --------------------------------------------------------------- LangChain token budget
 # `max_len`/`head_max_len` are the per-request knobs that decide how many tokens each option of a
 # choice question gets. Every runnable has to carry both, under the names the core API uses, or a
 # chain has no way to widen a question that overflows the checkpoint's budget.
-from laya.integrations.langchain import (  # noqa: E402
-    LayaEvaluator,
-    LayaGuardrail,
-    LayaRouter,
-    LayaTriage,
+from veya.integrations.langchain import (  # noqa: E402
+    VeyaEvaluator,
+    VeyaGuardrail,
+    VeyaRouter,
+    VeyaTriage,
 )
 
-for label, cls in (("LayaRouter", LayaRouter), ("LayaGuardrail", LayaGuardrail),
-                   ("LayaTriage", LayaTriage), ("LayaEvaluator", LayaEvaluator)):
+for label, cls in (("VeyaRouter", VeyaRouter), ("VeyaGuardrail", VeyaGuardrail),
+                   ("VeyaTriage", VeyaTriage), ("VeyaEvaluator", VeyaEvaluator)):
     # Without langchain-core the runnables are plain objects, so there is no model schema to
     # carry the field; only the constructor contract applies in that lane.
     declared = getattr(cls, "model_fields", None)
@@ -513,18 +537,18 @@ for label, cls in (("LayaRouter", LayaRouter), ("LayaGuardrail", LayaGuardrail),
 # install the cache/guard patterns from docs/hooks/patterns.md on a single node. They default to
 # None (meaning "inherit the runner"), which is what keeps an unset node byte-identical to today.
 # `hooks_concurrent` is deliberately absent: like the core predict surfaces, it is not per-call.
-from laya.integrations.langchain import (  # noqa: E402
-    LayaEvaluator,
-    LayaGuardrail,
-    LayaRouter,
-    LayaTriage,
+from veya.integrations.langchain import (  # noqa: E402
+    VeyaEvaluator,
+    VeyaGuardrail,
+    VeyaRouter,
+    VeyaTriage,
 )
 
 PER_CALL_HOOK_PARAMS = ("hooks", "on_predict_start", "on_predict_end", "hooks_raise",
                         "hooks_timeout")
 
-for label, cls in (("LayaRouter", LayaRouter), ("LayaGuardrail", LayaGuardrail),
-                   ("LayaTriage", LayaTriage), ("LayaEvaluator", LayaEvaluator)):
+for label, cls in (("VeyaRouter", VeyaRouter), ("VeyaGuardrail", VeyaGuardrail),
+                   ("VeyaTriage", VeyaTriage), ("VeyaEvaluator", VeyaEvaluator)):
     for param in PER_CALL_HOOK_PARAMS:
         check_param("%s.__init__" % label, cls.__init__, param, None)
         declared = getattr(cls, "model_fields", None)
@@ -537,7 +561,7 @@ for label, cls in (("LayaRouter", LayaRouter), ("LayaGuardrail", LayaGuardrail),
 # `input_tokens` / `output_tokens` are the fields every client decodes, so they are always
 # present. `options` (#538) is additive and conditional: it appears only for a request whose
 # options lost their distinct token spans, which is what keeps it out of ordinary responses.
-from laya.common import build_head, build_sequence, collapsed_options, state_room, window_budget  # noqa: E402
+from veya.common import build_head, build_sequence, collapsed_options, state_room, window_budget  # noqa: E402
 
 check_param("build_sequence", build_sequence, "return_stats", False)
 check_param("build_sequence", build_sequence, "return_truncation_stats", False)
@@ -591,20 +615,20 @@ BATCH = ["I was charged twice for the same invoice.",
 def taught_cache(path):
     """One taught copy of the cache pattern, exec'd out of that file's own text.
 
-    Sliced rather than imported: the example calls `laya.load()` at module scope, which would
+    Sliced rather than imported: the example calls `veya.load()` at module scope, which would
     download a checkpoint, and a docs code block is not importable at all. The slice stops at that
-    `laya.load(...)` line, or at the closing fence of the block, for the same reason, so none of
+    `veya.load(...)` line, or at the closing fence of the block, for the same reason, so none of
     this needs weights.
     """
     with open(os.path.join(REPO, path), encoding="utf-8") as handle:
         text = handle.read()
     start = text.index("CACHE = {")
     stop = len(text)
-    for cut in ("\nlaya.load", "\nagent = laya.load", "\n```"):
+    for cut in ("\nveya.load", "\nagent = veya.load", "\n```"):
         found = text.find(cut, start)
         if found != -1:
             stop = min(stop, found)
-    namespace = {"json": json, "hashlib": hashlib, "laya": laya}
+    namespace = {"json": json, "hashlib": hashlib, "veya": veya}
     exec(text[start:stop], namespace)
     return namespace
 
@@ -622,7 +646,7 @@ def cache_ctx(questions, model="english", max_len=None, head_max_len=None, state
 
 def answers_for(states):
     """Per-state payloads, each labelled with its own state, so a mix-up is visible."""
-    return [{"model": "laya-rl-agent", "answers": {"ask": {"type": "choice", "choice": tag}},
+    return [{"model": "veya-rl-agent", "answers": {"ask": {"type": "choice", "choice": tag}},
              "usage": {"input_tokens": 10 + i}} for i, tag in enumerate(
                  ["billing", "support", "other", "refund", "cancel"][:len(states)])]
 
@@ -695,10 +719,10 @@ for path, namespace in TAUGHT[1:]:
 # The example closes by saying its two-state batch "is served", and nothing in its printed output
 # distinguishes a served payload from a fresh one -- both are the same answers. So run the demo
 # against a stub agent that counts its own forward passes, and check the claim rather than trusting
-# the comment. No weights: `laya.load` is the only thing the example takes from the library.
+# the comment. No weights: `veya.load` is the only thing the example takes from the library.
 def run_cache_example():
     with open(os.path.join(REPO, "examples/hooks/cache.py"), encoding="utf-8") as handle:
-        source = handle.read().replace("\nimport laya\n", "\n")
+        source = handle.read().replace("\nimport veya\n", "\n")
     forwards = []
 
     class StubAgent:
@@ -711,7 +735,7 @@ def run_cache_example():
                 self.on_start(ctx)
             if ctx.results is None:
                 forwards.append(len(states))
-                ctx.results = [{"model": "laya-rl-agent",
+                ctx.results = [{"model": "veya-rl-agent",
                                 "answers": {"ask": {"type": "choice", "choice": s[:8]}}}
                                for s in states]
                 ctx.usage = {"input_tokens": 10 * len(states), "output_tokens": 0}
@@ -725,13 +749,13 @@ def run_cache_example():
         def predict_batch(self, states, questions, model=None, batch_size=None):
             return self._call(states, questions)
 
-    class StubLaya:
+    class StubVeya:
         @staticmethod
         def load(name, on_predict_start=None, on_predict_end=None):
             return StubAgent(on_predict_start, on_predict_end)
 
     out = io.StringIO()
-    namespace = {"laya": StubLaya}
+    namespace = {"veya": StubVeya}
     with contextlib.redirect_stdout(out):
         exec(compile(source, "examples/hooks/cache.py", "exec"), namespace)
     return namespace, forwards, out.getvalue()
@@ -755,8 +779,8 @@ check("examples/hooks/cache.py/the batch answers in the caller's order",
 # ------------------------------------------- taught hook bodies cover every decision of a call
 #
 # A hook fires once per call, and one call can carry many states: `Agent.predict_batch` hands the
-# hook every state at once, with `ctx.results` aligned to `ctx.states` by index (`laya/agent.py`),
-# while `ctx.usage` and `ctx.elapsed_ms` are totals for the whole call (`laya/hooks.py`). So a
+# hook every state at once, with `ctx.results` aligned to `ctx.states` by index (`veya/agent.py`),
+# while `ctx.usage` and `ctx.elapsed_ms` are totals for the whole call (`veya/hooks.py`). So a
 # taught body that reads only index 0 audits, guards, gates or flags one decision out of N.
 # Each body below is exec'd out of the file that teaches it -- no model, no weights -- so a copy
 # that drifts back to `[0]` fails here instead of in someone's production audit trail.
@@ -789,7 +813,7 @@ def taught(path, name, after=None, nth=1, **helpers):
 
 
 def decision(state, confidence):
-    return {"model": "laya-rl-agent",
+    return {"model": "veya-rl-agent",
             "answers": {"dept": {"choice": "billing", "confidence": confidence}},
             "usage": {"input_tokens": len(state.split()), "output_tokens": 0}}
 
@@ -925,7 +949,7 @@ class Enricher:
     """Stands in for the second agent the recursive-predict pattern names."""
 
     def predict(self, state, questions):
-        return {"model": "laya-rl-agent",
+        return {"model": "veya-rl-agent",
                 "answers": {"dept": {"choice": state, "confidence": 1.0}},
                 "usage": {"input_tokens": len(state.split()), "output_tokens": 0}}
 
@@ -949,7 +973,7 @@ class ChildCaller(Enricher):
 
     Mirrors `Agent.predict` exactly: `state` and `questions` positional, `on_predict_start`
     fired before the return with a fresh child `PredictContext`, and NO `run_id` in the
-    payload (that field lives on `PredictContext`, `laya/hooks.py:35`, and no predict path
+    payload (that field lives on `PredictContext`, `veya/hooks.py:35`, and no predict path
     writes it into the response dict).
     """
 
@@ -990,9 +1014,9 @@ check("docs/hooks/tracing.md/enrich on one state still links", SPAN_LINKS,
 
 # ------------------------------------------------ taught token-budget bodies size the whole call
 #
-# A start hook's ctx.head_max_len / ctx.max_len REPLACE the budgets in force (laya/agent.py), and
+# A start hook's ctx.head_max_len / ctx.max_len REPLACE the budgets in force (veya/agent.py), and
 # what is in force is the caller's per-call value or the checkpoint default in `agent.cfg`. Once a
-# question's options overflow the head, laya/common.py keeps each of them
+# question's options overflow the head, veya/common.py keeps each of them
 # `max(4, (head_max_len - 16) // k)` tokens -- so `16 + 4 * k` buys exactly the floor it is meant to
 # escape -- and the state is left with `max_len - head_max_len - 8` tokens, so widening the head
 # without widening the window truncates the state instead of the labels.
@@ -1093,11 +1117,11 @@ for path, name, anchor in BUDGET[1:]:
 # refuses them server-side. Those must stay the same five: if the server's list gained an argument
 # or dropped one, a chain step and a raw HTTP client would get different answers for one request
 # body -- and a caller that was told "no" on one path would be ignored on the other.
-from laya.integrations.langchain import _hook_kwargs as _lc_hook_kwargs  # noqa: E402
-from laya.serve import BODY_CONTROLS as _http_controls, BODY_REFUSALS as _http_refusals  # noqa: E402
-from laya.serve import build_router as _build_http_router, create_app as _create_http_app  # noqa: E402
-from laya.serve import main as _http_main  # noqa: E402
-from laya.cli import main as _cli_main  # noqa: E402
+from veya.integrations.langchain import _hook_kwargs as _lc_hook_kwargs  # noqa: E402
+from veya.serve import BODY_CONTROLS as _http_controls, BODY_REFUSALS as _http_refusals  # noqa: E402
+from veya.serve import build_router as _build_http_router, create_app as _create_http_app  # noqa: E402
+from veya.serve import main as _http_main  # noqa: E402
+from veya.cli import main as _cli_main  # noqa: E402
 
 check_param("serve.build_router", _build_http_router, "performance_mode", None)
 check_param("serve.create_app", _create_http_app, "performance_mode", None, inspect.Parameter.KEYWORD_ONLY)
@@ -1114,8 +1138,8 @@ check("serve forwards and refuses disjoint sets", sorted(set(_http_controls) & s
 
 # The HTTP compatibility field is additive; strict mode and the existing confidence keep
 # their meanings. Reused Router results must not acquire transport-only fields.
-from laya.confidence import jev_confidence  # noqa: E402
-from laya.serve import _add_jev_confidence, _project_jev_strict  # noqa: E402
+from veya.confidence import jev_confidence  # noqa: E402
+from veya.serve import _add_jev_confidence, _project_jev_strict  # noqa: E402
 
 check("jev_confidence parameters", list(sig(jev_confidence)), ["answer"])
 check_param("jev_confidence", jev_confidence, "answer", inspect.Parameter.empty,
@@ -1133,7 +1157,7 @@ check_true("serve/strict contract excludes compatibility additions",
 
 # The opt-in shortlist evaluator is a public Python entry point. Pin its required
 # provenance arguments without adding an eager import to the package root.
-from laya.shortlist import predict_shortlist  # noqa: E402
+from veya.shortlist import predict_shortlist  # noqa: E402
 
 class _ShortlistOrderProbe:
     def predict(self, state, questions, **kwargs):
@@ -1156,7 +1180,7 @@ with warnings.catch_warnings(record=True) as _shortlist_warnings:
 check("shortlist/passthrough emits no warning", len(_shortlist_warnings), 0)
 check("shortlist/passthrough keeps permutation", _order_probe.questions["q"]["option_order"], [2, 1, 0])
 
-from laya.evals_shortlist import evaluate_shortlist  # noqa: E402
+from veya.evals_shortlist import evaluate_shortlist  # noqa: E402
 
 check_param("evaluate_shortlist", evaluate_shortlist, "k", 20)
 check_param("evaluate_shortlist", evaluate_shortlist, "dataset_path", None)
@@ -1165,7 +1189,7 @@ for param in ("checkpoint_id", "embedder_id"):
 
 # Saved observations and a local runner are the two agreement entry points. Keep
 # provenance explicit and statistical controls keyword-only for both callers.
-from laya.evals import compare_agreement, evaluate_agreement  # noqa: E402
+from veya.evals import compare_agreement, evaluate_agreement  # noqa: E402
 
 check("compare_agreement parameters", list(sig(compare_agreement)),
       ["reference", "repeat", "student", "bootstrap_samples", "seed"])
@@ -1186,8 +1210,8 @@ check_param("evaluate_agreement", evaluate_agreement, "model", None, inspect.Par
 
 # The Java additions have compiled behavioral tests in their JDK lanes. Pin their
 # public overloads here too so the shared API guard tracks these SDK entry points.
-_java_source_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "laya-java", "laya-java",
-                               "src", "main", "java", "com", "convaiinnovations", "laya")
+_java_source_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "veya-java", "veya-java",
+                               "src", "main", "java", "com", "convaiinnovations", "veya")
 for _java_file, _java_method, _java_return, _java_overloads in (
         ("Router.java", "predictBatch", "List<Prediction>", [
             "List<?> states, Map<String, Question> questions",
@@ -1208,7 +1232,7 @@ for _java_file, _java_method, _java_return, _java_overloads in (
 # docs/hooks/examples.md ## Composition teaches one scope ordering contract; the pre-fix wording
 # ("Installed hooks first, then convenience callables") named only two tiers and put installed at
 # the head, which compose_hooks contradicts.
-from laya import hooks as _examples_hooks_mod  # noqa: E402
+from veya import hooks as _examples_hooks_mod  # noqa: E402
 
 _examples_md = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                             "docs", "hooks", "examples.md")
@@ -1295,7 +1319,7 @@ import ast  # noqa: E402
 # `encoding="utf-8"` because a bare `open()` takes the runner's locale codec, which is cp1252 on
 # `tests (windows)`; the gate that keeps every repo read in tests/ pinned is section 4 of
 # tests/test_portability.py.
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "laya", "tl_kernels.py"),
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "veya", "tl_kernels.py"),
           encoding="utf-8") as f:
     _tl_defs = {node.name: node for node in ast.parse(f.read()).body if isinstance(node, ast.FunctionDef)}
 for _name in ("gemm_kernel", "gemm_geglu_kernel", "add_ln_kernel", "rope_kernel", "attn_kernel"):
@@ -1345,10 +1369,10 @@ check_true("docs/hooks/api.md ONNXAgent constructor no longer ends at hooks_conc
 
 # Code truth: every documented surface really accepts hooks_timeout, so the ban cannot be
 # re-falsified by removing the parameter from the code.
-from laya.router import Router as _ApiRouter  # noqa: E402
-from laya.onnx_agent import ONNXAgent as _ApiONNXAgent  # noqa: E402
-from laya.agent import Agent as _ApiAgent  # noqa: E402
-from laya import load as _api_load  # noqa: E402
+from veya.router import Router as _ApiRouter  # noqa: E402
+from veya.onnx_agent import ONNXAgent as _ApiONNXAgent  # noqa: E402
+from veya.agent import Agent as _ApiAgent  # noqa: E402
+from veya import load as _api_load  # noqa: E402
 
 for _label, _obj in [
     ("Agent.__init__", _ApiAgent.__init__),
@@ -1367,7 +1391,7 @@ for _label, _obj in [
 # --------------------------------------------- docs/hooks/tracing.md nested-calls example
 # reads the child's `run_id`. `Agent.predict` returns `model`/`answers`/`usage` and `Router.predict`
 # adds `routing` -- no path returns a `run_id`, which is a `PredictContext` field
-# (laya/hooks.py:35). The pre-fix example's `child.get("run_id")` silently recorded `None`, so a
+# (veya/hooks.py:35). The pre-fix example's `child.get("run_id")` silently recorded `None`, so a
 # reader copying it linked every child span to no run at all.
 _tracing_md = os.path.join(REPO, "docs", "hooks", "tracing.md")
 with open(_tracing_md, encoding="utf-8") as _tf:
@@ -1380,9 +1404,9 @@ check_true("docs/hooks/tracing.md nested-call example reads child_ctx.run_id",
 check_true("docs/hooks/tracing.md nested-call example passes a per-call on_predict_start",
            "on_predict_start=link" in _tracing_text)
 
-# Code truth: no laya predict path ever writes `"run_id":` as a payload key, so the ban cannot be
+# Code truth: no veya predict path ever writes `"run_id":` as a payload key, so the ban cannot be
 # re-falsified by adding the key at a later refactor.
-for _src_rel in ("laya/agent.py", "laya/router.py", "laya/onnx_agent.py", "laya/serve.py"):
+for _src_rel in ("veya/agent.py", "veya/router.py", "veya/onnx_agent.py", "veya/serve.py"):
     with open(os.path.join(REPO, _src_rel), encoding="utf-8") as _sf:
         _src_text = _sf.read()
     check('%s never writes "run_id" as a payload key' % _src_rel,
@@ -1457,23 +1481,23 @@ def _canonical_surfaces(module_path, cls_name):
 
 
 _real_raise, _real_timeout = set(), set()
-for _mod_rel, _cls in [("laya/agent.py", "Agent"),
-                        ("laya/router.py", "Router"),
-                        ("laya/onnx_agent.py", "ONNXAgent")]:
+for _mod_rel, _cls in [("veya/agent.py", "Agent"),
+                        ("veya/router.py", "Router"),
+                        ("veya/onnx_agent.py", "ONNXAgent")]:
     _per = _canonical_surfaces(os.path.join(REPO, _mod_rel), _cls)
     _real_raise |= _per["hooks_raise"]
     _real_timeout |= _per["hooks_timeout"]
 
-check("docs/hooks/errors.md hooks_raise surfaces match laya's class bodies",
+check("docs/hooks/errors.md hooks_raise surfaces match veya's class bodies",
       _raise_doc, _real_raise)
-check("docs/hooks/errors.md hooks_timeout surfaces match laya's class bodies",
+check("docs/hooks/errors.md hooks_timeout surfaces match veya's class bodies",
       _timeout_doc, _real_timeout)
-check_true("laya's AST scan finds at least 9 hooks_raise surfaces",
+check_true("veya's AST scan finds at least 9 hooks_raise surfaces",
            len(_real_raise) >= 9, "found %d" % len(_real_raise))
-check_true("laya's AST scan finds at least 11 hooks_timeout surfaces",
+check_true("veya's AST scan finds at least 11 hooks_timeout surfaces",
            len(_real_timeout) >= 11, "found %d" % len(_real_timeout))
 # --------------------------------------- docs/hooks/lifecycle.md three-tier composition
-# laya/hooks.py::compose_hooks returns `defaults + installed + per-call`, so every lifecycle
+# veya/hooks.py::compose_hooks returns `defaults + installed + per-call`, so every lifecycle
 # diagram and the ordering rules must name all three tiers with defaults first. Pre-fix, the
 # Agent.predict_batch diagram said `installed hooks + per-call hooks (installed first)`, the
 # Router.predict diagram said the same without the parenthetical, the Router.predict_batch
@@ -1527,13 +1551,13 @@ check_true("docs/hooks/lifecycle.md example block includes a defaults row",
 # AST-side truth: compose_hooks's return must be exactly `defaults + list(installed) +
 # normalise_hooks(...)`. If a future change reorders the concat, the doc gate above would still
 # pass on stale wording, so bind the doc to the code with this second check.
-from laya import hooks as _hooks_mod  # noqa: E402
+from veya import hooks as _hooks_mod  # noqa: E402
 
 _compose_src = inspect.getsource(_hooks_mod.compose_hooks)
 _compose_tree = ast.parse(_compose_src.strip(), "<compose_hooks>")
 _ret = next(n for n in ast.walk(_compose_tree) if isinstance(n, ast.Return))
 _bin = _ret.value
-check_true("laya/hooks.compose_hooks returns a left-nested BinOp of three Add parts",
+check_true("veya/hooks.compose_hooks returns a left-nested BinOp of three Add parts",
            isinstance(_bin, ast.BinOp) and isinstance(_bin.op, ast.Add)
            and isinstance(_bin.left, ast.BinOp) and isinstance(_bin.left.op, ast.Add),
            ast.dump(_bin)[:200])
@@ -1555,7 +1579,7 @@ for _p in _parts:
         _part_names.append("[]")
     else:
         _part_names.append(ast.dump(_p)[:40])
-check("laya/hooks.compose_hooks concat order is defaults, installed, per-call",
+check("veya/hooks.compose_hooks concat order is defaults, installed, per-call",
       _part_names, ["defaults", "list()", "normalise_hooks()"])
 # The head part is a local `defaults` binding; prove it is the ternary that reads
 # default_hooks() behind _SKIP_DEFAULTS, so the doc's "defaults first" claim is anchored to
@@ -1610,8 +1634,8 @@ finally:
 # route_batch fires only on_route and has no predict events to bind convenience callables
 # to, so its signature carries neither on_predict_start nor on_predict_end. Both take
 # hooks_timeout, which the pre-fix bullet did not mention.
-# Veya keeps the original project's release notes in docs/laya-releases.md, not README.md.
-_readme_md = os.path.join(REPO, "docs", "laya-releases.md")
+# Veya keeps the original project's release notes in docs/veya-releases.md, not README.md.
+_readme_md = os.path.join(REPO, "docs", "veya-releases.md")
 with open(_readme_md, encoding="utf-8") as _rmf:
     _readme_text = _rmf.read()
 
@@ -1661,14 +1685,14 @@ check("README route_batch clause names exactly its hooks kwargs",
 
 # --------------------------------------------------------------- patterns.md composition order
 # `docs/hooks/patterns.md`'s Composition paragraph told the reader "installed hooks run first,
-# in order". Two things are wrong with that: `laya/hooks.py::compose_hooks` returns
+# in order". Two things are wrong with that: `veya/hooks.py::compose_hooks` returns
 # `defaults + installed + per-call`, so process-wide defaults -- not installed hooks -- are at
 # the head; and the same page's "Process-wide instrumentation" section (line 261) already says
 # "Defaults run before the instance and per-call hooks", so the sentence contradicts a section
 # further down its own file. `lifecycle.md`'s rule 1 (fixed in #991) says the same thing. The
 # gate bans the pre-fix wording, requires the tier vocabulary, and drives `compose_hooks` live
 # to prove the emitted order matches the prose.
-from laya import hooks as _hooks_mod  # noqa: E402
+from veya import hooks as _hooks_mod  # noqa: E402
 
 check_true("hooks module exports compose_hooks", callable(_hooks_mod.compose_hooks))
 
@@ -1755,7 +1779,7 @@ finally:
     _hooks_mod.clear_default_hooks()
 
 
-from laya.evals import ChoiceAccuracy, Dataset, EvalError, Example, evaluate  # noqa: E402
+from veya.evals import ChoiceAccuracy, Dataset, EvalError, Example, evaluate  # noqa: E402
 
 class _DirectEvalRunner:
     def __init__(self):
@@ -1779,35 +1803,35 @@ else:
     check_true("evaluate/direct runner refuses an explicit checkpoint", False)
 check("evaluate/refusal precedes inference", _eval_runner.calls, 1)
 
-from laya import lang as _lang_module  # noqa: E402
-from laya.common import temperature_rejected  # noqa: E402
-from laya.evals import questions_fingerprint  # noqa: E402
-from laya.integrations import AgnoRouteDecision, LayaAgnoGuardrail, LayaAgnoRouter  # noqa: E402
-from laya.integrations._guard import malformed as _malformed_decision  # noqa: E402
-from laya.integrations import (  # noqa: E402
-    LayaCrewRouter, LayaTaskGuard, LayaRouter, LayaGuardrail, LayaTriage, LayaEvaluator,
-    LayaDecision, LayaSingleSelector, LayaMultiSelector, LayaQueryRouter,
+from veya import lang as _lang_module  # noqa: E402
+from veya.common import temperature_rejected  # noqa: E402
+from veya.evals import questions_fingerprint  # noqa: E402
+from veya.integrations import AgnoRouteDecision, VeyaAgnoGuardrail, VeyaAgnoRouter  # noqa: E402
+from veya.integrations._guard import malformed as _malformed_decision  # noqa: E402
+from veya.integrations import (  # noqa: E402
+    VeyaCrewRouter, VeyaTaskGuard, VeyaRouter, VeyaGuardrail, VeyaTriage, VeyaEvaluator,
+    VeyaDecision, VeyaSingleSelector, VeyaMultiSelector, VeyaQueryRouter,
 )
-from laya.mcp.remote import RemoteRouter  # noqa: E402
-from laya.mcp.tools import laya_predict_long, laya_route, laya_route_batch, laya_tournament  # noqa: E402
+from veya.mcp.remote import RemoteRouter  # noqa: E402
+from veya.mcp.tools import veya_predict_long, veya_route, veya_route_batch, veya_tournament  # noqa: E402
 
 for label, function in (("Router.route", Router.route), ("Router.route_batch", Router.route_batch),
-                         ("lang.analyse", _lang_module.analyse), ("laya_route", laya_route),
-                         ("laya_route_batch", laya_route_batch)):
+                         ("lang.analyse", _lang_module.analyse), ("veya_route", veya_route),
+                         ("veya_route_batch", veya_route_batch)):
     check_param(label, function, "explain", False, inspect.Parameter.KEYWORD_ONLY)
 check_param("RemoteRouter", RemoteRouter.__init__, "user_agent", None, inspect.Parameter.KEYWORD_ONLY)
-check_param("laya_tournament", laya_tournament, "group_size", 16)
-for label, function in (("laya_predict_long", laya_predict_long), ("laya_tournament", laya_tournament)):
+check_param("veya_tournament", veya_tournament, "group_size", 16)
+for label, function in (("veya_predict_long", veya_predict_long), ("veya_tournament", veya_tournament)):
     check_param(label, function, "model", "auto")
-for cls in (LayaAgnoRouter, LayaAgnoGuardrail):
+for cls in (VeyaAgnoRouter, VeyaAgnoGuardrail):
     for control in ("task", "lang_guess", "hooks", "min_confidence"):
         check_param(cls.__name__, cls.__init__, control, None)
 check_true("AgnoRouteDecision is a typed result", dataclasses.is_dataclass(AgnoRouteDecision))
 _malformed_error = _malformed_decision("test", "invalid choice")
 check_true("adapter validation keeps ValueError compatibility", isinstance(_malformed_error, ValueError))
 check_true("malformed remote responses remain RuntimeError", isinstance(_malformed_error, RuntimeError))
-for cls in (LayaCrewRouter, LayaTaskGuard, LayaRouter, LayaGuardrail, LayaTriage, LayaEvaluator,
-            LayaDecision, LayaSingleSelector, LayaMultiSelector, LayaQueryRouter):
+for cls in (VeyaCrewRouter, VeyaTaskGuard, VeyaRouter, VeyaGuardrail, VeyaTriage, VeyaEvaluator,
+            VeyaDecision, VeyaSingleSelector, VeyaMultiSelector, VeyaQueryRouter):
     for control in ("task", "lang_guess"):
         check_param(cls.__name__, cls.__init__, control, None, inspect.Parameter.KEYWORD_ONLY)
     check_true(cls.__name__ + "/existing hooks retain positional compatibility",
@@ -1831,8 +1855,8 @@ for order in (None, [0, 1], [1, 0]):
     _fingerprints.append(questions_fingerprint(Dataset([Example("hello", {"q": definition}, {"q": "a"})])))
 check("evaluation identity preserves option order", len(set(_fingerprints)), 3)
 
-from laya import ContextCompactor  # noqa: E402
-check_true("ContextCompactor exported", "ContextCompactor" in laya.__all__)
+from veya import ContextCompactor  # noqa: E402
+check_true("ContextCompactor exported", "ContextCompactor" in veya.__all__)
 for _param, _default in (("drop_threshold", 0.1), ("preserve_recent_messages", 6),
                          ("batch_size", 8), ("truncate_head_chars", 300),
                          ("min_reduction_ratio", 0.1), ("model", None), ("max_len", None)):
@@ -1866,15 +1890,15 @@ _abstained_compaction = ContextCompactor(
 check("ContextCompactor respects predictor abstention", _abstained_compaction["messages"], _abstention_transcript)
 check("ContextCompactor abstention reason", _abstained_compaction["decisions"][0]["reason"], "unverified_confidence")
 
-from laya import DecisionCacheError  # noqa: E402
-check_param("DecisionCache", laya.DecisionCache.__init__, "required", False, inspect.Parameter.KEYWORD_ONLY)
-check_true("DecisionCacheError exported", "DecisionCacheError" in laya.__all__)
+from veya import DecisionCacheError  # noqa: E402
+check_param("DecisionCache", veya.DecisionCache.__init__, "required", False, inspect.Parameter.KEYWORD_ONLY)
+check_true("DecisionCacheError exported", "DecisionCacheError" in veya.__all__)
 check_true("DecisionCacheError is a runtime error", issubclass(DecisionCacheError, RuntimeError))
 
 check("Shared routing contract version", _lang_module.ROUTING_CONTRACT_VERSION,
       "veya-routing-v1-unicode15")
 
-from laya.qualification import (  # noqa: E402
+from veya.qualification import (  # noqa: E402
     compare_reports as _compare_qualification_reports,
     load_document as _load_qualification_document, qualify as _qualify,
     run_matrix as _run_qualification_matrix, split_families as _split_qualification_families,
@@ -1906,25 +1930,25 @@ check_param("qualification.compare_reports", _compare_qualification_reports, "al
             inspect.Parameter.KEYWORD_ONLY)
 
 for _param, _default in (("require_existing", False), ("expected_store_id", None)):
-    check_param("DecisionCache", laya.DecisionCache.__init__, _param, _default, inspect.Parameter.KEYWORD_ONLY)
-check_true("DecisionCache.store_id is read-only", isinstance(laya.DecisionCache.store_id, property)
-           and laya.DecisionCache.store_id.fset is None)
+    check_param("DecisionCache", veya.DecisionCache.__init__, _param, _default, inspect.Parameter.KEYWORD_ONLY)
+check_true("DecisionCache.store_id is read-only", isinstance(veya.DecisionCache.store_id, property)
+           and veya.DecisionCache.store_id.fset is None)
 for _method in ("__enter__", "__exit__"):
-    check_true("DecisionCache context-manager " + _method, callable(getattr(laya.DecisionCache, _method)))
+    check_true("DecisionCache context-manager " + _method, callable(getattr(veya.DecisionCache, _method)))
 check_param("Router", Router.__init__, "replay_manifest", None, inspect.Parameter.KEYWORD_ONLY)
 check_true("Router.replay_manifest is read-only", isinstance(Router.replay_manifest, property)
            and Router.replay_manifest.fset is None)
 check("Router replay is opt-in", Router().replay_manifest, None)
 check("Router manifest validation is opt-in", Router().validate_replay_manifest(), False)
 check_true("Router.validate_replay_manifest is public", callable(Router.validate_replay_manifest))
-from laya.mcp.device import env_device as _env_device  # noqa: E402
+from veya.mcp.device import env_device as _env_device  # noqa: E402
 check_param("mcp.env_device", _env_device, "validate", True, inspect.Parameter.KEYWORD_ONLY)
 check_param("Router.export_replay_manifest", Router.export_replay_manifest, "path", inspect.Parameter.empty)
 for _param in ("model", "task", "lang", "lang_guess", "max_len", "head_max_len", "min_confidence"):
     check_param("Router.try_replay", Router.try_replay, _param, None)
 
-from laya.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner  # noqa: E402
-from laya.mcp.tools import ToolError as _McpToolError  # noqa: E402
+from veya.mcp.code_mode import CodeModeError, CodeModeLimits, CodeModeRunner  # noqa: E402
+from veya.mcp.tools import ToolError as _McpToolError  # noqa: E402
 check_true("CodeModeError follows the MCP error contract", issubclass(CodeModeError, _McpToolError))
 check_true("CodeModeLimits is immutable", dataclasses.is_dataclass(CodeModeLimits)
            and CodeModeLimits.__dataclass_params__.frozen)
@@ -1933,9 +1957,11 @@ check_param("CodeModeRunner.execute", CodeModeRunner.execute, "code", inspect.Pa
 check_param("CodeModeRunner.execute", CodeModeRunner.execute, "input", None)
 check_param("CodeModeRunner.execute", CodeModeRunner.execute, "router", None, inspect.Parameter.KEYWORD_ONLY)
 
-from laya.common import DecisionModel  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
 check_param("DecisionModel", DecisionModel.__init__, "choice_adapter_width", 0)
 check_param("DecisionModel", DecisionModel.__init__, "score_adapter_width", 0)
+
+check_true("migration/legacy integration class", _legacy.LayaRouter is veya.VeyaRouter)
 
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:

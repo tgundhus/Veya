@@ -1,6 +1,6 @@
 """Rebuild the three corpora behind `_SHOUTED_MIN_STOPWORD` and `_SHOUTED_MIN_WORD`.
 
-`laya.lang` holds an all-caps line to an evidence bar before it will name it as foreign prose:
+`veya.lang` holds an all-caps line to an evidence bar before it will name it as foreign prose:
 a matched stopword of `_SHOUTED_MIN_STOPWORD` letters (or non-English diacritics), and one word
 of `_SHOUTED_MIN_WORD` letters. Those two constants were chosen against three corpora, and the
 corpora were not committed, so the trade behind them could not be rechecked when someone wanted
@@ -40,7 +40,7 @@ from typing import Dict, List, Optional, Tuple
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
-from laya.lang import (  # noqa: E402
+from veya.lang import (  # noqa: E402
     _CODE_LINE, _JOINED, _LETTER_RUN, _STOP, _WORD, NON_EN_DIACRITIC_RATE, latin_profile)
 
 DATASET = "mteb/amazon_massive_intent"

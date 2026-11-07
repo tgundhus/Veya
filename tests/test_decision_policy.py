@@ -13,12 +13,12 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from laya.agent import Agent, load  # noqa: E402
-from laya.decision_policy import (  # noqa: E402
+from veya.agent import Agent, load  # noqa: E402
+from veya.decision_policy import (  # noqa: E402
     CONTENT_FREE_PROBES, MAX_BALANCED_OPTIONS, _FORWARD_TOKEN_BUDGET, resolve_decision_policy,
 )
-from laya.inference_common import QTYPES  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.inference_common import QTYPES  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 
 QUESTIONS = {
@@ -111,7 +111,7 @@ def test_invalid_policy(value):
 @pytest.mark.parametrize("factory", [Agent, ONNXAgent, load])
 def test_invalid_constructor_policy_never_resolves_or_downloads_a_checkpoint(factory):
     with patch("huggingface_hub.snapshot_download", side_effect=AssertionError("download reached")), \
-            patch("laya.revisions.resolve_revision", side_effect=AssertionError("revision reached")):
+            patch("veya.revisions.resolve_revision", side_effect=AssertionError("revision reached")):
         with pytest.raises(ValueError, match="decision_policy"):
             factory("review/policy-validation-probe", decision_policy="invalid-policy")
 
@@ -121,7 +121,7 @@ def test_policy_configuration_does_not_import_numerical_runtime():
 import sys
 for name in ('numpy', 'torch', 'transformers', 'onnxruntime', 'tokenizers'):
     sys.modules[name] = None
-from laya.decision_policy import resolve_decision_policy
+from veya.decision_policy import resolve_decision_policy
 assert resolve_decision_policy('context-balanced-v1') == 'context-balanced-v1'
 """
     subprocess.run([sys.executable, "-c", script], cwd=Path(__file__).resolve().parents[1], check=True)
@@ -284,7 +284,7 @@ def test_language_override_and_explicit_option_order(kind):
 def test_old_binning_map_is_not_applied_to_new_policy(kind):
     agent = _fixture(kind)
     agent.binning_map = {"invalid-for-new-policy": True}
-    module = "laya.agent" if kind == "torch" else "laya.calibration"
+    module = "veya.agent" if kind == "torch" else "veya.calibration"
     with patch(module + ".apply_binning_map", side_effect=AssertionError("old map applied")):
         assert agent.predict("actual", QUESTIONS)["answers"]["category"]["confidence_calibrated"] is False
 
@@ -327,16 +327,16 @@ def test_nonfinite_model_results_fail_without_canonical_fallback(kind):
 
 
 def test_ratio_machine_floor_is_finite_without_tuned_smoothing():
-    from laya.decision_policy import _correct
+    from veya.decision_policy import _correct
     values = _correct(np.array([0., 1.]), np.array([0., 1.]))
     np.testing.assert_array_equal(values, [.5, .5])
     assert np.isfinite(_correct(np.array([1., 0.]), np.array([0., 1.]))).all()
 
 
 def test_load_forwards_policy_to_both_backends():
-    with patch("laya.agent.Agent") as cls:
+    with patch("veya.agent.Agent") as cls:
         load("unused/local-model", decision_policy="context-balanced-v1")
         assert cls.call_args.kwargs["decision_policy"] == "context-balanced-v1"
-    with patch("laya.onnx_agent.ONNXAgent") as cls:
+    with patch("veya.onnx_agent.ONNXAgent") as cls:
         load("unused/local-model", backend="onnx", decision_policy="context-balanced-v1")
         assert cls.call_args.kwargs["decision_policy"] == "context-balanced-v1"

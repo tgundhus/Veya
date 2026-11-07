@@ -21,9 +21,13 @@ codemode = ["mcp>=2.2.0", "quickjs-ng>=0.18.0.1,<0.19", "psutil>=5.9.8"]
 replay = ["onnx>=1.20.0"]
 
 [project.scripts]
-laya-onnx-serve = "laya_onnx.serve:main"
-laya-onnx-mcp = "laya_onnx.mcp.server:main"
-laya-onnx-replay = "laya_onnx.replay:main"
+veya-onnx-serve = "veya_onnx.serve:main"
+veya-onnx-mcp = "veya_onnx.mcp.server:main"
+veya-onnx-replay = "veya_onnx.replay:main"
+
+laya-onnx-serve = "veya_onnx.serve:main"
+laya-onnx-mcp = "veya_onnx.mcp.server:main"
+laya-onnx-replay = "veya_onnx.replay:main"
 
 [project.urls]
 Homepage = "https://tgundhus.github.io/Veya/"
@@ -35,4 +39,4 @@ Issues = "https://github.com/tgundhus/Veya/issues"
 where = ["src"]
 
 [tool.setuptools.package-data]
-laya_onnx = ["py.typed"]
+veya_onnx = ["py.typed"]

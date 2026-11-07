@@ -21,10 +21,10 @@ os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 import torch  # noqa: E402
 import transformers  # noqa: E402
 
-import laya  # noqa: E402
-from laya import Agent, DecisionCache  # noqa: E402
-from laya.agent import _checkpoint_signature  # noqa: E402
-from laya.revisions import snapshot_revision  # noqa: E402
+import veya  # noqa: E402
+from veya import Agent, DecisionCache  # noqa: E402
+from veya.agent import _checkpoint_signature  # noqa: E402
+from veya.revisions import snapshot_revision  # noqa: E402
 
 QUESTIONS = {
     "department": {"type": "choice", "instructions": "Which department should handle this request?",
@@ -85,7 +85,7 @@ def main():
     assert repeated_identical, "identical CPU calls changed their payloads"
     assert decision_flips == 0, "batching changed a decision in the smoke workload"
     report = {
-        "environment": {"laya": laya.__version__, "torch": torch.__version__, "transformers": transformers.__version__,
+        "environment": {"laya": veya.__version__, "torch": torch.__version__, "transformers": transformers.__version__,
                         "platform": platform.platform(), "processor": platform.processor(), "threads": args.threads,
                         "device": str(agent.device), "dtype": str(agent.dtype), "amp_enabled": agent.amp_enabled,
                         "checkpoint": "convaiinnovations/laya" if snapshot_revision(args.checkpoint) else "local checkpoint",

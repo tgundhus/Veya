@@ -5,15 +5,15 @@ raise when you might expect them to. Nothing here is inferred from the documenta
 """
 import os
 
-from _common import LOCAL_MODELS, banner, device_line, heading, laya, load
+from _common import LOCAL_MODELS, banner, device_line, heading, veya, load
 
-from laya.router import Router
+from veya.router import Router
 
 banner("39", "Error handling", """
     Five things a caller should be ready for:
 
       1. a typo in `model=` on a `Router`           -> ValueError, before anything loads;
-      2. `laya.load` on a missing local path       -> FileNotFoundError;
+      2. `veya.load` on a missing local path       -> FileNotFoundError;
       3. a `choice` question with empty criteria   -> ValueError naming it, before the model runs;
       4. a question whose options do not fit       -> ValueError, but only once they overflow;
       5. a `noul` whose probability is near 0.5    -> a perfectly ordinary answer, not an error.
@@ -38,13 +38,13 @@ except ValueError as e:
 print("   -> `model=` is resolved against the built-ins plus what you registered, so a typo fails")
 print("      before any weights load; nothing is downloaded until a request routes to a name.")
 
-heading("2. laya.load on a path that does not exist")
+heading("2. veya.load on a path that does not exist")
 # `LOCAL_MODELS` is the directory each checkpoint would live in; `MODELS` is the `Router` spec,
 # which `_common.checkpoint` returns as `(repo, subfolder)` when `models/` is not in the checkout.
 # A path has to come from the first one.
 missing = os.path.join(LOCAL_MODELS["english"], "does-not-exist")
 try:
-    laya.load(missing)
+    veya.load(missing)
     print("   no exception raised")
 except FileNotFoundError as e:
     print("   raised FileNotFoundError: %s" % e)

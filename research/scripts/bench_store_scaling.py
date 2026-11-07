@@ -19,10 +19,12 @@ Driver), or straight to a store. Sections:
     python research/scripts/bench_store_scaling.py --sections tail --sizes 10000,100000,1000000,5000000
 """
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 import math
 import os
+from pathlib import Path
 import platform
 import random
 import sqlite3
@@ -39,9 +41,9 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, HERE)
 
-import laya  # noqa: E402
-from laya import DecisionCache  # noqa: E402
-from laya import consistency  # noqa: E402
+import veya  # noqa: E402
+from veya import DecisionCache  # noqa: E402
+from veya import consistency  # noqa: E402
 from bench_retention import DAY, Driver, QUESTION_SETS, base_payload  # noqa: E402
 
 INF = math.inf
@@ -264,7 +266,7 @@ PROC = r"""
 import json, os, sys, time, random
 sys.path.insert(0, %(root)r); sys.path.insert(0, %(here)r)
 from bench_retention import Driver, QUESTION_SETS, base_payload
-from laya import DecisionCache
+from veya import DecisionCache
 job = json.loads(sys.argv[1])
 cache = DecisionCache(job["path"], coalesce=True)
 payload = dict(base_payload(), writer=os.getpid())
@@ -340,9 +342,15 @@ def main():
     sections = [s for s in args.sections.split(",") if s]
     payload = base_payload()
     blob = DecisionCache()._encode(payload)
-    results = {"meta": {"laya": laya.__version__, "python": platform.python_version(), "machine": platform.machine(),
+    results = {"meta": {"veya": veya.__version__, "python": platform.python_version(), "machine": platform.machine(),
+                        "created_utc": datetime.now(timezone.utc).isoformat(),
                         "platform": platform.platform(), "cpus": os.cpu_count(), "sqlite": sqlite3.sqlite_version,
-                        "load_average_at_start": os.getloadavg()}}
+                        "load_average_at_start": os.getloadavg() if hasattr(os, "getloadavg") else None,
+                        "parameters": {"sections": sections, "sizes": args.sizes, "ops": args.ops},
+                        "source_sha256": {name: hashlib.sha256(Path(os.path.join(ROOT, name)).read_bytes()).hexdigest()
+                            for name in ("veya/consistency.py", "research/scripts/bench_store_scaling.py",
+                                         "research/scripts/bench_retention.py",
+                                         "research/benchmarks/feishu_zh/results/v1/laya/raw.jsonl")}}}
     with tempfile.TemporaryDirectory() as tmp:
         if "tail" in sections:
             print("tail", flush=True)
@@ -364,7 +372,7 @@ def main():
         if "processes" in sections:
             print("processes", flush=True)
             results["processes"] = processes(tmp)
-    results["meta"]["load_average_at_end"] = os.getloadavg()
+    results["meta"]["load_average_at_end"] = os.getloadavg() if hasattr(os, "getloadavg") else None
     if args.out:
         with open(args.out, "w", encoding="utf-8") as f:
             f.write(json.dumps(results, indent=2, ensure_ascii=False) + "\n")

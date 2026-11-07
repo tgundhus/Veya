@@ -12,12 +12,12 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.calibrate import (  # noqa: E402
+from veya.calibrate import (  # noqa: E402
     apply_binning_map,
     fit_abstention_thresholds,
     fit_binning_map,
 )
-from laya.confidence import (  # noqa: E402
+from veya.confidence import (  # noqa: E402
     check_min_confidence,
     check_min_confidence_map,
     resolve_min_confidence,
@@ -156,8 +156,8 @@ check_raises("validate/map non-string key rejected", ValueError,
 # both sides, because it is deliberately copied: `confidence.py` must import without PyTorch, so it
 # cannot read `common.QTYPES`.
 import inspect  # noqa: E402
-from laya import confidence as confidence_module  # noqa: E402
-from laya.common import QTYPES, temp_bucket  # noqa: E402
+from veya import confidence as confidence_module  # noqa: E402
+from veya.common import QTYPES, temp_bucket  # noqa: E402
 
 check_true("vocabulary/the copy has something to be honest about",
            len(confidence_module.bucket_keys()) == 12, sorted(confidence_module.bucket_keys()))
@@ -313,7 +313,7 @@ check("binning/no map leaves the fit unchanged",
 # seed 2's cut is the bin value 5/6 = 0.83333..., the runtime reports that bin as 0.8333, and the
 # whole bin abstains. Gated through the real decoder, the fitted cut must keep the coverage and
 # error the fitter judged it on.
-from laya.agent import Agent  # noqa: E402
+from veya.agent import Agent  # noqa: E402
 
 _rng = np.random.default_rng(2)
 _round_records = []

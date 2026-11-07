@@ -16,17 +16,17 @@ showed new binary and score errors. Keep the canonical default unless the new
 policy earns acceptance on your deployment's cases.
 
 ```python
-from laya import Router
+from veya import Router
 
 with Router(models={"english": "/models/english"},
             agent_kwargs={"decision_policy": "context-balanced-v1"}) as router:
     result = router.predict(state, questions, model="english")
 ```
 
-`Agent`, `ONNXAgent` and `laya.load` accept the same keyword. When it is omitted,
+`Agent`, `ONNXAgent` and `veya.load` accept the same keyword. When it is omitted,
 the checkpoint configuration's `decision_policy` is used, with `canonical` as
 the default. Use `decision_policy="canonical"` to explicitly request the ordinary
-path. HTTP and local MCP accept `LAYA_DECISION_POLICY=context-balanced-v1` in the
+path. HTTP and local MCP accept `VEYA_DECISION_POLICY=context-balanced-v1` in the
 server environment. Docker Compose forwards it; the Nix service option is
 `decisionPolicy`. Standalone `veya-onnx` supports the policy without Torch.
 The native TypeScript inference engine keeps its canonical policy; HTTP clients

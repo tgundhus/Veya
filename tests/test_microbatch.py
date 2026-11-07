@@ -9,11 +9,11 @@ import pytest
 pytest.importorskip("fastapi")
 httpx = pytest.importorskip("httpx")
 
-from laya import DecisionCache, Router
-from laya._microbatch import Microbatcher, MicrobatchUnavailable
-from laya.errors import DecisionCacheError
-from laya.onnx_agent import ONNXAgent, _NativeONNXAgent
-from laya import serve
+from veya import DecisionCache, Router
+from veya._microbatch import Microbatcher, MicrobatchUnavailable
+from veya.errors import DecisionCacheError
+from veya.onnx_agent import ONNXAgent, _NativeONNXAgent
+from veya import serve
 
 
 QUESTIONS = {"q": {"type": "noul", "instructions": "Does this need attention?"}}
@@ -59,10 +59,10 @@ class CountingAgent:
 
 @pytest.fixture(autouse=True)
 def environment(monkeypatch):
-    for name in ("LAYA_API_KEY", "LAYA_TOURNAMENT_GROUP", "LAYA_JEV_STRICT", "LAYA_IDLE_UNLOAD_SECONDS"):
+    for name in ("VEYA_API_KEY", "VEYA_TOURNAMENT_GROUP", "VEYA_JEV_STRICT", "VEYA_IDLE_UNLOAD_SECONDS"):
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.setenv("LAYA_MICROBATCH_MAX_STATES", "8")
-    monkeypatch.setenv("LAYA_MICROBATCH_WAIT_MS", "10")
+    monkeypatch.setenv("VEYA_MICROBATCH_MAX_STATES", "8")
+    monkeypatch.setenv("VEYA_MICROBATCH_WAIT_MS", "10")
 
 
 def setup_router(hooks=None, agent_type=ONNXAgent):
@@ -113,7 +113,7 @@ def test_native_onnx_planning_never_imports_torch(monkeypatch):
 
 
 def test_default_off_preserves_single_calls_and_timing_headers(monkeypatch):
-    monkeypatch.delenv("LAYA_MICROBATCH_MAX_STATES")
+    monkeypatch.delenv("VEYA_MICROBATCH_MAX_STATES")
     router, agent = setup_router()
     responses = asyncio.run(send(serve.create_app(router), [request("one"), request("two")]))
     assert agent.singles == ["one", "two"]
@@ -122,7 +122,7 @@ def test_default_off_preserves_single_calls_and_timing_headers(monkeypatch):
 
 
 def test_aggregate_budget_uses_actual_resident_width(monkeypatch):
-    monkeypatch.setenv("LAYA_MAX_BATCH_TOKENS", "2048")
+    monkeypatch.setenv("VEYA_MAX_BATCH_TOKENS", "2048")
     router, agent = setup_router()
     agent.cfg = {"max_len": 1024}
     responses = asyncio.run(send(serve.create_app(router), [request(str(i)) for i in range(6)]))
@@ -298,12 +298,12 @@ def test_cancelled_job_waiting_for_legacy_gate_never_reaches_model():
     asyncio.run(run())
 
 
-@pytest.mark.parametrize("name,value", [("LAYA_MICROBATCH_MAX_STATES", "1"),
-    ("LAYA_MICROBATCH_MAX_STATES", "65"), ("LAYA_MICROBATCH_MAX_STATES", "oops"),
-    ("LAYA_MICROBATCH_WAIT_MS", "nan"), ("LAYA_MICROBATCH_WAIT_MS", "inf"),
-    ("LAYA_MICROBATCH_WAIT_MS", "-1")])
+@pytest.mark.parametrize("name,value", [("VEYA_MICROBATCH_MAX_STATES", "1"),
+    ("VEYA_MICROBATCH_MAX_STATES", "65"), ("VEYA_MICROBATCH_MAX_STATES", "oops"),
+    ("VEYA_MICROBATCH_WAIT_MS", "nan"), ("VEYA_MICROBATCH_WAIT_MS", "inf"),
+    ("VEYA_MICROBATCH_WAIT_MS", "-1")])
 def test_invalid_deployment_config_fails_startup(monkeypatch, name, value):
     monkeypatch.setenv(name, value)
     router, _ = setup_router()
-    with pytest.raises(ValueError, match="LAYA_MICROBATCH"):
+    with pytest.raises(ValueError, match="VEYA_MICROBATCH"):
         serve.create_app(router)

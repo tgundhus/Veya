@@ -13,8 +13,8 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from laya import lang  # noqa: E402
-from laya import _routing_unicode as unicode_rules  # noqa: E402
+from veya import lang  # noqa: E402
+from veya import _routing_unicode as unicode_rules  # noqa: E402
 from research.scripts.generate_routing_corpus import PROSE, expand, expected  # noqa: E402
 
 
@@ -23,7 +23,7 @@ CORPUS = json.loads((ROOT / "tests/fixtures/routing-parity-v1.json").read_text(e
 
 class RoutingContractTests(unittest.TestCase):
     def test_language_vocabulary_cannot_drift_between_ports(self):
-        source = (ROOT / "laya-ts/src/lang.ts").read_text(encoding="utf-8")
+        source = (ROOT / "veya-ts/src/lang.ts").read_text(encoding="utf-8")
         source = re.sub(r"//[^\n]*", "", source)
 
         def strings(body):
@@ -91,12 +91,12 @@ class RoutingContractTests(unittest.TestCase):
             unicode_rules._NATIVE_VERSION = native
 
     def test_invalid_bom_model_alias_is_not_silently_trimmed(self):
-        from laya.router import normalise_name
+        from veya.router import normalise_name
         with self.assertRaises(ValueError):
             normalise_name("\ufeffen")
 
     def test_entire_analysis_uses_frozen_rules_on_other_python_versions(self):
-        spec = importlib.util.spec_from_file_location("laya._frozen_lang_probe", ROOT / "laya/lang.py")
+        spec = importlib.util.spec_from_file_location("veya._frozen_lang_probe", ROOT / "veya/lang.py")
         frozen = importlib.util.module_from_spec(spec)
         with patch("unicodedata.unidata_version", "0.0.0"), patch.object(unicode_rules, "_NATIVE_VERSION", False):
             spec.loader.exec_module(frozen)
@@ -109,10 +109,10 @@ class RoutingContractTests(unittest.TestCase):
 
     def test_fixed_seed_live_cross_runtime_parity(self):
         node = shutil.which("node")
-        compiler = ROOT / "laya-ts/node_modules/typescript/bin/tsc"
+        compiler = ROOT / "veya-ts/node_modules/typescript/bin/tsc"
         if not node or not compiler.is_file():
             self.skipTest("Node and the local TypeScript dev toolchain are needed for live cross-runtime checks")
-        subprocess.run([node, str(compiler), "-p", "tsconfig.json"], cwd=ROOT / "laya-ts", check=True,
+        subprocess.run([node, str(compiler), "-p", "tsconfig.json"], cwd=ROOT / "veya-ts", check=True,
                        capture_output=True, encoding="utf-8", timeout=90)
         rng = random.Random(231105)
         words = ["where", "why", "done", "already", "the", "and", "i", "please", "je", "nous", "pour",

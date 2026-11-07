@@ -13,7 +13,7 @@ import warnings
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.agent import _fix_tokenizer_config  # noqa: E402
+from veya.agent import _fix_tokenizer_config  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -25,7 +25,7 @@ def check(name, got, want):
         FAIL.append("%s: got %r, want %r" % (name, got, want))
 
 
-root = tempfile.mkdtemp(prefix="laya_cache_")
+root = tempfile.mkdtemp(prefix="veya_cache_")
 blob_dir = os.path.join(root, "models--x", "blobs")
 snap_dir = os.path.join(root, "models--x", "snapshots", "rev1", "tokenizer")
 os.makedirs(blob_dir)

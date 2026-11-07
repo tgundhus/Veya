@@ -6,7 +6,7 @@ reproduction has to use them too, not a differently-defined library metric:
 
 - **accuracy** — top reported option against the gold label, over every decision (choice, score
   and noul).
-- **ECE** — `laya.common.ece_score` of the top probability against correctness, 15 equal-width
+- **ECE** — `veya.common.ece_score` of the top probability against correctness, 15 equal-width
   bins, over every decision.
 - **brier** — mean over **choice and noul** decisions of `sum((p - gold)**2)`. The notebook does
   not append score decisions to this mean, so a score change never moves Brier; kept as-is so the
@@ -22,7 +22,7 @@ from typing import Sequence
 
 import numpy as np
 
-from laya.common import ece_score
+from veya.common import ece_score
 
 
 def accuracy(correct: Sequence[float]) -> float:

@@ -30,9 +30,9 @@ def main():
     os.environ.pop("LAYA_JEV_STRICT", None)
     import torch
     from fastapi.testclient import TestClient
-    from laya import Agent
-    from laya.serve import create_app
-    from laya.shortlist import predict_tournament
+    from veya import Agent
+    from veya.serve import create_app
+    from veya.shortlist import predict_tournament
 
     torch.set_num_threads(2)
     agent = Agent(str(args.checkpoint), device="cpu", compile=False)

@@ -18,12 +18,12 @@ import types
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya import lang  # noqa: E402
+from veya import lang  # noqa: E402
 from research.scripts.generate_routing_corpus import NOTE, PROSE  # noqa: E402
 
 
 def sources():
-    names = ("laya/lang.py", "laya/_routing_unicode.py", "laya-ts/src/lang.ts", "laya-ts/src/routing-unicode.ts",
+    names = ("veya/lang.py", "veya/_routing_unicode.py", "veya-ts/src/lang.ts", "veya-ts/src/routing-unicode.ts",
              "research/scripts/bench_routing_contract.py", "research/scripts/bench_routing_contract.mjs",
              "research/scripts/generate_routing_corpus.py", "tests/routing_parity_support.mjs")
     return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in names}
@@ -88,11 +88,11 @@ def main():
         result["cases"].append(row)
         print(name, json.dumps(row["operations"]), flush=True)
     node = shutil.which("node")
-    compiler = ROOT / "laya-ts/node_modules/typescript/bin/tsc"
+    compiler = ROOT / "veya-ts/node_modules/typescript/bin/tsc"
     if not args.skip_node and node and compiler.is_file():
-        subprocess.run([node, str(compiler), "-p", "tsconfig.json"], cwd=ROOT / "laya-ts", check=True,
+        subprocess.run([node, str(compiler), "-p", "tsconfig.json"], cwd=ROOT / "veya-ts", check=True,
                        capture_output=True, encoding="utf-8", timeout=90)
-        source = subprocess.check_output(["git", "show", args.base + ":laya-ts/src/lang.ts"], cwd=ROOT)
+        source = subprocess.check_output(["git", "show", args.base + ":veya-ts/src/lang.ts"], cwd=ROOT)
 
         def serializable(value):
             if isinstance(value, bytes):

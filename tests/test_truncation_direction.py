@@ -12,8 +12,8 @@ import json
 import torch
 from transformers import AutoConfig, AutoModel
 
-from laya.agent import Agent
-from laya.common import DecisionModel, build_sequence, serialize_state
+from veya.agent import Agent
+from veya.common import DecisionModel, build_sequence, serialize_state
 
 
 class _FakeTok:
@@ -67,7 +67,7 @@ def test_agent_list_vs_string_truncation_direction():
         return build_sequence(tok, state, q, max_len, head_max_len,
                               truncate_left=truncate_left, **kwargs)
 
-    with patch("laya.agent.build_sequence", side_effect=fake_build):
+    with patch("veya.agent.build_sequence", side_effect=fake_build):
         agent.system_one([{"role": "user", "content": "hi"}, {"role": "user", "content": "newest"}], questions)
         agent.system_one("string state", questions)
 
@@ -91,7 +91,7 @@ def test_agent_system_one_passes_truncate_left_for_list():
         return build_sequence(tok, state, q, max_len, head_max_len,
                               truncate_left=truncate_left, **kwargs)
 
-    with patch("laya.agent.build_sequence", side_effect=fake_build):
+    with patch("veya.agent.build_sequence", side_effect=fake_build):
         agent.system_one(conversation, questions)
 
     assert captured["truncate_left"] is True, "list state must trigger truncate_left=True"
@@ -112,7 +112,7 @@ def test_agent_system_one_string_state_default_truncation():
         return build_sequence(tok, state, q, max_len, head_max_len,
                               truncate_left=truncate_left, **kwargs)
 
-    with patch("laya.agent.build_sequence", side_effect=fake_build):
+    with patch("veya.agent.build_sequence", side_effect=fake_build):
         agent.system_one("just a string state", questions)
 
     assert captured["truncate_left"] is False, "string state must keep default truncation"

@@ -7,7 +7,7 @@ again.
 
 ## Backend selection
 
-`Agent(..., backend="auto")` and `laya.load(..., backend="auto")` opt into the backend
+`Agent(..., backend="auto")` and `veya.load(..., backend="auto")` opt into the backend
 class layer. The default remains eager. Explicit `backend=` takes precedence over `compile`
 and `fast`; omitting it preserves both flags' existing behaviour.
 
@@ -15,13 +15,13 @@ and `fast`; omitting it preserves both flags' existing behaviour.
 - `compile`: CUDA-only `torch.compile` with dynamic shapes and `reduce-overhead` mode,
   bucket padding, persistent inductor cache, and warmup at installation. It reuses the same
   independent-dimension scope as `compile=True`, which keeps its existing default mode and
-  CPU support. Set `LAYA_COMPILE_WARMUP=0` to defer backend warmup and `LAYA_INDUCTOR_CACHE_DIR`
-  to choose its cache directory (default `~/.cache/laya/inductor`).
+  CPU support. Set `VEYA_COMPILE_WARMUP=0` to defer backend warmup and `VEYA_INDUCTOR_CACHE_DIR`
+  to choose its cache directory (default `~/.cache/veya/inductor`).
 - `tilelang`: an adapter around the current fast path, using the agent's bf16 or fp16 dtype.
 - `auto`: TileLang on CUDA with a supported ModernBERT encoder and dtype when TileLang is
   installed, otherwise compile on CUDA; eager on other devices.
-- `onnx`: `laya.load(..., backend="onnx", onnx_path="model.onnx")` returns the existing
-  `ONNXAgent`. Without `onnx_path`, it uses `laya.onnx`.
+- `onnx`: `veya.load(..., backend="onnx", onnx_path="model.onnx")` returns the existing
+  `ONNXAgent`. Without `onnx_path`, it uses `veya.onnx`.
 
 An unavailable backend emits a `RuntimeWarning` naming the resolved backend and falls back to
 eager. To require a backend, use `agent.set_backend("tilelang", strict=True)`. Switching waits
@@ -60,7 +60,7 @@ by sequence length, so it has no such buffer.
   naming the error (including the underlying compiler error) and load returns with the
   `torch.compile` wrapper and compile settings intact. For example, Windows without MSVC can
   load with `compile=True` even though warm-up fails. Later requests still use the compiled
-  model and surface compilation failures; Laya does not switch them to eager execution.
+  model and surface compilation failures; Veya does not switch them to eager execution.
   Explicit `agent.warmup()` calls also propagate failures, including after a failed automatic
   warm-up. A successful load therefore does not guarantee that compiled inference is ready.
 - **Across restarts.** Inductor's FX-graph cache keeps compiled graphs under
@@ -68,9 +68,9 @@ by sequence length, so it has no such buffer.
   container restart. Set it to a persistent directory, or a volume in a container, and a second
   process loads the graphs instead of compiling them. In #472's measurement that took warm-up from
   about 120 s to about 50 s.
-- **Laya cache opt-in.** `laya.load(..., compile=True, compile_cache=True)` sets the process-wide
-  `TORCHINDUCTOR_CACHE_DIR` only when absent, to `$XDG_CACHE_HOME/laya/torchinductor` or
-  `~/.cache/laya/torchinductor` when XDG is unset or not absolute. An existing setting, including
+- **Veya cache opt-in.** `veya.load(..., compile=True, compile_cache=True)` sets the process-wide
+  `TORCHINDUCTOR_CACHE_DIR` only when absent, to `$XDG_CACHE_HOME/veya/torchinductor` or
+  `~/.cache/veya/torchinductor` when XDG is unset or not absolute. An existing setting, including
   one set by an earlier PyTorch compile, wins. The directory is created at load; filesystem
   errors propagate. `compile_cache=False` (default), eager, and TileLang loads leave the
   environment alone. This does not move or delete old caches. Containers still need a persistent
@@ -80,7 +80,7 @@ by sequence length, so it has no such buffer.
 ## Opt-in CUDA graphs
 
 ```python
-agent = laya.load("convaiinnovations/laya", compile=True,
+agent = veya.load("convaiinnovations/laya", compile=True,
                   compile_cache=True, compile_mode="reduce-overhead")
 ```
 
@@ -95,7 +95,7 @@ warm-up shapes do not pre-record every request shape. Repeated shapes can benefi
 shapes can pay extra latency and retain graph pools. PyTorch may skip CUDA graphs for unsupported
 operations or configurations; setting this mode is not a guarantee of capture.
 
-Laya marks each compiled CUDA forward as a new step, serializes these forwards across its agents,
+Veya marks each compiled CUDA forward as a new step, serializes these forwards across its agents,
 and clones both output tensors outside the compiled graph before releasing the lock. This keeps
 retained outputs valid across replays, at the cost of two copies and serialized forward execution.
 The lock does not coordinate unrelated application-owned compiled models; callers sharing CUDA
@@ -129,7 +129,7 @@ head's dtype, or run the head in fp32.
 ## TileLang portability: the kernels are CUDA-only
 
 tilelang registers targets for CUDA, HIP, Metal, WebGPU and a C backend. Without AMD or Apple
-hardware, the answerable question was whether `laya/tl_kernels.py` lowers for the CPU at all.
+hardware, the answerable question was whether `veya/tl_kernels.py` lowers for the CPU at all.
 Probed with `tilelang.compile(kernel.prim_func, target=...)` on Linux x86-64:
 
 | target | result |
@@ -138,7 +138,7 @@ Probed with `tilelang.compile(kernel.prim_func, target=...)` on Linux x86-64:
 | `"llvm"` | `Cannot find global function target.build.llvm`. The wheel ships no LLVM backend. |
 | `"c"` | Lowers to C and runs on CPU tensors, but only for a subset of the language. |
 
-Every Laya kernel fails on `"c"`, for one of three reasons:
+Every Veya kernel fails on `"c"`, for one of three reasons:
 
 | kernel | failure on `target="c"` | construct |
 |---|---|---|

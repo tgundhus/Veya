@@ -21,12 +21,12 @@ from tokenizers import Tokenizer  # noqa: E402
 from tokenizers.models import WordLevel  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
 
-from laya.agent import Agent  # noqa: E402
-from laya.common import DecisionModel  # noqa: E402
-# `laya/onnx_agent.py` imports onnxruntime inside a function, not at module scope, so this
+from veya.agent import Agent  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
+# `veya/onnx_agent.py` imports onnxruntime inside a function, not at module scope, so this
 # import is safe in an environment without it -- which is the case for the Windows CI job that
 # runs this file. ONNXAgent.__new__ skips __init__, so no session and no checkpoint are needed.
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 
 class _FakeOnnxTok:
@@ -53,7 +53,7 @@ class _StubOnnxSession:
 
 def _bare_onnx_agent():
     a = ONNXAgent.__new__(ONNXAgent)
-    a.model_id = "laya-rl-agent-onnx"
+    a.model_id = "veya-rl-agent-onnx"
     a.cfg = {"max_len": 64, "head_max_len": 32}
     a.tok = _FakeOnnxTok()
     a.temperature = [1.0, 1.0, 1.0]
@@ -88,7 +88,7 @@ class EmptyQuestionsTests(unittest.TestCase):
         config = BertConfig(vocab_size=6, hidden_size=16, num_hidden_layers=1,
                             num_attention_heads=1, intermediate_size=32)
         self.agent.model = DecisionModel(BertModel(config), head_layers=0).eval()
-        self.empty = {"model": "laya-rl-agent", "answers": {},
+        self.empty = {"model": "veya-rl-agent", "answers": {},
                       "usage": {"input_tokens": 0, "output_tokens": 0}}
         # The same runtime surface, built for the ONNX backend. Both are exercised by the
         # parity tests below, which is the point: a guard that exists on only one backend is
@@ -109,8 +109,8 @@ class EmptyQuestionsTests(unittest.TestCase):
     def test_empty_questions_skip_tokenization_batching_and_forward(self):
         self.agent.tok = Mock(side_effect=AssertionError("unexpected tokenization"))
         self.agent.model = Mock(side_effect=AssertionError("unexpected forward pass"))
-        with patch("laya.agent.build_sequence", side_effect=AssertionError("unexpected encoding")) as encode, \
-                patch("laya.agent.collate_items", side_effect=AssertionError("unexpected batching")) as collate:
+        with patch("veya.agent.build_sequence", side_effect=AssertionError("unexpected encoding")) as encode, \
+                patch("veya.agent.collate_items", side_effect=AssertionError("unexpected batching")) as collate:
             self.assertEqual(self.agent.predict("hello", {}), self.empty)
             self.assertEqual(self.agent.system_one("hello", {}), self.empty)
         encode.assert_not_called()
@@ -160,8 +160,8 @@ class EmptyQuestionsTests(unittest.TestCase):
 
     def test_onnx_rejects_exactly_what_torch_rejects(self):
         # The two guards above were added in 86fe2a1 to `Agent.predict_batch` only.
-        # `git log -S "state must not be None" -- laya/` returns that single commit, and
-        # laya/onnx_agent.py was never updated: it kept the first of the three checks and a
+        # `git log -S "state must not be None" -- veya/` returns that single commit, and
+        # veya/onnx_agent.py was never updated: it kept the first of the three checks and a
         # comment claiming parity with Agent.predict_batch. Two consequences, both measured
         # before the fix:
         #
@@ -172,7 +172,7 @@ class EmptyQuestionsTests(unittest.TestCase):
         #                                   'keys', three frames down, naming neither the
         #                                   argument nor the fix
         #
-        # The second matters over HTTP as well as in-process: laya/serve.py classifies only
+        # The second matters over HTTP as well as in-process: veya/serve.py classifies only
         # ValueError as a caller error, so the request torch answers with 422 became a 500
         # "inference failed" whenever the ONNX backend was attached.
         #
@@ -198,7 +198,7 @@ class EmptyQuestionsTests(unittest.TestCase):
         # test above and break both of these.
         questions = {"q": {"type": "noul", "instructions": "Is it true?"}}
         answer = self.onnx.predict("hello", questions)
-        self.assertEqual(answer["model"], "laya-rl-agent-onnx")
+        self.assertEqual(answer["model"], "veya-rl-agent-onnx")
         self.assertIn("q", answer["answers"])
         self.assertGreater(answer["usage"]["input_tokens"], 0)
         self.assertEqual(answer["usage"]["output_tokens"], 0)
@@ -228,7 +228,7 @@ class EmptyQuestionsTests(unittest.TestCase):
         self.assertEqual(forward.call_count, 2)
         self.assertEqual(before, after)
         self.assertEqual(questions, original)
-        self.assertEqual(before["model"], "laya-rl-agent")
+        self.assertEqual(before["model"], "veya-rl-agent")
         self.assertGreater(before["usage"]["input_tokens"], 0)
         self.assertEqual(before["usage"]["output_tokens"], 0)
         answers = before["answers"]

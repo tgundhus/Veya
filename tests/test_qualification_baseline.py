@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import pytest
 
-from laya import qualification
-from laya.qualification import compare_reports, qualify
+from veya import qualification
+from veya.qualification import compare_reports, qualify
 
 
 QUESTIONS = {

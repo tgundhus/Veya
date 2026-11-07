@@ -19,10 +19,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np  # noqa: E402
 
-from laya.agent import Agent  # noqa: E402
+from veya.agent import Agent  # noqa: E402
 from _long_attribution import check_long_attribution
-from laya.common import window_budget  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.common import window_budget  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -181,7 +181,7 @@ check_true("window/a 200-token state over a 64-token budget produces several win
            len(windows) > 1, len(windows))
 per_window = _real_batch(list(windows), QUESTIONS)
 
-check("result/model names the ONNX backend", result["model"], "laya-rl-agent-onnx")
+check("result/model names the ONNX backend", result["model"], "veya-rl-agent-onnx")
 check("result/keys match system_one", sorted(result), ["answers", "model", "usage"])
 for qid, key in (("dept", "answer_confidence"), ("urgent", "noul")):
     ans = result["answers"][qid]

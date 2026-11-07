@@ -22,15 +22,15 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya import DecisionCache, Router  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
 
 
 QUESTIONS = {
     "decision": {"type": "choice", "instructions": "Which outcome applies to this request?",
                  "criteria": {"allow": "allow the request", "review": "review the request"}},
 }
-SOURCE_FILES = ("laya/consistency.py", "laya/hooks.py", "laya/router.py", "laya/errors.py",
-                "laya/inference.py", "laya/confidence.py", "laya/lang.py", "laya/performance.py",
+SOURCE_FILES = ("veya/consistency.py", "veya/hooks.py", "veya/router.py", "veya/errors.py",
+                "veya/inference.py", "veya/confidence.py", "veya/lang.py", "veya/performance.py",
                 "research/scripts/bench_required_cache.py")
 
 

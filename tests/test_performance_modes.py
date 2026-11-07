@@ -16,10 +16,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np  # noqa: E402
 
-from laya import performance  # noqa: E402
-from laya.agent import Agent, load  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
-from laya.router import Router  # noqa: E402
+from veya import performance  # noqa: E402
+from veya.agent import Agent, load  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 
 QUESTIONS = {"q": {"type": "choice", "instructions": "?", "criteria": {"yes": "y", "no": "n"}}}
@@ -65,7 +65,7 @@ def _runtime(cls, mode=None):
 
 class PerformanceModesTests(unittest.TestCase):
     def setUp(self):
-        self.environment = patch.dict(os.environ, {"LAYA_PERFORMANCE_MODE": "", "LAYA_THREADS": "", "LAYA_CPU_AMP": ""})
+        self.environment = patch.dict(os.environ, {"VEYA_PERFORMANCE_MODE": "", "VEYA_THREADS": "", "VEYA_CPU_AMP": ""})
         self.environment.start()
         self.addCleanup(self.environment.stop)
 
@@ -85,19 +85,19 @@ class PerformanceModesTests(unittest.TestCase):
                 performance.parse_performance_mode(value)
 
     def test_environment_and_thread_override(self):
-        with patch.dict(os.environ, {"LAYA_PERFORMANCE_MODE": "4"}), \
+        with patch.dict(os.environ, {"VEYA_PERFORMANCE_MODE": "4"}), \
                 patch.object(performance, "_available_cpus", return_value=3):
             self.assertEqual(performance.resolve_performance_mode()["threads"], 3)
             self.assertEqual(performance.resolve_performance_mode(1)["mode"], 1)
             self.assertIsNone(performance.resolve_performance_mode("default"))
             self.assertIsNone(performance.resolve_performance_mode(""))
             for threads in ("7", " 2 "):
-                with patch.dict(os.environ, {"LAYA_THREADS": threads}):
+                with patch.dict(os.environ, {"VEYA_THREADS": threads}):
                     self.assertEqual(performance.resolve_performance_mode()["threads"], int(threads))
             for threads in ("0", "-1", "bad"):
-                with patch.dict(os.environ, {"LAYA_THREADS": threads}):
+                with patch.dict(os.environ, {"VEYA_THREADS": threads}):
                     self.assertEqual(performance.resolve_performance_mode()["threads"], 3)
-        with patch.dict(os.environ, {"LAYA_PERFORMANCE_MODE": "6"}), self.assertRaises(ValueError):
+        with patch.dict(os.environ, {"VEYA_PERFORMANCE_MODE": "6"}), self.assertRaises(ValueError):
             Router()
 
     def test_affinity_caps_logical_cpus(self):
@@ -109,12 +109,12 @@ class PerformanceModesTests(unittest.TestCase):
     def test_default_router_stays_lazy(self):
         script = """
 import os, sys
-import laya
-r = laya.Router()
+import veya
+r = veya.Router()
 assert r.performance_mode is None and r.performance_config is None
 assert r.max_loaded == 2 and r.loaded == []
-os.environ['LAYA_PERFORMANCE_MODE'] = '5'
-r = laya.Router(performance_mode='default')
+os.environ['VEYA_PERFORMANCE_MODE'] = '5'
+r = veya.Router(performance_mode='default')
 assert r.performance_config is None and r.loaded == []
 r.route('Please refund this invoice')
 assert 'torch' not in sys.modules
@@ -148,10 +148,10 @@ assert 'torch' not in sys.modules
 
         with patch("torch.set_num_threads") as threads, \
                 patch.object(performance, "_available_cpus", return_value=16), \
-                patch("laya.agent.Agent", side_effect=build):
+                patch("veya.agent.Agent", side_effect=build):
             router = Router(performance_mode=2)
             threads.assert_called_once_with(2)
-            with patch.dict(os.environ, {"LAYA_PERFORMANCE_MODE": "5", "LAYA_THREADS": "7"}):
+            with patch.dict(os.environ, {"VEYA_PERFORMANCE_MODE": "5", "VEYA_THREADS": "7"}):
                 agent = router.load("english")
             threads.assert_called_once_with(2)
             self.assertEqual(agent.performance_mode, 2)
@@ -196,10 +196,10 @@ assert 'torch' not in sys.modules
         self.assertLessEqual(max(agent.calls), 2)
 
     def test_load_forwards_mode_to_both_backends(self):
-        with patch("laya.agent.Agent", return_value="torch") as build:
+        with patch("veya.agent.Agent", return_value="torch") as build:
             self.assertEqual(load("./checkpoint", performance_mode="default"), "torch")
             self.assertEqual(build.call_args.kwargs["performance_mode"], "default")
-        with patch("laya.onnx_agent.ONNXAgent", return_value="onnx") as build:
+        with patch("veya.onnx_agent.ONNXAgent", return_value="onnx") as build:
             self.assertEqual(load("./checkpoint", backend="onnx", performance_mode=3), "onnx")
             self.assertEqual(build.call_args.kwargs["performance_mode"], 3)
 
@@ -230,15 +230,15 @@ assert 'torch' not in sys.modules
             checkpoint = Path(directory)
             (checkpoint / "rl_agent_config.json").write_text(json.dumps({"temperature": [1.0] * 3}))
             (checkpoint / "model.safetensors").touch()
-            graph = checkpoint / "laya.onnx"
+            graph = checkpoint / "veya.onnx"
             graph.touch()
             with patch("torch.set_num_threads") as threads, \
-                    patch("laya.agent.build_model", return_value=Model()), \
-                    patch("laya.agent._load_tokenizer", return_value=_Tokenizer()), \
-                    patch("laya.agent._verify_compatibility"), \
+                    patch("veya.agent.build_model", return_value=Model()), \
+                    patch("veya.agent._load_tokenizer", return_value=_Tokenizer()), \
+                    patch("veya.agent._verify_compatibility"), \
                     patch("safetensors.torch.load_file", return_value={}), \
                     patch.dict(sys.modules, {"onnxruntime": ort, "transformers": transformers}), \
-                    patch.dict(os.environ, {"LAYA_PERFORMANCE_MODE": "2", "LAYA_THREADS": "3"}):
+                    patch.dict(os.environ, {"VEYA_PERFORMANCE_MODE": "2", "VEYA_THREADS": "3"}):
                 agent = Agent(directory, device="cpu")
                 self.assertEqual(agent.performance_mode, 2)
                 self.assertEqual(agent.performance_config["threads"], 3)

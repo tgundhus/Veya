@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT))
 
 
 def main():
-    from laya.decision_policy import DECISION_POLICIES
+    from veya.decision_policy import DECISION_POLICIES
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--onnx", type=Path)
@@ -37,7 +37,7 @@ def main():
         parser.error("threads must be positive")
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_THREADS=str(args.threads))
     import torch
-    from laya import qualification
+    from veya import qualification
     torch.set_num_threads(args.threads)
     torch.set_num_interop_threads(1)
     checkpoint = str(args.checkpoint.resolve())

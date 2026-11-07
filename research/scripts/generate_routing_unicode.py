@@ -219,8 +219,8 @@ def main():
                                         sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     hashes = verification_hashes(properties, lower)
     outputs = {
-        ROOT / "laya/_routing_unicode.py": python_module(properties, lower, identity, hashes),
-        ROOT / "laya-ts/src/routing-unicode.ts": typescript_module(properties, lower, identity, hashes),
+        ROOT / "veya/_routing_unicode.py": python_module(properties, lower, identity, hashes),
+        ROOT / "veya-ts/src/routing-unicode.ts": typescript_module(properties, lower, identity, hashes),
     }
     for path, content in outputs.items():
         if args.check:
@@ -237,7 +237,7 @@ def main():
 
 
 def verify_python():
-    spec = importlib.util.spec_from_file_location("routing_unicode", ROOT / "laya/_routing_unicode.py")
+    spec = importlib.util.spec_from_file_location("routing_unicode", ROOT / "veya/_routing_unicode.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     module._NATIVE_VERSION = False           # exercise compatibility with other Python Unicode releases
@@ -288,7 +288,7 @@ console.log(JSON.stringify({
   contexts: input.texts.map(text => [table.unicodeLower(text), table.unicodeIsUpper(text)]),
 }));
 '''
-    payload = {"module": str(ROOT / "laya-ts/src/routing-unicode.ts"),
+    payload = {"module": str(ROOT / "veya-ts/src/routing-unicode.ts"),
                "properties": PROPERTIES, "texts": texts}
     result = subprocess.run(["node", "--input-type=module", "-e", code], cwd=ROOT,
                             input=json.dumps(payload), encoding="utf-8", capture_output=True, check=True)

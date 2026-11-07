@@ -6,12 +6,12 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.agent import Agent
+from veya.agent import Agent
 
 # Skip the test if onnx isn't installed
 try:
     import onnxruntime
-    from laya.onnx_agent import ONNXAgent
+    from veya.onnx_agent import ONNXAgent
     from scripts.export_onnx import export_to_onnx
     HAS_ONNX = True
 except ImportError:
@@ -27,7 +27,7 @@ INPUT_NAMES = ("input_ids", "attention_mask", "marker_pos", "marker_mask", "qtyp
 def exported():
     """One export shared by the tests below: (onnx path, the PyTorch agent it came from)."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        onnx_path = os.path.join(tmpdir, "laya.onnx")
+        onnx_path = os.path.join(tmpdir, "veya.onnx")
         export_to_onnx(MODEL_ID, onnx_path)
         yield onnx_path, Agent(MODEL_ID, compile=False, device="cpu")
 

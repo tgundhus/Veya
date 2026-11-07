@@ -1,6 +1,6 @@
 """Example 35 -- device selection, the per-call autocast policy, and device latency.
 
-Laya picks CUDA, then MPS, then CPU when `device=None`. This example times the multilingual
+Veya picks CUDA, then MPS, then CPU when `device=None`. This example times the multilingual
 checkpoint on CPU and on MPS (if present), prints median ms and ms/question, checks that the two
 devices return the same answers, and prints -- then measures -- the precision each forward really
 runs in.
@@ -17,15 +17,15 @@ banner("35", "Device selection and latency", """
     fallback to CPU if it is unavailable), otherwise CUDA, then MPS, then CPU. Mixed precision is
     chosen per device at load time and per call at inference time, and it is not CUDA-only: MPS
     gets `amp_enabled=True` with an autocast `dtype` of float16, XPU gets bfloat16, and CPU gets
-    bfloat16 only when `LAYA_CPU_AMP=bf16` asks for it. What one call actually runs in is
+    bfloat16 only when `VEYA_CPU_AMP=bf16` asks for it. What one call actually runs in is
     `dtype_for(rows)`, and on MPS that is gated by row count: below `mps_amp_min_rows` (5 rows by
-    default, override with `LAYA_MPS_AMP_MIN_ROWS`) an MPS forward stays fp32, because fp16
+    default, override with `VEYA_MPS_AMP_MIN_ROWS`) an MPS forward stays fp32, because fp16
     autocast loses on a single small row and only wins once the batch has several. So `dtype` is
     the target and `dtype_for(rows)` is the precision; this example prints both and then measures
     the same MPS batch under each.
 
-    For explicit control pass `device="cpu"`, `"mps"` or `"cuda"`. Laya does not read an env var
-    for the device itself, but a common application pattern is to read one (`LAYA_DEVICE`) and
+    For explicit control pass `device="cpu"`, `"mps"` or `"cuda"`. Veya does not read an env var
+    for the device itself, but a common application pattern is to read one (`VEYA_DEVICE`) and
     pass it through.
 
     `timed(fn, repeat=3)` discards one warm-up call, so the first MPS call's ~13 s of Metal
@@ -35,7 +35,7 @@ banner("35", "Device selection and latency", """
 device_line_torch = "   torch %s   cuda_available=%s   mps_available=%s"
 mps_ok = hasattr(torch.backends, "mps") and torch.backends.mps.is_available()
 print(device_line_torch % (torch.__version__, torch.cuda.is_available(), mps_ok))
-print("   explicit selection example: device = os.environ.get('LAYA_DEVICE') or None")
+print("   explicit selection example: device = os.environ.get('VEYA_DEVICE') or None")
 
 QUESTIONS = {
     "department": {
@@ -158,6 +158,6 @@ else:
    its autocast dtype, so MPS mixed precision is real on this torch build. `amp_enabled` and
    `dtype` are what the load-time policy picked for the device; `dtype_for(rows)` and the flag
    observed above are what a call actually ran in. `mps_amp_min_rows` is where the library puts
-   the crossover on MPS, and `LAYA_MPS_AMP_MIN_ROWS` moves it -- the two forced arms print this
+   the crossover on MPS, and `VEYA_MPS_AMP_MIN_ROWS` moves it -- the two forced arms print this
    machine's ratio at each batch size, so the threshold can be checked against the hardware a call
    is really running on rather than taken on faith.""")

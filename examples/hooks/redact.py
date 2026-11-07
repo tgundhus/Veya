@@ -6,7 +6,7 @@ A start hook can rewrite `ctx.states`; the rewrite is what gets tokenized.
 """
 import re
 
-import laya
+import veya
 
 EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.-]+\b")
 PHONE = re.compile(r"\+?\d[\d ()-]{7,}\d")
@@ -26,7 +26,7 @@ def redact(ctx):
     ctx.states = [scrub(state) for state in ctx.states]
 
 
-agent = laya.load("convaiinnovations/laya", on_predict_start=redact)
+agent = veya.load("convaiinnovations/laya", on_predict_start=redact)
 result = agent.system_one(
     "Email jane@example.com or call +1 555 010 9999 about invoice 42.",
     {"urgent": {"type": "noul", "instructions": "Is this urgent?"}},

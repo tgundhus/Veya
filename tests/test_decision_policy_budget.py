@@ -3,8 +3,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from laya.mcp._code_budget import check_operation_budget
-from laya.mcp.tools import ToolError
+from veya.mcp._code_budget import check_operation_budget
+from veya.mcp.tools import ToolError
 
 
 STATE = {"message": "Check this request"}
@@ -109,7 +109,7 @@ def test_cold_preflight_defers_actual_policy_but_postload_check_cannot_bypass_it
 
 
 def test_local_batch_eviction_cannot_discount_an_unknown_checkpoint_policy(monkeypatch):
-    from laya.router import Router as LocalRouter
+    from veya.router import Router as LocalRouter
 
     router = LocalRouter(models={"english": "english-fixture", "multilingual": "multi-fixture"},
                          backend="onnx", max_loaded=1, preload=False, performance_mode="default")

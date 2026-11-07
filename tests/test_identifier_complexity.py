@@ -27,7 +27,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.lang import _IDENTIFIER, analyse, latin_profile  # noqa: E402
+from veya.lang import _IDENTIFIER, analyse, latin_profile  # noqa: E402
 
 # The pattern as it was before the lookbehind, kept here so parity is asserted against
 # the real previous behaviour rather than against expectations someone typed out.

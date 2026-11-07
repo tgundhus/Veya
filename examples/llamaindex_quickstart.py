@@ -1,20 +1,20 @@
-"""Laya System 1 decision engine: LlamaIndex Integration Quickstart.
+"""Veya System 1 decision engine: LlamaIndex Integration Quickstart.
 
 Demonstrates:
 1. Sub-35ms single-choice tool routing in LlamaIndex with confidence fallback gating.
 2. Multi-choice routing across multiple RAG query engines for composite questions.
-3. Direct high-performance query dispatch with LayaQueryRouter.
-4. Edge/Serverless deployment against remote laya-serve HTTP instances.
+3. Direct high-performance query dispatch with VeyaQueryRouter.
+4. Edge/Serverless deployment against remote veya-serve HTTP instances.
 """
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.integrations.llamaindex import (
-    LayaMultiSelector,
-    LayaQueryRouter,
-    LayaSingleSelector,
+from veya.integrations.llamaindex import (
+    VeyaMultiSelector,
+    VeyaQueryRouter,
+    VeyaSingleSelector,
     QueryBundle,
     ToolMetadata,
 )
@@ -37,7 +37,7 @@ class _DemoAgent:
             chosen = "choice_0" if "choice_0" in criteria else "docs"
             probs = {"choice_0": 0.91, "choice_1": 0.06, "choice_2": 0.03}
         return {
-            "model": "laya-demo",
+            "model": "veya-demo",
             "answers": {
                 q_id: {
                     "choice": chosen,
@@ -50,7 +50,7 @@ class _DemoAgent:
 
 _agent = None
 try:
-    from laya import Router
+    from veya import Router
     r = Router()
     # Test if models/dependencies are present
     r.predict("test", {"test": {"type": "choice", "instructions": "test", "criteria": {"a": "a"}}})
@@ -80,7 +80,7 @@ tools = [
 ]
 
 # Configure selector with confidence threshold fallback
-selector = LayaSingleSelector(
+selector = VeyaSingleSelector(
     confidence_threshold=0.80,
     fallback_index=0,  # Fallback to vector documentation if uncertain
     agent=_agent,
@@ -101,7 +101,7 @@ print(f"Reason: {result.selections[0].reason}")
 # =====================================================================
 # Identifies which subset of candidate tools are relevant for complex queries.
 
-multi_selector = LayaMultiSelector(
+multi_selector = VeyaMultiSelector(
     probability_threshold=0.25,
     max_outputs=2,
     agent=_agent,
@@ -121,7 +121,7 @@ for sel in multi_result.selections:
 
 
 # =====================================================================
-# 3. Direct High-Performance Query Dispatch with LayaQueryRouter
+# 3. Direct High-Performance Query Dispatch with VeyaQueryRouter
 # =====================================================================
 # Dispatches incoming queries directly to backend query engines or functions.
 
@@ -139,7 +139,7 @@ engines = {
     "finance": DummyQueryEngine("FinanceEngine"),
 }
 
-router = LayaQueryRouter(
+router = VeyaQueryRouter(
     query_engines=engines,
     descriptions={
         "docs": "Documentation and setup tutorials",
@@ -154,7 +154,7 @@ router = LayaQueryRouter(
 db_query = "What is the account balance for user Alice?"
 routed_key = router.route(db_query)
 response = router.query(db_query)
-print(f"\n--- 3. LayaQueryRouter Direct Dispatch ---")
+print(f"\n--- 3. VeyaQueryRouter Direct Dispatch ---")
 print(f"Query: {db_query}")
 print(f"Routed Engine Key: -> {routed_key}")
 print(f"Engine Response: {response}")
@@ -163,8 +163,8 @@ print(f"Engine Response: {response}")
 # =====================================================================
 # 4. Remote HTTP Server Execution (Zero Heavy Dependencies)
 # =====================================================================
-# Connects to your self-hosted `laya-serve` instance without requiring PyTorch on edge clients.
-remote_selector = LayaSingleSelector(
+# Connects to your self-hosted `veya-serve` instance without requiring PyTorch on edge clients.
+remote_selector = VeyaSingleSelector(
     base_url="http://localhost:8080",
     confidence_threshold=0.85,
     fallback_index=0,

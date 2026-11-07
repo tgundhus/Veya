@@ -15,11 +15,11 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya._compile import compile_model, independent_dims, _fx_config  # noqa: E402
-from laya.agent import Agent, _pad_cuda_compile_batch  # noqa: E402
-from laya.common import DecisionModel  # noqa: E402
+from veya._compile import compile_model, independent_dims, _fx_config  # noqa: E402
+from veya.agent import Agent, _pad_cuda_compile_batch  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
 
-# `torch.fx.experimental._config` only exists where duck sizing does; `laya._compile` degrades
+# `torch.fx.experimental._config` only exists where duck sizing does; `veya._compile` degrades
 # to a no-op without it, so the tests that observe the setting skip rather than assert on a
 # knob this torch does not have.
 fx_config = _fx_config()
@@ -41,7 +41,7 @@ def tiny_model():
                            max_position_embeddings=512, pad_token_id=0, bos_token_id=1, eos_token_id=2,
                            cls_token_id=1, sep_token_id=2)
     encoder = AutoModel.from_config(cfg, attn_implementation="sdpa")
-    # The CPU fixture checks Laya's dynamic dimensions, not ModernBERT's own
+    # The CPU fixture checks Veya's dynamic dimensions, not ModernBERT's own
     # first-forward mutation of reference_compile ("auto" -> False on CPU).
     encoder.config.reference_compile = False
     return DecisionModel(encoder, 1, 2).eval()
@@ -192,8 +192,8 @@ def test_constructor_warms_only_the_active_compiled_path():
     import tempfile
     from pathlib import Path
     from unittest.mock import patch
-    import laya.agent as module
-    from laya import load
+    import veya.agent as module
+    from veya import load
 
     model = tiny_model()
     events = []
@@ -255,19 +255,19 @@ def test_missing_compiler_preserves_wrapper_and_warns_only_during_automatic_warm
     from unittest.mock import patch
     from torch._inductor.exc import InvalidCxxCompiler
     from torch._dynamo.eval_frame import OptimizedModule
-    import laya.agent as module
-    from laya import load
+    import veya.agent as module
+    from veya import load
 
     attempts = []
 
     def missing_compiler(graph, inputs, **kwargs):
         attempts.append(True)
         # Torch versions differ: some take the compiler, others read cpp.cxx.
-        with torch._inductor.config.patch({"cpp.cxx": ("laya-missing-cxx",)}):
+        with torch._inductor.config.patch({"cpp.cxx": ("veya-missing-cxx",)}):
             try:
                 error = InvalidCxxCompiler()
             except TypeError:
-                error = InvalidCxxCompiler("laya-missing-cxx")
+                error = InvalidCxxCompiler("veya-missing-cxx")
         raise error
 
     def compile_without_toolchain(model, **kwargs):
@@ -289,7 +289,7 @@ def test_missing_compiler_preserves_wrapper_and_warns_only_during_automatic_warm
             assert attempts, "automatic warm-up never reached the compile backend"
             assert any(issubclass(w.category, RuntimeWarning)
                        and "InvalidCxxCompiler" in str(w.message)
-                       and "laya-missing-cxx" in str(w.message)
+                       and "veya-missing-cxx" in str(w.message)
                        and "keeping the compiled model" in str(w.message) for w in caught)
             wrapped = agent.model
             assert isinstance(wrapped, OptimizedModule) and wrapped._orig_mod is model
@@ -300,7 +300,7 @@ def test_missing_compiler_preserves_wrapper_and_warns_only_during_automatic_warm
                 try:
                     operation()
                 except Exception as error:
-                    assert "InvalidCxxCompiler" in str(error) and "laya-missing-cxx" in str(error)
+                    assert "InvalidCxxCompiler" in str(error) and "veya-missing-cxx" in str(error)
                 else:
                     raise AssertionError("request or explicit warmup swallowed the compiler failure")
                 assert len(attempts) > calls
@@ -313,7 +313,7 @@ def test_missing_compiler_preserves_wrapper_and_warns_only_during_automatic_warm
             try:
                 explicit.warmup()
             except Exception as error:
-                assert "InvalidCxxCompiler" in str(error) and "laya-missing-cxx" in str(error)
+                assert "InvalidCxxCompiler" in str(error) and "veya-missing-cxx" in str(error)
             else:
                 raise AssertionError("explicit warmup swallowed the compiler failure")
             assert len(attempts) > calls and explicit._compiled
@@ -324,7 +324,7 @@ def test_persistent_cache_is_opt_in_and_respects_the_environment():
     import tempfile
     from pathlib import Path
     from unittest.mock import patch
-    from laya._compile import configure_cache
+    from veya._compile import configure_cache
 
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
@@ -336,7 +336,7 @@ def test_persistent_cache_is_opt_in_and_respects_the_environment():
             compile_model(object())
             assert "TORCHINDUCTOR_CACHE_DIR" not in os.environ
             configure_cache()
-            expected = root / "xdg" / "laya" / "torchinductor"
+            expected = root / "xdg" / "veya" / "torchinductor"
             assert Path(os.environ["TORCHINDUCTOR_CACHE_DIR"]) == expected
             assert expected.is_dir()
             assert compiler.call_args.kwargs == {"dynamic": True}
@@ -347,7 +347,7 @@ def test_persistent_cache_is_opt_in_and_respects_the_environment():
             assert (root / "explicit").is_dir()
             del os.environ["TORCHINDUCTOR_CACHE_DIR"]
             os.environ["XDG_CACHE_HOME"] = "relative-is-invalid"
-            expected = root / ".cache" / "laya" / "torchinductor"
+            expected = root / ".cache" / "veya" / "torchinductor"
             assert Path(configure_cache()) == expected
             assert expected.is_dir()
             del os.environ["TORCHINDUCTOR_CACHE_DIR"]
@@ -358,7 +358,7 @@ def test_persistent_cache_is_opt_in_and_respects_the_environment():
 
 def test_cuda_graph_step_marks_each_forward_and_releases_after_failure():
     from unittest.mock import patch
-    from laya._compile import cuda_graph_step
+    from veya._compile import cuda_graph_step
 
     with patch("torch.compiler.cudagraph_mark_step_begin") as mark:
         try:

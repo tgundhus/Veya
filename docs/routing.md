@@ -11,7 +11,7 @@ see [Structured decisions](structured.md); for lifecycle callbacks, see [Predict
 ## Quick start
 
 ```python
-from laya import Router
+from veya import Router
 
 router = Router()
 
@@ -133,8 +133,8 @@ registered checkpoint loads, is evicted and unloads like a built-in, and is name
 removes one.
 
 ```python
-router = Router(models={"papers": "/models/laya-papers"})
-router.register("tone", ("acme/laya-tone", None), description="tone of voice")
+router = Router(models={"papers": "/models/veya-papers"})
+router.register("tone", ("acme/veya-tone", None), description="tone of voice")
 result = router.predict(state, questions, model="papers")
 ```
 
@@ -214,7 +214,7 @@ number of states passed together to the Agent; results still correspond to the r
 Pass `explain=True` to `route()` or `route_batch()` to include the built-in detector's stage,
 reason and source location. Explicit model/task/language overrides skip detection. Hook-replaced
 decisions retain their own diagnostic; explaining a route does not run detection a second time
-after the hook. The CLI exposes this as `laya --explain` in routing mode.
+after the hook. The CLI exposes this as `veya --explain` in routing mode.
 
 - Use `route()` or `route_batch()` when you need to inspect decisions without loading models.
 - Use `predict()` for a single request and `predict_batch()` for multiple possibly heterogeneous

@@ -1,6 +1,6 @@
-# laya-eval — a reproducible per-language evaluation harness
+# veya-eval — a reproducible per-language evaluation harness
 
-An independent harness for measuring a Laya checkpoint: per-language accuracy and
+An independent harness for measuring a Veya checkpoint: per-language accuracy and
 calibration, with machine-readable per-case output.
 
 It exists because the repository's own benchmark scripts are research code. They
@@ -11,41 +11,41 @@ record behind the published numbers, so they could not be re-derived without a G
 and the original environment.
 
 This addresses the ask in
-Laya issue #35:
+Veya issue #35:
 
 > A fixed prompt format plus a per-language ECE report is exactly what the repo
 > lacks ... Per-case JSON would be very welcome too.
 
 ## Install
 
-Nothing beyond a normal Laya install, plus `datasets`:
+Nothing beyond a normal Veya install, plus `datasets`:
 
 ```bash
-pip install "laya @ git+https://github.com/tgundhus/laya.git" datasets
+pip install "veya @ git+https://github.com/tgundhus/veya.git" datasets
 ```
 
 The harness is deliberately not part of the `laya` package: it is evaluation code,
-it pulls a dataset, and `import laya` should stay dependency-light.
+it pulls a dataset, and `import veya` should stay dependency-light.
 
 ## Use
 
 ```bash
 # one language
-python research/eval/laya_eval.py --model convaiinnovations/laya --langs en
+python research/eval/veya_eval.py --model convaiinnovations/laya --langs en
 
 # several, with a JSON report
-python research/eval/laya_eval.py --model convaiinnovations/laya \
+python research/eval/veya_eval.py --model convaiinnovations/laya \
     --langs en,de,ro --out report.json
 
 # every MASSIVE language
-python research/eval/laya_eval.py --model convaiinnovations/laya --langs all --out all.json
+python research/eval/veya_eval.py --model convaiinnovations/laya --langs all --out all.json
 
 # the multilingual checkpoint
-python research/eval/laya_eval.py --model convaiinnovations/laya \
+python research/eval/veya_eval.py --model convaiinnovations/laya \
     --subfolder multilingual --langs all --out multilingual.json
 
 # a local checkpoint
-python research/eval/laya_eval.py --model ./my-finetune --langs en
+python research/eval/veya_eval.py --model ./my-finetune --langs en
 ```
 
 Output, per language:
@@ -60,7 +60,7 @@ and a JSON document with four parts:
 
 | key | contents |
 |---|---|
-| `config` | checkpoint, device, `max_len`, `head_max_len`, dataset, `per_lang`, `n_opts`, seed, the fixed instructions, the temperatures in force, laya version |
+| `config` | checkpoint, device, `max_len`, `head_max_len`, dataset, `per_lang`, `n_opts`, seed, the fixed instructions, the temperatures in force, veya version |
 | `report` | per language: `n`, `accuracy`, `macro_f1`, `ece`, `mean_confidence`, `acc_at_50_coverage`, `temperature` |
 | `summary` | macro accuracy / ECE / macro-F1 over the languages that ran |
 | `cases` | every individual decision |
@@ -114,7 +114,7 @@ sampling, prompt text, option construction and inference path are all identical 
 the committed run.
 
 The `macro_ece` gap on english is the temperature clamp — `choice:11+` is `0.1006`
-raw and `0.5` as served (Laya issue #208).
+raw and `0.5` as served (Veya issue #208).
 `--unclamped` exists so both regimes can be produced from one tool. The single-language
 view is the same result in miniature (`--langs en --unclamped`):
 
@@ -153,7 +153,7 @@ Ruled out: the option sets (identical digest to the english run), the weights
   is `472` bytes at `sha256 00e35f88…` at every revision from the sweep's timestamp to
   today; the Hub commits in that window are model-card `docs:`/`assets:` only.
 
-It is in the multilingual inference path between `laya 0.2.0` and `0.3.6` and is
+It is in the multilingual inference path between `veya 0.2.0` and `0.3.6` and is
 **not** reconciled. Flagged rather than hidden.
 
 Related: **`head_max_len` is load-bearing for accuracy**, not just for option
@@ -162,17 +162,17 @@ forcing 256 or 512 drops it to 0.79.
 
 ## Tests
 
-`research/eval/test_laya_eval.py` covers the pure functions and runs offline — no
+`research/eval/test_veya_eval.py` covers the pure functions and runs offline — no
 checkpoint, no network:
 
 ```bash
-python research/eval/test_laya_eval.py     # 64 passed, 0 failed
+python research/eval/test_veya_eval.py     # 64 passed, 0 failed
 ```
 
 It pins the upstream constants (seed 13, 20 options, the exact instruction string),
 the determinism of the sampler, that a fresh RNG per language is used, and the
 metric arithmetic, including the `confidence == 0.0` bin boundary that this harness
-shares with `laya.common.ece_score`, `research/scripts/bench_local.py` and
+shares with `veya.common.ece_score`, `research/scripts/bench_local.py` and
 `research/scripts/build_benchmark_nb.py`. That boundary is asserted against all four,
 not just against this harness's own arithmetic.
 
@@ -184,14 +184,14 @@ not just against this harness's own arithmetic.
   100 cases is noisy; raise `--per-lang` and say so when quoting a number.
 * The English checkpoint collapses on non-Latin scripts (see `BENCHMARKS.md`), so a
   low score in one language is not by itself evidence of a misroute — check
-  `laya.lang.analyse` for the script before concluding which checkpoint was used.
+  `veya.lang.analyse` for the script before concluding which checkpoint was used.
 * The `confidence == 0.0` bin boundary is the one
-  Laya PR #39 settled: the first bin is closed
+  Veya PR #39 settled: the first bin is closed
   at the bottom, so `0.0` is counted. This harness used `conf > lo` for every bin until
   the divergence was found, which made it the only one of the four implementations that
-  binned differently. It now matches `laya.common.ece_score`,
+  binned differently. It now matches `veya.common.ece_score`,
   `research/scripts/bench_local.py` and `research/scripts/build_benchmark_nb.py`, and
-  `test_laya_eval.py` asserts that agreement.
+  `test_veya_eval.py` asserts that agreement.
 
 ### The temperature clamp, measured both ways
 
@@ -251,12 +251,12 @@ sits in each slot exactly twice per state. A checkpoint whose answer does not de
 on the order picks the first slot in exactly 1/3 of the decisions, whatever the states
 say; the rate moves only through order dependence.
 
-Both read raw marker logits (before temperature) through `laya_eval.score_cases`,
+Both read raw marker logits (before temperature) through `veya_eval.score_cases`,
 and the script first compares that path with `Agent.system_one` on every state.
 
 ### Measured on the shipped checkpoints
 
-CPU, fp32, `convaiinnovations/laya@1c5edc1`, laya 0.3.7. Full output, per state and
+CPU, fp32, `convaiinnovations/laya@1c5edc1`, veya 0.3.7. Full output, per state and
 per configuration: `research/results/presentation_checks_shipped.json`.
 
 | checkpoint | `score_slot0_identical` (leave-one-out) | `score_first_slot_permuted` (leave-one-out) | verdict |
@@ -302,7 +302,7 @@ python research/eval/presentation_checks.py --model convaiinnovations/laya \
     --subfolder multilingual --lang ja,ko,hi,tr --out langs.json
 ```
 
-CPU, fp32, `convaiinnovations/laya@55cf4c4` (subfolder `multilingual`), laya 0.3.21.
+CPU, fp32, `convaiinnovations/laya@55cf4c4` (subfolder `multilingual`), veya 0.3.21.
 Full output: `research/results/presentation_checks_langs.json`. The same run without
 `--lang` reproduces the English row above exactly.
 
@@ -330,7 +330,7 @@ is the same, −0.20), and 3 options are reported beside it. The control runs in
 the default English report is unchanged. With the control, the parity check also
 compares the choice probabilities with `Agent.system_one`.
 
-CPU, fp32, `convaiinnovations/laya@55cf4c4`, laya 0.3.21. Full output:
+CPU, fp32, `convaiinnovations/laya@55cf4c4`, veya 0.3.21. Full output:
 `research/results/presentation_checks_choice.json`. `Router` picks `english` for the
 English states and `multilingual` for the rest; every row runs on the checkpoint named.
 
@@ -392,7 +392,7 @@ that the control stays out of the default run.
 ## Metamorphic option-order robustness (experimental)
 
 `metamorphic.py` adds the initial scope of
-Laya issue #244: **choice option order robustness**, and the label-renaming transformation from Laya issue #512, without changing model/runtime behavior. Paraphrases, structured-state permutations, `score` and `noul` perturbations are intentionally deferred. Run from the repository root after installing Laya and `datasets`:
+Veya issue #244: **choice option order robustness**, and the label-renaming transformation from Veya issue #512, without changing model/runtime behavior. Paraphrases, structured-state permutations, `score` and `noul` perturbations are intentionally deferred. Run from the repository root after installing Veya and `datasets`:
 
 ```bash
 python -m research.eval.metamorphic --model convaiinnovations/laya \
@@ -416,7 +416,7 @@ Each MASSIVE case uses the existing harness's sampler and produces three inputs:
 
 Instructions and state are otherwise unchanged. Option key/value pairs are moved together during permutation. Every result is mapped back to the original semantic option order **before** predictions and metrics are computed, and each variant records the explicit bidirectional mapping so the comparison is auditable. Exact ties choose the first canonical option. The RNG starts fresh per language; `--seed` controls both sampling and transformations. `--batch-size` bounds the number of forward-pass inputs and does not alter the generated variants. Model inference may still have small floating-point differences across devices and batch sizes.
 
-The JSON contains `config`, per-language `report`, and full `cases`. Each case saves its original input, canonical keys and optional gold index; each variant saves its presented keys, explicit `canonical_to_transformed` and `transformed_to_canonical` label mappings, slot-to-canonical indices, complete **canonical-order** probability vector, prediction, confidence, correctness (or `null`), and comparison to baseline. Probabilities are not rounded. The config records model/subfolder, temperature mode and values, truncation settings, dataset, seed and batch size. For reproducible checkpoint comparisons, use a pinned local snapshot and retain the environment versions alongside the report. `--unclamped` has the same meaning as in `laya_eval`. If any language fails, its error is saved and the command exits nonzero while retaining successful languages.
+The JSON contains `config`, per-language `report`, and full `cases`. Each case saves its original input, canonical keys and optional gold index; each variant saves its presented keys, explicit `canonical_to_transformed` and `transformed_to_canonical` label mappings, slot-to-canonical indices, complete **canonical-order** probability vector, prediction, confidence, correctness (or `null`), and comparison to baseline. Probabilities are not rounded. The config records model/subfolder, temperature mode and values, truncation settings, dataset, seed and batch size. For reproducible checkpoint comparisons, use a pinned local snapshot and retain the environment versions alongside the report. `--unclamped` has the same meaning as in `veya_eval`. If any language fails, its error is saved and the command exits nonzero while retaining successful languages.
 
 Metrics are grouped under `option_order`, `label_rename` and `overall`:
 
@@ -434,9 +434,9 @@ Metrics are grouped under `option_order`, `label_rename` and `overall`:
 
 ### Option budget and rendering information
 
-At high option counts Laya's head token budget can cut the options themselves, and two options that share a prefix can come out of the cut as the same token span, which removes the question's ability to tell them apart. This matters for `label_rename`: a shorter label leaves more room for its description, so the baseline and the renamed input can survive the budget with **different content**. For `iot_hue_lightoff: iot hue lightoff` a roomy budget keeps the semantic description on both sides, but a tight budget can keep `iot_` on the baseline and `A: t` on the renamed variant -- no longer information-equivalent.
+At high option counts Veya's head token budget can cut the options themselves, and two options that share a prefix can come out of the cut as the same token span, which removes the question's ability to tell them apart. This matters for `label_rename`: a shorter label leaves more room for its description, so the baseline and the renamed input can survive the budget with **different content**. For `iot_hue_lightoff: iot hue lightoff` a roomy budget keeps the semantic description on both sides, but a tight budget can keep `iot_` on the baseline and `A: t` on the renamed variant -- no longer information-equivalent.
 
-This section is an evaluation-side follow-up motivated by Laya issue #543, Laya issue #517 and Laya issue #569. #543 raised option collapse at high option counts and was closed as addressed at runtime in v0.3.21 via #569/#542: the model side now reports, for an individual inference, which options lost a token span of their own. That report does not say whether the baseline and transformed variants of a *metamorphic comparison* still carry equivalent option information, which is the question this diagnostic answers -- per comparison, so the resulting drift is not read as pure lexical-label sensitivity.
+This section is an evaluation-side follow-up motivated by Veya issue #543, Veya issue #517 and Veya issue #569. #543 raised option collapse at high option counts and was closed as addressed at runtime in v0.3.21 via #569/#542: the model side now reports, for an individual inference, which options lost a token span of their own. That report does not say whether the baseline and transformed variants of a *metamorphic comparison* still carry equivalent option information, which is the question this diagnostic answers -- per comparison, so the resulting drift is not read as pure lexical-label sensitivity.
 
 With a real model, the CLI and `evaluate_variants()` derive a budget probe from the agent (`agent.cfg`) and attach a budget diagnostic to every variant, measured by rendering the options through the same tokenizer/`build_sequence` budget path the model input uses. `evaluate()` has no agent, so it probes only when it is passed an explicit `budget`:
 
@@ -498,7 +498,7 @@ This measures whether a signal ranks errors below correct answers; it does not s
 
 #### Measured
 
-MASSIVE `en`, `--per-lang 300 --n-opts 20`, seed 13, laya 0.3.21, CPU (65 wrong answers). Differences vs `confidence` are bootstrap 95% intervals over cases (2,000 resamples):
+MASSIVE `en`, `--per-lang 300 --n-opts 20`, seed 13, veya 0.3.21, CPU (65 wrong answers). Differences vs `confidence` are bootstrap 95% intervals over cases (2,000 resamples):
 
 | Signal | AUROC | vs `confidence` |
 |---|---:|---:|

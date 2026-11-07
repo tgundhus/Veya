@@ -1,10 +1,10 @@
 """Required local cache failures must surface as errors, never alternate predictions."""
 import pytest
 
-from laya import DecisionCache, Router
-from laya import serve
-from laya.consistency import _MemoryStore
-from laya.mcp.tools import ToolError, laya_predict, laya_predict_batch
+from veya import DecisionCache, Router
+from veya import serve
+from veya.consistency import _MemoryStore
+from veya.mcp.tools import ToolError, veya_predict, veya_predict_batch
 
 
 QUESTIONS = {"keep": {"type": "noul", "instructions": "Keep this?"}}
@@ -48,20 +48,20 @@ def broken_router(operation):
 
 @pytest.fixture(autouse=True)
 def local_environment(monkeypatch):
-    for name in ("LAYA_CACHE", "LAYA_CACHE_PATH", "LAYA_CACHE_REQUIRED", "LAYA_CACHE_FINGERPRINT",
-                 "LAYA_API_KEY", "LAYA_MICROBATCH_MAX_STATES", "LAYA_TOURNAMENT_GROUP"):
+    for name in ("VEYA_CACHE", "VEYA_CACHE_PATH", "VEYA_CACHE_REQUIRED", "VEYA_CACHE_FINGERPRINT",
+                 "VEYA_API_KEY", "VEYA_MICROBATCH_MAX_STATES", "VEYA_TOURNAMENT_GROUP"):
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
 
 
 @pytest.mark.parametrize("raw", ["1", "true", "YES", " on "])
 def test_required_deployment_is_explicit_and_reported(monkeypatch, raw):
-    monkeypatch.setenv("LAYA_CACHE", "1")
-    monkeypatch.setenv("LAYA_CACHE_REQUIRED", raw)
+    monkeypatch.setenv("VEYA_CACHE", "1")
+    monkeypatch.setenv("VEYA_CACHE_REQUIRED", raw)
     router = Router()
     serve._configure_decision_cache(router)
     try:
-        assert router._laya_decision_cache.required
+        assert router._veya_decision_cache.required
         assert serve._decision_cache_report(router)["decision_cache"]["required"] is True
     finally:
         serve._close_decision_cache(router)
@@ -69,22 +69,22 @@ def test_required_deployment_is_explicit_and_reported(monkeypatch, raw):
 
 @pytest.mark.parametrize("raw", ["0", "false", "NO", " off ", ""])
 def test_optional_deployment_remains_default(monkeypatch, raw):
-    monkeypatch.setenv("LAYA_CACHE", "1")
-    monkeypatch.setenv("LAYA_CACHE_REQUIRED", raw)
+    monkeypatch.setenv("VEYA_CACHE", "1")
+    monkeypatch.setenv("VEYA_CACHE_REQUIRED", raw)
     router = Router()
     serve._configure_decision_cache(router)
     try:
-        assert not router._laya_decision_cache.required
+        assert not router._veya_decision_cache.required
     finally:
         serve._close_decision_cache(router)
 
 
 def test_required_deployment_cannot_silently_disable_caching(monkeypatch):
-    monkeypatch.setenv("LAYA_CACHE_REQUIRED", "true")
-    with pytest.raises(ValueError, match="LAYA_CACHE_REQUIRED"):
+    monkeypatch.setenv("VEYA_CACHE_REQUIRED", "true")
+    with pytest.raises(ValueError, match="VEYA_CACHE_REQUIRED"):
         serve._configure_decision_cache(Router())
-    monkeypatch.setenv("LAYA_CACHE_REQUIRED", "tru")
-    with pytest.raises(ValueError, match="LAYA_CACHE_REQUIRED"):
+    monkeypatch.setenv("VEYA_CACHE_REQUIRED", "tru")
+    with pytest.raises(ValueError, match="VEYA_CACHE_REQUIRED"):
         serve._configure_decision_cache(Router())
 
 
@@ -110,8 +110,8 @@ def test_mcp_required_errors_are_sanitized(operation, batch):
     request = {**REQUEST, "state": {"text": "same input"}}
     with pytest.raises(ToolError) as failure:
         if batch:
-            laya_predict_batch([request], router=router)
+            veya_predict_batch([request], router=router)
         else:
-            laya_predict(**request, router=router)
+            veya_predict(**request, router=router)
     assert failure.value.code == "decision_cache_unavailable"
     assert "private-storage-location" not in str(failure.value)

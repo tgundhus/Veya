@@ -9,8 +9,8 @@ import json
 import math
 import time
 
-from _common import laya, banner, device_line, heading, load
-from laya.common import QTYPES, temp_bucket
+from _common import veya, banner, device_line, heading, load
+from veya.common import QTYPES, temp_bucket
 
 banner("40", "Caching and monitoring", """
     The model is stateless and deterministic, so the same state and the same question
@@ -18,7 +18,7 @@ banner("40", "Caching and monitoring", """
     the inputs, keep the result, and pay for the forward pass once.
 
     Part A measures a real forward pass against a cache hit. Part B runs 15 tickets through
-    the triage preset and gates on `answer_confidence`, the probability of the answer Laya
+    the triage preset and gates on `answer_confidence`, the probability of the answer Veya
     reports, to sort every answer into auto-action, human review or escalation -- the
     operational shape example 41 builds on. Part C then prints the temperature this
     checkpoint actually applies to each of those five questions, because that is what decides
@@ -28,7 +28,7 @@ banner("40", "Caching and monitoring", """
 
 agent = load("english")
 device_line(agent)
-QUESTIONS = laya.triage_questions()
+QUESTIONS = veya.triage_questions()
 
 # --- Part A: an in-memory answer cache -----------------------------------------------------
 def cache_key(state, questions):

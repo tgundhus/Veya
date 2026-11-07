@@ -1,6 +1,6 @@
 """Example 04 -- routing with a choice question.
 
-A `choice` question offers a closed set of labels; Laya returns the winner plus a
+A `choice` question offers a closed set of labels; Veya returns the winner plus a
 probability for every label, all from one forward pass. Nothing is generated, so there
 is no text to parse and no label it can invent outside the `criteria` map.
 """

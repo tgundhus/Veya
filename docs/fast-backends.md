@@ -2,14 +2,14 @@
 
 ## TileLang portability
 
-All five kernels in `laya/tl_kernels.py` can execute on TileLang's CPU (`c`)
+All five kernels in `veya/tl_kernels.py` can execute on TileLang's CPU (`c`)
 target through `compile_cpu`. This is an explicit, scalar fp32 specialization,
 not a CPU acceleration backend for `Agent.accelerate`. It requires TileLang and
 a local C++ compiler. It introduces no runtime service dependency.
 
 ```python
 import torch
-from laya import tl_kernels as K
+from veya import tl_kernels as K
 
 A = torch.randn(17, 67)
 W = torch.randn(70, 67)
@@ -117,9 +117,9 @@ scopes, parallel loops, swizzles and `FAST` options are unchanged. Default fp32
 GPU calls still raise `ValueError`.
 
 Before/after runs used the original module extracted with
-`git show fa9a2a7:laya/tl_kernels.py` and the changed module, respectively.
-The original was loaded as `laya.tl_kernels` via `importlib` for baseline runs;
-all other Laya code and the Python environment stayed the same.
+`git show fa9a2a7:veya/tl_kernels.py` and the changed module, respectively.
+The original was loaded as `veya.tl_kernels` via `importlib` for baseline runs;
+all other Veya code and the Python environment stayed the same.
 
 - `python -m pytest tests/test_fast.py -q`, with the full-forward tests configured
   to load the cached English checkpoint identified below:
@@ -151,19 +151,19 @@ No multilingual or typed-decisions checkpoint comparison is claimed here.
 
 ### Repository checks
 
-All commands used `/home/ckl/projects/S/laya/.venv/bin/python`; `ruff` and
+All commands used `/home/ckl/projects/S/veya/.venv/bin/python`; `ruff` and
 `zensical` came from that virtualenv's `bin` directory.
 
 | Command | Result |
 | --- | --- |
-| `ruff check laya/ --select=E9,F63,F7,F82,F401,F811 --line-length=120` | `All checks passed!` |
-| `python -m compileall -q laya/ tests/` | Exit 0, no output |
+| `ruff check veya/ --select=E9,F63,F7,F82,F401,F811 --line-length=120` | `All checks passed!` |
+| `python -m compileall -q veya/ tests/` | Exit 0, no output |
 | `python tests/test_router.py` | 703 passed, 0 failed |
 | `python tests/test_criteria.py` | 198 passed, 0 failed |
 | `python tests/test_hooks.py` | 240 passed, 0 failed |
 | `python tests/test_hooks_api.py` | 415 passed, 0 failed |
 | `python tests/test_packaging.py` | 131 passed, 0 failed |
-| `uv pip install --python /home/ckl/projects/S/laya/.venv/bin/python -r requirements-docs.txt` | Checked 3 packages (already installed); virtualenv has no pip |
+| `uv pip install --python /home/ckl/projects/S/veya/.venv/bin/python -r requirements-docs.txt` | Checked 3 packages (already installed); virtualenv has no pip |
 | `zensical build --strict --clean` | `No issues found`; no `griffe:` lines |
 
 The new suite is registered as requiring the optional TileLang extra and a C++
@@ -179,7 +179,7 @@ the additive keyword-only CPU selector, unchanged GPU dtype default, and
 Tokenization, padding, temperature calibration and answer formatting remain the caller's job;
 this does not add an `Agent` backend or change its default execution path.
 
-The closed Laya PR #472 documented the earlier dtype
+The closed Veya PR #472 documented the earlier dtype
 blocker. The action head's pooled state and confidence features are computed in fp32, even
 when a model's weights are explicitly bf16. Without autocast, the first action linear therefore
 received an fp32 input and bf16 weights. The forward now casts the concatenated input to the
@@ -200,10 +200,10 @@ AOTInductor APIs or a C++ compiler produces an explicit `SKIP`; compilation and 
 on a supported installation fail the check.
 
 ```bash
-python scripts/check_aoti.py --output-dir /tmp/laya-aoti-smoke
-HF_HUB_OFFLINE=1 TORCHINDUCTOR_CACHE_DIR=/tmp/laya-aoti/cache \
+python scripts/check_aoti.py --output-dir /tmp/veya-aoti-smoke
+HF_HUB_OFFLINE=1 TORCHINDUCTOR_CACHE_DIR=/tmp/veya-aoti/cache \
   python scripts/check_aoti.py --model /path/to/local/multilingual \
-  --output-dir /tmp/laya-aoti
+  --output-dir /tmp/veya-aoti
 ```
 
 The output directory holds `decision.pt2`, `results.json`, `inputs.pt` and `eager.pt`. The JSON

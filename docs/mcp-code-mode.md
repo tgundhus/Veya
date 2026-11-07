@@ -19,19 +19,19 @@ hosted sandbox, Node.js installation or external execution API is required.
 
 ```bash
 python -m pip install "veya[codemode] @ git+https://github.com/tgundhus/Veya.git"
-laya-mcp-server --mode code
+veya-mcp-server --mode code
 ```
 
 The lightweight ONNX distribution also supports its `codemode` extra and
-`laya-onnx-mcp --mode code`. Core ONNX inference still needs neither Torch nor
+`veya-onnx-mcp --mode code`. Core ONNX inference still needs neither Torch nor
 Transformers. Pin a reviewed source revision for deployment.
 
-`LAYA_MCP_MODE=code` selects the same mode. Valid values are `classic` and `code`;
+`VEYA_MCP_MODE=code` selects the same mode. Valid values are `classic` and `code`;
 `--mode` takes precedence. Invalid values fail startup. Resource flags apply only
 to code mode and reject invalid or nonpositive values before model loading:
 
 ```bash
-laya-mcp-server --mode code --code-wall-seconds 120 --code-cpu-seconds 2 \
+veya-mcp-server --mode code --code-wall-seconds 120 --code-cpu-seconds 2 \
   --code-memory-mib 64 --code-max-calls 32
 ```
 
@@ -41,9 +41,9 @@ An MCP client configuration can select the single-tool interface:
 {
   "mcpServers": {
     "veya": {
-      "command": "laya-mcp-server",
+      "command": "veya-mcp-server",
       "args": ["--mode", "code"],
-      "env": {"LAYA_PRELOAD": "0", "LAYA_DEVICE": "cpu"}
+      "env": {"VEYA_PRELOAD": "0", "VEYA_DEVICE": "cpu"}
     }
   }
 }
@@ -178,10 +178,10 @@ Keep the optional runtime patched and run the service with appropriate OS permis
 ## Python embedding and verification
 
 The lightweight distribution exposes the same classes through
-`laya_onnx.mcp.code_mode`; install `veya-onnx[codemode]` for that interface.
+`veya_onnx.mcp.code_mode`; install `veya-onnx[codemode]` for that interface.
 
 ```python
-from laya.mcp.code_mode import CodeModeLimits, CodeModeRunner
+from veya.mcp.code_mode import CodeModeLimits, CodeModeRunner
 
 runner = CodeModeRunner(CodeModeLimits(wall_seconds=60, max_calls=16))
 try:
@@ -207,7 +207,7 @@ faster encoder inference, and no hosted-LLM latency or token saving is assumed.
 ## Recorded local checkpoint comparison
 
 ```bash
-python research/scripts/bench_code_mode.py --checkpoint /models/laya \
+python research/scripts/bench_code_mode.py --checkpoint /models/veya \
   --requests 8 --repeats 3 --out research/results/code_mode_cpu.json
 ```
 

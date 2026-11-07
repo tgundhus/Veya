@@ -4,7 +4,7 @@ Routes each incoming item, answers a general triage set on the language-appropri
 checkpoint, then hands the same state to `typed-decisions` for a specialist action.
 """
 
-from _common import laya, banner, heading, router
+from _common import veya, banner, heading, router
 
 banner("38", "A multi-checkpoint pipeline", """
     One `predict()` is one checkpoint answering one question set. Real traffic often needs
@@ -17,16 +17,16 @@ banner("38", "A multi-checkpoint pipeline", """
                         `multilingual`, whichever the item's language selects;
       3. specialist  -- the same state goes to `typed-decisions`, which `Router` picks
                         because the question-id set is exactly the `customer_service`
-                        workflow signature from `laya/router.py`.
+                        workflow signature from `veya/router.py`.
 
     Stage 2 answers "what is this and how bad is it"; stage 3 answers "what should the agent
     do". Two items, one English and one German, so the general stage switches checkpoints
     while the specialist stage does not.
     """)
 
-GENERAL = laya.triage_questions()
+GENERAL = veya.triage_questions()
 
-# These five ids are the real `customer_service` signature from `laya/router.py`. Router
+# These five ids are the real `customer_service` signature from `veya/router.py`. Router
 # matches on the id set alone, which is what selects the fine-tuned checkpoint; the wording
 # below is ours.
 SPECIALIST = {

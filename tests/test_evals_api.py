@@ -1,4 +1,4 @@
-"""API-stability guard for laya.evals: an accidental rename or a torch import fails here.
+"""API-stability guard for veya.evals: an accidental rename or a torch import fails here.
 
 Run: python tests/test_evals_api.py
 """
@@ -12,7 +12,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import evals  # noqa: E402
+from veya import evals  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -51,9 +51,9 @@ for name in ("Dataset", "Example", "EvalError", "EvalReport", "evaluate", "ece",
              # caller.
              "is_coverage_metric", "coverage_definition_conflict",
              "COVERAGE_METRIC_DEFINITION"):
-    check_true("laya.evals.%s exists" % name, hasattr(evals, name))
+    check_true("veya.evals.%s exists" % name, hasattr(evals, name))
 
-check("REPORT_SCHEMA", evals.REPORT_SCHEMA, "laya-evals-report/1")
+check("REPORT_SCHEMA", evals.REPORT_SCHEMA, "veya-evals-report/1")
 check("the coverage-cut definition this code computes", evals.COVERAGE_METRIC_DEFINITION, 2)
 check_true("EvalReport.comparable_to is part of the report contract",
            callable(getattr(evals.EvalReport, "comparable_to", None)))
@@ -63,7 +63,7 @@ check("EvalReport fields are unchanged", [f.name for f in dataclasses.fields(eva
 # --------------------------------------------------------------- evaluate's call signature
 # `evaluate` is the harness entry point callers extend from their own scripts, so its parameter
 # names and order are the contract. `sort_by_length` is core's #294 forward-pass grouping knob
-# reaching a scored run through `laya-evals run --sort-by-length`; it is appended, never inserted,
+# reaching a scored run through `veya-evals run --sort-by-length`; it is appended, never inserted,
 # because a caller that passed `on_error` or `config` positionally must still mean the same thing.
 # `min_confidence` extends the same rule: it is appended after `sort_by_length`, defaults to None
 # (an unset abstention threshold means "score the raw argmax", which is what a pre-#361 run did),
@@ -89,7 +89,7 @@ check_true("evaluate: the abstention knob sits after the batch size it may apply
 # never applied -- the metrics stay identical (the gate flags, it does not overwrite the argmax),
 # but the report itself would lie -- so the CLI runner shapes have to accept the kwarg under the
 # same name the guard on `evaluate` checks.
-from laya import evals_cli  # noqa: E402
+from veya import evals_cli  # noqa: E402
 
 for label, fn in (("RouterRunner.predict_batch", evals_cli.RouterRunner.predict_batch),
                   ("OnnxRunner.predict_batch", evals_cli.OnnxRunner.predict_batch)):
@@ -128,9 +128,9 @@ _router = _RecordingRouter()
 # --------------------------------------------------------------- torch stays out of import
 probe = subprocess.run(
     [sys.executable, "-c",
-     "import sys; import laya.evals; sys.exit(1 if 'torch' in sys.modules else 0)"],
+     "import sys; import veya.evals; sys.exit(1 if 'torch' in sys.modules else 0)"],
     cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-check("import laya.evals does not import torch", probe.returncode, 0)
+check("import veya.evals does not import torch", probe.returncode, 0)
 
 # --------------------------------------------------------------- argument documentation
 # `_build_parser` is what a caller reads before running anything: argparse prints each
@@ -159,7 +159,7 @@ def _subparsers(parser):
 
 
 _subs = _subparsers(evals_cli._build_parser())
-check("laya-evals subcommands", sorted(_subs), ["agreement", "compare", "evidence", "run", "validate"])
+check("veya-evals subcommands", sorted(_subs), ["agreement", "compare", "evidence", "run", "validate"])
 
 _unhelped, _unstated, _options = [], [], {}
 for _sub, _parser in sorted(_subs.items()):
@@ -182,16 +182,16 @@ for _sub, _parser in sorted(_subs.items()):
                              action.help):
                 _unstated.append("%s (default %r)" % (site, action.default))
 
-check("every laya-evals argument carries a help string", sorted(_unhelped), [])
-check("every laya-evals default is stated in its own help", sorted(_unstated), [])
+check("every veya-evals argument carries a help string", sorted(_unhelped), [])
+check("every veya-evals default is stated in its own help", sorted(_unstated), [])
 
 _documented = sorted("%s %s" % (sub, opt) for sub, opts in _options.items() for opt in opts
                      if opt not in _PAGE_FLAGS)
-check("every laya-evals option is named in docs/evals.md", _documented, [])
+check("every veya-evals option is named in docs/evals.md", _documented, [])
 
 _advertised = []
 for line in _PAGE.splitlines():
-    match = re.search(r"laya-evals\s+([a-z]+)", line)
+    match = re.search(r"veya-evals\s+([a-z]+)", line)
     if not match or match.group(1) not in _options:
         continue
     _advertised += ["%s %s" % (match.group(1), flag)

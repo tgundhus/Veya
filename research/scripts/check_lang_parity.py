@@ -3,7 +3,7 @@
 The corpus is every utterance of the mteb/amazon_massive_intent test split in all 51 languages,
 long texts made by joining utterances of one language (around 2,000 characters), and each
 utterance as the dict state `{"utterance": ...}` the Router also sees. Each checkout runs
-`laya.lang.analyse` over it in its own subprocess; the results are compared one by one.
+`veya.lang.analyse` over it in its own subprocess; the results are compared one by one.
 
     git worktree add ../laya-main main
     python research/scripts/check_lang_parity.py --base ../laya-main --out lang_parity.json
@@ -25,8 +25,8 @@ DATASET = "mteb/amazon_massive_intent"
 WORKER = r"""
 import json, sys, time
 sys.path.insert(0, %(root)r)
-from laya.lang import analyse
-import laya
+from veya.lang import analyse
+import veya
 corpus = json.load(open(%(corpus)r, encoding="utf-8"))
 out, t_cpu = [], {}
 for kind, items in corpus.items():
@@ -34,7 +34,7 @@ for kind, items in corpus.items():
     for x in items:
         out.append(json.dumps(analyse(x), sort_keys=True, ensure_ascii=False))
     t_cpu[kind] = time.thread_time() - t
-json.dump({"laya_file": laya.__file__, "results": out, "cpu_s": t_cpu}, open(%(result)r, "w", encoding="utf-8"))
+json.dump({"laya_file": veya.__file__, "results": out, "cpu_s": t_cpu}, open(%(result)r, "w", encoding="utf-8"))
 """
 
 

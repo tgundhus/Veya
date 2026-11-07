@@ -7,8 +7,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import laya  # noqa: E402
-from laya.structured import (  # noqa: E402
+import veya  # noqa: E402
+from veya.structured import (  # noqa: E402
     SchemaError,
     answers_to_json,
     answer_to_pydantic,
@@ -218,7 +218,7 @@ check_true("decide/details high conf flag unset", det.answers["department"].get(
 # the details artifact, so the number that filter reads has to be the one the gate uses.
 #
 # `DecisionResult.confidence` is built from the answer's `confidence` field, which is normalized
-# entropy: `laya/common.py` calls it "not calibrated: it is not what temperature scaling fits and
+# entropy: `veya/common.py` calls it "not calibrated: it is not what temperature scaling fits and
 # not what the reported ECE measures", `tests/test_confidence.py` pins that a two-option
 # distribution reads 0.90 on a `noul` and 0.53 on an equivalent `choice`, and #394 is an open issue
 # saying a confidence threshold does not transfer across option counts -- which is the entropy
@@ -342,7 +342,7 @@ check("batch/forwards predict kwargs", batch_runner.calls[0]["kwargs"],
 
 # return_details: one DecisionResult per state with the usual fields
 details = decide_batch(FakeBatchRunner(BATCH_ANSWERS), STATES, schema=SCHEMA, return_details=True)
-check_true("batch/details are DecisionResult", all(isinstance(d, laya.DecisionResult) for d in details))
+check_true("batch/details are DecisionResult", all(isinstance(d, veya.DecisionResult) for d in details))
 check("batch/details values", [d.values["department"] for d in details], ["billing", "sales"])
 check("batch/details confidence", details[0].confidence["department"], 0.9)
 check("batch/details routing", details[0].routing, {"model": "english"})
@@ -394,7 +394,7 @@ class StubCheckpoint:
 
     def predict_batch(self, states, questions, **kwargs):
         self.calls.append({"states": list(states), "kwargs": kwargs})
-        return [{"model": "laya-rl-agent", "usage": {"input_tokens": 1, "output_tokens": 0},
+        return [{"model": "veya-rl-agent", "usage": {"input_tokens": 1, "output_tokens": 0},
                  "answers": BATCH_ANSWERS[s]} for s in states]
 
     def system_one(self, state, questions, **kwargs):
@@ -404,7 +404,7 @@ class StubCheckpoint:
 
 
 def stub_router():
-    router = laya.Router()
+    router = veya.Router()
     stubs = {name: StubCheckpoint(name) for name in ("english", "multilingual")}
     for name, stub in stubs.items():
         router.attach(name, stub)
@@ -499,14 +499,14 @@ except ImportError:
 
 
 # --------------------------------------------------------------- exports and methods
-check("export/decide", callable(laya.decide), True)
-check("export/decide_batch", callable(laya.decide_batch), True)
-check("export/DecisionResult", hasattr(laya, "DecisionResult"), True)
-check("method/Agent.decide", callable(getattr(laya.Agent, "decide", None)), True)
-check("method/Agent.decide_batch", callable(getattr(laya.Agent, "decide_batch", None)), True)
-check("method/Router.decide", callable(getattr(laya.Router, "decide", None)), True)
-check("method/Router.decide_batch", callable(getattr(laya.Router, "decide_batch", None)), True)
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+check("export/decide", callable(veya.decide), True)
+check("export/decide_batch", callable(veya.decide_batch), True)
+check("export/DecisionResult", hasattr(veya, "DecisionResult"), True)
+check("method/Agent.decide", callable(getattr(veya.Agent, "decide", None)), True)
+check("method/Agent.decide_batch", callable(getattr(veya.Agent, "decide_batch", None)), True)
+check("method/Router.decide", callable(getattr(veya.Router, "decide", None)), True)
+check("method/Router.decide_batch", callable(getattr(veya.Router, "decide_batch", None)), True)
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 check("method/ONNXAgent.decide", callable(getattr(ONNXAgent, "decide", None)), True)
 

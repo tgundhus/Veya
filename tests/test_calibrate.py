@@ -19,8 +19,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.agent import Agent, load  # noqa: E402
-from laya.calibrate import (  # noqa: E402
+from veya.agent import Agent, load  # noqa: E402
+from veya.calibrate import (  # noqa: E402
     CALIBRATION_VERSION,
     ECE_HOLDOUT_FRAC,
     MIN_BUCKET_N,
@@ -39,9 +39,9 @@ from laya.calibrate import (  # noqa: E402
     fit_temperatures,
     records_from_labeled,
 )
-from laya.common import QTYPES, TEMP_MAX, TEMP_MIN, ece_score, temp_bucket  # noqa: E402
-import laya.calibrate as _calibrate  # noqa: E402
-import laya.agent as _agent_module  # noqa: E402
+from veya.common import QTYPES, TEMP_MAX, TEMP_MIN, ece_score, temp_bucket  # noqa: E402
+import veya.calibrate as _calibrate  # noqa: E402
+import veya.agent as _agent_module  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -333,7 +333,7 @@ _CFG = {
     "encoder": "answerdotai/ModernBERT-large",
     "head_layers": 2,
     "max_len": 512,
-    "model_name": "laya",
+    "model_name": "veya",
     "temperature": [9.0, 9.0, 9.0],
     "temperature_by_options": {"choice:2": 9.0},
 }
@@ -366,7 +366,7 @@ check("save/version", payload["version"], CALIBRATION_VERSION)
 check("save/model_id", payload["model_id_or_path"], "convaiinnovations/laya")
 check("save/subfolder", payload["subfolder"], None)
 check("save/config encoder", payload["config"]["encoder"], "answerdotai/ModernBERT-large")
-check("save/config model_name", payload["config"]["model_name"], "laya")
+check("save/config model_name", payload["config"]["model_name"], "veya")
 check_true("save/config omits temperature", "temperature" not in payload["config"])
 check_true(
     "save/config omits temperature_by_options",
@@ -563,7 +563,7 @@ check(
     boundary_bins["noul:2"]["values"][18],
 )
 
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 onnx_boundary = ONNXAgent.__new__(ONNXAgent)
 onnx_boundary.temperature = [1.0, 1.0, 1.0]
@@ -943,13 +943,13 @@ check("records/noul logits unscaled", labeled[1][1].tolist(), [2.0, 4.0])
 
 
 # public exports stay lazy: importing the package must not import torch for these names
-import laya as _laya  # noqa: E402
+import veya as _veya  # noqa: E402
 for name in ("fit_temperatures", "fit_one_temperature", "fit_temperature_map"):
-    check_true("export/%s in __all__" % name, name in _laya.__all__)
-    check_true("export/%s attr" % name, hasattr(_laya, name))
+    check_true("export/%s in __all__" % name, name in _veya.__all__)
+    check_true("export/%s attr" % name, hasattr(_veya, name))
     check(
         "export/%s lazy table" % name,
-        _laya._LAZY_ATTRS.get(name),
+        _veya._LAZY_ATTRS.get(name),
         (".calibrate", name),
     )
 

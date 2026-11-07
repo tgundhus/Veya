@@ -5,7 +5,7 @@ CI next to the other suites. The model-dependent paths (`score_cases`,
 `run_language`) are exercised by `tests/test_local_e2e.py` when a checkpoint is
 present.
 
-Run: python research/eval/test_laya_eval.py
+Run: python research/eval/test_veya_eval.py
 """
 import os
 import random
@@ -13,7 +13,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from research.eval.laya_eval import (  # noqa: E402
+from research.eval.veya_eval import (  # noqa: E402
     ECE_BINS, INSTRUCTIONS, N_OPTS, SEED, build_case, build_suite, ece, macro_f1,
     render_label, summarise, temperature_for,
 )
@@ -106,7 +106,7 @@ check("ece/one sample", round(ece([1.0], [1.0]), 4), 0.0)
 # Bin boundary: the first bin is closed at the bottom, so conf == 0.0 IS counted. This
 # harness tested `conf > lo` for every bin until the divergence was found, which made it
 # the only one of the four implementations that binned differently --
-# `laya.common.ece_score`, `research/scripts/bench_local.py` and
+# `veya.common.ece_score`, `research/scripts/bench_local.py` and
 # `research/scripts/build_benchmark_nb.py` all settled on this boundary in #39.
 check("ece/conf==0.0 is binned (matches the other three)",
       round(ece([0.0, 0.0], [1.0, 1.0]), 4), 1.0)
@@ -140,7 +140,7 @@ class _FakeAgent:
 
 
 _fa = _FakeAgent()
-from laya.common import QTYPES  # noqa: E402
+from veya.common import QTYPES  # noqa: E402
 
 check("temp/clamped path is used by default",
       temperature_for(_fa, QTYPES["choice"], 20), 0.5)

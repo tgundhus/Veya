@@ -22,8 +22,8 @@ from tokenizers import Tokenizer  # noqa: E402
 from tokenizers.models import WordLevel  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
 
-from laya import load  # noqa: E402
-from laya.common import TEMP_MAX, TEMP_MIN, DecisionModel, temperature_rejected  # noqa: E402
+from veya import load  # noqa: E402
+from veya.common import TEMP_MAX, TEMP_MIN, DecisionModel, temperature_rejected  # noqa: E402
 
 
 class TemperatureLoadingTests(unittest.TestCase):
@@ -62,7 +62,7 @@ class TemperatureLoadingTests(unittest.TestCase):
         self.assertEqual(json.dumps(agent.cfg), json.dumps(cfg))
         self.assertEqual(json.dumps(agent.temperature_raw), json.dumps(cfg.get("temperature", [1.0] * 3)))
         self.assertEqual(json.dumps(agent.temperature_by_options_raw), json.dumps(cfg.get("temperature_by_options", {})))
-        messages = [w for w in caught if str(w.message).startswith("laya:")]
+        messages = [w for w in caught if str(w.message).startswith("veya:")]
         self.assertTrue(all(issubclass(w.category, RuntimeWarning) for w in messages))
         return agent, [str(w.message) for w in messages]
 
@@ -222,7 +222,7 @@ class TemperatureRejectionPredicateTests(unittest.TestCase):
         # `clamp_temperature` is how a `true` temperature loaded unreported. Walk the package
         # rather than naming files, so a re-derived fourth copy is caught the same way.
         root = Path(__file__).resolve().parents[1]
-        offenders = [p.relative_to(root).as_posix() for p in sorted((root / "laya").rglob("*.py"))
+        offenders = [p.relative_to(root).as_posix() for p in sorted((root / "veya").rglob("*.py"))
                      if "if float(raw) == applied:" in p.read_text(encoding="utf-8")]
         self.assertEqual(offenders, [])
 

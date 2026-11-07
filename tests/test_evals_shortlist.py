@@ -3,8 +3,8 @@ import json
 
 import pytest
 
-from laya.evals import Dataset, EvalError, Example, evaluate
-from laya.evals_shortlist import SHORTLIST_REPORT_SCHEMA, evaluate_shortlist
+from veya.evals import Dataset, EvalError, Example, evaluate
+from veya.evals_shortlist import SHORTLIST_REPORT_SCHEMA, evaluate_shortlist
 
 
 QUESTION = {"intent": {"type": "choice", "instructions": "Which?",
@@ -106,7 +106,7 @@ def test_malformed_shortlist_metadata_fails(monkeypatch):
                 "shortlist": {"intent": {"labels": ["a", "a"], "k": 2, "n": 3,
                                          "passthrough": False, "scores": [1.0, 1.0]}}}
 
-    monkeypatch.setattr("laya.evals_shortlist.predict_shortlist", malformed)
+    monkeypatch.setattr("veya.evals_shortlist.predict_shortlist", malformed)
     with pytest.raises(EvalError, match="inconsistent shortlist metadata"):
         run(ChoiceAgent({"one": "a"}), Dataset([sample("one", "a", "ok")]), TableEmbed())
 
@@ -119,7 +119,7 @@ def test_dataset_bytes_are_recorded_when_path_is_supplied(tmp_path):
     report = evaluate_shortlist(ChoiceAgent({"one": "a"}), dataset, TableEmbed(), k=2,
                                 checkpoint_id="checkpoint@123", embedder_id="embedder@456",
                                 dataset_path=str(path))
-    from laya.evals import file_fingerprint
+    from veya.evals import file_fingerprint
 
     assert report.config["dataset_sha256"] == file_fingerprint(str(path))
     assert report.config["questions_sha256"]
@@ -131,7 +131,7 @@ def test_plain_evaluate_keeps_its_schema_and_metrics():
             return {"answers": {"intent": {"type": "choice", "choice": "a"}}}
 
     report = evaluate(Runner(), Dataset([sample("one", "a", "ok")]))
-    assert report.config["schema"] == "laya-evals-report/1"
+    assert report.config["schema"] == "veya-evals-report/1"
     assert report.overall["choice_accuracy"] == 1.0
     assert "shortlist_recall_at_k" not in report.overall
     assert "shortlist" not in report.cases[0]

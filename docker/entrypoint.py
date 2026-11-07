@@ -7,7 +7,7 @@ import sys
 
 # Both names are read as `<NAME>_FILE` and then moved into `<NAME>`, so a secret can be
 # mounted as a file instead of passed in the environment.
-SECRET_NAMES = ("HF_TOKEN", "LAYA_API_KEY")
+SECRET_NAMES = ("HF_TOKEN", "VEYA_API_KEY")
 
 
 def main():

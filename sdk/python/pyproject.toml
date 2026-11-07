@@ -27,4 +27,4 @@ Issues = "https://github.com/tgundhus/Veya/issues"
 where = ["src"]
 
 [tool.setuptools.package-data]
-laya_client = ["py.typed"]
+veya_client = ["py.typed"]

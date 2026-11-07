@@ -126,7 +126,7 @@ CELLS = [("rlcd", 1), ("soft-ce", 0), ("soft-ce", 1), ("rlcd", 2), ("soft-ce", 2
 
 def train(loss, seed):
     out = WORK / ("run_" + loss.replace("-", "_") + "_seed%d" % seed)
-    cmd = [sys.executable, "-m", "laya.train_cli",
+    cmd = [sys.executable, "-m", "veya.train_cli",
            "--data", str(WORK / "data" / "train.jsonl"),
            "--out", str(out),
            "--base", "convaiinnovations/laya",

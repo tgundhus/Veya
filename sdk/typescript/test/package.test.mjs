@@ -31,18 +31,18 @@ test('packed HTTP SDK installs in an external ESM and CommonJS project', async t
   await writeFile(join(consumer, 'runtime.mjs'), `
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { Laya } from 'veya-client';
+import { Veya } from 'veya-client';
 const cjs = createRequire(import.meta.url)('veya-client');
-assert.equal(typeof cjs.Laya, 'function');
-const client = new Laya({ fetch: async () => new Response(JSON.stringify({ status: 'ok' })) });
+assert.equal(typeof cjs.Veya, 'function');
+const client = new Veya({ fetch: async () => new Response(JSON.stringify({ status: 'ok' })) });
 assert.equal((await client.health()).status, 'ok');
 assert.equal(typeof client.predictBatch, 'function');
 `);
   await exec(process.execPath, ['runtime.mjs'], { cwd: consumer });
   await writeFile(join(consumer, 'types.ts'), `
-import { Laya, type Questions, type BatchPrediction } from 'veya-client';
+import { Veya, type Questions, type BatchPrediction } from 'veya-client';
 const questions = { q: { type: 'noul', instructions: '?' } } satisfies Questions;
-const result: Promise<BatchPrediction<typeof questions>> = new Laya().predictBatch(['state'], questions);
+const result: Promise<BatchPrediction<typeof questions>> = new Veya().predictBatch(['state'], questions);
 void result;
 `);
   await exec(process.execPath, [join(root, 'node_modules/typescript/bin/tsc'), '--noEmit', '--strict',

@@ -64,8 +64,8 @@ def clinc_rows(data, domains):
 def capture(agent, rows, *, rotate=False, compact=False):
     import torch
     from torch.nn.functional import pad
-    from laya.common import collate_items
-    from laya.train import encode_item, items_from_rows
+    from veya.common import collate_items
+    from veya.train import encode_item, items_from_rows
 
     max_len, head_len = (agent.cfg[key] for key in ("max_len", "head_max_len"))
     items, skipped = items_from_rows(agent.tok, rows, max_len, head_len)
@@ -124,10 +124,10 @@ def main():
     os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_CPU_AMP="fp32")
     import torch
     from safetensors.torch import load_file, save_file
-    from laya.agent import Agent
-    from laya.calibrate import MIN_TYPE_N, fit_one_temperature
-    from laya.common import DecisionModel
-    from laya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
+    from veya.agent import Agent
+    from veya.calibrate import MIN_TYPE_N, fit_one_temperature
+    from veya.common import DecisionModel
+    from veya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
 
     if not torch.cuda.is_available():
         parser.error("this research trainer requires local CUDA-enabled PyTorch")

@@ -2,7 +2,7 @@
 title: Decision consistency
 description: Why the same request can get a different answer, how close an answer is to flipping, and how to replay decisions so a repeated request gets the answer it got before.
 type: explanation
-specificity: "Laya 0.3.20. Consistency figures come from the archived Feishu run in research/benchmarks/feishu_zh (64 cases x 3 repeats: Jev 1.13.0 over its API, laya-multilingual on an Apple M4 in float32). Timings come from a 4-core Xeon CPU."
+specificity: "Veya 0.3.20. Consistency figures come from the archived Feishu run in research/benchmarks/feishu_zh (64 cases x 3 repeats: Jev 1.13.0 over its API, laya-multilingual on an Apple M4 in float32). Timings come from a 4-core Xeon CPU."
 credibility: "Measured. tests/test_consistency.py recomputes every consistency figure from the archived raw responses, and research/scripts/bench_decision_cache.py and bench_stages.py reproduce the timings, and research/scripts/check_backend_sharing.py the fp32/int8/ONNX replay; the coalescing figures come from tests/test_consistency.py. The stage timings on this page used random weights with the published architectures, because the machine could not reach Hugging Face; they are right about where time goes and not about accuracy."
 ---
 
@@ -13,7 +13,7 @@ The figures on this page describe the archived 0.3.20 runs identified above. The
 clarifies local checkpoint identity and retention limits.
 
 The same request can come back with a different answer for two unrelated reasons: the model
-varies between runs, or something around the model changed. Laya's forward pass samples nothing,
+varies between runs, or something around the model changed. Veya's forward pass samples nothing,
 so the first reason does not apply to it on a fixed setup, but the second one does. This page
 shows how to see how close an answer is to flipping, and how to make a repeated request get the
 answer it got the first time.
@@ -23,7 +23,7 @@ answer it got the first time.
 A hosted decision API is re-evaluated on every call. In the archived Feishu comparison, the same
 64 requests were sent three times to Jev 1.13.0 and to `laya-multilingual`:
 
-| identical across three runs | Jev 1.13.0 | Laya |
+| identical across three runs | Jev 1.13.0 | Veya |
 |---|---|---|
 | whole response, probabilities and `confidence` included | 29 of 128 (23%) | 128 of 128 |
 | `choice` probabilities | 38 of 64 | 64 of 64 |
@@ -35,7 +35,7 @@ Jev's yes/no values moved by a median of 0.01 and at most 0.08 between runs, and
 that changed (`cross_chat-03`: `todo`, `todo`, `noise`) was the least decided answer in the set:
 0.53 against 0.44, then 0.51 against 0.44, then 0.45 against 0.50.
 
-Laya returned the same bytes every time. What can still move one of its answers:
+Veya returned the same bytes every time. What can still move one of its answers:
 
 - **Hardware and precision.** CUDA runs in bf16 or fp16 autocast, and MPS in fp16 from five rows
   up, so the same request on another device can differ in the last digits.
@@ -44,7 +44,7 @@ Laya returned the same bytes every time. What can still move one of its answers:
 - **The model.** A new revision, a refitted temperature, or a `max_len` change is a different
   model.
 - **The request.** Option order is positional, so reordered options are a different request
-  (Laya issue #166); on 20 options the answer changed
+  (Veya issue #166); on 20 options the answer changed
   for 15-23% of permutations ([option-order robustness](benchmarks.md)).
 
 Each of these only flips an answer that sits close to its decision boundary.
@@ -55,7 +55,7 @@ Each of these only flips an answer that sits close to its decision boundary.
 from 0 on the boundary to 1:
 
 ```python
-from laya import Router, decision_margins
+from veya import Router, decision_margins
 
 router = Router()
 result = router.predict(state, questions)
@@ -73,7 +73,7 @@ three in every run, while marking 26 of the 960 answers it gave across the runs 
 that varies between runs does know when it is close. What it cannot know is which side the next
 run lands on: each probability it reports is itself one draw.
 
-For Laya the margin means something else, because its answers do not move between runs: it says
+For Veya the margin means something else, because its answers do not move between runs: it says
 how likely the answer is to be wrong. On the same archive, which ran the base multilingual
 checkpoint with no fine-tuning, 1 of the 14 `choice` answers with a margin under 0.05 was right,
 against 14 of the 36 with a margin of 0.2 or more. Send low-margin answers to review or to a
@@ -85,7 +85,7 @@ fallback rather than acting on them.
 the request and replays it when the same request comes again:
 
 ```python
-from laya import DecisionCache, Router
+from veya import DecisionCache, Router
 
 cache = DecisionCache("decisions.sqlite", ttl=30 * 24 * 3600)  # or DecisionCache() for memory
 router = Router(hooks=[cache])
@@ -101,7 +101,7 @@ continue. For a policy that must not return an uncommitted replacement answer,
 opt into required storage:
 
 ```python
-from laya import DecisionCache, DecisionCacheError, Router
+from veya import DecisionCache, DecisionCacheError, Router
 
 cache = DecisionCache(
     "decisions.sqlite", ttl=None, maxsize=None,
@@ -161,7 +161,7 @@ that the original answer was correct.
 
 - **Key.** A 16-byte BLAKE2b hash of the state, the questions in their given order, the per-call
   token budget, the checkpoint, and the model's fingerprint: its id, revision, calibration
-  temperatures, configured token budget, subfolder and the Laya version. Unversioned local
+  temperatures, configured token budget, subfolder and the Veya version. Unversioned local
   checkpoints also use artifact identity captured at load: verified digests when supplied,
   otherwise file size, modification time and inode. File metadata detects ordinary replacements;
   it does not verify contents or provide portable identity across machines. When the checkpoint has
@@ -193,7 +193,7 @@ A `ttl` function sets retention per question set or per answer. It receives the 
 answer payload, and returns seconds, `None` to keep the decision for ever, or 0 not to keep it:
 
 ```python
-from laya import DecisionCache, decision_margins
+from veya import DecisionCache, decision_margins
 
 DAY = 24 * 3600
 
@@ -210,17 +210,17 @@ cache = DecisionCache("decisions.sqlite", ttl=retention, renew_on_hit=True)
 ### Sharing decisions between machines
 
 The SQLite file is shared by the processes of one machine. To share one set of decisions across
-machines, pass `store=` any object that follows `laya.DecisionStore`: `get`, `add`, `renew`,
+machines, pass `store=` any object that follows `veya.DecisionStore`: `get`, `add`, `renew`,
 `prune`, `__len__`, `clear` and `close`, over bytes keys and values with an expiry in Unix
 seconds. The one rule a store must keep is in `add`: when a key already holds an unexpired
 value, keep it and return it; that is what makes the first decision stored the one every machine
-replays. Laya ships no network store itself, so it keeps depending on nothing hosted.
+replays. Veya ships no network store itself, so it keeps depending on nothing hosted.
 [`examples/hooks/decision_store_redis.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/decision_store_redis.py)
 is one over Redis, using `SET ... NX` for that rule and Redis's own expiry:
 
 ```python
 import redis
-from laya import DecisionCache, Router
+from veya import DecisionCache, Router
 from decision_store_redis import RedisDecisionStore
 
 store = RedisDecisionStore(redis.Redis(host="cache.internal"))
@@ -302,7 +302,7 @@ remove it. If one run flips with probability q, a three-run majority still flips
 votes, and gating on the margin keeps the cost down: on the archive, re-asking Jev only when the
 margin is under 0.1 would have re-asked 2.7% of answers.
 
-Re-running Laya on the same input returns the same bytes, so a vote over repeats is a vote of
+Re-running Veya on the same input returns the same bytes, so a vote over repeats is a vote of
 identical ballots. A vote over *equivalent* requests is not: averaging the probabilities over
 the rotations of a `choice` question's options, sent as one `predict_batch`, cancels the option
 position bias above. Measure it on your own data before relying on it:

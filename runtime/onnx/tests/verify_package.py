@@ -39,18 +39,18 @@ def check_wheel(path):
                        for req in requirements), requirements
         entry_points, = [name for name in names if name.endswith(".dist-info/entry_points.txt")]
         scripts = archive.read(entry_points).decode()
-        assert "laya-onnx-serve = laya_onnx.serve:main" in scripts, scripts
-        assert "laya-onnx-mcp = laya_onnx.mcp.server:main" in scripts, scripts
-        assert "laya-onnx-replay = laya_onnx.replay:main" in scripts, scripts
-        assert "laya_onnx/py.typed" in names
-        assert "laya_onnx/replay.py" in names
-        assert "laya_onnx/mcp/code_mode.py" in names
+        assert "veya-onnx-serve = veya_onnx.serve:main" in scripts, scripts
+        assert "veya-onnx-mcp = veya_onnx.mcp.server:main" in scripts, scripts
+        assert "veya-onnx-replay = veya_onnx.replay:main" in scripts, scripts
+        assert "veya_onnx/py.typed" in names
+        assert "veya_onnx/replay.py" in names
+        assert "veya_onnx/mcp/code_mode.py" in names
         for module in ("router", "serve", "shortlist", "lang", "presets", "errors", "replay", "decision_policy",
                        "_routing_unicode", "_microbatch", "mcp/server", "mcp/tools",
                        "mcp/code_mode", "mcp/_code_worker", "mcp/_code_budget"):
-            assert "laya_onnx/_runtime/" + module + ".py" in names, module
+            assert "veya_onnx/_runtime/" + module + ".py" in names, module
         assert any("LICENSE" in name for name in names)
-        assert all(name.startswith(("laya_onnx/", "veya_onnx-")) for name in names), names
+        assert all(name.startswith(("veya_onnx/", "laya_onnx/", "veya_onnx-")) for name in names), names
         assert not any(name.endswith(("/agent.py", "/common.py", "/calibrate.py")) for name in names)
 
 
@@ -71,30 +71,30 @@ def extract_sdist(source, destination):
 def runtime_hashes(wheel):
     with zipfile.ZipFile(wheel) as archive:
         return {name: hashlib.sha256(archive.read(name)).hexdigest() for name in sorted(archive.namelist())
-                if name.startswith("laya_onnx/") and name.endswith(".py")}
+                if name.startswith("veya_onnx/") and name.endswith(".py")}
 
 
 def check_service_commands(python, root, env):
     scripts = python.parent
-    for name in ("laya-onnx-serve", "laya-onnx-mcp"):
+    for name in ("veya-onnx-serve", "veya-onnx-mcp"):
         executable = scripts / (name + ".exe" if os.name == "nt" else name)
         assert executable.is_file(), executable
         output = subprocess.check_output([str(executable), "--help"], cwd=root, env=env, text=True)
         assert "--backend {torch,onnx}" in output, output
         assert "--performance-mode" in output, output
-        if name == "laya-onnx-mcp":
+        if name == "veya-onnx-mcp":
             assert "--mode {classic,code}" in output, output
             for option in ("--code-wall-seconds", "--code-cpu-seconds", "--code-memory-mib", "--code-max-calls"):
                 assert option in output, output
-    for module in ("laya_onnx.serve", "laya_onnx.mcp.server"):
+    for module in ("veya_onnx.serve", "veya_onnx.mcp.server"):
         output = subprocess.check_output([str(python), "-I", "-m", module, "--help"],
                                          cwd=root, env=env, text=True)
         assert "--backend {torch,onnx}" in output, output
         if module.endswith("mcp.server"):
             assert "--mode {classic,code}" in output, output
-    replay = scripts / ("laya-onnx-replay.exe" if os.name == "nt" else "laya-onnx-replay")
+    replay = scripts / ("veya-onnx-replay.exe" if os.name == "nt" else "veya-onnx-replay")
     assert replay.is_file(), replay
-    for args in ([str(replay), "--help"], [str(python), "-I", "-m", "laya_onnx.replay", "--help"]):
+    for args in ([str(replay), "--help"], [str(python), "-I", "-m", "veya_onnx.replay", "--help"]):
         output = subprocess.check_output(args, cwd=root, env=env, text=True)
         assert "--output" in output and "--models" in output, output
 
@@ -127,10 +127,10 @@ def main():
     assert len(wheels) == len(sdists) == 1, "Use a clean output directory with one wheel and sdist"
     check_wheel(wheels[0])
     original_runtime = runtime_hashes(wheels[0])
-    env = {key: value for key, value in os.environ.items() if not key.startswith("LAYA_")}
+    env = {key: value for key, value in os.environ.items() if not key.startswith("VEYA_")}
     env.update(PIP_DISABLE_PIP_VERSION_CHECK="1", TOKENIZERS_PARALLELISM="false")
     env.pop("PYTHONPATH", None)
-    with tempfile.TemporaryDirectory(prefix="laya-onnx-package-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="veya-onnx-package-") as tmp:
         root = Path(tmp)
         fixture = root / "fixture"
         command(sys.executable, tests / "fixture.py", fixture, cwd=root, env=env)

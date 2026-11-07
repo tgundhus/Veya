@@ -9,8 +9,8 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import ContextCompactor, Router  # noqa: E402
-from laya.confidence import apply_confidence_gate  # noqa: E402
+from veya import ContextCompactor, Router  # noqa: E402
+from veya.confidence import apply_confidence_gate  # noqa: E402
 
 
 def transcript(count=3):
@@ -76,7 +76,7 @@ class CompactionTests(unittest.TestCase):
         use = result["messages"][1]["toolUses"][0]
         output = result["messages"][2]["toolResults"][0]
         self.assertEqual(use["text"], output["text"])
-        self.assertEqual(output["text"], "snapshot con\n[laya: replayable output omitted]")
+        self.assertEqual(output["text"], "snapshot con\n[veya: replayable output omitted]")
 
     def test_uncertainty_retains_everything(self):
         for scores in ((0.01, 0.5), (0.5, 0.5), (0.99, 0.99)):
@@ -119,7 +119,7 @@ class CompactionTests(unittest.TestCase):
         self.assertEqual(self.compact(scorer=scorer)["stats"]["pairs_dropped"], 3)
 
     def test_benchmark_injection_is_in_visible_scoring_excerpt(self):
-        from laya.compaction import _excerpt
+        from veya.compaction import _excerpt
         from research.scripts.bench_compaction import cases
         case = next(c for c in cases() if c["id"] == "untrusted_output")
         scorer = Scorer()

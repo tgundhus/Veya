@@ -23,8 +23,8 @@ RUN pip install "torch==${TORCH_VERSION}" --index-url https://download.pytorch.o
 
 WORKDIR /src
 COPY pyproject.toml setup.py README.md LICENSE ./
-COPY laya/ ./laya/
-# The `serve` extra puts `laya-serve` (POST /v1/systemone, GET /health) in the image, so
+COPY veya/ ./veya/
+# The `serve` extra puts `veya-serve` (POST /v1/systemone, GET /health) in the image, so
 # the same image can run a one-shot request or serve the Jev-compatible API. It adds
 # fastapi and uvicorn only; torch was installed above.
 RUN pip install ".[serve]" && pip check
@@ -54,35 +54,35 @@ ENV PATH="/opt/venv/bin:$PATH" \
     USE_TORCH=1 \
     TOKENIZERS_PARALLELISM=false \
     OMP_NUM_THREADS=4 \
-    LAYA_DEVICE=cpu \
-    HF_HOME=/home/laya/.cache/huggingface
+    VEYA_DEVICE=cpu \
+    HF_HOME=/home/veya/.cache/huggingface
 
-RUN groupadd --gid 10001 laya \
-    && useradd --uid 10001 --gid laya --create-home laya \
-    && mkdir -p /home/laya/.cache/huggingface /home/laya/decisions \
-    && chown -R laya:laya /home/laya/.cache /home/laya/decisions
+RUN groupadd --gid 10001 veya \
+    && useradd --uid 10001 --gid veya --create-home veya \
+    && mkdir -p /home/veya/.cache/huggingface /home/veya/decisions \
+    && chown -R veya:veya /home/veya/.cache /home/veya/decisions
 
 COPY --from=build /opt/venv /opt/venv
-COPY LICENSE /usr/share/doc/laya/LICENSE
-COPY examples/docker/ /opt/laya/examples/
-COPY docker/entrypoint.py /opt/laya/entrypoint.py
-COPY docker/prefetch_modelscope.py /opt/laya/prefetch_modelscope.py
+COPY LICENSE /usr/share/doc/veya/LICENSE
+COPY examples/docker/ /opt/veya/examples/
+COPY docker/entrypoint.py /opt/veya/entrypoint.py
+COPY docker/prefetch_modelscope.py /opt/veya/prefetch_modelscope.py
 
 # Bake the requested ModelScope checkpoints into the hub cache ($HF_HOME/hub), laid out the way
 # `snapshot_download` reads them offline, so no entry point changes: the quickstart's Router, the
-# HTTP server's Router and `laya.cli` all resolve their repo ids to the baked snapshot. The cache is
+# HTTP server's Router and `veya.cli` all resolve their repo ids to the baked snapshot. The cache is
 # handed to the runtime user afterwards, because the tokenizer-compatibility fix writes into the
 # snapshot on first load.
 RUN if [ -n "$MODELSCOPE_MODEL" ]; then \
-      python /opt/laya/prefetch_modelscope.py \
+      python /opt/veya/prefetch_modelscope.py \
         --model "$MODELSCOPE_MODEL" \
         --revision "$MODELSCOPE_REVISION" \
         --cache-dir "$HF_HOME/hub" \
-      && chown -R laya:laya /home/laya/.cache; \
+      && chown -R veya:veya /home/veya/.cache; \
     fi
 
-USER laya
-WORKDIR /home/laya
+USER veya
+WORKDIR /home/veya
 
-ENTRYPOINT ["python", "/opt/laya/entrypoint.py"]
-CMD ["python", "/opt/laya/examples/quickstart.py"]
+ENTRYPOINT ["python", "/opt/veya/entrypoint.py"]
+CMD ["python", "/opt/veya/examples/quickstart.py"]

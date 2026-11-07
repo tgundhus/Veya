@@ -5,7 +5,7 @@ description: Qualify local decision backends, precision, batching and queue beha
 
 # Release qualification
 
-`laya-evals qualify` checks a fixed decision corpus across local backend/precision
+`veya-evals qualify` checks a fixed decision corpus across local backend/precision
 cells, repeated calls, batch sizes, reversed input order and unrelated batch
 neighbours. Its reference is the first serial observation. A saved reviewed
 baseline also catches a code change that changes every current cell together.
@@ -34,10 +34,10 @@ Only evaluation cases are scored. Use your reviewed domain examples for an
 actual release decision; record their source-family provenance honestly.
 
 ```bash
-laya-evals qualify-validate research/evals/qualification-v1.json
+veya-evals qualify-validate research/evals/qualification-v1.json
 ```
 
-`laya.qualification.split_families()` can assign complete families using a seeded
+`veya.qualification.split_families()` can assign complete families using a seeded
 metadata-only hash. It does not select cases using predictions, confidence or
 correctness. Inspect domain/type coverage after splitting. Family IDs cannot
 automatically establish that two semantically related documents are independent.
@@ -110,10 +110,10 @@ that bypasses that witness fails rather than claiming an unobserved precision.
 ## Run and review the gate
 
 ```bash
-laya-evals qualify cases.json --matrix matrix.json --json candidate.json
-laya-evals qualify cases.json --matrix matrix.json --baseline reviewed.json \
+veya-evals qualify cases.json --matrix matrix.json --json candidate.json
+veya-evals qualify cases.json --matrix matrix.json --baseline reviewed.json \
   --json candidate.json
-laya-evals qualify-compare candidate.json --baseline reviewed.json \
+veya-evals qualify-compare candidate.json --baseline reviewed.json \
   --json comparison.json
 ```
 
@@ -194,7 +194,7 @@ to manufacture a passing release. This small synthetic corpus is not a business
 quality certificate or a production latency SLO.
 
 ```bash
-python research/scripts/qualify_local.py --checkpoint /models/laya \
+python research/scripts/qualify_local.py --checkpoint /models/veya \
   --onnx /models/english.onnx --out qualification.json
 ```
 

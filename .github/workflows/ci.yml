@@ -16,7 +16,7 @@ concurrency:
 
 env:
   # transformers probes for TensorFlow at import; when TF is present its abseil runtime can
-  # deadlock model construction. Laya is torch-only.
+  # deadlock model construction. Veya is torch-only.
   USE_TF: "0"
   USE_TORCH: "1"
   TOKENIZERS_PARALLELISM: "false"
@@ -29,7 +29,7 @@ jobs:
     timeout-minutes: 10
     defaults:
       run:
-        working-directory: laya-ts
+        working-directory: veya-ts
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +40,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-          cache-dependency-path: laya-ts/package-lock.json
+          cache-dependency-path: veya-ts/package-lock.json
       - run: npm ci
       - name: Unit tests
         run: npm test -- --run
@@ -85,17 +85,17 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: laya-ts/package-lock.json
+          cache-dependency-path: veya-ts/package-lock.json
       - name: Install live routing-contract toolchain
-        run: npm ci --prefix laya-ts --ignore-scripts --omit=optional
+        run: npm ci --prefix veya-ts --ignore-scripts --omit=optional
 
       - name: Install
         run: |
           python -m pip install --upgrade pip
           # CPU-only torch keeps the job under a minute instead of pulling CUDA wheels
           pip install torch --index-url https://download.pytorch.org/whl/cpu
-          # `mcp` so laya[mcp] resolution and the laya.mcp layer are both exercised, and
-          # `serve` because laya.serve and examples/server.py both import fastapi -- without
+          # `mcp` so veya[mcp] resolution and the veya.mcp layer are both exercised, and
+          # `serve` because veya.serve and examples/server.py both import fastapi -- without
           # it every test that touches them skips itself silently and passes.
           # `langchain` for the same reason: without langchain-core the runnables fall back
           # to their plain-object path, so tests/test_langchain.py never checks the real
@@ -105,9 +105,9 @@ jobs:
           pip install pytest
 
       - name: Import check
-        run: python -c "import laya; print(laya.__version__); print(sorted(laya.__all__))"
+        run: python -c "import veya; print(veya.__version__); print(sorted(veya.__all__))"
       - name: Agno integration uses the installed framework
-        run: python -c "from laya.integrations.agno import _AGNO_AVAILABLE; assert _AGNO_AVAILABLE"
+        run: python -c "from veya.integrations.agno import _AGNO_AVAILABLE; assert _AGNO_AVAILABLE"
 
       # The install above is what makes tests/test_langchain.py run on real Runnables, and
       # nothing proves it took: with langchain-core missing, the checks inside that file's
@@ -115,9 +115,9 @@ jobs:
       # Assert the install took before the shared list runs test_langchain_real_mode.py.
       - name: LangChain integration runs on the real base class
         run: |
-          python -c "from laya.integrations.langchain import RunnableSerializable; \
+          python -c "from veya.integrations.langchain import RunnableSerializable; \
             assert RunnableSerializable is not object, \
-            'langchain-core is missing: laya.integrations.langchain fell back to a plain object, ' \
+            'langchain-core is missing: veya.integrations.langchain fell back to a plain object, ' \
             'so the LangChain suites in this job test a shape no install produces'"
 
       # The canonical suite list lives in `scripts/test_suites.py`, which the release gate invokes
@@ -153,7 +153,7 @@ jobs:
       - name: Quantized-export tests
         run: python tests/test_onnx_quantize.py
 
-  # The eval harness needs numpy and laya only, so it stays a separate, weight-free job: metric
+  # The eval harness needs numpy and veya only, so it stays a separate, weight-free job: metric
   # math, dataset parsing, the CLI and the API guard. The real-checkpoint gate is the scheduled
   # `evals` workflow, which needs weights and network.
   evals:
@@ -188,21 +188,21 @@ jobs:
       - name: Eval ONNX runner tests
         run: python tests/test_evals_onnx.py
 
-      # The offline research suites. Each claims a CI consumer and had none: `test_laya_eval.py`
+      # The offline research suites. Each claims a CI consumer and had none: `test_veya_eval.py`
       # says in its own docstring that it "runs in CI next to the other suites", while
       # `test_presentation_checks.py` and `test_act_head_eval.py` guard the eval harness's own
-      # presentation and act-head math. They need only `laya` and numpy, so they belong here
+      # presentation and act-head math. They need only `veya` and numpy, so they belong here
       # rather than in the weekly weight lane. `test_metamorphic` is invoked as a module: run as a
       # script its `research` import fails (`No module named 'research'`).
       - name: Offline research eval suites
         run: |
-          python research/eval/test_laya_eval.py
+          python research/eval/test_veya_eval.py
           python research/eval/test_presentation_checks.py
           python -m research.eval.test_metamorphic
           python research/evals/test_act_head_eval.py
 
       - name: Fixture dataset validates
-        run: laya-evals validate research/evals/fixture.jsonl
+        run: veya-evals validate research/evals/fixture.jsonl
 
   # Every workflow in this repo ran on ubuntu-latest only, so a test that fails off Linux was
   # invisible until a user hit it -- which is what happened to tests/test_download.py (#140).
@@ -225,9 +225,9 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: laya-ts/package-lock.json
+          cache-dependency-path: veya-ts/package-lock.json
       - name: Install live routing-contract toolchain
-        run: npm ci --prefix laya-ts --ignore-scripts --omit=optional
+        run: npm ci --prefix veya-ts --ignore-scripts --omit=optional
 
       # The +cpu index used on Linux is Linux/macOS only. On Windows the default PyPI wheel is
       # already CPU-only, so installing torch plainly is both correct and what a user gets.
@@ -247,13 +247,13 @@ jobs:
       # bash on this runner so the quoting rules match the Linux job; the default shell on a
       # Windows runner is PowerShell, where `python -c "...; ..."` is not the same command.
       - name: Import check
-        run: python -c "import laya; print(laya.__version__); print(sorted(laya.__all__))"
+        run: python -c "import veya; print(veya.__version__); print(sorted(veya.__all__))"
         shell: bash
 
       - name: Integrations run on their real base classes
         run: |
           python -c "import mcp, httpx, langchain_core"
-          python -c "from laya.integrations.langchain import RunnableSerializable; assert RunnableSerializable is not object"
+          python -c "from veya.integrations.langchain import RunnableSerializable; assert RunnableSerializable is not object"
         shell: bash
 
       - name: Test suites
@@ -271,9 +271,9 @@ jobs:
           python-version: "3.11"
       - run: pip install ruff
       - name: Ruff
-        run: ruff check laya/ --select=E9,F63,F7,F82,F401,F811 --line-length=120
+        run: ruff check veya/ --select=E9,F63,F7,F82,F401,F811 --line-length=120
       - name: Byte-compile every module
-        run: python -m compileall -q laya/ tests/
+        run: python -m compileall -q veya/ tests/
 
   typescript-sdk:
     name: TypeScript SDK (node${{ matrix.node }})

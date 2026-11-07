@@ -19,9 +19,9 @@ from types import MethodType
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya import DecisionCache, Router  # noqa: E402
-from laya.serve import create_app  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
+from veya.serve import create_app  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 
 QUESTIONS = {"q": {"type": "noul", "instructions": "Does this request need immediate attention?"}}
@@ -186,7 +186,7 @@ def main():
         if not (path / "model.safetensors").is_file():
             parser.error("checkpoint must be a local weight directory")
         import torch
-        from laya import Agent
+        from veya import Agent
         torch.set_num_threads(4)
         torch.set_num_interop_threads(1)
         runtime.update(torch=torch.__version__, cpu_threads=torch.get_num_threads(),

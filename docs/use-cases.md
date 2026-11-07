@@ -1,12 +1,12 @@
 # Architectural Patterns and Production Use Cases
 
-Laya is an on-device, non-autoregressive decision engine built on a single-forward-pass transformer
+Veya is an on-device, non-autoregressive decision engine built on a single-forward-pass transformer
 architecture (`ModernBERT-large` and `mmBERT-base`). Instead of generating tokens sequentially like an
 LLM (which incurs variable token generation costs, decode loop overhead, and unpredictable output schemas),
-Laya computes calibrated probability distributions across discrete questions in one pass.
+Veya computes calibrated probability distributions across discrete questions in one pass.
 
 This document serves as an architectural blueprint for system architects and backend engineers
-integrating Laya into production environments.
+integrating Veya into production environments.
 
 ---
 
@@ -15,7 +15,7 @@ integrating Laya into production environments.
 Choosing the right primitive depends on latency constraints, hosting topology, and whether the task
 requires free-form generation or discrete classification:
 
-| Dimension | Embedding Retrieval | Laya Decision Engine | Autoregressive LLM |
+| Dimension | Embedding Retrieval | Veya Decision Engine | Autoregressive LLM |
 |---|---|---|---|
 | **Computation Model** | Vector cosine distance | Single forward pass (non-autoregressive masked head) | Sequential token-by-token generation |
 | **Execution Profile** | Nearest-neighbor index lookup | Single fixed forward pass (no decoding loop) | Iterative decoding loop scaling with output length |
@@ -32,7 +32,7 @@ In tiered architectures, a large fraction of incoming requests do not require th
 of an autoregressive LLM. Queries such as standard FAQs, deterministic state inquiries, or categorical
 routing decisions can be evaluated locally.
 
-Laya functions as an intelligent ingress gateway: it classifies query intent and complexity in a single
+Veya functions as an intelligent ingress gateway: it classifies query intent and complexity in a single
 local forward pass. Deterministic requests are resolved locally via internal endpoints or cached responses,
 while complex generative tasks are forwarded to upstream LLMs.
 
@@ -40,7 +40,7 @@ while complex generative tasks are forwarded to upstream LLMs.
 
 ```mermaid
 graph TD
-    A[User Request] --> B["<b>Laya Gateway Router</b><br/>• query_complexity: simple | moderate | complex<br/>• intent: faq | account_lookup | creative_synthesis"]
+    A[User Request] --> B["<b>Veya Gateway Router</b><br/>• query_complexity: simple | moderate | complex<br/>• intent: faq | account_lookup | creative_synthesis"]
     B -->|Simple & High Confidence| C["<b>Local In-Process Resolution</b><br/>Deterministic FAQ / Internal API"]
     B -->|Complex or Low Confidence| D["<b>Upstream Generative LLM</b><br/>Open-ended synthesis & reasoning"]
 ```
@@ -48,9 +48,9 @@ graph TD
 ### Implementation
 
 ```python
-import laya
+import veya
 
-agent = laya.load("convaiinnovations/laya")
+agent = veya.load("convaiinnovations/laya")
 
 GATEWAY_QUESTIONS = {
     "complexity": {
@@ -93,7 +93,7 @@ detecting when a user speaks or interrupts create unnatural conversational dead 
 generative model to produce its first token introduces avoidable lag when the caller simply acknowledges or
 interrupts.
 
-Laya can be placed directly after Speech-to-Text (STT) transcription to classify conversational flow and
+Veya can be placed directly after Speech-to-Text (STT) transcription to classify conversational flow and
 user intent in a single forward pass: triggering quick filler audio or halting audio playback immediately
 when an interruption is detected, while delegating complex inquiries to the full synthesis pipeline.
 
@@ -102,7 +102,7 @@ when an interruption is detected, while delegating complex inquiries to the full
 ```mermaid
 graph TD
     A[User Voice Audio] --> B["<b>Speech-to-Text</b><br/>Streaming Audio Transcription"]
-    B --> C["<b>Laya Voice Router</b><br/>• intent: ack | reject | interrupt | inquiry<br/>• is_interruption: noul probability"]
+    B --> C["<b>Veya Voice Router</b><br/>• intent: ack | reject | interrupt | inquiry<br/>• is_interruption: noul probability"]
     C -->|Interruption: score &gt; 0.6| D["<b>Halt Audio Playback</b><br/>Immediate playback cutoff"]
     C -->|Quick Intent: ack / reject| E["<b>Immediate Audio Filler</b><br/>Conversational confirmation"]
     C -->|Complex Inquiry| F["<b>Upstream Pipeline</b><br/>Full response synthesis"]
@@ -111,7 +111,7 @@ graph TD
 ### Implementation
 
 ```python
-from laya import Agent
+from veya import Agent
 
 agent = Agent("convaiinnovations/laya")
 
@@ -155,7 +155,7 @@ Protecting systems against adversarial prompt injections, jailbreaks, and sensit
 must happen *before* the prompt reaches the LLM context window. Running a separate generative model just to
 judge whether a prompt is safe adds redundant latency and operational overhead.
 
-Laya operates as an inline, non-autoregressive security firewall, evaluating prompt injections,
+Veya operates as an inline, non-autoregressive security firewall, evaluating prompt injections,
 privilege escalations, and out-of-scope tasks in a single forward pass before downstream processing.
 
 ### Architecture
@@ -169,18 +169,18 @@ graph TD
 
 ### Implementation
 
-Hooks in Laya are duck-typed: any object implementing the lifecycle methods of `Hook` (or subclassing
-`BaseHook` from `laya.hooks`) can be attached to an `Agent` or `Router`. 
+Hooks in Veya are duck-typed: any object implementing the lifecycle methods of `Hook` (or subclassing
+`BaseHook` from `veya.hooks`) can be attached to an `Agent` or `Router`.
 
-Under Laya's default hook raising semantics (`hooks_raise=True`):
+Under Veya's default hook raising semantics (`hooks_raise=True`):
 - Raising an exception inside `on_predict_start` immediately aborts execution **before** model tokenization or inference occurs.
 - The exception propagates directly out of `system_one()` / `predict()` to the caller.
 - Lifecycle cleanups (`on_error` and `on_predict_end`) still execute, with `ctx.error` set to the raised exception, ensuring audit logs and telemetry record the blocked request.
 
 ```python
-import laya
-from laya import Router
-from laya.hooks import BaseHook, PredictContext
+import veya
+from veya import Router
+from veya.hooks import BaseHook, PredictContext
 
 SECURITY_SCHEMA = {
     "is_jailbreak": {
@@ -215,12 +215,12 @@ class SecurityFirewallHook(BaseHook):
                 raise PermissionError("Request blocked by security firewall: adversarial prompt detected.")
 
 # Attach to Router or Agent; hooks_raise=True ensures policy exceptions propagate
-guard_agent = laya.load("convaiinnovations/laya")
+guard_agent = veya.load("convaiinnovations/laya")
 router = Router(hooks=[SecurityFirewallHook(guard_agent)], hooks_raise=True)
 ```
 
 > [!TIP]
-> For CrewAI workflows, Laya also provides [`LayaTaskGuard`](crewai.md) out of the box in `laya.integrations.crewai` for this exact pre-execution safety gate pattern.
+> For CrewAI workflows, Veya also provides [`VeyaTaskGuard`](crewai.md) out of the box in `veya.integrations.crewai` for this exact pre-execution safety gate pattern.
 
 ---
 
@@ -230,14 +230,14 @@ In secure enterprise environments (defense, healthcare, financial compliance, ed
 APIs are unavailable or forbidden. Document collections are often segregated into distinct domains
 (e.g., Clinical Trials, Patient Records, Financial Reports, Technical Specs).
 
-Rather than querying a single monolithic vector index with unrelated embeddings, Laya acts as a local edge
+Rather than querying a single monolithic vector index with unrelated embeddings, Veya acts as a local edge
 router that directs user queries to the specific local vector index or SQLite database before retrieval.
 
 ### Architecture
 
 ```mermaid
 graph TD
-    A["<b>User Query</b><br/>Local / Edge Workstation"] --> B["<b>Laya Edge Router</b><br/>• target_domain: clinical | billing | compliance<br/><i>In-process local routing</i>"]
+    A["<b>User Query</b><br/>Local / Edge Workstation"] --> B["<b>Veya Edge Router</b><br/>• target_domain: clinical | billing | compliance<br/><i>In-process local routing</i>"]
     B -->|Clinical Domain| C[("<b>Clinical Vector Store</b><br/>Medical trials, dosages & EHR")]
     B -->|Billing Domain| D[("<b>Billing Vector Store</b><br/>Invoices, claims & ICD-10 codes")]
     B -->|Compliance Domain| E[("<b>Compliance Vector Store</b><br/>HIPAA policies & audit guidelines")]
@@ -246,7 +246,7 @@ graph TD
 ### Implementation
 
 ```python
-from laya import Router
+from veya import Router
 
 # Automatically routes between local English and Multilingual models
 router = Router()
@@ -283,16 +283,16 @@ Because generative manager nodes generate tokens sequentially, supervisor delega
 substantial orchestration overhead per hop. Replacing the generative supervisor with a non-autoregressive
 decision model performs delegation in a single forward pass, providing deterministic routing across agents.
 
-Laya ships first-party integrations for popular orchestration frameworks:
-- **CrewAI:** Use [`LayaCrewRouter`](crewai.md) for hierarchical multi-agent task routing and guardrails.
-- **LlamaIndex:** Use [`LayaSingleSelector`](llamaindex.md) for single-forward-pass router query engines.
-- **LangChain / LangGraph:** Use [`laya.integrations.langchain`](langchain.md) for conditional edge dispatch.
+Veya ships first-party integrations for popular orchestration frameworks:
+- **CrewAI:** Use [`VeyaCrewRouter`](crewai.md) for hierarchical multi-agent task routing and guardrails.
+- **LlamaIndex:** Use [`VeyaSingleSelector`](llamaindex.md) for single-forward-pass router query engines.
+- **LangChain / LangGraph:** Use [`veya.integrations.langchain`](langchain.md) for conditional edge dispatch.
 
 ### Architecture
 
 ```mermaid
 graph TD
-    A["<b>Task Input / Workflow State</b>"] --> B["<b>Laya Orchestrator</b><br/>• assignee: researcher | coder | writer<br/>• priority: score (1–5 urgency)"]
+    A["<b>Task Input / Workflow State</b>"] --> B["<b>Veya Orchestrator</b><br/>• assignee: researcher | coder | writer<br/>• priority: score (1–5 urgency)"]
     B -->|Research Assignment| C["<b>Researcher Agent</b><br/>Literature search & fact-checking"]
     B -->|Code Assignment| D["<b>Coder Agent</b><br/>Implementation, bug-fixing & tests"]
     B -->|Writing Assignment| E["<b>Copywriter Agent</b><br/>Drafting, copy editing & summary"]
@@ -301,7 +301,7 @@ graph TD
 ### Implementation (CrewAI / LangGraph Example)
 
 ```python
-from laya import Router
+from veya import Router
 
 router = Router()
 
@@ -350,7 +350,7 @@ Batch processing pipelines can evaluate ticket streams on shared forward passes 
 
 ```mermaid
 graph TD
-    A["<b>Incoming Ticket Stream</b><br/>Message Broker / Webhook"] --> B["<b>Laya Batch Worker</b><br/>decide_batch()<br/>• department: billing | tech | sales | general<br/>• severity: 1..5<br/>• escalate_to_human: true | false"]
+    A["<b>Incoming Ticket Stream</b><br/>Message Broker / Webhook"] --> B["<b>Veya Batch Worker</b><br/>decide_batch()<br/>• department: billing | tech | sales | general<br/>• severity: 1..5<br/>• escalate_to_human: true | false"]
     B -->|Department: billing| C["<b>Billing & Invoicing Queue</b>"]
     B -->|Severity &ge; 4 or Human Escalation| D["<b>Tier-3 Escalation Queue</b><br/>Human On-Call Pager"]
     B -->|Low Severity & Standard Inquiry| E["<b>Automated Resolution Pipeline</b>"]
@@ -359,8 +359,8 @@ graph TD
 ### Implementation
 
 ```python
-from laya.structured import decide_batch
-from laya import Agent
+from veya.structured import decide_batch
+from veya import Agent
 
 agent = Agent("convaiinnovations/laya")
 

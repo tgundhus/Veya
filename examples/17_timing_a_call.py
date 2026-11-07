@@ -12,7 +12,7 @@ banner("17", "Timing a call", """
     A single `perf_counter()` around `agent.predict()` measures three different things
     depending on when you run it: the checkpoint build, the first forward pass (which on
     MPS pays one-off Metal kernel compilation), and ordinary inference. Timing them
-    together is how people convince themselves Laya takes ten seconds.
+    together is how people convince themselves Veya takes ten seconds.
 
     So: time the load on its own, time the cold first call on its own, then let `timed()`
     discard a warm-up and report a median over several steady-state calls. The bottom line

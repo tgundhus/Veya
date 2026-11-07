@@ -1,0 +1,593 @@
+# NixOS module: run veya-serve (Veya's Jev-compatible /v1/systemone HTTP API)
+# as a hardened systemd service with CUDA access.
+#
+# The package is built from the host's own `pkgs` via ./package.nix (which pulls
+# the prebuilt CUDA torch, so the host needs `allowUnfree`). This deliberately
+# avoids an overlay, so the module also works on hosts that inject `pkgs` via
+# specialArgs and ignore module-level `nixpkgs.overlays`.
+{ config, lib, pkgs, ... }:
+let
+  cfg = config.services.veya-serve;
+
+  startScript = pkgs.writeShellScript "veya-serve-start" ''
+    set -eu
+    ${lib.optionalString (cfg.apiKeyFile != null) ''
+      export VEYA_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/apikey")"
+    ''}
+    exec ${cfg.package}/bin/veya-serve
+  '';
+in
+{
+  options.services.veya-serve = {
+    enable = lib.mkEnableOption "Veya System-1 decision server (TypeSafe Jev-compatible HTTP API)";
+
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = (pkgs.callPackage ./package.nix { }).veya-serve;
+      defaultText = lib.literalExpression "(pkgs.callPackage ./package.nix { }).veya-serve";
+      description = ''
+        The veya-serve package to run. Built from the host's own `pkgs` (needs
+        `allowUnfree` for the prebuilt CUDA torch), so it works regardless of how
+        the host provides `pkgs`.
+      '';
+    };
+
+    host = lib.mkOption {
+      type = lib.types.str;
+      default = "127.0.0.1";
+      description = "Address to bind. Use 0.0.0.0 to serve the LAN/Tailscale net.";
+    };
+
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8000;
+      description = "TCP port to listen on.";
+    };
+
+    performanceMode = lib.mkOption {
+      type = lib.types.nullOr (lib.types.ints.between 1 5);
+      default = null;
+      example = 3;
+      description = "Resource preset, from 1 (minimal) to 5 (dedicated). null preserves existing defaults.";
+    };
+
+    backend = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "onnx";
+      description = ''
+        Inference runtime (VEYA_BACKEND). null preserves Torch. For ONNX, supply
+        a package with ONNX Runtime and tokenizers, set device to cpu, and pair
+        local extraModels with onnxPaths. Set models to the installed checkpoints.
+      '';
+    };
+
+    onnxPaths = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "JSON map of checkpoint names to local exported graphs (VEYA_ONNX_PATHS).";
+    };
+
+    rootPath = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "/veya";
+      description = ''
+        Public URL prefix used by FastAPI behind a reverse proxy (sets
+        `VEYA_ROOT_PATH`). The proxy should strip this prefix before forwarding
+        requests. null leaves the root path empty.
+      '';
+    };
+
+    device = lib.mkOption {
+      type = lib.types.str;
+      default = "cuda";
+      example = "cpu";
+      description = "torch device for every checkpoint (cuda, cpu, cuda:0, ...).";
+    };
+
+    cudaAmp = lib.mkOption {
+      type = lib.types.nullOr (lib.types.strMatching "[a-zA-Z0-9_-]+");
+      default = null;
+      example = "fp16";
+      description = ''
+        Autocast dtype on CUDA, overriding the checkpoint's own `amp_dtype`
+        (sets `VEYA_CUDA_AMP`). Which tokens mean something is decided by
+        `veya.agent`, not here: `tests/test_packaging.py` reads them out of the
+        runtime and fails if this text drifts from it, which is why there is no
+        `enum` on this option. The recognised spellings are `fp16`, `float16`,
+        `bf16`, `bfloat16`, `fp32` and `float32` — each pair names one dtype.
+        `fp32`/`float32` turn autocast off. Anything else fails the service load
+        instead of silently serving the checkpoint's own precision.
+
+        The type allows any single token but refuses whitespace. The runtime
+        trims and lower-cases values; the type keeps the transported token literal.
+        null leaves every CUDA checkpoint on its own `amp_dtype`.
+      '';
+    };
+
+    cpuAmp = lib.mkOption {
+      type = lib.types.nullOr (lib.types.strMatching "[a-zA-Z0-9_-]+");
+      default = null;
+      example = "bf16";
+      description = ''
+        Run CPU inference under autocast (sets `VEYA_CPU_AMP`). CPU is the one
+        device where the runtime does not do this by default: reduced precision
+        on CPU only pays where the hardware has a native BF16 path. The
+        accepted spellings are `bf16` and `bfloat16`, and nothing else —
+        deliberately narrower than `cudaAmp`, which additionally takes a
+        half-precision spelling that means nothing on CPU. A value the runtime
+        does not recognise leaves CPU in fp32 rather than raising, and
+        `tests/test_packaging.py` derives both device sets from `veya.agent`,
+        so this sentence is checked in both directions rather than trusted.
+
+        On a host without a native BF16 path this costs several times the fp32
+        latency for the same decision: measured at 137 ms -> 744 ms on one
+        single-row request, answer unchanged. Set it only where the hardware is
+        known to want it. null keeps CPU at full precision.
+      '';
+    };
+
+    mpsAmpMinRows = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      example = 1;
+      description = ''
+        Smallest batch that runs under fp16 autocast on MPS (sets
+        `VEYA_MPS_AMP_MIN_ROWS`). MPS autocast is decided per call rather than
+        once at load: casting costs more than the matmul saves on a single
+        small row, and starts to win once a batch has several, so the runtime
+        holds short requests in fp32 and long ones in fp16. This option moves
+        that crossover for the whole service.
+
+        There is no value that is simply better, which is why the default is
+        null and not a number. Measured on an Apple-silicon host with the
+        `english` checkpoint: forcing the threshold to 1 made a one-row request
+        42% slower (31.8 ms -> 45.1 ms), while pushing it past the largest
+        batch the service sees made an eight-row batch 71% slower
+        (83.5 ms -> 142.7 ms) — the two settings trade the same two cases
+        against each other. The reported answer was unchanged either way.
+
+        `ints.positive` rather than `ints.unsigned`: the runtime clamps a value
+        below 1 up to 1, so this refuses at evaluation time the one input the
+        service would otherwise reinterpret. null leaves the runtime's own
+        threshold in place.
+      '';
+    };
+
+    models = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = if cfg.performanceMode == null then [ "english" "multilingual" "typed-decisions" ] else [];
+      description = ''
+        Checkpoints to preload at startup. All three fit comfortably in a 24 GB
+        card (~1.16B params total), so the default keeps every one hot and makes
+        language routing free. Selecting performanceMode leaves this empty so
+        the preset chooses a bounded preload list instead.
+
+        The names are validated by veya rather than by this module: the list is
+        joined into `VEYA_MODELS`, and the server normalises every entry with
+        `veya.router.normalise_name`, which accepts `english`, `multilingual` and
+        `typed-decisions` plus the aliases `en`, `veya` (legacy alias `laya`), `default`, `multi`, `ml`,
+        `laya-multilingual` (alias `veya-multilingual`), `typed`, `typed_decisions`, `laya-typed-decisions` (alias `veya-typed-decisions`) and
+        `decisions`. An unknown name stops the service at startup with an error
+        listing all of them. An `enum` here could only copy that list and fall
+        behind it, refusing a spelling the server accepts.
+      '';
+    };
+
+    preload = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = if cfg.performanceMode == null then true else null;
+      description = "Build checkpoints at startup. null uses the selected performance preset.";
+    };
+
+    idleUnloadSeconds = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.unsigned;
+      default = null;
+      example = 300;
+      description = ''
+        Unload resident checkpoints after this many idle seconds (sets
+        `VEYA_IDLE_UNLOAD_SECONDS`). The next request pays a cold load.
+        Zero disables unloading; null leaves the server's default, also off.
+        Device caches are released, but the process allocator may retain RAM pages.
+      '';
+    };
+
+    threads = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      example = 16;
+      description = ''
+        Cap torch intra-op threads for CPU inference (sets VEYA_THREADS and
+        OMP_NUM_THREADS). Ignored in practice on CUDA. Keep this at or below the
+        host's *physical* core count — oversubscribing the logical/hyperthread
+        count is a large latency regression. For single-request latency, a value
+        below the core count (e.g. 8-16) is often fastest; for batched
+        throughput, the physical core count is best. null leaves torch's default.
+      '';
+    };
+
+    logLevel = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "warning";
+      description = ''
+        uvicorn's log level (sets `VEYA_LOG_LEVEL`), one of `critical`, `error`,
+        `warning`, `info`, `debug`, `trace`. `info`, which the server uses when
+        this is unset, logs a line per request, so on a busy decision endpoint it
+        is most of the unit's journal traffic; `warning` keeps startup and errors.
+        Not an `enum` over those names: uvicorn checks the value, and a copy here
+        could only fall behind it. null leaves the server's own default.
+      '';
+    };
+
+    maxConcurrent = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      example = 4;
+      description = ''
+        Cap on requests admitted at once (sets `VEYA_MAX_CONCURRENT`). A request
+        that arrives with every slot taken is refused with HTTP 503 right away
+        rather than queued, which is what keeps the bodies held in memory
+        bounded. Lower it on a host where a queue of forwards is worse
+        than a refusal — measured on the `english` checkpoint, CPU, 16
+        simultaneous requests: the median accepted request answered in 64 ms at a
+        cap of 1 and 542 ms at 16, and 15 of 16 were refused in under 0.1 ms at
+        that cap against none at 16. So the knob trades the latency of the
+        requests that get through against the number turned away, and a host
+        needs to be able to pick. null leaves the server's own default.
+      '';
+    };
+
+    maxLoaded = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      example = 3;
+      description = ''
+        Checkpoints kept resident at once (sets `VEYA_MAX_LOADED`). The Router
+        keeps two by default, the number automatic routing chooses between;
+        with `autoTaskDetection` a third one becomes reachable on demand, and a
+        cap below what routing chooses rebuilds a checkpoint on every switch.
+        null leaves the Router's own default.
+      '';
+    };
+
+    maxTokenBudget = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      example = 4096;
+      description = ''
+        Ceiling on the per-request `max_len` / `head_max_len` a client may ask
+        for (sets `VEYA_MAX_TOKEN_BUDGET`); a larger value is refused with 422.
+        null leaves the server's own default.
+      '';
+    };
+
+    maxBatchTokens = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      example = 262144;
+      description = ''
+        Tokens one /v1/systemone/batch FORWARD PASS may collate -- states x
+        questions x the row width (sets `VEYA_MAX_BATCH_TOKENS`). A larger batch
+        is split across several passes, not refused. null leaves the server's own
+        default.
+      '';
+    };
+
+    bodyReadTimeout = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      example = 10;
+      description = ''
+        Maximum seconds to receive a request body (sets VEYA_BODY_READ_TIMEOUT).
+        A stalled upload answers 408 and releases its admission slot.
+        null keeps the server default of 10 seconds.
+      '';
+    };
+
+    revision = lib.mkOption {
+      type = lib.types.nullOr (lib.types.strMatching "[A-Za-z0-9._/-]+");
+      default = null;
+      example = "reviewed";
+      description = ''
+        Hub commit, branch or tag every checkpoint is downloaded at (sets
+        `VEYA_REVISION`), or `reviewed` for the reviewed commit SHAs veya ships.
+        null keeps huggingface_hub's default revision and any existing cache.
+      '';
+    };
+
+    autoTaskDetection = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Let the router auto-select the typed-decisions checkpoint when question ids match its workflows.";
+    };
+
+    tournamentGroup = lib.mkOption {
+      type = lib.types.nullOr (lib.types.ints.between 2 100);
+      default = null;
+      example = 16;
+      description = ''
+        Opt-in elimination group size for large choices on both decision routes
+        (VEYA_TOURNAMENT_GROUP). null keeps one-pass inference. Choices can
+        contain up to 255 labels when narrowing is eligible; ordered choices
+        keep the one-pass cap. Probabilities describe the surviving finalists.
+      '';
+    };
+
+    jevStrict = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Project every `/v1/systemone` answer onto the strict Jev wire contract
+        (sets `VEYA_JEV_STRICT`): only the fields the vendor Jev API itself
+        returns — `model`/`answers`/`usage` at the root, the contracted keys per
+        answer, and a two-key `usage`. Nothing is recomputed; every value is the
+        one the result already carries. A client that validates the response
+        against the contract with no extra fields rejects the full payload, so
+        this makes the server usable with such clients; OpenClaw's
+        `@openclaw/typesafe` decision provider is one. Default off, full payload
+        unchanged.
+      '';
+    };
+
+    defaultModel = lib.mkOption {
+      type = lib.types.nullOr (lib.types.strMatching "[A-Za-z0-9._/-]+");
+      default = null;
+      example = "multilingual";
+      description = ''
+        Checkpoint a state with no language evidence falls back to (sets
+        `VEYA_DEFAULT_MODEL`): text with no letters at all, or Latin script too
+        short to identify a language. Set it to `multilingual` when most traffic
+        on this host is not English. Text the detector can place is routed on
+        what it detects, so this is a fallback and not a pin. The spellings
+        accepted, and the aliases among them, are veya's own -- the server
+        checks the value against them at startup and refuses to start on a name
+        it does not know, so this module deliberately lists none. null leaves
+        veya's default, which is `english`.
+      '';
+    };
+
+    extraModels = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "JSON map of additional checkpoint names to paths or model IDs (VEYA_EXTRA_MODELS).";
+    };
+
+    cache = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Enable memory decision caching (VEYA_CACHE); cachePath enables SQLite instead.";
+    };
+
+    cachePath = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "/var/lib/veya-serve/decisions.sqlite";
+      description = "SQLite decision cache path (VEYA_CACHE_PATH), within a writable service directory.";
+    };
+
+    cacheTtl = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Decision lifetime in seconds, or none for indefinite retention (VEYA_CACHE_TTL).";
+    };
+
+    cacheMaxsize = lib.mkOption {
+      type = lib.types.nullOr (lib.types.either lib.types.ints.positive lib.types.str);
+      default = null;
+      description = "Maximum decisions stored, or none to disable eviction (VEYA_CACHE_MAXSIZE).";
+    };
+
+    cacheFingerprint = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Explicit decision-policy identity (VEYA_CACHE_FINGERPRINT); null uses model identity.";
+    };
+
+    cacheRenewOnHit = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Renew decision retention on cache hits (VEYA_CACHE_RENEW_ON_HIT).";
+    };
+
+    cacheRequired = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Require successful decision replay or commit (VEYA_CACHE_REQUIRED); requires caching enabled.";
+    };
+
+    cacheRequireExisting = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Refuse to create a missing decision database (VEYA_CACHE_REQUIRE_EXISTING).";
+    };
+
+    cacheExpectedStoreId = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Expected identity of an existing decision database (VEYA_CACHE_EXPECTED_STORE_ID).";
+    };
+
+    decisionPolicy = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Inference-policy override (VEYA_DECISION_POLICY), validated by Veya; null keeps the checkpoint's policy.";
+    };
+
+    replayManifest = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Path to verified local replay policy metadata (VEYA_REPLAY_MANIFEST).";
+    };
+
+    httpReplayFastPath = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = "Allow verified HTTP hits to bypass inference queues (VEYA_HTTP_REPLAY_FAST_PATH); requires a replay manifest.";
+    };
+
+    microbatchMaxStates = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.unsigned;
+      default = null;
+      description = "Opt-in HTTP single-request microbatch size (VEYA_MICROBATCH_MAX_STATES); 0 disables it.";
+    };
+
+    microbatchWaitMs = lib.mkOption {
+      type = lib.types.nullOr (lib.types.either lib.types.ints.unsigned lib.types.str);
+      default = null;
+      description = "Finite nonnegative collection window in milliseconds (VEYA_MICROBATCH_WAIT_MS), validated by the service.";
+    };
+
+    apiKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      example = lib.literalExpression "config.age.secrets.veya-api-key.path";
+      description = ''
+        Path to a file containing a bearer token. When set, clients must send
+        `Authorization: Bearer <token>`. Read via systemd LoadCredential, so it
+        never lands in the store or the unit's environment.
+      '';
+    };
+
+    openFirewall = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Open `port` in the firewall.";
+    };
+
+    stateDirectory = lib.mkOption {
+      type = lib.types.str;
+      default = "veya-serve";
+      description = "Name under /var/lib for the Hugging Face weight cache (HF_HOME).";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    systemd.services.veya-serve = {
+      description = "Veya System-1 decision server (Jev-compatible)";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
+
+      environment = {
+        VEYA_HOST = cfg.host;
+        VEYA_PORT = toString cfg.port;
+        VEYA_DEVICE = cfg.device;
+        VEYA_MODELS = lib.concatStringsSep "," cfg.models;
+        VEYA_AUTO_TASK = if cfg.autoTaskDetection then "1" else "0";
+        VEYA_JEV_STRICT = if cfg.jevStrict then "1" else "0";
+      } // lib.optionalAttrs (cfg.performanceMode != null) {
+        VEYA_PERFORMANCE_MODE = toString cfg.performanceMode;
+      } // lib.optionalAttrs (cfg.backend != null) {
+        VEYA_BACKEND = cfg.backend;
+      } // lib.optionalAttrs (cfg.onnxPaths != null) {
+        VEYA_ONNX_PATHS = cfg.onnxPaths;
+      } // lib.optionalAttrs (cfg.preload != null) {
+        VEYA_PRELOAD = if cfg.preload then "1" else "0";
+      } // lib.optionalAttrs (cfg.threads != null) {
+        VEYA_THREADS = toString cfg.threads;
+        OMP_NUM_THREADS = toString cfg.threads;
+      } // lib.optionalAttrs (cfg.idleUnloadSeconds != null) {
+        VEYA_IDLE_UNLOAD_SECONDS = toString cfg.idleUnloadSeconds;
+      } // lib.optionalAttrs (cfg.rootPath != null) {
+        VEYA_ROOT_PATH = cfg.rootPath;
+      } // lib.optionalAttrs (cfg.logLevel != null) {
+        VEYA_LOG_LEVEL = cfg.logLevel;
+      } // lib.optionalAttrs (cfg.maxConcurrent != null) {
+        VEYA_MAX_CONCURRENT = toString cfg.maxConcurrent;
+      } // lib.optionalAttrs (cfg.cudaAmp != null) {
+        VEYA_CUDA_AMP = cfg.cudaAmp;
+      } // lib.optionalAttrs (cfg.cpuAmp != null) {
+        VEYA_CPU_AMP = cfg.cpuAmp;
+      } // lib.optionalAttrs (cfg.mpsAmpMinRows != null) {
+        VEYA_MPS_AMP_MIN_ROWS = toString cfg.mpsAmpMinRows;
+      } // lib.optionalAttrs (cfg.maxLoaded != null) {
+        VEYA_MAX_LOADED = toString cfg.maxLoaded;
+      } // lib.optionalAttrs (cfg.maxTokenBudget != null) {
+        VEYA_MAX_TOKEN_BUDGET = toString cfg.maxTokenBudget;
+      } // lib.optionalAttrs (cfg.maxBatchTokens != null) {
+        VEYA_MAX_BATCH_TOKENS = toString cfg.maxBatchTokens;
+      } // lib.optionalAttrs (cfg.bodyReadTimeout != null) {
+        VEYA_BODY_READ_TIMEOUT = toString cfg.bodyReadTimeout;
+      } // lib.optionalAttrs (cfg.tournamentGroup != null) {
+        VEYA_TOURNAMENT_GROUP = toString cfg.tournamentGroup;
+      } // lib.optionalAttrs (cfg.revision != null) {
+        VEYA_REVISION = cfg.revision;
+      } // lib.optionalAttrs (cfg.defaultModel != null) {
+        VEYA_DEFAULT_MODEL = cfg.defaultModel;
+      } // lib.optionalAttrs (cfg.extraModels != null) {
+        VEYA_EXTRA_MODELS = cfg.extraModels;
+      } // lib.optionalAttrs (cfg.cache != null) {
+        VEYA_CACHE = if cfg.cache then "1" else "0";
+      } // lib.optionalAttrs (cfg.cachePath != null) {
+        VEYA_CACHE_PATH = cfg.cachePath;
+      } // lib.optionalAttrs (cfg.cacheTtl != null) {
+        VEYA_CACHE_TTL = cfg.cacheTtl;
+      } // lib.optionalAttrs (cfg.cacheMaxsize != null) {
+        VEYA_CACHE_MAXSIZE = toString cfg.cacheMaxsize;
+      } // lib.optionalAttrs (cfg.cacheFingerprint != null) {
+        VEYA_CACHE_FINGERPRINT = cfg.cacheFingerprint;
+      } // lib.optionalAttrs (cfg.cacheRenewOnHit != null) {
+        VEYA_CACHE_RENEW_ON_HIT = if cfg.cacheRenewOnHit then "1" else "0";
+      } // lib.optionalAttrs (cfg.cacheRequired != null) {
+        VEYA_CACHE_REQUIRED = if cfg.cacheRequired then "1" else "0";
+      } // lib.optionalAttrs (cfg.cacheRequireExisting != null) {
+        VEYA_CACHE_REQUIRE_EXISTING = if cfg.cacheRequireExisting then "1" else "0";
+      } // lib.optionalAttrs (cfg.cacheExpectedStoreId != null) {
+        VEYA_CACHE_EXPECTED_STORE_ID = cfg.cacheExpectedStoreId;
+      } // lib.optionalAttrs (cfg.decisionPolicy != null) {
+        VEYA_DECISION_POLICY = cfg.decisionPolicy;
+      } // lib.optionalAttrs (cfg.replayManifest != null) {
+        VEYA_REPLAY_MANIFEST = cfg.replayManifest;
+      } // lib.optionalAttrs (cfg.httpReplayFastPath != null) {
+        VEYA_HTTP_REPLAY_FAST_PATH = if cfg.httpReplayFastPath then "1" else "0";
+      } // lib.optionalAttrs (cfg.microbatchMaxStates != null) {
+        VEYA_MICROBATCH_MAX_STATES = toString cfg.microbatchMaxStates;
+      } // lib.optionalAttrs (cfg.microbatchWaitMs != null) {
+        VEYA_MICROBATCH_WAIT_MS = toString cfg.microbatchWaitMs;
+      } // {
+        HF_HOME = "/var/lib/${cfg.stateDirectory}/huggingface";
+        # torch-bin bundles its own CUDA runtime but still needs the host
+        # driver's libcuda.so.1 / libnvidia-ml.so, which NixOS exposes here.
+        LD_LIBRARY_PATH = "/run/opengl-driver/lib";
+      };
+
+      serviceConfig = {
+        ExecStart = startScript;
+        Restart = "on-failure";
+        RestartSec = 5;
+        # First start downloads ~1.2 GB of weights before it listens.
+        TimeoutStartSec = "600";
+
+        DynamicUser = true;
+        StateDirectory = cfg.stateDirectory;
+
+        # GPU: keep the nvidia device nodes visible to the sandbox.
+        PrivateDevices = false;
+        DeviceAllow = [
+          "/dev/nvidia0 rw"
+          "/dev/nvidiactl rw"
+          "/dev/nvidia-uvm rw"
+          "/dev/nvidia-uvm-tools rw"
+          "/dev/nvidia-modeset rw"
+        ];
+
+        # Hardening (kept compatible with CUDA device access).
+        NoNewPrivileges = true;
+        ProtectSystem = "strict";
+        ProtectHome = true;
+        PrivateTmp = true;
+        ProtectControlGroups = true;
+        ProtectKernelModules = true;
+        RestrictNamespaces = true;
+        RestrictSUIDSGID = true;
+        LockPersonality = true;
+      } // lib.optionalAttrs (cfg.apiKeyFile != null) {
+        LoadCredential = [ "apikey:${cfg.apiKeyFile}" ];
+      };
+    };
+
+    networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall cfg.port;
+  };
+}

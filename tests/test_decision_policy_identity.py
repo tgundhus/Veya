@@ -10,12 +10,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from laya import DecisionCache, Router
-from laya.checkpoint import _checkpoint_signature
-from laya.consistency import _KEY_VERSION, _canonical, _fingerprint
-from laya.errors import DecisionCacheError
-from laya.hooks import PredictContext, clear_default_hooks
-from laya.replay import load_manifest
+from veya import DecisionCache, Router
+from veya.checkpoint import _checkpoint_signature
+from veya.consistency import _KEY_VERSION, _canonical, _fingerprint
+from veya.errors import DecisionCacheError
+from veya.hooks import PredictContext, clear_default_hooks
+from veya.replay import load_manifest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,7 +26,7 @@ QUESTIONS = {"keep": {"type": "noul", "instructions": "Keep this?"}}
 @pytest.fixture(autouse=True)
 def clean_environment(monkeypatch):
     for name in tuple(os.environ):
-        if name.startswith("LAYA_"):
+        if name.startswith("VEYA_"):
             monkeypatch.delenv(name)
     clear_default_hooks()
     yield
@@ -34,7 +34,7 @@ def clean_environment(monkeypatch):
 
 
 def predictor(directory, policy="canonical"):
-    from laya.agent import Agent
+    from veya.agent import Agent
 
     checkpoint = directory / "checkpoint"
     checkpoint.mkdir(exist_ok=True)
@@ -107,7 +107,7 @@ def test_canonical_cache_layout_is_byte_compatible_with_existing_keys(tmp_path, 
 
 
 def test_cleared_effective_policy_matches_inference_and_invalidates_balanced_approval(tmp_path):
-    from laya.decision_policy import resolve_decision_policy
+    from veya.decision_policy import resolve_decision_policy
 
     router, cache, agent, checkpoint = configured(tmp_path, POLICY, "reviewed-policy")
     with cache:
@@ -178,7 +178,7 @@ class Deny(importlib.abc.MetaPathFinder):
    attempted.append(name)
    raise AssertionError(name)
 sys.meta_path.insert(0,Deny())
-from laya import Router,DecisionCache
+from veya import Router,DecisionCache
 with DecisionCache(sys.argv[1],required=True,ttl=None,maxsize=None,
                    fingerprint='reviewed-policy',expected_store_id=sys.argv[4]) as cache:
  router=Router(models={'english':sys.argv[2]},hooks=[cache],replay_manifest=sys.argv[3],performance_mode='default')
@@ -221,43 +221,43 @@ def test_explicit_constructor_override_is_the_approved_effective_policy(tmp_path
                                          ("canonical", {"agent_kwargs": {"decision_policy": "canonical"}}),
                                          (" context-balanced-v1 ", {"agent_kwargs": {"decision_policy": POLICY}})])
 def test_service_policy_environment_is_opt_in_and_shared(monkeypatch, raw, expected):
-    from laya import serve
+    from veya import serve
     if raw is not None:
-        monkeypatch.setenv("LAYA_DECISION_POLICY", raw)
+        monkeypatch.setenv("VEYA_DECISION_POLICY", raw)
     assert serve._decision_policy_option() == expected
 
 
 def test_invalid_http_policy_fails_before_runtime_or_router_construction(monkeypatch):
-    import laya.router
-    from laya import serve
+    import veya.router
+    from veya import serve
 
-    monkeypatch.setenv("LAYA_DECISION_POLICY", "automatic")
+    monkeypatch.setenv("VEYA_DECISION_POLICY", "automatic")
     monkeypatch.setattr(serve, "_router_runtime_setup", lambda *_: pytest.fail("runtime was constructed"))
-    monkeypatch.setattr(laya.router, "Router", lambda **_: pytest.fail("router was constructed"))
-    with pytest.raises(ValueError, match="LAYA_DECISION_POLICY"):
+    monkeypatch.setattr(veya.router, "Router", lambda **_: pytest.fail("router was constructed"))
+    with pytest.raises(ValueError, match="VEYA_DECISION_POLICY"):
         serve.build_router()
 
 
 def test_http_and_mcp_forward_the_same_local_policy(monkeypatch):
-    import laya
-    import laya.router
-    from laya import serve
+    import veya
+    import veya.router
+    from veya import serve
 
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
-    monkeypatch.setenv("LAYA_DECISION_POLICY", POLICY)
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
+    monkeypatch.setenv("VEYA_DECISION_POLICY", POLICY)
 
     def build(**options):
         return SimpleNamespace(options=options, loaded=[], max_loaded=2)
 
     with monkeypatch.context() as http:
-        http.setattr(laya.router, "Router", build)
+        http.setattr(veya.router, "Router", build)
         http.setattr(serve, "_router_runtime_setup", lambda *_: (None, None))
         http.setattr(serve, "_configure_decision_cache", lambda _: None)
         assert serve.build_router().options["agent_kwargs"] == {"decision_policy": POLICY}
     pytest.importorskip("mcp")
-    from laya.mcp import server
+    from veya.mcp import server
 
-    monkeypatch.setattr(laya, "Router", build)
+    monkeypatch.setattr(veya, "Router", build)
     monkeypatch.setattr(server, "_ROUTER", None)
     monkeypatch.setattr(server, "_PERFORMANCE_MODE", None)
     monkeypatch.setattr(server, "_BACKEND", None)
@@ -268,13 +268,13 @@ def test_http_and_mcp_forward_the_same_local_policy(monkeypatch):
 
 def test_invalid_mcp_policy_stays_unconfigured_without_loading_models(monkeypatch):
     pytest.importorskip("mcp")
-    from laya.mcp import server
-    from laya.mcp.tools import ToolError
+    from veya.mcp import server
+    from veya.mcp.tools import ToolError
 
-    monkeypatch.setenv("LAYA_DECISION_POLICY", "automatic")
+    monkeypatch.setenv("VEYA_DECISION_POLICY", "automatic")
     monkeypatch.setattr(server, "_ROUTER", None)
     monkeypatch.setattr(server, "_router_runtime_setup", lambda *_: pytest.fail("runtime was constructed"))
-    with pytest.raises(ToolError, match="LAYA_DECISION_POLICY"):
+    with pytest.raises(ToolError, match="VEYA_DECISION_POLICY"):
         server._ensure_router()
     assert server._ROUTER is None
 
@@ -288,13 +288,13 @@ def test_invalid_mcp_policy_stays_unconfigured_without_loading_models(monkeypatc
 def test_http_policy_caps_each_real_and_probe_forward(tmp_path, monkeypatch, path, microbatch, width, budget):
     pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
-    from laya import serve
-    from laya.decision_policy import CONTENT_FREE_PROBES
+    from veya import serve
+    from veya.decision_policy import CONTENT_FREE_PROBES
 
-    monkeypatch.setenv("LAYA_MAX_BATCH_TOKENS", str(budget))
+    monkeypatch.setenv("VEYA_MAX_BATCH_TOKENS", str(budget))
     if microbatch:
-        monkeypatch.setenv("LAYA_MICROBATCH_MAX_STATES", "2")
-        monkeypatch.setenv("LAYA_MICROBATCH_WAIT_MS", "0")
+        monkeypatch.setenv("VEYA_MICROBATCH_MAX_STATES", "2")
+        monkeypatch.setenv("VEYA_MICROBATCH_WAIT_MS", "0")
     agent, checkpoint = predictor(tmp_path, POLICY)
     # Exercise the real Agent entry point and policy splitter with a controlled
     # backend, recording each canonical forward's padded token ceiling.

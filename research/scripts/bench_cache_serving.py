@@ -11,7 +11,7 @@ Sections:
               On CPU by default: PyTorch's MPS backend is not safe for concurrent forward passes
               from several threads (a Metal assertion aborts the process), so "off" cannot run there.
               `mps_threads` checks that in a subprocess: two threads, two different new requests.
-    serve     the HTTP server (laya.serve.create_app, in process over httpx) with a cache in its
+    serve     the HTTP server (veya.serve.create_app, in process over httpx) with a cache in its
               Router: a hit on its own, a miss on its own, and a hit while other clients' misses
               are running. The server runs one prediction at a time behind a lock, hits included.
 
@@ -37,9 +37,9 @@ sys.path.insert(0, HERE)
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
-import laya.router as router_mod  # noqa: E402
-from laya import DecisionCache, Router  # noqa: E402
+import veya  # noqa: E402
+import veya.router as router_mod  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
 from request_sets import load  # noqa: E402
 
 
@@ -118,7 +118,7 @@ def run_trace(pool, device, n, s, tmp):
 MPS_THREADS = r"""
 import sys, threading
 sys.path.insert(0, %(root)r)
-from laya import Router
+from veya import Router
 router = Router(device="mps")
 agent = router.load("english")
 q = {"billing": {"type": "noul", "instructions": "Is this about billing?"}}
@@ -230,7 +230,7 @@ async def _serve(app, pool, hits_n=100, misses_n=12, clients=3):
 
 
 def run_serve(pool, device):
-    from laya.serve import create_app
+    from veya.serve import create_app
 
     router = Router(device=device, hooks=[DecisionCache()])
     for m in ("english", "multilingual"):
@@ -256,7 +256,7 @@ def main():
     args = parser.parse_args()
     device = args.device or ("mps" if torch.backends.mps.is_available() else "cpu")
     pool = load(args.requests, set(args.pool.split(",")))
-    results = {"meta": {"laya": laya.__version__, "torch": torch.__version__, "device": device,
+    results = {"meta": {"laya": veya.__version__, "torch": torch.__version__, "device": device,
                         "platform": platform.platform(), "machine": platform.machine(), "cpus": os.cpu_count(),
                         "torch_threads": torch.get_num_threads(), "load_average_at_start": os.getloadavg()}}
     with tempfile.TemporaryDirectory() as tmp:

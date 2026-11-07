@@ -1,6 +1,6 @@
 import {
-  LayaAbortError, LayaAPIError, LayaConnectionError, LayaError, LayaResponseError,
-  LayaTimeoutError, LayaValidationError,
+  VeyaAbortError, VeyaAPIError, VeyaConnectionError, VeyaError, VeyaResponseError,
+  VeyaTimeoutError, VeyaValidationError,
 } from './errors.js';
 import type { BatchPrediction, Health, Prediction, PredictBatchOptions, PredictOptions, Questions, RequestOptions, State } from './types.js';
 import { isMinConfidenceKey } from './buckets.js';
@@ -14,7 +14,7 @@ function isThreshold(value: unknown): value is number {
 
 function validateState(state: unknown): void {
   if (typeof state !== 'string' && !Array.isArray(state) && !isRecord(state)) {
-    throw new LayaValidationError('state must be text, a JSON object, or an array');
+    throw new VeyaValidationError('state must be text, a JSON object, or an array');
   }
   validateJson(state);
 }
@@ -28,11 +28,11 @@ function validateMinConfidence(value: unknown): asserts value is number | Record
   if (isRecord(value) && Object.keys(value).length > 0
       && Object.keys(value).every(isMinConfidenceKey)
       && Object.values(value).every(isThreshold)) return;
-  throw new LayaValidationError(
+  throw new VeyaValidationError(
     'minConfidence must be a number between 0 and 1, or a non-empty map of bucket to threshold');
 }
 
-export interface LayaOptions {
+export interface VeyaOptions {
   /** Server root URL, optionally including a reverse-proxy path prefix. */
   baseURL?: string;
   apiKey?: string;
@@ -45,24 +45,24 @@ export interface LayaOptions {
   fetch?: typeof globalThis.fetch;
 }
 
-export class Laya {
+export class Veya {
   private readonly baseURL: string;
   private readonly timeoutMs: number;
   private readonly headers: Headers;
   private readonly fetcher: typeof globalThis.fetch;
   private readonly model: string | undefined;
 
-  constructor(options: LayaOptions = {}) {
+  constructor(options: VeyaOptions = {}) {
     let url: URL;
     try { url = new URL(options.baseURL ?? 'http://127.0.0.1:8000'); }
-    catch { throw new LayaValidationError('baseURL must be an absolute HTTP(S) URL'); }
+    catch { throw new VeyaValidationError('baseURL must be an absolute HTTP(S) URL'); }
     if (!['http:', 'https:'].includes(url.protocol) || url.search || url.hash || url.username || url.password) {
-      throw new LayaValidationError('baseURL must be HTTP(S), without credentials, query, or fragment');
+      throw new VeyaValidationError('baseURL must be HTTP(S), without credentials, query, or fragment');
     }
     this.baseURL = url.href.replace(/\/+$/, '');
     this.model = options.model;
     if (this.model !== undefined && (typeof this.model !== 'string' || !this.model.trim())) {
-      throw new LayaValidationError('model must be a nonempty string');
+      throw new VeyaValidationError('model must be a nonempty string');
     }
     this.timeoutMs = options.timeoutMs ?? 120_000;
     validateTimeout(this.timeoutMs);
@@ -70,7 +70,7 @@ export class Laya {
     this.headers.set('Accept', 'application/json');
     if (options.apiKey !== undefined) this.headers.set('Authorization', `Bearer ${options.apiKey}`);
     const fetcher = options.fetch ?? globalThis.fetch;
-    if (typeof fetcher !== 'function') throw new LayaValidationError('A Fetch implementation is required');
+    if (typeof fetcher !== 'function') throw new VeyaValidationError('A Fetch implementation is required');
     this.fetcher = fetcher;
   }
 
@@ -84,7 +84,7 @@ export class Laya {
   /** Answer states sharing one question set in input order through the server's batch endpoint. */
   async predictBatch<const Q extends Questions>(states: readonly State[], questions: Q,
     options: PredictBatchOptions = {}): Promise<BatchPrediction<Q>> {
-    if (!Array.isArray(states) || states.length === 0) throw new LayaValidationError('states must be a nonempty array');
+    if (!Array.isArray(states) || states.length === 0) throw new VeyaValidationError('states must be a nonempty array');
     validateQuestions(questions);
     for (const state of states) validateState(state);
     const body = JSON.parse(this.body(states[0], questions, options));
@@ -92,25 +92,25 @@ export class Laya {
     body.states = states;
     if (options.batchSize !== undefined) {
       if (!Number.isInteger(options.batchSize) || options.batchSize < 1) {
-        throw new LayaValidationError('batchSize must be a positive integer');
+        throw new VeyaValidationError('batchSize must be a positive integer');
       }
       body.batch_size = options.batchSize;
     }
     if (options.sortByLength !== undefined) {
-      if (typeof options.sortByLength !== 'boolean') throw new LayaValidationError('sortByLength must be boolean');
+      if (typeof options.sortByLength !== 'boolean') throw new VeyaValidationError('sortByLength must be boolean');
       body.sort_by_length = options.sortByLength;
     }
     const result = await this.request<BatchPrediction<Q>>('/v1/systemone/batch', JSON.stringify(body), options);
     if (!Array.isArray(result.results) || result.results.length !== states.length ||
         !isRecord(result.total_usage) || !Number.isInteger(result.total_usage.input_tokens) ||
         !Number.isInteger(result.total_usage.output_tokens)) {
-      throw new LayaResponseError('Invalid Laya batch response');
+      throw new VeyaResponseError('Invalid Veya batch response');
     }
     for (const prediction of result.results) validatePrediction(prediction, questions);
     return result;
   }
 
-  /** Query the self-hosted Laya server's health probe. */
+  /** Query the self-hosted Veya server's health probe. */
   async health(options: RequestOptions = {}): Promise<Health> {
     const result = await this.request<Health>('/health', undefined, options);
     validateHealth(result);
@@ -120,24 +120,24 @@ export class Laya {
   private body(state: State, questions: Questions, options: PredictOptions): string {
     validateState(state);
     if (options.task !== undefined && (typeof options.task !== 'string' || !options.task.trim())) {
-      throw new LayaValidationError('task must be a nonempty string');
+      throw new VeyaValidationError('task must be a nonempty string');
     }
     for (const key of ['lang', 'langGuess'] as const) {
       const value = options[key];
       if (value !== undefined && (typeof value !== 'string' || !value.trim())) {
-        throw new LayaValidationError(`${key} must be a nonempty language code string`);
+        throw new VeyaValidationError(`${key} must be a nonempty language code string`);
       }
     }
     for (const key of ['maxLen', 'headMaxLen'] as const) {
       const value = options[key];
       if (value !== undefined && (!Number.isInteger(value) || value < 1)) {
-        throw new LayaValidationError(`${key} must be a positive integer`);
+        throw new VeyaValidationError(`${key} must be a positive integer`);
       }
     }
     if (options.minConfidence !== undefined) validateMinConfidence(options.minConfidence);
     const model = options.model ?? this.model;
     if (model !== undefined && (typeof model !== 'string' || !model.trim())) {
-      throw new LayaValidationError('model must be a nonempty string');
+      throw new VeyaValidationError('model must be a nonempty string');
     }
     const wireQuestions = Object.fromEntries(Object.entries(questions).map(([id, question]) => [id,
       question.type === 'choice' && Array.isArray(question.criteria)
@@ -167,11 +167,11 @@ export class Laya {
     const timeoutMs = options.timeoutMs ?? this.timeoutMs;
     validateTimeout(timeoutMs);
     const controller = new AbortController();
-    const abort = () => controller.abort(new LayaAbortError('Request aborted', { cause: options.signal?.reason }));
+    const abort = () => controller.abort(new VeyaAbortError('Request aborted', { cause: options.signal?.reason }));
     options.signal?.addEventListener('abort', abort, { once: true });
     if (options.signal?.aborted) abort();
     const timer = timeoutMs > 0 ? setTimeout(() => {
-      controller.abort(new LayaTimeoutError(`Request timed out after ${timeoutMs} ms`));
+      controller.abort(new VeyaTimeoutError(`Request timed out after ${timeoutMs} ms`));
     }, timeoutMs) : undefined;
 
     try {
@@ -187,25 +187,25 @@ export class Laya {
       let payload: unknown;
       try { payload = JSON.parse(raw); }
       catch {
-        if (response.ok) throw new LayaResponseError('Server returned invalid JSON');
+        if (response.ok) throw new VeyaResponseError('Server returned invalid JSON');
       }
       if (!response.ok) {
         const error = isRecord(payload) && isRecord(payload.error) ? payload.error : undefined;
         const detail = isRecord(payload) ? payload.detail : undefined;
-        throw new LayaAPIError(
+        throw new VeyaAPIError(
           typeof error?.message === 'string' ? error.message
-            : typeof detail === 'string' ? detail : `Laya returned HTTP ${response.status}`,
+            : typeof detail === 'string' ? detail : `Veya returned HTTP ${response.status}`,
           response.status,
           typeof error?.code === 'string' ? error.code : 'http_error',
           error?.details ?? detail ?? payload ?? raw,
         );
       }
-      if (!isRecord(payload)) throw new LayaResponseError('Server returned a non-object JSON response');
+      if (!isRecord(payload)) throw new VeyaResponseError('Server returned a non-object JSON response');
       return payload as T;
     } catch (error) {
       if (controller.signal.aborted) throw controller.signal.reason;
-      if (error instanceof LayaError) throw error;
-      throw new LayaConnectionError('Could not reach the Laya server', { cause: error });
+      if (error instanceof VeyaError) throw error;
+      throw new VeyaConnectionError('Could not reach the Veya server', { cause: error });
     } finally {
       if (timer !== undefined) clearTimeout(timer);
       options.signal?.removeEventListener('abort', abort);

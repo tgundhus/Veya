@@ -11,12 +11,12 @@ HTTP calls only. The explicit `/v1/systemone/batch` endpoint and tournament mode
 keep their existing serialized execution paths.
 
 ```text
-LAYA_MICROBATCH_MAX_STATES=8
-LAYA_MICROBATCH_WAIT_MS=1
+VEYA_MICROBATCH_MAX_STATES=8
+VEYA_MICROBATCH_WAIT_MS=1
 ```
 
-`LAYA_MICROBATCH_MAX_STATES` defaults to `0` (disabled); an enabled value must be
-between 2 and 64. `LAYA_MICROBATCH_WAIT_MS` defaults to one millisecond and must be
+`VEYA_MICROBATCH_MAX_STATES` defaults to `0` (disabled); an enabled value must be
+between 2 and 64. `VEYA_MICROBATCH_WAIT_MS` defaults to one millisecond and must be
 finite and nonnegative. Zero collects work already queued without an intentional
 collection delay. Invalid settings fail startup. Existing deployments keep their
 original single-request behavior when the feature is disabled.
@@ -25,7 +25,7 @@ original single-request behavior when the feature is disabled.
 
 Authentication, admission, body deadlines, byte/state/question limits, surrogate
 checks and control validation run before work is queued. The queue has at most
-`LAYA_MAX_CONCURRENT` entries independently of admission, so repeated client
+`VEYA_MAX_CONCURRENT` entries independently of admission, so repeated client
 cancellations cannot grow retained queued bodies without bound. Overflow and
 shutdown return 503 with `Retry-After`.
 
@@ -37,7 +37,7 @@ explicit batches, tournaments and idle unloading.
 
 Combined model calls use the exact built-in Router and Agent/ONNXAgent types and already resident checkpoints
 whose actual token widths are known. Aggregate state/question/token cost bounds
-each model pass using `LAYA_MAX_BATCH_TOKENS`. A cold checkpoint or unknown width
+each model pass using `VEYA_MAX_BATCH_TOKENS`. A cold checkpoint or unknown width
 uses the original per-request prediction path. Non-cache custom hooks, custom
 Router/Agent subclasses, custom attached agents and callable deployment routing hints also use individual
 prediction, preserving their side effects. The built-in `DecisionCache` remains
@@ -83,7 +83,7 @@ profile enables it.
 ```bash
 python -m pytest tests/test_microbatch.py -q
 python research/scripts/bench_microbatch.py --out research/results/microbatch.json
-python research/scripts/bench_microbatch.py --checkpoint /models/laya \
+python research/scripts/bench_microbatch.py --checkpoint /models/veya \
   --requests 16 --out research/results/microbatch_cpu.json
 ```
 

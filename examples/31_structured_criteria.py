@@ -7,7 +7,7 @@ types with structured criteria, then runs the prediction.
 import json
 import textwrap
 
-from _common import laya, banner, describe, device_line, load
+from _common import veya, banner, describe, device_line, load
 
 banner("31", "Structured criteria", """
     Every option carries a description, and those descriptions are part of the input -- strip
@@ -23,7 +23,7 @@ banner("31", "Structured criteria", """
 
     Before that fix, dict-valued `noul` criteria raised
     `TypeError: can only concatenate str (not "dict") to str`, and `choice`/`score` leaked
-    `{'desc': ...}` into the prompt. Calling `laya.render_options` is the cheapest way to see
+    `{'desc': ...}` into the prompt. Calling `veya.render_options` is the cheapest way to see
     exactly what the model reads.
     """)
 
@@ -75,8 +75,8 @@ def internal(question):
 
 agent = load("english")
 device_line(agent)
-print("   Laya %s; the option text below is exactly what the encoder sees (rendered as JSON)."
-      % laya.__version__)
+print("   Veya %s; the option text below is exactly what the encoder sees (rendered as JSON)."
+      % veya.__version__)
 
 # --- what the model actually reads ----------------------------------------------------------
 def show_option(index, option):
@@ -87,7 +87,7 @@ def show_option(index, option):
 
 for qid, question in QUESTIONS.items():
     print("\n   == %s (%s) ==" % (qid, question["type"]))
-    for i, option in enumerate(laya.render_options(internal(question))):
+    for i, option in enumerate(veya.render_options(internal(question))):
         show_option(i, option)
 
 # --- the same questions through the real API ------------------------------------------------
@@ -101,6 +101,6 @@ print("   severity legend from the dict levels: %s"
       % json.dumps(result["answers"]["severity"]["legend"]))
 print("   JSON round-trips: the `true` criterion parses back to %s"
       % json.dumps(json.loads(
-          laya.render_options(internal(QUESTIONS["is_phishing"]))[1].split("true: ", 1)[1])))
+          veya.render_options(internal(QUESTIONS["is_phishing"]))[1].split("true: ", 1)[1])))
 print("   tokens used: %d in, %d out" % (result["usage"]["input_tokens"],
                                          result["usage"]["output_tokens"]))

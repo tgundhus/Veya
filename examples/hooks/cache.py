@@ -10,7 +10,7 @@ every state of the batch at once.
 import hashlib
 import json
 
-import laya
+import veya
 
 CACHE = {}
 SKIPS = []            # one entry per call `cache_read` served, so the prints below are checkable
@@ -20,7 +20,7 @@ def cache_key(ctx, index):
     """One entry per question the model is actually asked, for one state of the call.
 
     Deliberately not `sort_keys=True`: a choice question's criteria order is positional, so two
-    orders are two questions, and `_question_schema` in `laya/router.py` keeps them apart for the
+    orders are two questions, and `_question_schema` in `veya/router.py` keeps them apart for the
     same reason. Sorting the keys folds them into one entry, and the second caller gets the first
     caller's numbers. `ctx.model` and the token budget belong in the key for the same reason: on
     the Router one hook set serves three checkpoints, and a smaller `max_len` truncates the state.
@@ -42,7 +42,7 @@ def cache_write(ctx):
         CACHE[cache_key(ctx, i)] = result
 
 
-agent = laya.load("convaiinnovations/laya",
+agent = veya.load("convaiinnovations/laya",
                   on_predict_start=cache_read, on_predict_end=cache_write)
 
 STATE = "I was charged twice for the same invoice."

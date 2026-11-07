@@ -34,7 +34,7 @@ toggle.name = "Switch to light mode"
 
 [project.plugins.awesome-nav]
 
-# API reference pages under docs/reference/ are generated from the docstrings in laya/.
+# API reference pages under docs/reference/ are generated from the docstrings in veya/.
 [project.plugins.mkdocstrings.handlers.python]
 paths = ["."]
 

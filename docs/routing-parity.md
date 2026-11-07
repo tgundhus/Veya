@@ -12,15 +12,15 @@ checkpoint selection, language evidence, diagnostic source and human-readable
 route reason. Python result keys use snake_case; TypeScript uses camelCase.
 
 ```python
-from laya import Router
-from laya.lang import ROUTING_CONTRACT_VERSION
+from veya import Router
+from veya.lang import ROUTING_CONTRACT_VERSION
 
 decision = Router().route(state, questions, explain=True)
 print(ROUTING_CONTRACT_VERSION, decision["model"], decision["detection"])
 ```
 
 ```typescript
-import { Router, ROUTING_CONTRACT_VERSION } from "laya-ts";
+import { Router, ROUTING_CONTRACT_VERSION } from "veya-ts";
 
 const decision = new Router().route(state, questions, { explain: true });
 console.log(ROUTING_CONTRACT_VERSION, decision.model, decision.detection);
@@ -84,7 +84,7 @@ Regenerate or validate the tables with Python 3.12 / Unicode 15.0.0:
 python research/scripts/generate_routing_unicode.py --check --check-node
 python research/scripts/generate_routing_corpus.py --check
 python tests/test_routing_parity.py
-cd laya-ts && npm test -- --run tests/routing-parity.test.ts
+cd veya-ts && npm test -- --run tests/routing-parity.test.ts
 ```
 
 The Unicode validator compares all 1,114,112 code points and 10,000 contextual

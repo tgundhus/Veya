@@ -1,0 +1,319 @@
+# Veya native TypeScript runtime (`veya-ts`)
+
+TypeScript inference for Veya (`Agent.predict`, `Router`, `lang`, `email`, `presets`, `shortlist`, `hooks`) on Node and the browser via split ONNX (`encoder.onnx` + `head.onnx`). ESM-only (`"type": "module"`); import from ESM or bundle.
+
+Build and install this checkout in another project:
+
+```sh
+cd veya-ts
+npm ci
+npm pack
+# In the consuming application:
+npm install /path/to/veya/veya-ts/veya-ts-0.1.0.tgz
+```
+
+The package retains the `veya-ts` import name. For HTTP calls to a shared Python process, use
+the [Veya HTTP SDK](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) instead.
+
+## Export weights (once per checkpoint)
+
+```bash
+python veya-ts/scripts/export_onnx.py --model-dir <ckpt> --out-dir ./model
+# writes encoder.onnx, head.onnx + copies tokenizer.json, rl_agent_config.json
+# verifies torch vs ONNX match within 1e-4 (skip with --no-verify)
+```
+
+## Node (CPU/CUDA)
+
+```ts
+import { Agent, Router } from "veya-ts";
+
+const agent = await Agent.load("./model"); // local dir, or ("convaiinnovations/laya", { subfolder: "multilingual" })
+const router = new Router();
+router.attach("english", agent);
+const out = await router.predict({ body: "charged twice, refund please" }, {
+  intent: { type: "choice", instructions: "What does the customer want?", criteria: { refund: "money back", other: "anything else" } },
+});
+console.log(out.answers.intent);
+```
+
+CUDA: `Agent.load("./model", { device: "cuda" })` (falls back to CPU with a warning).
+
+## Browser (WebGPU → WASM fallback)
+
+```ts
+import { Agent } from "veya-ts";
+
+const agent = await Agent.load("https://example.com/models/veya"); // serves encoder.onnx, head.onnx, tokenizer.json, rl_agent_config.json
+const out = await agent.predict("charged twice", {
+  d: { type: "choice", instructions: "pick", criteria: { refund: "money back", other: "rest" } },
+});
+```
+
+`onnxruntime-node` / `onnxruntime-web` are optional peer deps, imported lazily behind the provider you use.
+
+## Hooks (observe or shape every decision)
+
+Port of the Python `veya.hooks` lifecycle. A hook is a `(ctx) => void` for `onPredictStart` /
+`onPredictEnd`, or an object implementing any subset of `onPredictStart`, `onPredictEnd`,
+`onRoute`, `onLoad`, `onEvict`, `onError`. A hook may be `async`: it is awaited, in order, before the
+call continues, and a rejection follows `hooksRaise` like a thrown error. `onRoute` runs inside the
+synchronous `route()`, so it is not awaited and a rejection there is only logged:
+
+```ts
+const tracer = {
+  onPredictStart(ctx) { console.time(ctx.runId); },
+  onPredictEnd(ctx) { console.timeEnd(ctx.runId); console.log(ctx.model, ctx.usage, ctx.elapsedMs); },
+};
+const router = new Router({ hooks: [tracer], hooksRaise: false }); // telemetry must not fail a request
+await router.withHooks([auditHook], () => router.predict(state, questions)); // scoped install
+
+// a start hook may rewrite ctx.states / ctx.questions, or serve a cached result:
+const cache = { onPredictStart(ctx) { const hit = lookup(ctx.states[0]); if (hit) ctx.skip([hit]); } };
+// an onRoute hook may replace ctx.decision (e.g. pin a checkpoint)
+
+// subclass BaseHook to override only the events you need:
+class MetricsHook extends BaseHook {
+  onPredictEnd(ctx) { record(ctx.usage); }
+}
+
+// process-wide defaults run before installed and per-call hooks for every Agent/Router,
+// so a tracer or metrics hook does not have to be threaded through every construction:
+setDefaultHooks([new MetricsHook()]);  // addDefaultHook(...) appends; clearDefaultHooks() resets
+```
+
+Asynchronous prediction hooks are awaited before the prediction returns, including when
+`hooksRaise` is `false`. Hooks should finish promptly; the native SDK does not cancel them.
+`Router.predictBatch` awaits each request's hooks and ends contexts in reverse start order.
+Process defaults run once per request, including when the Router delegates to an Agent.
+
+## Structured decisions (`decide`)
+
+Turn a JSON schema into typed values in one call — the port of Python's `veya.structured`
+(#280). Enum properties become choice questions, booleans become noul, bounded integers
+become scores; anything the fixed-option model cannot answer (free strings, arrays, nested
+objects, `$ref`) is rejected with a `SchemaError` naming the path:
+
+```ts
+import { Agent, decide } from "veya-ts";
+
+const agent = await Agent.load("./dist/veya");
+const values = await agent.decide(ticketText, {
+  type: "object",
+  properties: {
+    department: { type: "string", enum: ["billing", "support", "sales"] },
+    urgency: { type: "integer", minimum: 0, maximum: 2 },
+    needs_human: { type: "boolean" },
+  },
+});
+// { department: "billing", urgency: 2, needs_human: false }
+```
+
+`router.decide(...)` works the same way (routing options are forwarded to `predict`), and the
+free `decide(runner, state, schema, opts)` accepts anything with a `predict` method. Pass
+`{ returnDetails: true }` for per-field confidence and probabilities, or `{ questions }`
+instead of a schema to get raw answers. Zod/TypeBox users can pass `z.toJSONSchema(Model)` —
+any object with a `toJSONSchema()` method is accepted. `planFromJsonSchema`,
+`questionsFromJsonSchema` and `answersToJson` expose the planning and projection steps.
+
+Use `agent.decideBatch(states, schema, opts)`, `router.decideBatch(...)`, or the free
+`decideBatch(runner, states, schema, opts)` for a shared schema over many states. Planning
+runs once, predictions use the runner's `predictBatch`, and results preserve input order.
+`batchSize` controls the forward-pass chunks. `returnDetails: true` includes
+`answerConfidence` (per-field `max(p)`, or null when unavailable), alongside the existing
+entropy confidence, probabilities, raw answers, usage and routing. `minConfidence` and
+`min_confidence` accept a threshold or bucket map and gate the returned batch after prediction.
+
+Questions may set `option_order: [1, 0]` to present options in a different order while
+returning probabilities and answers against the original choice keys, score levels or
+noul false/true indices. The array must contain each integer option index exactly once;
+booleans, strings, nulls and extra entries are rejected before inference. Shortlisting
+or tournament narrowing drops stale orders with a warning. Option-stability probes are
+not included.
+
+## Truncation reporting
+
+The state is clamped to whatever token room a question's head leaves, and that budget moves
+with `max_len`, `head_max_len` and the rendered head — so `usage` reports it instead of letting
+you guess from character counts (issue #174; mirrors Python #181):
+
+```ts
+const out = await agent.predict(longState, questions);
+out.usage.truncated;             // true when any state token was dropped
+out.usage.state_tokens;          // encoded length of the full state
+out.usage.state_tokens_dropped;  // worst case across the questions
+out.usage.truncated_questions;   // ids of the questions whose head left too little room
+```
+
+The fields are absent only where no state was ever encoded (empty question schema, or a
+start hook that supplied the result).
+
+### Collapsed options
+
+The same budget also cuts the options themselves: each is capped at 48 tokens, and once they
+overflow `head_max_len` all of them are re-capped at `max(4, (head_max_len - 16) // n)`. Two
+options that share a prefix can come out of that cut as the *same* token span, so the question
+can no longer name them apart while still answering normally — and an answer chosen from 42
+distinguishable spans of 58 has an accuracy ceiling of 72% that nothing else in the response
+mentions (issue #538; mirrors Python `veya.common.collapsed_options`):
+
+```ts
+out.usage.options;   // absent when every option kept a span of its own
+out.usage.options?.intent;  // { total: 58, distinct: 42, tokens_per_option: 4 }
+```
+
+`total` is what the question defines, not the markers that reached the sequence, so a report
+cannot read "43 of 43" about a question whose missing options never entered the input at all.
+
+## Batching (many states, one call)
+
+Port of `Agent.predict_batch` / `Router.route_batch` / `Router.predict_batch`. The throughput
+path: states that share a question schema are collated into one shared forward pass (or one
+per `batchSize` chunk) instead of one pass per state.
+
+```ts
+// Agent: same questions over many states; results align with `states` by index.
+const results = await agent.predictBatch(states, questions, { batchSize: 32 });
+
+// Router: heterogeneous requests — route first, then each checkpoint scores its requests
+// in as few forward passes as possible. Results keep input order and carry `routing`.
+const decisions = router.routeBatch(requests);          // validate + route, nothing loads
+const routed = await router.predictBatch(requests, 32); // == router.predictMany(...)
+// Per-call hooks are composed like predict: installed hooks first, then this list,
+// then onPredictStart / onPredictEnd. null and [] add nothing. hooksRaise overrides
+// the Router's policy for this call. The list runs once per request, including onRoute.
+const traced = await router.predictBatch(requests, null, {
+  hooks: [tracer],
+  onPredictEnd(ctx) { console.log(ctx.usage); },
+  hooksRaise: false,
+});
+
+// requests routed to the same checkpoint still split into separate batches when their
+// question schemas differ (order-sensitively), when per-request start hooks set
+// different ctx.maxLen / ctx.headMaxLen overrides, or — for an agent carrying
+// lang_temperatures — when their languages differ: each request's effective language (an
+// explicit lang, otherwise the detected non-English one) is forwarded to the agent, so
+// the batched path scores exactly like predict. Router-level predict hooks run once per
+// request: ctx.decision is set, ctx.skip() serves a cached result, and onPredictEnd runs
+// per request even when the batch fails.
+```
+
+Python's `sort_by_length` grouping is not ported yet.
+
+## Shortlist (many labels)
+
+```ts
+import { shortlistChoice, predictShortlist, embedFnFromAgent, cached } from "veya-ts";
+
+const embed = cached(embedFnFromAgent(agent), 4096);
+const keep = await shortlistChoice(state, bigCriteriaDict, embed, 20);
+const out = await predictShortlist(agent, state, questions, embed, 20);
+// out.shortlist[qid] = { labels, scores, k, n, passthrough }
+// embedFnFromAgent(agent) mean-pools the loaded encoder; a dedicated bi-encoder usually shortlists better.
+console.log(embed.cacheInfo()); // { size, maxsize, hits, misses }
+embed.cacheClear();
+```
+
+`cached` (`cachedEmbedFn`) keeps at most `maxsize` text vectors in a process-local LRU
+cache; the default is 4096. Repeated label text avoids embedding work. Returned vectors
+are copied, failed embeddings are not stored, and clearing prevents pending calls from
+restoring old entries. Entries remain until eviction or `cacheClear()`; there is no TTL or
+disk persistence. Clear or replace the wrapper whenever the underlying model changes.
+Concurrent cold requests may embed the same missing text independently. Python-style
+`cache_info()` and `cache_clear()` aliases are also available.
+
+## Tournament (large choices without an embedder)
+
+```ts
+import { predictTournament } from "veya-ts";
+
+const out = await predictTournament(agent, state, questions, 16, { minConfidence: 0.9 });
+console.log(out.tournament.intent); // { labels: finalists, n: originalCount, rounds }
+```
+
+`predictTournament` splits each large choice into balanced groups and asks the model to
+pick one winner per group. Each round sends all groups in one prediction call, then the
+final call evaluates the narrowed questions together with any small or non-choice
+questions. The default group size is 16; it must be an integer of at least 2. The helper
+accepts an `Agent`, a `Router`, or an object with `predict`/`systemOne`/`system_one`.
+When a router needs narrowing, the helper resolves the original questions once and pins
+that checkpoint for every prediction, retaining the original detected calibration language.
+Route hooks run for that resolution and for each prediction; deliberate hook overrides
+remain active. Final routing keeps the original explanation when the checkpoint matches.
+Requests that need no narrowing use one ordinary prediction.
+
+Grouping can change the winning label. Final probabilities and confidence describe the
+finalists, and `usage` describes only the final call. Metadata records the original label
+count and narrowing rounds. A narrowed question drops `option_order` and warns once;
+the caller's questions remain unchanged. Tournament selection does not guarantee the
+same accuracy or latency as scoring the entire catalog.
+
+Local parity and caching checks are runnable after building the SDK:
+
+```bash
+python veya-ts/scripts/tournament_parity.py --model-dir CHECKPOINT --onnx-dir SPLIT_EXPORT --fixture tournament-python.json
+node veya-ts/examples/tournament.mjs --model-dir SPLIT_EXPORT --fixture tournament-python.json --report tournament-node.json --compact
+node veya-ts/examples/cached-embedder.mjs --model-dir SPLIT_EXPORT --report cached-embedder.json
+```
+
+The [local English parity result](https://github.com/tgundhus/Veya/blob/main/veya-ts/examples/results/tournament-parity-windows-20261012.json)
+records four scenarios with matching winners, finalists and usage, and at most one
+four-decimal output unit of numeric difference. Both runtimes clamped the checkpoint's
+out-of-range `choice:11+` temperature to 0.5; this check does not validate calibration.
+The [cache measurement](https://github.com/tgundhus/Veya/blob/main/veya-ts/examples/results/cached-embedder-windows-20261012.json)
+preserved shortlisted labels while reducing embedded rows from 126 to 6 over six requests.
+Its three alternating CPU repeats measured a median 294.5 → 33.7 ms per request for a fixed
+20-label catalog. The artifacts record settings and limits; these small panels do not
+establish general accuracy or throughput.
+
+## Per-language calibration (`lang_temperatures`)
+
+Port of the Python `Agent(lang_temperatures=...)` knob. A language override replaces the
+checkpoint's temperature for matching requests — keys normalise to the base subtag
+(`de-AT` → `de`), an omitted `temperature` inherits the base one, and
+`temperature_by_options` works per option-count bucket as usual:
+
+```ts
+const agent = await Agent.load("convaiinnovations/laya", {
+  lang_temperatures: {
+    de: { temperature: [1.2, 1.2, 1.2] },                 // fitted on German evals
+    ja: { temperature_by_options: { "choice:11+": 1.4 } }, // buckets only, base temperature kept
+  },
+});
+await agent.systemOne(state, questions, { lang: "de" });   // uses the German temperature
+await router.predict(state, questions);                    // Router forwards the detected language
+```
+
+`Router.predict` forwards an explicit `lang` verbatim and otherwise the detected language
+(never `"en"` — matching Python, where detection only names non-English languages), so an
+override applies exactly to the requests it was fitted on.
+
+
+## Example (repo root)
+
+```bash
+node veya-ts/examples/try-ml.mjs   # needs ./model-ml from the export step
+node veya-ts/examples/snake.mjs --ticks 50   # autonomous snake demo, headless smoke (live TUI without --ticks)
+```
+
+## Web demo (browser, WebGPU → WASM)
+
+No build step — serve the repo root over HTTP and open the page
+(`localhost` counts as a secure context for WebGPU):
+
+```bash
+python -m http.server 8000   # run at the repo root
+# open http://localhost:8000/veya-ts/examples/web/
+```
+
+The page loads `veya-ts/dist` (run `npm run build` inside `veya-ts/`
+first), pulls `onnxruntime-web` from a pinned CDN import map, and
+fetches the model from the URL in the box (default `../../../model-ml`,
+i.e. the exported `./model-ml` at the repo root). First load transfers ~1.3GB and is
+cached in CacheStorage afterwards; the encoder tries WebGPU and falls
+back to WASM automatically. Chrome/Edge for WebGPU, any modern
+browser for WASM.
+
+## Packaging
+
+ponytail: CJS/browser-field dual build + tsconfig tests-include deferred — Task 7 verified ESM-only; CJS needs second tsc config + export-map change, untested. Add when a CJS consumer or browser-field swap is requested.

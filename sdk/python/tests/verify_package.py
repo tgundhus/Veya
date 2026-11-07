@@ -23,9 +23,9 @@ def check_wheel(path):
         message = BytesParser().parsebytes(wheel.read(metadata[0]))
         assert message["Name"] == "veya-client"
         assert not message.get_all("Requires-Dist"), message.get_all("Requires-Dist")
-        assert "laya_client/py.typed" in names
+        assert "veya_client/py.typed" in names
         assert any("LICENSE" in n for n in names)
-        assert all(n.startswith(("laya_client/", "veya_client-")) for n in names), names
+        assert all(n.startswith(("veya_client/", "laya_client/", "veya_client-")) for n in names), names
 
 
 def extract_sdist(source, destination):
@@ -56,7 +56,7 @@ def main():
     env = dict(os.environ)
     env.pop("PYTHONPATH", None)
     env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
-    with tempfile.TemporaryDirectory(prefix="laya-sdk-package-") as directory:
+    with tempfile.TemporaryDirectory(prefix="veya-sdk-package-") as directory:
         root = Path(directory)
         environment = root / "client"
         venv.EnvBuilder(with_pip=True).create(environment)

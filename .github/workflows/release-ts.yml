@@ -1,6 +1,6 @@
-name: Release TypeScript (laya-ts)
+name: Release TypeScript (veya-ts)
 
-# Tag a commit laya-ts-v0.1.0 and push it; this runs tests, verifies the version
+# Tag a commit veya-ts-v0.1.0 and push it; this runs tests, verifies the version
 # matches the tag, packs the artifact, publishes to npm with provenance, and
 # attaches the tarball to a GitHub Release.
 #
@@ -9,7 +9,7 @@ name: Release TypeScript (laya-ts)
 
 on:
   push:
-    tags: ["laya-ts-v*"]
+    tags: ["veya-ts-v*"]
   workflow_dispatch:
 
 permissions:
@@ -22,14 +22,14 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        working-directory: laya-ts
+        working-directory: veya-ts
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: laya-ts/package-lock.json
+          cache-dependency-path: veya-ts/package-lock.json
 
       - run: npm ci
 
@@ -40,10 +40,10 @@ jobs:
         run: npm run test:package
 
       - name: Version matches tag
-        if: startsWith(github.ref, 'refs/tags/laya-ts-v')
+        if: startsWith(github.ref, 'refs/tags/veya-ts-v')
         run: |
           pkg=$(node -p "require('./package.json').version")
-          tag="${GITHUB_REF_NAME#laya-ts-v}"
+          tag="${GITHUB_REF_NAME#veya-ts-v}"
           echo "package.json=$pkg tag=$tag"
           test "$pkg" = "$tag" || { echo "::error::package.json version $pkg does not match tag $tag"; exit 1; }
 
@@ -52,13 +52,13 @@ jobs:
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: laya-ts-dist
-          path: laya-ts/dist/*.tgz
+          name: veya-ts-dist
+          path: veya-ts/dist/*.tgz
 
   npm:
     name: Publish to npm
     needs: build
-    if: startsWith(github.ref, 'refs/tags/laya-ts-v') && vars.PUBLISH_TO_NPM == 'true'
+    if: startsWith(github.ref, 'refs/tags/veya-ts-v') && vars.PUBLISH_TO_NPM == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: npm
@@ -76,15 +76,15 @@ jobs:
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: laya-ts-dist
+          name: veya-ts-dist
           path: dist
 
       - name: Publish to npm with provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          tarball=$(ls dist/laya-ts-*.tgz)
-          tag="${GITHUB_REF_NAME#laya-ts-v}"
+          tarball=$(ls dist/veya-ts-*.tgz)
+          tag="${GITHUB_REF_NAME#veya-ts-v}"
           if [[ "$tag" == *-* ]]; then
             DIST_TAG="next"
             echo "Prerelease detected ($tag). Publishing under dist-tag: $DIST_TAG"
@@ -97,7 +97,7 @@ jobs:
   github_release:
     name: Attach to GitHub Release
     needs: [build, npm]
-    if: startsWith(github.ref, 'refs/tags/laya-ts-v') && vars.PUBLISH_TO_NPM == 'true'
+    if: startsWith(github.ref, 'refs/tags/veya-ts-v') && vars.PUBLISH_TO_NPM == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -109,14 +109,14 @@ jobs:
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: laya-ts-dist
+          name: veya-ts-dist
           path: dist
 
       - name: Publish or update GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="${GITHUB_REF_NAME#laya-ts-v}"
+          tag="${GITHUB_REF_NAME#veya-ts-v}"
           PRERELEASE_FLAG=""
           if [[ "$tag" == *-* ]]; then
             PRERELEASE_FLAG="--prerelease"

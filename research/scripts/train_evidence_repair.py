@@ -92,9 +92,9 @@ def main():
     import torch
     from safetensors import safe_open
     from safetensors.torch import load_file, save_file
-    from laya.agent import Agent
-    from laya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
-    from laya.train import TrainConfig, items_from_rows, train_model
+    from veya.agent import Agent
+    from veya.qualification import _artifact_identity, _file_sha, _source_identity, load_document, validate_corpus
+    from veya.train import TrainConfig, items_from_rows, train_model
 
     if not torch.cuda.is_available():
         parser.error("training requires a local CUDA-enabled PyTorch installation")

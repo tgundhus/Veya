@@ -13,14 +13,14 @@ import weakref
 
 import pytest
 
-import laya.qualification as qualification
-from laya.qualification import qualify, run_matrix, split_families, validate_corpus, validate_matrix
+import veya.qualification as qualification
+from veya.qualification import qualify, run_matrix, split_families, validate_corpus, validate_matrix
 
 
 @pytest.mark.parametrize(("kind", "index"), [("choice", 0), ("score", 1)])
 def test_typed_adapter_preserves_other_rows_in_one_forward(kind, index):
     torch = pytest.importorskip("torch")
-    from laya.common import DecisionModel
+    from veya.common import DecisionModel
 
     class Encoder(torch.nn.Module):
         config = SimpleNamespace(hidden_size=64)
@@ -795,8 +795,8 @@ def test_local_concurrency_serializes_inference_and_measures_gate_wait(monkeypat
 
 def build_probe_cell(monkeypatch, *, precision, actual_autocast=None, keyword=False):
     torch = pytest.importorskip("torch")
-    import laya.agent as agent_module
-    import laya.consistency as consistency
+    import veya.agent as agent_module
+    import veya.consistency as consistency
 
     class Probe(torch.nn.Module):
         def forward(self, input_ids):
@@ -894,8 +894,8 @@ def test_changed_runtime_source_refuses_a_release_pass(monkeypatch, fixed_local_
 
 def test_close_releases_real_agent_backend_cycles_even_with_automatic_gc_disabled():
     torch = pytest.importorskip("torch")
-    from laya.agent import Agent
-    from laya.backends.base import Backend
+    from veya.agent import Agent
+    from veya.backends.base import Backend
 
     agent = object.__new__(Agent)
     agent.model = torch.nn.Identity()
@@ -922,7 +922,7 @@ def test_close_releases_real_agent_backend_cycles_even_with_automatic_gc_disable
 @pytest.mark.parametrize("cleanup_failure", [False, True])
 def test_partial_backend_setup_is_disposed_without_masking_the_original_failure(monkeypatch, cleanup_failure):
     pytest.importorskip("torch")
-    import laya.agent as agent_module
+    import veya.agent as agent_module
 
     original = RuntimeError("original backend failure")
     agents = []
@@ -949,7 +949,7 @@ def test_partial_backend_setup_is_disposed_without_masking_the_original_failure(
 
     monkeypatch.setattr(agent_module, "Agent", Partial)
     monkeypatch.setattr(qualification, "_artifact_identity", lambda *args: {"fixture": "stable"})
-    names = ("LAYA_CPU_AMP", "LAYA_CUDA_AMP", "HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE")
+    names = ("VEYA_CPU_AMP", "VEYA_CUDA_AMP", "HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE")
     before = {name: os.environ.get(name) for name in names}
     with pytest.raises(RuntimeError) as failure:
         qualification._build_cell({"checkpoint": "/local/probe", "backend": "compile",
@@ -1014,8 +1014,8 @@ def test_onnx_session_is_released_when_agent_has_no_context_manager():
 
 def test_explicit_backend_unavailability_is_classified_after_partial_agent_cleanup(monkeypatch):
     pytest.importorskip("torch")
-    import laya.agent as agent_module
-    from laya.backends.base import BackendUnavailable
+    import veya.agent as agent_module
+    from veya.backends.base import BackendUnavailable
 
     original = BackendUnavailable("injected compiler feature unavailable")
     agents = []
@@ -1034,7 +1034,7 @@ def test_explicit_backend_unavailability_is_classified_after_partial_agent_clean
 
     monkeypatch.setattr(agent_module, "Agent", Unavailable)
     monkeypatch.setattr(qualification, "_artifact_identity", lambda *args: {"fixture": "stable"})
-    names = ("LAYA_CPU_AMP", "LAYA_CUDA_AMP", "HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE")
+    names = ("VEYA_CPU_AMP", "VEYA_CUDA_AMP", "HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE")
     before = {name: os.environ.get(name) for name in names}
     with pytest.raises(qualification._Unavailable, match="compiler feature unavailable") as failure:
         qualification._build_cell({"checkpoint": "/local/probe", "backend": "compile",

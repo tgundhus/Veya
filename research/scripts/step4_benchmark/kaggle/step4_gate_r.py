@@ -73,7 +73,7 @@ with open(WORK / "data" / "test_meta.json", encoding="utf-8") as _f:
 print("SPLITS train_cases=%d test_cases=%d" % (n_train_cases, len(test_meta)), flush=True)
 
 # --- Gate R: rlcd, seed 0, notebook hyperparameters ----------------------------------------
-cmd = [sys.executable, "-m", "laya.train_cli",
+cmd = [sys.executable, "-m", "veya.train_cli",
        "--data", str(WORK / "data" / "train.jsonl"),
        "--out", str(WORK / "run_rlcd_seed0"),
        "--base", "convaiinnovations/laya",

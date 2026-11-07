@@ -13,9 +13,9 @@ import argparse, json, os, sys
 os.environ.setdefault("USE_TF", "0"); os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np, torch
-import laya
-from laya.common import QTYPES, build_sequence, collate_items
-from laya.presets import email_questions, guard_questions, moderation_questions, router_questions, triage_questions
+import veya
+from veya.common import QTYPES, build_sequence, collate_items
+from veya.presets import email_questions, guard_questions, moderation_questions, router_questions, triage_questions
 
 # ---- a fixed set of states: 5 presets x 12 texts (short and long, 6 languages) = 60 states, up to 8 questions each
 TEXTS = [
@@ -68,7 +68,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--model", default="convaiinnovations/laya"); ap.add_argument("--subfolder", default=None); ap.add_argument("--json", default=None)
     ap.add_argument("--dtype", choices=["bf16", "fp16"], default=None, help="autocast dtype for stock and fast (default: the agent's)")
     a = ap.parse_args()
-    agent = laya.load(a.model, subfolder=a.subfolder)
+    agent = veya.load(a.model, subfolder=a.subfolder)
     if agent.device.type != "cuda":
         sys.exit("needs CUDA")
     if a.dtype:

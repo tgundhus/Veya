@@ -14,8 +14,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from laya import Router, BaseHook  # noqa: E402
-from laya import lang  # noqa: E402
+from veya import Router, BaseHook  # noqa: E402
+from veya import lang  # noqa: E402
 
 EN = "This is an English note about the order. "
 DE = "Ich kann mich nicht anmelden und brauche Hilfe"
@@ -182,7 +182,7 @@ def test_router_keeps_fallback_and_never_loads_models(default):
 ])
 def test_explicit_routes_do_not_invent_detector_evidence(override):
     router = Router()
-    with patch("laya.router.analyse", side_effect=AssertionError("detector must be skipped")):
+    with patch("veya.router.analyse", side_effect=AssertionError("detector must be skipped")):
         result = router.route(DE, explain=True, **override)
     assert result["detection"] is None
 
@@ -200,7 +200,7 @@ def test_abstaining_hint_runs_detection_once():
 def test_automatic_workflow_selection_skips_detection():
     questions = {key: {"type": "bool"} for key in
                  ("action", "category", "churn_risk", "needs_human", "urgency")}
-    with patch("laya.router.analyse", side_effect=AssertionError("detector must be skipped")):
+    with patch("veya.router.analyse", side_effect=AssertionError("detector must be skipped")):
         result = Router(auto_task_detection=True).route(DE, questions, explain=True)
     assert result["workflow"] == "customer_service"
     assert result["detection"] is None
@@ -227,7 +227,7 @@ def test_batch_uses_same_explanation_and_order():
 
 
 def cli(*args, stdin=None):
-    return subprocess.run([sys.executable, "-m", "laya.cli", *args],
+    return subprocess.run([sys.executable, "-m", "veya.cli", *args],
         cwd=Path(__file__).resolve().parents[1], input=stdin, text=True, encoding="utf-8",
         capture_output=True, timeout=45,
         env={**os.environ, "PYTHONUTF8": "1", "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1"})

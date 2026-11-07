@@ -1,4 +1,4 @@
-"""Latency of a real Laya call on this machine: CPU (Xeon) vs MPS (AMD Radeon), plus CPU thread scaling.
+"""Latency of a real Veya call on this machine: CPU (Xeon) vs MPS (AMD Radeon), plus CPU thread scaling.
 
 Run:  python verify/bench_devices.py
 """
@@ -12,11 +12,11 @@ os.environ.setdefault("USE_TORCH", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)          # repository root; <root>/laya/email.py must not shadow stdlib email
+sys.path.insert(0, ROOT)          # repository root; <root>/veya/email.py must not shadow stdlib email
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
+import veya  # noqa: E402
 
 QUESTIONS = {
     "department": {"type": "choice", "instructions": "Which department should handle this request?",
@@ -48,9 +48,9 @@ def main():
           % (torch.__version__, torch.get_num_threads(), torch.backends.mps.is_available()))
     print("%-16s %-6s %10s %10s %12s" % ("checkpoint", "device", "median ms", "min ms", "ms/question"))
     for device in ("cpu", "mps"):
-        for name, rel in [("english", "models/laya"), ("multilingual", "models/laya-multilingual"),
+        for name, rel in [("english", "models/veya"), ("multilingual", "models/laya-multilingual"),
                           ("typed-decisions", "models/laya-typed-decisions")]:
-            agent = laya.load(os.path.join(ROOT, rel), device=device)
+            agent = veya.load(os.path.join(ROOT, rel), device=device)
             med, lo = bench(agent)
             print("%-16s %-6s %10.0f %10.0f %12.0f"
                   % (name, agent.device, med, lo, med / len(QUESTIONS)))
@@ -59,7 +59,7 @@ def main():
 
     # CPU thread scaling on the heaviest checkpoint
     print("\nCPU thread scaling (english, median of %d)" % REPEAT)
-    agent = laya.load(os.path.join(ROOT, "models/laya"), device="cpu")
+    agent = veya.load(os.path.join(ROOT, "models/veya"), device="cpu")
     for threads in (4, 8, 16, 28, 56):
         torch.set_num_threads(threads)
         med, lo = bench(agent, repeat=5)

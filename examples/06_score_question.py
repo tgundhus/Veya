@@ -1,6 +1,6 @@
 """Example 06 -- an ordinal rubric with a score question.
 
-A `score` question is a choice question whose labels are ordered. Laya returns an
+A `score` question is a choice question whose labels are ordered. Veya returns an
 expected level, the full distribution over levels, and the legend that maps each level
 index back to its text, so the number never floats free of its rubric.
 """

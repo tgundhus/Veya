@@ -1,59 +1,59 @@
 # Fine-tuning
 
-`laya.train` is imported on its own (`from laya.train import finetune, TrainConfig`); it is not
-re-exported from the top-level package. `laya-train` is its command line. The
-[fine-tuning guide](../finetune.md#fine-tune-with-laya-train) shows both in use.
+`veya.train` is imported on its own (`from veya.train import finetune, TrainConfig`); it is not
+re-exported from the top-level package. `veya-train` is its command line. The
+[fine-tuning guide](../finetune.md#fine-tune-with-veya-train) shows both in use.
 
 ## Running a fine-tune
 
-::: laya.train.TrainConfig
+::: veya.train.TrainConfig
 
-::: laya.train.finetune
+::: veya.train.finetune
 
-::: laya.train.dry_run
+::: veya.train.dry_run
 
 ## The two halves of `finetune`
 
-::: laya.train.train_model
+::: veya.train.train_model
 
-::: laya.train.calibration_records
+::: veya.train.calibration_records
 
-::: laya.train.calibration_report
+::: veya.train.calibration_report
 
 ## Reading data
 
-::: laya.train.read_data
+::: veya.train.read_data
 
-::: laya.train.rows_from_csv
+::: veya.train.rows_from_csv
 
 ## Building training items
 
-::: laya.train.items_from_rows
+::: veya.train.items_from_rows
 
-::: laya.train.target_from_gold
+::: veya.train.target_from_gold
 
-::: laya.train.target_from_expected
+::: veya.train.target_from_expected
 
-::: laya.train.to_internal
+::: veya.train.to_internal
 
-::: laya.train.make_item
+::: veya.train.make_item
 
-::: laya.train.encode_item
+::: veya.train.encode_item
 
-::: laya.train.draw_option_order
+::: veya.train.draw_option_order
 
-::: laya.train.split_calibration
+::: veya.train.split_calibration
 
 ## Losses
 
-::: laya.train.soft_ce_loss
+::: veya.train.soft_ce_loss
 
-::: laya.train.rlcd_loss
+::: veya.train.rlcd_loss
 
 ## Checkpoints
 
-::: laya.train.resolve_checkpoint_dir
+::: veya.train.resolve_checkpoint_dir
 
-::: laya.train.load_checkpoint
+::: veya.train.load_checkpoint
 
-::: laya.train.save_checkpoint
+::: veya.train.save_checkpoint

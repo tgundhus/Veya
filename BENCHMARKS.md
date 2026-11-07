@@ -1,6 +1,71 @@
-# Laya and Veya benchmarks
+# Veya benchmarks
 
-The [October 2026 Veya review](docs/reports/production-review.md) records current CPU
+## Current CPU refresh — 7 November 2026
+
+Veya 0.3.29, Windows 11, Intel Core i9-13900KF (32 logical CPUs), Python 3.12.14,
+PyTorch 2.14.1+cpu, eager fp32 and two Torch threads. The cached upstream English
+checkpoint revision is `7b928d828b7b0e022f929d9bd2e44165aa270148` (421.3M parameters).
+Fifteen warm calls follow three warm-ups per workload; cache rows use 50 memory-cache
+hits after priming. These are local Python calls, excluding HTTP and first load.
+
+| Workload | Before rename, median ms | Veya, median ms | Change |
+|---|---:|---:|---:|
+| english ticket, 1 question | 179.146 | 171.993 | -3.99% |
+| english ticket, 3 questions | 511.658 | 509.616 | -0.40% |
+| english ticket, 10 questions | 1615.797 | 1609.739 | -0.37% |
+| english email, 3 questions | 2435.051 | 2480.429 | +1.86% |
+| english ticket, 3 questions, DecisionCache hit | 0.058 | 0.056 | -3.45% |
+| english email, 3 questions, DecisionCache hit | 0.059 | 0.059 | +0.00% |
+
+These sequential workstation runs have uncontrolled load; their variation is not a
+rename speedup claim. A separate comparison against pre-rename commit `a5477bdc`
+reproduced all **17 typed answers and token counts exactly**, using the same checkpoint
+revision. This small parity check does not measure task accuracy.
+[Method and reproduction](docs/reports/veya-migration-2026-11-07.md),
+[measurement summary](research/results/veya_refresh_cpu_20261107.json),
+[refreshed samples](research/results/veya_rename_after_cpu_20261107.json).
+
+The latest experimental ordinal continuation is **not production qualified**:
+its fresh holdout scored 20/36 within ±0.25 for ordinal answers, 10/15 choice and
+9/10 binary. Score and choice miss the 80% gates; the default checkpoint is unchanged.
+[6 November qualification and limits](docs/reports/ordinal-continuation-2026-11-06.md).
+
+## Cache store scaling — 7 November 2026
+
+This additional Windows CPU run measures the stores directly, without a model, HTTP,
+request hashing or answer decoding. Each bounded store is filled to its configured
+capacity, then receives 2,000 hit/insert pairs. SQLite uses the default optional-store
+settings, not required-mode `synchronous=FULL`. These are exploratory measurements
+from one workstation pass; file caches and other machine activity are uncontrolled.
+
+| Configured capacity | Store | Hit p50, µs | Hit p99, µs | Insert p50, µs | Insert p99, µs |
+|---|---|---:|---:|---:|---:|
+| 10,000 | Memory | 0.4 | 0.5 | 0.8 | 1.0 |
+| 10,000 | SQLite | 7.0 | 29.8 | 25.4 | 2066.9 |
+| 100,000 | Memory | 0.6 | 1.0 | 0.9 | 1.2 |
+| 100,000 | SQLite | 10.7 | 38.3 | 37.3 | 1991.3 |
+
+A separate hook-level renewal stress test measures 15,000 hits per configuration.
+Its simulated clock advances by one eighth of the TTL between passes, deliberately
+making every renewal-enabled hit write to SQLite. p50/p99 change from **29.4/42.0 µs**
+without renewal to **61.4/2080.4 µs** with a renewal on every hit. This is a stress case;
+ordinary hot hits already throttle renewal writes to at most 16 per lifetime. These
+hook timings are separate from the raw store operations above.
+
+[Raw results, parameters and source digests](research/results/cache_scaling_windows_20261107.json).
+Reproduce with:
+
+```bash
+python research/scripts/bench_store_scaling.py --sections tail,renewal --sizes 10000,100000 --ops 2000 --out cache_scaling.json
+```
+
+## Checkpoint and hardware measurements
+
+The tables below retain the actual upstream project names, checkpoint IDs and measured
+versions. GPU, multilingual and third-party results were not rerun on this CPU-only host.
+
+
+The [October 2026 Veya review](docs/reports/production-review.md) records October CPU
 smoke measurements, cache before/after results and SDK verification. Historical upstream and
 fork runs below retain their original versions and hardware.
 
@@ -43,7 +108,7 @@ The direction is consistent rather than noise: of the 16 languages that move by 
 
 ---
 
-## Headline
+## Historical checkpoint headline
 
 | | Laya | Jev (published) |
 |---|---|---|

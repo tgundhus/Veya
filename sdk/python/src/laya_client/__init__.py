@@ -1,11 +1,4 @@
-"""A standalone HTTP client; no local model or inference dependencies."""
-from .client import LayaClient
-from .errors import (
-    LayaAPIError, LayaConnectionError, LayaError, LayaResponseError,
-    LayaTimeoutError, LayaValidationError,
-)
+"""Legacy import alias; use veya_client in new applications."""
+from veya_client._compat import install_alias
 
-__all__ = [
-    "LayaClient", "LayaError", "LayaValidationError", "LayaAPIError",
-    "LayaConnectionError", "LayaTimeoutError", "LayaResponseError",
-]
+install_alias(__name__, "veya_client")

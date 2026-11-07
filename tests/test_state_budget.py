@@ -34,7 +34,7 @@ import textwrap
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.common import _build_question_head, build_head, build_sequence, render_options  # noqa: E402
+from veya.common import _build_question_head, build_head, build_sequence, render_options  # noqa: E402
 
 PASS, FAIL, SKIPPED = [], [], []
 
@@ -105,7 +105,7 @@ def _many_options(k, desc="a short description of this option"):
 
 
 def _models_dir():
-    return os.environ.get("LAYA_LAB_MODELS", os.path.expanduser("~/laya_models"))
+    return os.environ.get("VEYA_LAB_MODELS", os.path.expanduser("~/veya_models"))
 
 
 def _real_tok(name):

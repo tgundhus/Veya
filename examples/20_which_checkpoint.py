@@ -9,7 +9,7 @@ import torch
 from _common import STATE_EN, STATE_HI, banner, device_line, heading, load
 
 banner("20", "Which checkpoint?", """
-    Laya ships three checkpoints with different encoders, windows and training. The names
+    Veya ships three checkpoints with different encoders, windows and training. The names
     do not tell you when to use which, so this example runs the same three questions over
     two tickets: one in English, one in Devanagari Hindi.
 

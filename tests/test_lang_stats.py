@@ -13,7 +13,7 @@ from types import MappingProxyType
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.lang import _SCRIPT_RANGES, _iter_text, analyse, detect_script, script_profile, state_text  # noqa: E402
+from veya.lang import _SCRIPT_RANGES, _iter_text, analyse, detect_script, script_profile, state_text  # noqa: E402
 from research.scripts.bench_state_text import eager_state_text, eager_text_leaves  # noqa: E402
 
 PASS, FAIL = [], []

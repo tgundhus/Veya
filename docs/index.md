@@ -26,5 +26,5 @@ then choose an [SDK or local MCP interface](integration.md).
 
 The [source repository](https://github.com/tgundhus/Veya) includes SDKs, examples,
 regression suites and raw benchmark results. The pretrained checkpoints remain upstream
-Laya models. Cache replay fixes repeatability while an entry remains valid; it does not
+Veya models. Cache replay fixes repeatability while an entry remains valid; it does not
 establish that a decision is correct.

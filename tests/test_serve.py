@@ -21,7 +21,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-from laya.serve import (  # noqa: E402
+from veya.serve import (  # noqa: E402
     BATCH_BODY_CALL_CONTROLS,
     BATCH_BODY_OUT_PARAMETERS,
     BATCH_BODY_ITEM_CONTROLS,
@@ -51,7 +51,7 @@ from laya.serve import (  # noqa: E402
 
 # Read from the router rather than copied here: the workload below has to reach the
 # typed-decisions checkpoint the same way a request does.
-from laya.router import _TYPED_DECISION_WORKFLOWS  # noqa: E402
+from veya.router import _TYPED_DECISION_WORKFLOWS  # noqa: E402
 
 
 class FakeRouter:
@@ -65,7 +65,7 @@ class FakeRouter:
     def predict(self, state, questions, model=None):
         self.calls.append({"state": state, "questions": questions, "model": model})
         return {
-            "model": "laya-rl-agent",
+            "model": "veya-rl-agent",
             "answers": {
                 "dept": {"type": "choice", "choice": "billing",
                          "probabilities": {"billing": 0.94, "tech": 0.06}, "confidence": 0.94},
@@ -86,36 +86,36 @@ class BudgetRouter(FakeRouter):
 
 def _client(monkeypatch, api_key=None):
     if api_key is None:
-        monkeypatch.delenv("LAYA_API_KEY", raising=False)
+        monkeypatch.delenv("VEYA_API_KEY", raising=False)
     else:
-        monkeypatch.setenv("LAYA_API_KEY", api_key)
+        monkeypatch.setenv("VEYA_API_KEY", api_key)
     fake = FakeRouter()
     return TestClient(create_app(router=fake)), fake
 
 
 def _budget_client(monkeypatch, api_key=None):
     if api_key is None:
-        monkeypatch.delenv("LAYA_API_KEY", raising=False)
+        monkeypatch.delenv("VEYA_API_KEY", raising=False)
     else:
-        monkeypatch.setenv("LAYA_API_KEY", api_key)
+        monkeypatch.setenv("VEYA_API_KEY", api_key)
     fake = BudgetRouter()
     return TestClient(create_app(router=fake)), fake
 
 
 def test_root_path_from_environment_updates_openapi_and_keeps_routes(monkeypatch):
-    monkeypatch.setenv("LAYA_ROOT_PATH", "/laya")
+    monkeypatch.setenv("VEYA_ROOT_PATH", "/veya")
     app = create_app(router=FakeRouter())
 
-    assert app.root_path == "/laya"
+    assert app.root_path == "/veya"
     with TestClient(app) as client:
         assert client.get("/health").status_code == 200
-        assert client.get("/openapi.json").json()["servers"] == [{"url": "/laya"}]
+        assert client.get("/openapi.json").json()["servers"] == [{"url": "/veya"}]
 
 
 @pytest.mark.parametrize("path", ["/openapi.json", "/docs", "/redoc"])
 def test_no_docs_or_schema_on_a_locked_down_deployment(monkeypatch, path):
     """FastAPI's own documentation routes are not written by this module, so per-route auth never
-    covered them: with LAYA_API_KEY set they answered 200 to an unauthenticated caller, publishing
+    covered them: with VEYA_API_KEY set they answered 200 to an unauthenticated caller, publishing
     the API shape and an interactive console beside a service the operator had locked down."""
     client, _ = _client(monkeypatch, api_key="s3cret")
     assert client.get(path).status_code == 404
@@ -132,9 +132,9 @@ def test_docs_and_schema_are_served_without_a_key(monkeypatch):
 @pytest.mark.parametrize("root_path", [None, ""])
 def test_root_path_defaults_to_empty(monkeypatch, root_path):
     if root_path is None:
-        monkeypatch.delenv("LAYA_ROOT_PATH", raising=False)
+        monkeypatch.delenv("VEYA_ROOT_PATH", raising=False)
     else:
-        monkeypatch.setenv("LAYA_ROOT_PATH", root_path)
+        monkeypatch.setenv("VEYA_ROOT_PATH", root_path)
 
     app = create_app(router=FakeRouter())
 
@@ -143,7 +143,7 @@ def test_root_path_defaults_to_empty(monkeypatch, root_path):
 
 
 REQ = {
-    "model": "jev-1",  # a non-Laya model id -> should be ignored, router auto-routes
+    "model": "jev-1",  # a non-Veya model id -> should be ignored, router auto-routes
     "state": {"body": "billed twice, refund please"},
     "questions": {"dept": {"type": "choice", "instructions": "which team?",
                            "criteria": {"billing": None, "tech": None}}},
@@ -163,7 +163,7 @@ def test_predict_passthrough_shape(monkeypatch):
     assert fake.calls[0]["model"] is None
 
 
-# A router that answers with the full Laya payload: every answer type, the per-answer
+# A router that answers with the full Veya payload: every answer type, the per-answer
 # additions and the extended usage report -- what a strict client must be projected off.
 FULL_ANSWERS = {
     "queue": {"type": "choice", "choice": "billing",
@@ -192,7 +192,7 @@ class StrictFullRouter:
 
     def predict(self, state, questions, model=None):
         self.calls.append({"state": state, "questions": questions, "model": model})
-        return {"model": "laya-rl-agent", "answers": FULL_ANSWERS, "usage": dict(FULL_USAGE),
+        return {"model": "veya-rl-agent", "answers": FULL_ANSWERS, "usage": dict(FULL_USAGE),
                 "routing": {"model": "english", "reason": "English Latin text"}}
 
     def predict_batch(self, requests, **kwargs):
@@ -202,9 +202,9 @@ class StrictFullRouter:
 
 def _strict_client(monkeypatch, value):
     if value is None:
-        monkeypatch.delenv("LAYA_JEV_STRICT", raising=False)
+        monkeypatch.delenv("VEYA_JEV_STRICT", raising=False)
     else:
-        monkeypatch.setenv("LAYA_JEV_STRICT", value)
+        monkeypatch.setenv("VEYA_JEV_STRICT", value)
     fake = StrictFullRouter()
     return TestClient(create_app(router=fake)), fake
 
@@ -216,7 +216,7 @@ def test_jev_strict_projects_the_full_payload(monkeypatch):
     body = r.json()
     # the strict contract: exactly three top-level fields, the contracted answer keys
     assert set(body) == {"model", "answers", "usage"}
-    assert body["model"] == "laya-rl-agent"
+    assert body["model"] == "veya-rl-agent"
     assert body["answers"]["queue"] == {"type": "choice", "choice": "billing",
                                         "confidence": 0.797,
                                         "probabilities": {"billing": 0.9519, "tech": 0.0327,
@@ -263,14 +263,14 @@ def test_jev_strict_batch_projects_every_item(monkeypatch):
 
 def test_jev_strict_leaves_an_unknown_answer_shape_unchanged(monkeypatch):
     """A shape the contract does not name is passed through: the caller still sees it."""
-    monkeypatch.setenv("LAYA_JEV_STRICT", "1")
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_JEV_STRICT", "1")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
 
     class OddRouter:
         loaded = ["english"]
 
         def predict(self, state, questions, model=None):
-            return {"model": "laya-rl-agent",
+            return {"model": "veya-rl-agent",
                     "answers": {"odd": {"type": "weird", "payload": 1}},
                     "usage": {"input_tokens": 1, "output_tokens": 0}}
 
@@ -281,14 +281,14 @@ def test_jev_strict_leaves_an_unknown_answer_shape_unchanged(monkeypatch):
 
 
 def test_choice_and_score_answers_carry_jev_confidence(monkeypatch):
-    """Each choice and score answer reports Jev's `confidence` beside Laya's own (#302)."""
+    """Each choice and score answer reports Jev's `confidence` beside Veya's own (#302)."""
     client, _ = _strict_client(monkeypatch, None)
     answers = client.post("/v1/systemone", json=REQ).json()["answers"]
     # choice: (max(p) - 1/n) / (1 - 1/n) over billing 0.9519 / tech 0.0327 / other 0.0154
     assert answers["queue"]["x_jev_confidence"] == 0.9278
     # score: 1 - sum(p_i * |i - mode|) / D with mode 1 and D = 2/3, so 1 - 0.35 / (2/3)
     assert answers["urgency"]["x_jev_confidence"] == 0.475
-    # Laya's own numbers are untouched, and a noul answer has no Jev confidence to report
+    # Veya's own numbers are untouched, and a noul answer has no Jev confidence to report
     assert answers["queue"]["confidence"] == 0.797
     assert answers["urgency"]["confidence"] == 0.1925
     assert "x_jev_confidence" not in answers["threat"]
@@ -313,7 +313,7 @@ def test_jev_strict_leaves_out_jev_confidence(monkeypatch):
         assert all("x_jev_confidence" not in answer for answer in answers.values())
 
 
-# --- LAYA_TOURNAMENT_GROUP: large choices answered by elimination (#302) ----------------------
+# --- VEYA_TOURNAMENT_GROUP: large choices answered by elimination (#302) ----------------------
 
 def _queues(n):
     return {"Queue %03d" % i: "Tickets routed to queue %d" % i for i in range(n)}
@@ -349,21 +349,21 @@ class EliminationRouter:
                 probabilities[winner] = 1.0
             answers[qid] = {"type": "choice", "choice": winner, "probabilities": probabilities,
                             "confidence": 0.5, "answer_confidence": probabilities[winner]}
-        return {"model": "laya-rl-agent", "answers": answers,
+        return {"model": "veya-rl-agent", "answers": answers,
                 "usage": {"input_tokens": 10 * len(questions), "output_tokens": 0},
                 "routing": {"model": "english", "reason": "English Latin text"}}
 
 
 def _tournament_client(monkeypatch, group, strict=False):
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     if group is None:
-        monkeypatch.delenv("LAYA_TOURNAMENT_GROUP", raising=False)
+        monkeypatch.delenv("VEYA_TOURNAMENT_GROUP", raising=False)
     else:
-        monkeypatch.setenv("LAYA_TOURNAMENT_GROUP", group)
+        monkeypatch.setenv("VEYA_TOURNAMENT_GROUP", group)
     if strict:
-        monkeypatch.setenv("LAYA_JEV_STRICT", "1")
+        monkeypatch.setenv("VEYA_JEV_STRICT", "1")
     else:
-        monkeypatch.delenv("LAYA_JEV_STRICT", raising=False)
+        monkeypatch.delenv("VEYA_JEV_STRICT", raising=False)
     fake = EliminationRouter()
     return TestClient(create_app(router=fake)), fake
 
@@ -394,7 +394,7 @@ def test_tournament_refuses_unhashable_choice_labels_as_a_422(monkeypatch):
 
 def test_tournament_eligibility_names_the_question_on_unhashable_labels():
     from fastapi import HTTPException
-    from laya import serve
+    from veya import serve
     with pytest.raises(HTTPException, match="queue") as caught:
         serve._tournament_eligible({"queue": {"type": "choice",
                                           "criteria": [["a", 1], ["b", 2], ["c", 3]]}}, 2)
@@ -431,7 +431,7 @@ def test_every_choice_over_the_one_pass_cap_is_narrowed(monkeypatch, group, n):
     client, fake = _tournament_client(monkeypatch, group)
     r = client.post("/v1/systemone", json=_large_req(n))
     assert r.status_code == 200
-    from laya.serve import MAX_QUESTIONS
+    from veya.serve import MAX_QUESTIONS
 
     parts = -(-n // int(group))
     chunks = -(-parts // MAX_QUESTIONS)
@@ -441,7 +441,7 @@ def test_every_choice_over_the_one_pass_cap_is_narrowed(monkeypatch, group, n):
 
 
 def test_a_group_over_the_one_pass_cap_leaves_the_flag_off(monkeypatch):
-    """`LAYA_TOURNAMENT_GROUP=200` with 150 options: off, so the clear cap refusal, not a budget one."""
+    """`VEYA_TOURNAMENT_GROUP=200` with 150 options: off, so the clear cap refusal, not a budget one."""
     client, fake = _tournament_client(monkeypatch, "200")
     r = client.post("/v1/systemone", json=_large_req(150))
     assert r.status_code == 413
@@ -531,9 +531,9 @@ def test_batch_without_a_large_choice_keeps_the_batched_pass(monkeypatch):
             self.batches.append(len(requests))
             return [self.predict(item["state"], item["questions"]) for item in requests]
 
-    monkeypatch.setenv("LAYA_TOURNAMENT_GROUP", "16")
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
-    monkeypatch.delenv("LAYA_JEV_STRICT", raising=False)
+    monkeypatch.setenv("VEYA_TOURNAMENT_GROUP", "16")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_JEV_STRICT", raising=False)
     fake = BatchingRouter()
     client = TestClient(create_app(router=fake))
     data = client.post("/v1/systemone/batch", json=_large_batch(12)).json()
@@ -583,7 +583,7 @@ def test_tournament_bypass_keeps_the_one_pass_cap(monkeypatch):
 
 
 def test_generated_tournament_calls_respect_the_question_cap(monkeypatch):
-    from laya.serve import MAX_QUESTIONS
+    from veya.serve import MAX_QUESTIONS
 
     client, fake = _tournament_client(monkeypatch, "2")
     response = client.post("/v1/systemone", json=_large_req(255))
@@ -597,10 +597,10 @@ def test_generated_tournament_calls_respect_the_question_cap(monkeypatch):
                                            ({"task": "english"}, "english")])
 @pytest.mark.parametrize("batch", [False, True])
 def test_tournament_pins_the_original_workflow(monkeypatch, control, model, batch):
-    from laya.router import Router
+    from veya.router import Router
 
-    monkeypatch.setenv("LAYA_TOURNAMENT_GROUP", "16")
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_TOURNAMENT_GROUP", "16")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     seen = []
 
     class Agent:
@@ -641,9 +641,9 @@ def test_tournament_pins_the_original_workflow(monkeypatch, control, model, batc
                                        ("101", 0), ("200", 0), ("255", 0)])
 def test_tournament_group_resolution(monkeypatch, raw, want):
     if raw is None:
-        monkeypatch.delenv("LAYA_TOURNAMENT_GROUP", raising=False)
+        monkeypatch.delenv("VEYA_TOURNAMENT_GROUP", raising=False)
     else:
-        monkeypatch.setenv("LAYA_TOURNAMENT_GROUP", raw)
+        monkeypatch.setenv("VEYA_TOURNAMENT_GROUP", raw)
     assert _resolve_tournament_group() == want
 
 
@@ -780,7 +780,7 @@ def test_body_read_preserves_parse_error_codes(monkeypatch):
 class DeviceRouter:
     """A Router with resident checkpoints whose real devices are known.
 
-    `Agent.device` is a `torch.device`; `laya.mcp.device.agent_device` also accepts the
+    `Agent.device` is a `torch.device`; `veya.mcp.device.agent_device` also accepts the
     plain string, which keeps this stub free of torch and of checkpoint weights.
     """
 
@@ -790,7 +790,7 @@ class DeviceRouter:
         self.loaded = list(devices)
 
     def predict(self, state, questions, model=None):
-        return {"model": "laya-rl-agent",
+        return {"model": "veya-rl-agent",
                 "answers": {"dept": {"type": "choice", "choice": "billing",
                                      "probabilities": {"billing": 1.0}, "confidence": 1.0}},
                 "usage": {"input_tokens": 1, "output_tokens": 0},
@@ -798,8 +798,8 @@ class DeviceRouter:
 
 
 def test_health_reports_where_inference_actually_runs(monkeypatch):
-    """`LAYA_DEVICE` is a request, not a fact: the Agent falls back to CPU silently."""
-    monkeypatch.setenv("LAYA_DEVICE", "cuda")
+    """`VEYA_DEVICE` is a request, not a fact: the Agent falls back to CPU silently."""
+    monkeypatch.setenv("VEYA_DEVICE", "cuda")
     fake = DeviceRouter(english="cpu")            # asked for cuda, ended up on cpu
     body = TestClient(create_app(router=fake)).get("/health").json()
     assert body["device"] == "cpu", body
@@ -808,16 +808,16 @@ def test_health_reports_where_inference_actually_runs(monkeypatch):
 
 
 def test_health_names_each_checkpoint_device(monkeypatch):
-    monkeypatch.setenv("LAYA_DEVICE", "cuda")
+    monkeypatch.setenv("VEYA_DEVICE", "cuda")
     fake = DeviceRouter(english="cpu", multilingual="cuda")
     body = TestClient(create_app(router=fake)).get("/health").json()
     assert body["checkpoint_devices"] == {"english": "cpu", "multilingual": "cuda"}, body
-    # The top-level answer is the first resident one, exactly as `laya_status` reports it.
+    # The top-level answer is the first resident one, exactly as `veya_status` reports it.
     assert body["device"] == body["checkpoint_devices"][body["loaded"][0]], body
 
 
 def test_health_without_a_resident_checkpoint_flags_the_preference(monkeypatch):
-    monkeypatch.setenv("LAYA_DEVICE", "cuda")
+    monkeypatch.setenv("VEYA_DEVICE", "cuda")
     body = TestClient(create_app(router=FakeRouter())).get("/health").json()
     assert body["device_is_preference"] is True, body
     assert body["checkpoint_devices"] == {}, body
@@ -827,19 +827,19 @@ def test_health_without_a_resident_checkpoint_flags_the_preference(monkeypatch):
 def test_health_agrees_with_the_mcp_status_tool(monkeypatch):
     """One fact about the device, reported the same way by both surfaces."""
     pytest.importorskip("mcp")
-    from laya.mcp.tools import laya_status
+    from veya.mcp.tools import veya_status
 
-    monkeypatch.setenv("LAYA_DEVICE", "cuda")
+    monkeypatch.setenv("VEYA_DEVICE", "cuda")
     fake = DeviceRouter(english="cpu")
     body = TestClient(create_app(router=fake)).get("/health").json()
-    status = laya_status(router=fake, loaded=list(fake.loaded))
+    status = veya_status(router=fake, loaded=list(fake.loaded))
     assert body["device"] == status["device"], (body["device"], status["device"])
     assert body["checkpoint_devices"] == status["checkpoint_devices"], body
     assert body["device_is_preference"] == status["device_is_preference"], body
 
 
 def test_health_needs_neither_the_mcp_extra_nor_torch():
-    """`laya.mcp.device` is documented as importable without `mcp`; prove the server agrees."""
+    """`veya.mcp.device` is documented as importable without `mcp`; prove the server agrees."""
     probe = r'''
 import sys
 class Blocker:
@@ -848,13 +848,13 @@ class Blocker:
             raise ImportError("mcp blocked")
 sys.meta_path.insert(0, Blocker())
 sys.path.insert(0, %r)
-from laya.mcp.device import agent_device, env_device, resolve_device, router_agent
+from veya.mcp.device import agent_device, env_device, resolve_device, router_agent
 assert agent_device(type("A", (), {"device": "cpu"})()) == "cpu"
-assert env_device.__module__ == "laya.mcp.device"
-import laya.serve
-assert "mcp" not in sys.modules, "laya.mcp.device reached the mcp distribution"
+assert env_device.__module__ == "veya.mcp.device"
+import veya.serve
+assert "mcp" not in sys.modules, "veya.mcp.device reached the mcp distribution"
 from fastapi.testclient import TestClient
-client = TestClient(laya.serve.create_app(router=type("R", (), {"loaded": ["english"],
+client = TestClient(veya.serve.create_app(router=type("R", (), {"loaded": ["english"],
     "_agents": {"english": type("A", (), {"device": "cpu"})()}})()))
 body = client.get("/health").json()
 assert body["device"] == "cpu" and body["checkpoint_devices"] == {"english": "cpu"}, body
@@ -867,8 +867,8 @@ print("ok")
 
 def test_build_router_strips_the_device_before_torch_sees_it(monkeypatch):
     """A value pasted from a Dockerfile or a `.env` file carries a trailing newline."""
-    import laya.router
-    import laya.serve
+    import veya.router
+    import veya.serve
 
     seen = {}
 
@@ -879,14 +879,14 @@ def test_build_router_strips_the_device_before_torch_sees_it(monkeypatch):
         def preload(self, names=None):
             seen["preloaded"] = names
 
-    monkeypatch.setattr(laya.router, "Router", RecordingRouter)
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
+    monkeypatch.setattr(veya.router, "Router", RecordingRouter)
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
     for raw, want in ((" cpu\n", "cpu"), ("cuda ", "cuda"), ("   ", None), ("cpu", "cpu")):
-        monkeypatch.setenv("LAYA_DEVICE", raw)
-        laya.serve.build_router()
+        monkeypatch.setenv("VEYA_DEVICE", raw)
+        veya.serve.build_router()
         assert seen["device"] == want, "%r -> %r" % (raw, seen["device"])
-    monkeypatch.delenv("LAYA_DEVICE")
-    laya.serve.build_router()
+    monkeypatch.delenv("VEYA_DEVICE")
+    veya.serve.build_router()
     assert seen["device"] is None, repr(seen["device"])      # unset means auto
 
 
@@ -932,13 +932,13 @@ def test_helpers():
 
 
 def test_env_bool_reads_a_blank_value_as_unset(monkeypatch):
-    """`LAYA_X=` is "not set", the way most other readers of this family already read it.
+    """`VEYA_X=` is "not set", the way most other readers of this family already read it.
 
     A blank value is what a `.env` line, a Compose `KEY=` with nothing after it, or a CI matrix
     writes when a variable is declared and left for the operator to fill in. Reading it as false
-    silently moved `LAYA_PRELOAD` off its documented default of `1` onto lazy loading -- the one
+    silently moved `VEYA_PRELOAD` off its documented default of `1` onto lazy loading -- the one
     switch in the set whose default is True, and `docs/cli-mcp.md` names `0` as the spelling that
-    asks for it -- and `laya_status` then reported the blank back as the operator's own choice.
+    asks for it -- and `veya_status` then reported the blank back as the operator's own choice.
     The truthy spelling set is unchanged: anything that is a value and is not one of the four is
     still false.
     """
@@ -959,20 +959,20 @@ def test_env_bool_reads_a_blank_value_as_unset(monkeypatch):
         assert _env_bool("X_FLAG", True) is False, repr(off)
 
     # The live case: the preload switch keeps its documented default when the value is blank.
-    monkeypatch.setenv("LAYA_PRELOAD", "")
-    assert _env_bool("LAYA_PRELOAD", True) is True
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
-    assert _env_bool("LAYA_PRELOAD", True) is False
+    monkeypatch.setenv("VEYA_PRELOAD", "")
+    assert _env_bool("VEYA_PRELOAD", True) is True
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
+    assert _env_bool("VEYA_PRELOAD", True) is False
 
 
 def test_resolve_port_reads_a_blank_value_as_unset(monkeypatch):
-    """`LAYA_PORT=` is the same "not set" as an absent variable, and only that.
+    """`VEYA_PORT=` is the same "not set" as an absent variable, and only that.
 
     `_resolve_port` was the last reader in this module that treated a blank as a value. Every other
     one answers "unset": `_env_bool` above, `_default_model_option`, `_resolve_max_concurrent`,
     `_resolve_max_loaded`, `_resolve_max_batch_tokens`, `_resolve_max_token_budget`,
     `_resolve_tournament_group` and `_resolve_idle_unload_seconds` -- and outside the server,
-    `laya.mcp.server._remote_base_url`, whose own documentation says "Blank or unset means the
+    `veya.mcp.server._remote_base_url`, whose own documentation says "Blank or unset means the
     default." On the base commit the startup path answered the same `SystemExit` it gives a bad
     port, so a declared-but-unfilled `.env` line stopped the server from starting and the message
     blamed the operator for a value they never wrote. Blank carries no number for a fallback to
@@ -986,31 +986,31 @@ def test_resolve_port_reads_a_blank_value_as_unset(monkeypatch):
     assert DEFAULT_PORT == 8000, "the default the README and docs/http-api.md tables print"
 
     for blank in ("", " ", "  \t ", "\n"):
-        monkeypatch.setenv("LAYA_PORT", blank)
+        monkeypatch.setenv("VEYA_PORT", blank)
         assert _resolve_port() == DEFAULT_PORT, repr(blank)
 
-    monkeypatch.delenv("LAYA_PORT", raising=False)
+    monkeypatch.delenv("VEYA_PORT", raising=False)
     assert _resolve_port() == DEFAULT_PORT
 
     # The leniency the blank case was dying on, unchanged: whitespace around a number is noise.
     for text, expected in (("8000", 8000), (" 9000 ", 9000), ("+8080", 8080),
                            ("1", 1), ("65535", 65535)):
-        monkeypatch.setenv("LAYA_PORT", text)
+        monkeypatch.setenv("VEYA_PORT", text)
         assert _resolve_port() == expected, repr(text)
 
     # Every non-blank misvalue still exits, naming the value as written rather than as stripped.
     for bad in ("0", "-1", "70000", "http", "8000.0", "8000px"):
-        monkeypatch.setenv("LAYA_PORT", bad)
+        monkeypatch.setenv("VEYA_PORT", bad)
         try:
             port = _resolve_port()
         except SystemExit as exc:
-            assert str(exc) == "invalid LAYA_PORT %r: must be an integer 1-65535" % bad, str(exc)
+            assert str(exc) == "invalid VEYA_PORT %r: must be an integer 1-65535" % bad, str(exc)
         else:
             raise AssertionError("%r was accepted as port %r" % (bad, port))
 
 
 def test_resolve_model_follows_the_router_registry(monkeypatch):
-    """A checkpoint added to laya.router must become pinnable over HTTP with no edit here.
+    """A checkpoint added to veya.router must become pinnable over HTTP with no edit here.
 
     serve used to keep two hand-copies of that registry -- a set of accepted names and a map of
     published Hugging Face ids. Either copy left behind means a client that names a real
@@ -1018,7 +1018,7 @@ def test_resolve_model_follows_the_router_registry(monkeypatch):
     the dropped pin is invisible from the outside. Only the name maps are read; nothing loads a
     checkpoint.
     """
-    from laya import router as router_mod
+    from veya import router as router_mod
 
     monkeypatch.setitem(router_mod.DEFAULT_MODELS, "spanish", (router_mod.BUNDLE_REPO, "spanish"))
     monkeypatch.setitem(router_mod.STANDALONE_MODELS, "spanish", "convaiinnovations/laya-spanish")
@@ -1108,12 +1108,13 @@ def test_path_or_unpublished_hub_id_is_refused_on_both_endpoints(monkeypatch):
 
 def test_thread_limit(monkeypatch):
     pytest.importorskip("torch")
+    monkeypatch.delenv("VEYA_THREADS", raising=False)
     monkeypatch.delenv("LAYA_THREADS", raising=False)
     assert _apply_thread_limit() is None  # unset -> no-op, no torch import
     for bad in ("0", "-4", "abc", ""):
-        monkeypatch.setenv("LAYA_THREADS", bad)
+        monkeypatch.setenv("VEYA_THREADS", bad)
         assert _apply_thread_limit() is None
-    monkeypatch.setenv("LAYA_THREADS", "8")
+    monkeypatch.setenv("VEYA_THREADS", "8")
     assert _apply_thread_limit() == 8
     import torch
     assert torch.get_num_threads() == 8
@@ -1138,14 +1139,14 @@ class _StubAgent:
 
 
 def _server_router(monkeypatch, **env):
-    """The Router `laya-serve` builds for `env`, with loads recorded instead of performed."""
-    from laya.serve import build_router
+    """The Router `veya-serve` builds for `env`, with loads recorded instead of performed."""
+    from veya.serve import build_router
 
-    monkeypatch.setenv("LAYA_PRELOAD", "0")       # nothing may download
-    monkeypatch.setenv("LAYA_AUTO_TASK", "1")     # the config that puts three checkpoints in play
-    monkeypatch.delenv("LAYA_MAX_LOADED", raising=False)
-    monkeypatch.delenv("LAYA_DEFAULT_MODEL", raising=False)
-    monkeypatch.delenv("LAYA_EXTRA_MODELS", raising=False)
+    monkeypatch.setenv("VEYA_PRELOAD", "0")       # nothing may download
+    monkeypatch.setenv("VEYA_AUTO_TASK", "1")     # the config that puts three checkpoints in play
+    monkeypatch.delenv("VEYA_MAX_LOADED", raising=False)
+    monkeypatch.delenv("VEYA_DEFAULT_MODEL", raising=False)
+    monkeypatch.delenv("VEYA_EXTRA_MODELS", raising=False)
     for name, value in env.items():
         monkeypatch.setenv(name, value)
     router = build_router()
@@ -1153,7 +1154,7 @@ def _server_router(monkeypatch, **env):
 
     def load(name):
         # `router.resolve`, not `normalise_name`: `predict` hands `load` the
-        # decision's key, which can be a LAYA_EXTRA_MODELS registration that the
+        # decision's key, which can be a VEYA_EXTRA_MODELS registration that the
         # built-in table does not know.
         key = router.resolve(name)
         if key in router._agents:
@@ -1188,17 +1189,17 @@ def _run_workload(router, cycles):
 
 
 def test_max_loaded_reaches_the_router_the_server_builds(monkeypatch):
-    from laya.router import Router
+    from veya.router import Router
 
     # Unset has to be reported as "not set", not as a copy of Router's default, or the two
     # numbers drift the day the default moves. Checked at the resolver, because a copy of 2 and
     # the real default are otherwise indistinguishable at the Router.
-    monkeypatch.delenv("LAYA_MAX_LOADED", raising=False)
+    monkeypatch.delenv("VEYA_MAX_LOADED", raising=False)
     assert _resolve_max_loaded() is None
     for raw in ("abc", "0", "-2", "2.5", ""):
-        monkeypatch.setenv("LAYA_MAX_LOADED", raw)
+        monkeypatch.setenv("VEYA_MAX_LOADED", raw)
         assert _resolve_max_loaded() is None, raw
-    monkeypatch.setenv("LAYA_MAX_LOADED", "3")
+    monkeypatch.setenv("VEYA_MAX_LOADED", "3")
     assert _resolve_max_loaded() == 3
 
     # And it reaches the Router the server actually builds. The literal below is the value the
@@ -1207,17 +1208,17 @@ def test_max_loaded_reaches_the_router_the_server_builds(monkeypatch):
     assert router.max_loaded == Router().max_loaded
     assert router.max_loaded == 2
     for raw, want in (("3", 3), ("1", 1), (" 4 ", 4)):
-        router, _ = _server_router(monkeypatch, LAYA_MAX_LOADED=raw)
+        router, _ = _server_router(monkeypatch, VEYA_MAX_LOADED=raw)
         assert router.max_loaded == want, raw
-    # A bad value falls back the way LAYA_MAX_CONCURRENT's does: it must not stop the server
+    # A bad value falls back the way VEYA_MAX_CONCURRENT's does: it must not stop the server
     # and must not be read as "no limit" or "one".
     for raw in ("abc", "0", "-2", "2.5", ""):
-        router, _ = _server_router(monkeypatch, LAYA_MAX_LOADED=raw)
+        router, _ = _server_router(monkeypatch, VEYA_MAX_LOADED=raw)
         assert router.max_loaded == 2, raw
 
 
 def test_raising_the_cap_stops_the_server_rebuilding_a_checkpoint(monkeypatch):
-    from laya.router import DEFAULT_MODELS
+    from veya.router import DEFAULT_MODELS
 
     cycles = 3
     router, built = _server_router(monkeypatch)
@@ -1228,7 +1229,7 @@ def test_raising_the_cap_stops_the_server_rebuilding_a_checkpoint(monkeypatch):
     assert router.max_loaded == 2
     assert len(built) == 9, built               # every request after the second rebuilds one
 
-    roomy, built3 = _server_router(monkeypatch, LAYA_MAX_LOADED="3")
+    roomy, built3 = _server_router(monkeypatch, VEYA_MAX_LOADED="3")
     _run_workload(roomy, cycles)
     assert roomy.max_loaded == 3
     assert len(built3) == 3, built3             # each checkpoint once, then they stay resident
@@ -1239,30 +1240,30 @@ def test_raising_the_cap_stops_the_server_rebuilding_a_checkpoint(monkeypatch):
 # given where it explains that very short Latin-script text ("Quero cancelar", "Esqueci minha
 # senha") carries nothing identifying its language and so goes to `default`. Both packaged
 # servers build their Router from the environment and neither could pass it: the only reader of
-# LAYA_DEFAULT_MODEL was examples/server.py, so the demo server honoured the variable while
-# laya-serve routed the ambiguous states to the English checkpoint it was told not to use.
+# VEYA_DEFAULT_MODEL was examples/server.py, so the demo server honoured the variable while
+# veya-serve routed the ambiguous states to the English checkpoint it was told not to use.
 #
-# Unlike the numeric knobs above, an unresolvable name is fatal here. `LAYA_MAX_LOADED=abc`
-# falling back to 2 costs a rebuild; `LAYA_DEFAULT_MODEL=mutli` falling back to english costs the
+# Unlike the numeric knobs above, an unresolvable name is fatal here. `VEYA_MAX_LOADED=abc`
+# falling back to 2 costs a rebuild; `VEYA_DEFAULT_MODEL=mutli` falling back to english costs the
 # wrong checkpoint answering every ambiguous state, which is the failure the operator was trying
 # to configure away. So the message is core's and the server refuses to start.
 def test_default_model_reaches_the_router_the_server_builds(monkeypatch):
-    from laya.router import DEFAULT_MODELS, Router, _ALIASES, normalise_name
-    from laya.serve import _default_model_option
+    from veya.router import DEFAULT_MODELS, Router, _ALIASES, normalise_name
+    from veya.serve import _default_model_option
 
     # Unset is "not asked for", not a copy of Router's default -- the same reason
     # `_resolve_max_loaded` returns None, and the same drift it prevents.
-    monkeypatch.delenv("LAYA_DEFAULT_MODEL", raising=False)
+    monkeypatch.delenv("VEYA_DEFAULT_MODEL", raising=False)
     assert _default_model_option() == {}
     for blank in ("", "   ", "\n"):
-        monkeypatch.setenv("LAYA_DEFAULT_MODEL", blank)
+        monkeypatch.setenv("VEYA_DEFAULT_MODEL", blank)
         assert _default_model_option() == {}, repr(blank)
 
     # The accepted spellings are core's tables read out of core, so a name added to _ALIASES
     # arrives here on its own -- and a value this module resolves differently from the way
     # `Router` itself resolves it fails the same line.
     for name in sorted(set(DEFAULT_MODELS) | set(_ALIASES)):
-        monkeypatch.setenv("LAYA_DEFAULT_MODEL", name)
+        monkeypatch.setenv("VEYA_DEFAULT_MODEL", name)
         assert _default_model_option() == {"default": normalise_name(name)}, name
 
     # And it reaches the Router the server builds. The literal is the one the README and
@@ -1272,7 +1273,7 @@ def test_default_model_reaches_the_router_the_server_builds(monkeypatch):
     assert router.default == "english"
     for raw, want in (("multilingual", "multilingual"), ("ml", "multilingual"),
                       (" MULTI ", "multilingual"), ("typed-decisions", "typed-decisions")):
-        router, _ = _server_router(monkeypatch, LAYA_DEFAULT_MODEL=raw)
+        router, _ = _server_router(monkeypatch, VEYA_DEFAULT_MODEL=raw)
         assert router.default == want, raw
 
     # The decision the whole knob exists to change, measured at `route()` rather than at the
@@ -1280,8 +1281,8 @@ def test_default_model_reaches_the_router_the_server_builds(monkeypatch):
     # this costs no weights.
     ambiguous = ("12345 !!!", "Quero cancelar", "Esqueci minha senha")
     stock, _ = _server_router(monkeypatch)
-    english, _ = _server_router(monkeypatch, LAYA_DEFAULT_MODEL="english")
-    portuguese, _ = _server_router(monkeypatch, LAYA_DEFAULT_MODEL="multilingual")
+    english, _ = _server_router(monkeypatch, VEYA_DEFAULT_MODEL="english")
+    portuguese, _ = _server_router(monkeypatch, VEYA_DEFAULT_MODEL="multilingual")
     for state in ambiguous:
         # Veya keeps its English fallback; multilingual deployments can opt in.
         assert stock.route(state).model == "english", state
@@ -1295,23 +1296,23 @@ def test_default_model_reaches_the_router_the_server_builds(monkeypatch):
 
 
 def test_an_unresolvable_default_stops_the_server_with_core_s_words(monkeypatch):
-    from laya.serve import build_router
+    from veya.serve import build_router
 
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
-    monkeypatch.delenv("LAYA_DEFAULT_MODEL", raising=False)
-    monkeypatch.setenv("LAYA_DEFAULT_MODEL", "mutli-lingual")
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
+    monkeypatch.delenv("VEYA_DEFAULT_MODEL", raising=False)
+    monkeypatch.setenv("VEYA_DEFAULT_MODEL", "mutli-lingual")
     with pytest.raises(SystemExit) as raised:
         build_router()
     message = str(raised.value)
     # Names the variable, quotes the value the operator typed, and then says in core's own words
     # what the accepted set is -- so the typo is fixed from the message, not from the source.
-    assert message.startswith("invalid LAYA_DEFAULT_MODEL 'mutli-lingual': unknown model"), message
+    assert message.startswith("invalid VEYA_DEFAULT_MODEL 'mutli-lingual': unknown model"), message
     for name in ("english", "multilingual", "typed-decisions", "ml"):
         assert name in message, message
     # The contrast with the numeric knobs has to stay the contrast: with the name fixed, the bad
     # number below still falls back instead of stopping the server.
-    monkeypatch.setenv("LAYA_DEFAULT_MODEL", "english")
-    monkeypatch.setenv("LAYA_MAX_LOADED", "abc")
+    monkeypatch.setenv("VEYA_DEFAULT_MODEL", "english")
+    monkeypatch.setenv("VEYA_MAX_LOADED", "abc")
     assert build_router().default == "english"
     assert build_router().max_loaded == 2
 
@@ -1346,7 +1347,7 @@ def test_inference_runs_off_the_event_loop(monkeypatch):
 
     import httpx
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     fake = FakeRouter()
     seen = []
     real_predict = fake.predict
@@ -1378,7 +1379,7 @@ def test_health_stays_available_during_inference(monkeypatch):
 
     import httpx
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     fake = SlowRouter(seconds=0.25)
     app = create_app(router=fake)
     seen = {}
@@ -1431,10 +1432,10 @@ def test_inference_failure_is_logged_and_not_leaked(monkeypatch, caplog):
     """
     secret = ("Failed to find C compiler. Please specify via CC environment variable "
               "or set triton.knobs.build.impl (/opt/venv/lib/python3.11/site-packages/triton)")
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=ExplodingRouter(secret)), raise_server_exceptions=False)
 
-    with caplog.at_level(logging.ERROR, logger="laya.serve"):
+    with caplog.at_level(logging.ERROR, logger="veya.serve"):
         response = client.post("/v1/systemone", json=REQ)
 
     assert response.status_code == 500
@@ -1463,10 +1464,10 @@ def test_validation_errors_are_not_logged_as_failures(monkeypatch, caplog):
         def predict(self, state, questions, model=None):
             raise ValueError("question 'q': a choice question needs at least one criterion")
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=RejectingRouter()), raise_server_exceptions=False)
 
-    with caplog.at_level(logging.ERROR, logger="laya.serve"):
+    with caplog.at_level(logging.ERROR, logger="veya.serve"):
         response = client.post("/v1/systemone", json=REQ)
 
     assert response.status_code == 422, response.text
@@ -1485,7 +1486,7 @@ class ValidatingRouter:
     loaded = ["english"]
 
     def predict(self, state, questions, model=None):
-        from laya.agent import Agent
+        from veya.agent import Agent
         for qid, qdef in questions.items():
             Agent._check_question(qid, qdef)
         raise AssertionError("validation should have rejected this before predict()")
@@ -1493,7 +1494,7 @@ class ValidatingRouter:
 
 @pytest.mark.parametrize("bad_type", [[], {}, "bogus", 123])
 def test_malformed_question_type_is_a_named_422(monkeypatch, bad_type):
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=ValidatingRouter()), raise_server_exceptions=False)
     body = dict(REQ)
     body["questions"] = {"refund": {"type": bad_type, "instructions": "Is a refund requested?"}}
@@ -1507,7 +1508,7 @@ def test_malformed_question_type_is_a_named_422(monkeypatch, bad_type):
 
 @pytest.mark.parametrize("bad_ins", [None, "", "   ", []])
 def test_malformed_instructions_is_a_named_422(monkeypatch, bad_ins):
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=ValidatingRouter()), raise_server_exceptions=False)
     body = dict(REQ)
     body["questions"] = {"refund": {"type": "noul", "instructions": bad_ins}}
@@ -1518,7 +1519,7 @@ def test_malformed_instructions_is_a_named_422(monkeypatch, bad_ins):
 
 @pytest.mark.parametrize("bad_qid", ["", "   "])
 def test_malformed_question_id_is_a_named_422(monkeypatch, bad_qid):
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=ValidatingRouter()), raise_server_exceptions=False)
     body = dict(REQ)
     body["questions"] = {bad_qid: {"type": "noul", "instructions": "Is it urgent?"}}
@@ -1530,7 +1531,7 @@ def test_malformed_question_id_is_a_named_422(monkeypatch, bad_qid):
 def test_score_null_level_is_a_named_422(monkeypatch):
     """A null score level would come back as `legend: {"<i>": null}`, which Jev clients refuse to
     parse (#302). The request is rejected as a named 422 instead of answered 200."""
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=ValidatingRouter()), raise_server_exceptions=False)
     body = dict(REQ)
     body["questions"] = {"urgency": {"type": "score", "instructions": "How urgent?",
@@ -1548,7 +1549,7 @@ def test_a_nested_choice_label_is_a_caller_error_not_a_server_fault(monkeypatch)
     `ValueError` to 422, so the caller got a 500 "inference failed" with the reason discarded.
     `ValueError` is what carries the message to the client, so the guard has to raise that type.
     """
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=ValidatingRouter()), raise_server_exceptions=False)
 
     for label in (["billing"], {"billing": "x"}):
@@ -1570,7 +1571,7 @@ def test_a_colliding_choice_label_is_a_caller_error_not_a_server_fault(monkeypat
     dict label arrives as one of those and the guard above already names it, which
     `test_a_nested_choice_label_is_a_caller_error_not_a_server_fault` covers.)
     """
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=ValidatingRouter()), raise_server_exceptions=False)
 
     for criteria, expect in (
@@ -1650,8 +1651,8 @@ def test_admission_bound_refuses_with_503_when_full(monkeypatch):
 
     import httpx
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
-    monkeypatch.setenv("LAYA_MAX_CONCURRENT", "1")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_MAX_CONCURRENT", "1")
     fake = GatedRouter()
     app = create_app(router=fake)
     seen = {}
@@ -1685,8 +1686,8 @@ def test_admission_bound_refuses_with_503_when_full(monkeypatch):
 
 def test_admission_slot_is_released_after_inference(monkeypatch):
     """Slots are reusable: sequential requests with a bound of one all pass."""
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
-    monkeypatch.setenv("LAYA_MAX_CONCURRENT", "1")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_MAX_CONCURRENT", "1")
     client = TestClient(create_app(router=FakeRouter()))
     assert client.post("/v1/systemone", json=REQ).status_code == 200
     assert client.post("/v1/systemone", json=REQ).status_code == 200
@@ -1737,12 +1738,12 @@ def test_accepted_connections_set_tcp_nodelay(monkeypatch):
 
     import uvicorn
 
-    import laya.serve
+    import veya.serve
 
     captured = {}
     monkeypatch.setattr(uvicorn, "run", lambda app, **kwargs: captured.update(kwargs))
-    monkeypatch.setattr(laya.serve, "create_app", lambda: None)
-    laya.serve.main([])
+    monkeypatch.setattr(veya.serve, "create_app", lambda: None)
+    veya.serve.main([])
 
     async def drive():
         config = uvicorn.Config(create_app(router=FakeRouter()), host="127.0.0.1", port=0,
@@ -1818,7 +1819,7 @@ def test_token_budget_head_max_len_equal_to_max_len(monkeypatch):
 
 
 def test_token_budget_env_cap_override(monkeypatch):
-    monkeypatch.setenv("LAYA_MAX_TOKEN_BUDGET", "2048")
+    monkeypatch.setenv("VEYA_MAX_TOKEN_BUDGET", "2048")
     client, fake = _budget_client(monkeypatch)
     r = client.post("/v1/systemone", json={**REQ, "max_len": 4096})
     assert r.status_code == 422
@@ -1830,43 +1831,43 @@ def test_token_budget_env_cap_override(monkeypatch):
 
 
 def test_resolve_max_token_budget_fallback(monkeypatch, caplog):
-    monkeypatch.delenv("LAYA_MAX_TOKEN_BUDGET", raising=False)
+    monkeypatch.delenv("VEYA_MAX_TOKEN_BUDGET", raising=False)
     assert _resolve_max_token_budget() == DEFAULT_MAX_TOKEN_BUDGET
     for bad in ("abc", "-10", "0"):
-        monkeypatch.setenv("LAYA_MAX_TOKEN_BUDGET", bad)
+        monkeypatch.setenv("VEYA_MAX_TOKEN_BUDGET", bad)
         assert _resolve_max_token_budget() == DEFAULT_MAX_TOKEN_BUDGET
-    assert "invalid LAYA_MAX_TOKEN_BUDGET" in caplog.text
-    assert "LAYA_MAX_TOKEN_BUDGET must be positive" in caplog.text
+    assert "invalid VEYA_MAX_TOKEN_BUDGET" in caplog.text
+    assert "VEYA_MAX_TOKEN_BUDGET must be positive" in caplog.text
 
 
 def test_resolve_log_level_refuses_a_bad_value_by_name(monkeypatch):
-    """`LAYA_LOG_LEVEL` answers with a message about the variable, never a traceback.
+    """`VEYA_LOG_LEVEL` answers with a message about the variable, never a traceback.
 
     uvicorn looks the value up in its own `LOG_LEVELS` with `.lower()` and no `.strip()`, so a typo,
-    a padded value copied out of a `.env`, and a blank `LAYA_LOG_LEVEL=` all raise a bare `KeyError`
+    a padded value copied out of a `.env`, and a blank `VEYA_LOG_LEVEL=` all raise a bare `KeyError`
     from inside `configure_logging` -- and the key it prints is the lowercased one, which names
     neither the variable nor the caller. The accepted names are read from `LOG_LEVELS` itself rather
     than restated here, so the refusal cannot list a set uvicorn disagrees with.
     """
     from uvicorn.config import LOG_LEVELS
 
-    monkeypatch.delenv("LAYA_LOG_LEVEL", raising=False)
+    monkeypatch.delenv("VEYA_LOG_LEVEL", raising=False)
     assert _resolve_log_level() == DEFAULT_LOG_LEVEL
     for blank in ("", "  ", "\t"):
-        monkeypatch.setenv("LAYA_LOG_LEVEL", blank)
+        monkeypatch.setenv("VEYA_LOG_LEVEL", blank)
         assert _resolve_log_level() == DEFAULT_LOG_LEVEL, repr(blank)
 
     # Every spelling that worked before still works, case and padding included.
     for name in sorted(LOG_LEVELS):
-        monkeypatch.setenv("LAYA_LOG_LEVEL", " %s " % name.upper())
+        monkeypatch.setenv("VEYA_LOG_LEVEL", " %s " % name.upper())
         assert _resolve_log_level() == name
 
     for bad in ("verbose", "INFOO", "notset", "none", "0", "warn"):
-        monkeypatch.setenv("LAYA_LOG_LEVEL", bad)
+        monkeypatch.setenv("VEYA_LOG_LEVEL", bad)
         with pytest.raises(SystemExit) as caught:
             _resolve_log_level()
         message = str(caught.value)
-        assert message == ("invalid LAYA_LOG_LEVEL %r: must be one of %s"
+        assert message == ("invalid VEYA_LOG_LEVEL %r: must be one of %s"
                            % (bad, ", ".join(sorted(LOG_LEVELS)))), message
 
 
@@ -1874,32 +1875,32 @@ def test_a_bad_log_level_is_refused_before_uvicorn_sees_it(monkeypatch):
     """`main()` is where the level is handed over, so that is where the promise is checked."""
     import uvicorn
 
-    import laya.serve
+    import veya.serve
 
     captured = {}
     monkeypatch.setattr(uvicorn, "run", lambda app, **kwargs: captured.update(kwargs))
-    monkeypatch.setattr(laya.serve, "create_app", lambda: None)
+    monkeypatch.setattr(veya.serve, "create_app", lambda: None)
 
-    monkeypatch.setenv("LAYA_LOG_LEVEL", "  WARNING  ")
-    laya.serve.main([])
+    monkeypatch.setenv("VEYA_LOG_LEVEL", "  WARNING  ")
+    veya.serve.main([])
     assert captured["log_level"] == "warning"
 
-    monkeypatch.setenv("LAYA_LOG_LEVEL", "")
+    monkeypatch.setenv("VEYA_LOG_LEVEL", "")
     captured.clear()
-    laya.serve.main([])
+    veya.serve.main([])
     assert captured["log_level"] == DEFAULT_LOG_LEVEL
 
     captured.clear()
-    monkeypatch.setenv("LAYA_LOG_LEVEL", "verbose")
-    with pytest.raises(SystemExit, match=r"invalid LAYA_LOG_LEVEL 'verbose'"):
-        laya.serve.main([])
+    monkeypatch.setenv("VEYA_LOG_LEVEL", "verbose")
+    with pytest.raises(SystemExit, match=r"invalid VEYA_LOG_LEVEL 'verbose'"):
+        veya.serve.main([])
     assert captured == {}, "the refusal must happen before uvicorn.run is reached"
 
 
 def test_uvicorn_dies_on_the_values_the_resolver_refuses():
     """The witness that the guard guards a real crash: this is uvicorn's own behaviour, unmediated.
 
-    No `laya` code is on this path, which is the point -- `laya-serve` passed the environment
+    No `veya` code is on this path, which is the point -- `veya-serve` passed the environment
     straight through, so every `KeyError` here is one the CLI printed.
     """
     import uvicorn
@@ -1939,7 +1940,7 @@ def test_batch_sums_output_tokens():
     """total_usage must sum output_tokens, not report a hardcoded 0 (each result carries its own)."""
     class _UsageRouter:
         def predict(self, state, questions, model=None, **kwargs):
-            return {"model": "laya-rl-agent",
+            return {"model": "veya-rl-agent",
                     "answers": {"dept": {"type": "choice", "choice": "billing",
                                          "probabilities": {"billing": 1.0}, "confidence": 1.0}},
                     "usage": {"input_tokens": 5, "output_tokens": 3},
@@ -2000,7 +2001,7 @@ def test_batch_missing_questions_returns_400(monkeypatch):
 
 def test_batch_too_many_states_returns_413(monkeypatch):
     client, _ = _client(monkeypatch)
-    from laya.serve import MAX_BATCH_STATES
+    from veya.serve import MAX_BATCH_STATES
     oversized = {"states": ["state"] * (MAX_BATCH_STATES + 1), "questions": REQ["questions"]}
     r = client.post("/v1/systemone/batch", json=oversized)
     assert r.status_code == 413
@@ -2016,14 +2017,14 @@ def _batch_env_client(monkeypatch, **env):
     """A batch client with the batch-token knob explicitly set, or explicitly unset.
 
     Every test below states the budget it measures against. Without this an exported
-    `LAYA_MAX_BATCH_TOKENS` silently changes the chunk and these pass or fail for a reason that is not
+    `VEYA_MAX_BATCH_TOKENS` silently changes the chunk and these pass or fail for a reason that is not
     in the file -- there is no `conftest.py` in this repo to isolate the environment, and
-    `_batch_client` clears only `LAYA_API_KEY`.
+    `_batch_client` clears only `VEYA_API_KEY`.
     """
-    if "LAYA_MAX_BATCH_TOKENS" in env:
-        monkeypatch.setenv("LAYA_MAX_BATCH_TOKENS", env["LAYA_MAX_BATCH_TOKENS"])
+    if "VEYA_MAX_BATCH_TOKENS" in env:
+        monkeypatch.setenv("VEYA_MAX_BATCH_TOKENS", env["VEYA_MAX_BATCH_TOKENS"])
     else:
-        monkeypatch.delenv("LAYA_MAX_BATCH_TOKENS", raising=False)
+        monkeypatch.delenv("VEYA_MAX_BATCH_TOKENS", raising=False)
     return _batch_client(monkeypatch)
 
 
@@ -2049,7 +2050,7 @@ def test_batch_within_the_budget_is_passed_no_batch_size(monkeypatch):
     that works today must not start answering differently. Not-passing is the only way to guarantee
     that: it leaves `predict_batch` on its own default.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     client, fake = _batch_env_client(monkeypatch)
     rows = serve_mod.DEFAULT_MAX_BATCH_TOKENS // serve_mod._BATCH_ROW_TOKENS_ASSUMED
@@ -2063,7 +2064,7 @@ def test_batch_within_the_budget_is_passed_no_batch_size(monkeypatch):
 
 def test_batch_over_the_budget_is_split_not_refused(monkeypatch):
     """The 4096-row shape still answers; it is chunked so one pass stays inside the budget."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     client, fake = _batch_env_client(monkeypatch)
     r = client.post("/v1/systemone/batch",
@@ -2081,7 +2082,7 @@ def test_batch_over_the_budget_is_split_not_refused(monkeypatch):
 
 def test_batch_one_row_over_the_budget_is_split(monkeypatch):
     """One row over, with both factors inside their own caps, so the comparison cannot be off by one."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     client, fake = _batch_env_client(monkeypatch)
     rows = serve_mod.DEFAULT_MAX_BATCH_TOKENS // serve_mod._BATCH_ROW_TOKENS_ASSUMED
@@ -2101,7 +2102,7 @@ def test_batch_a_raised_max_len_chunks_harder(monkeypatch):
     512, so 256 rows at 8192 is the same token count as 4096 rows at 512 and collates the same tensor.
     Counting tokens means a wider row buys proportionally fewer rows per pass.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     wide = serve_mod.DEFAULT_MAX_TOKEN_BUDGET
     assert wide > serve_mod._BATCH_ROW_TOKENS_ASSUMED
@@ -2125,12 +2126,12 @@ def test_batch_an_explicit_batch_size_shapes_a_pass_but_cannot_widen_one(monkeyp
     """The caller asked for a shape, not for an unbounded pass.
 
     `batch_size` is the only knob that decides what ONE forward pass collates, and the plan above is
-    the only thing that keeps that pass inside `LAYA_MAX_BATCH_TOKENS`. Forwarding the caller's value
+    the only thing that keeps that pass inside `VEYA_MAX_BATCH_TOKENS`. Forwarding the caller's value
     verbatim made the budget opt-out: `batch_size=10**18` on a 4 KB body meant one pass over 524 288
     tokens (64 states x 8192) with every documented limit satisfied. A smaller value still wins,
     because asking for a *narrower* pass is asking for less work than the plan allows.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     rows_that_do_not_fit = {"states": ["hi"] * serve_mod.MAX_BATCH_STATES,
                             "questions": _noul_questions(serve_mod.MAX_QUESTIONS)}
@@ -2160,9 +2161,9 @@ def test_batch_an_explicit_batch_size_shapes_a_pass_but_cannot_widen_one(monkeyp
 
 def test_batch_chunking_follows_a_raised_budget(monkeypatch):
     """A deployment whose hardware can take more stops being chunked."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
-    client, fake = _batch_env_client(monkeypatch, LAYA_MAX_BATCH_TOKENS="2097152")
+    client, fake = _batch_env_client(monkeypatch, VEYA_MAX_BATCH_TOKENS="2097152")
     r = client.post("/v1/systemone/batch",
                     json={"states": ["hi"] * serve_mod.MAX_BATCH_STATES,
                           "questions": _noul_questions(serve_mod.MAX_QUESTIONS)})
@@ -2172,10 +2173,10 @@ def test_batch_chunking_follows_a_raised_budget(monkeypatch):
 
 def test_batch_chunking_follows_a_lowered_budget(monkeypatch):
     """And a LOWERED one -- the regime an operator on small hardware actually uses."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     assert 2048 < serve_mod.DEFAULT_MAX_BATCH_TOKENS, "2048 must be the lowered regime"
-    client, fake = _batch_env_client(monkeypatch, LAYA_MAX_BATCH_TOKENS="2048")
+    client, fake = _batch_env_client(monkeypatch, VEYA_MAX_BATCH_TOKENS="2048")
     r = client.post("/v1/systemone/batch",
                     json={"states": ["hi"] * 8, "questions": _noul_questions(2)})
     assert r.status_code == 200, r.text
@@ -2186,12 +2187,12 @@ def test_batch_chunking_follows_a_lowered_budget(monkeypatch):
 @pytest.mark.parametrize("raw", ["nonsense", "0", "-5", "3.5"])
 def test_batch_budget_warns_and_falls_back_on_an_unusable_value(monkeypatch, caplog, raw):
     """A bad knob must not disable the chunking, and must say so in the log."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
-    monkeypatch.setenv("LAYA_MAX_BATCH_TOKENS", raw)
-    with caplog.at_level(logging.WARNING, logger="laya.serve"):
+    monkeypatch.setenv("VEYA_MAX_BATCH_TOKENS", raw)
+    with caplog.at_level(logging.WARNING, logger="veya.serve"):
         assert serve_mod._resolve_max_batch_tokens() == serve_mod.DEFAULT_MAX_BATCH_TOKENS
-    assert "LAYA_MAX_BATCH_TOKENS" in caplog.text, caplog.text
+    assert "VEYA_MAX_BATCH_TOKENS" in caplog.text, caplog.text
     assert ("invalid" in caplog.text or "must be positive" in caplog.text), caplog.text
 
     client, fake = _batch_client(monkeypatch)
@@ -2204,9 +2205,9 @@ def test_batch_budget_warns_and_falls_back_on_an_unusable_value(monkeypatch, cap
 
 def test_batch_an_empty_environment_value_falls_back_silently(monkeypatch):
     """Unset and empty both mean "not configured", which is not worth a warning."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
-    monkeypatch.setenv("LAYA_MAX_BATCH_TOKENS", "")
+    monkeypatch.setenv("VEYA_MAX_BATCH_TOKENS", "")
     assert serve_mod._resolve_max_batch_tokens() == serve_mod.DEFAULT_MAX_BATCH_TOKENS
 
 
@@ -2216,9 +2217,9 @@ def test_batch_chunk_plan_floors_at_one_state(monkeypatch):
     At that floor one pass carries `len(questions)` rows, which is exactly what one `/v1/systemone`
     request can already ask for -- so the batch route's worst pass is the single route's worst pass.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
-    monkeypatch.delenv("LAYA_MAX_BATCH_TOKENS", raising=False)
+    monkeypatch.delenv("VEYA_MAX_BATCH_TOKENS", raising=False)
     plan = serve_mod._batch_chunk_size(serve_mod.MAX_BATCH_STATES, serve_mod.MAX_QUESTIONS,
                                        serve_mod.DEFAULT_MAX_TOKEN_BUDGET)
     assert plan == 1, plan
@@ -2229,9 +2230,9 @@ def test_batch_chunk_plan_floors_at_one_state(monkeypatch):
 @pytest.mark.parametrize("states,questions", [(0, 4), (4, 0), (0, 0)])
 def test_batch_chunk_plan_is_none_for_a_degenerate_shape(monkeypatch, states, questions):
     """Nothing to split, and no division by the question count."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
-    monkeypatch.delenv("LAYA_MAX_BATCH_TOKENS", raising=False)
+    monkeypatch.delenv("VEYA_MAX_BATCH_TOKENS", raising=False)
     assert serve_mod._batch_chunk_size(states, questions) is None
 
 
@@ -2253,7 +2254,7 @@ def test_batch_a_non_object_questions_body_keeps_its_own_400(monkeypatch):
 
 def test_batch_too_many_questions_still_gets_its_own_413(monkeypatch):
     """Chunking does not replace the per-question cap: 300 questions is still refused, by name."""
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     client, _ = _batch_env_client(monkeypatch)
     r = client.post("/v1/systemone/batch",
@@ -2264,7 +2265,7 @@ def test_batch_too_many_questions_still_gets_its_own_413(monkeypatch):
 
 def test_batch_individual_oversized_state_returns_413(monkeypatch):
     client, _ = _client(monkeypatch)
-    from laya.serve import MAX_STATE_CHARS
+    from veya.serve import MAX_STATE_CHARS
     bad_req = {
         "states": ["ok", "X" * (MAX_STATE_CHARS + 10)],
         "questions": REQ["questions"],
@@ -2291,8 +2292,8 @@ def test_batch_admission_bound_refuses_with_503(monkeypatch):
     import asyncio
     import httpx
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
-    monkeypatch.setenv("LAYA_MAX_CONCURRENT", "1")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_MAX_CONCURRENT", "1")
     fake = GatedRouter()
     app = create_app(router=fake)
     seen = {}
@@ -2328,7 +2329,7 @@ class BatchCapableFakeRouter(FakeRouter):
         self.batch_calls.append(requests)
         return [
             {
-                "model": "laya-rl-agent",
+                "model": "veya-rl-agent",
                 "answers": {
                     "dept": {
                         "type": "choice",
@@ -2345,7 +2346,7 @@ class BatchCapableFakeRouter(FakeRouter):
 
 
 def test_batch_uses_predict_batch_when_available(monkeypatch):
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     fake = BatchCapableFakeRouter()
     client = TestClient(create_app(router=fake))
     r = client.post("/v1/systemone/batch", json=BATCH_REQ)
@@ -2448,10 +2449,10 @@ def test_both_decision_routes_refuse_the_escape_before_the_router_sees_it(path, 
     `predict_batch`, which raises the `TypeError` above for all three slots on the real one, so each
     is a `500 inference failed` on a live server plus a `_log.exception` traceback per request. That
     is exactly the shape 06462bf was written to stop. So each slot is its own case, the message is
-    read from `laya.serve` rather than retyped here, and the router is asserted to have seen
+    read from `veya.serve` rather than retyped here, and the router is asserted to have seen
     nothing: the refusal has to land before the forward pass it exists to prevent.
     """
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client, router = _surrogate_client()
     body = _lone_surrogate_bodies(batch)[slot]
     # `json.dumps` escapes the unpaired surrogate by default, which is what a client sending one of
@@ -2474,7 +2475,7 @@ def test_an_emoji_still_reaches_both_decision_routes(path, batch, monkeypatch):
     unpairedness would reject every emoji a state contains, which is why 06462bf asserts it for the
     single route and it is asserted here for both.
     """
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client, router = _surrogate_client()
     body = {"states": ["hi \U0001f600"]} if batch else {"state": "hi \U0001f600"}
     body["questions"] = {"q": {"type": "noul", "instructions": "x"}}
@@ -2529,7 +2530,7 @@ _ZWSP_STATE = {"body": "\u200b" * 8332}    # len(str()) == 50004, serialized == 
 
 
 def _serialized_len(state):
-    """The length `laya.common.serialize_state` produces, without importing torch."""
+    """The length `veya.common.serialize_state` produces, without importing torch."""
     return len(json.dumps(state, ensure_ascii=False))
 
 
@@ -2596,16 +2597,16 @@ def test_the_declared_limit_is_the_limit_for_ordinary_states(monkeypatch, reques
 def test_the_gate_agrees_with_the_function_that_feeds_the_tokenizer():
     """Pin serve.py's inline `json.dumps` to `serialize_state` itself.
 
-    serve.py cannot import it -- `laya.common` imports torch at module level and
-    `import laya.serve` must not (tests/test_lazy_import.py) -- so the mirror is held here
+    serve.py cannot import it -- `veya.common` imports torch at module level and
+    `import veya.serve` must not (tests/test_lazy_import.py) -- so the mirror is held here
     instead. Looked up rather than imported at module scope so that a serve.py without the
     helper fails this one check instead of aborting the suite's import.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     state_length = getattr(serve_mod, "_state_length", None)
-    assert state_length is not None, "laya.serve no longer measures the state through _state_length"
-    serialize_state = pytest.importorskip("laya.common").serialize_state
+    assert state_length is not None, "veya.serve no longer measures the state through _state_length"
+    serialize_state = pytest.importorskip("veya.common").serialize_state
     for state in (_QUOTE_STATE, _ZWSP_STATE, "plain text", {}, [],
                   {"a": {"b": ["c", 1, 1.5, None, True]}},
                   ["\u4e2d\u6587", '"', "'", "\n", "\x00", "\U0001f600"],
@@ -2673,7 +2674,7 @@ def test_the_probe_refuses_an_oversized_value_without_serializing_the_state(monk
     This is the check that goes red if `_state_length_lower_bound_over` is removed: without it the gate
     still answers 413, so the *absence of the dump* is the only observable difference.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     calls = []
     real_dumps = json.dumps
@@ -2704,7 +2705,7 @@ def test_the_probe_verdict_always_matches_the_exact_measurement():
     are compared across shapes placed deliberately on both sides of the limit -- including the
     escape-heavy values where `repr` and JSON diverge, which is what the gate exists for.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
     cap = serve_mod.MAX_STATE_CHARS
     shapes = []
     for ch in ("a", '"', "\u200b", "\U000e0001", "\n", "\\", "\u4e2d"):
@@ -2736,7 +2737,7 @@ def test_the_early_refusal_reports_a_number_it_measured():
     """The 413 must not invent a count. Reporting `cap + 1` would answer "50001 > 50000" for a
     60 012-character state -- the same fabricated count this gate was written to remove.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
     cap = serve_mod.MAX_STATE_CHARS
     # `cap + 1` is NOT the tell: {"body": "a" * 50001} legitimately sums to exactly that. The
     # property that distinguishes a measured bound from a fabricated one is `cap < reported <= exact`.
@@ -2755,7 +2756,7 @@ def test_the_probe_is_bounded_and_falls_through_rather_than_guessing():
     A state of 200 000 small values is not provably over within that budget, and must fall through
     to the encoder rather than be refused on a partial sum.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
     assert serve_mod._STATE_PROBE_VALUES <= 256
     wide = {("k%06d" % i): "x" for i in range(200000)}
     assert serve_mod._state_length_lower_bound_over(wide, serve_mod.MAX_STATE_CHARS) == 0
@@ -2768,7 +2769,7 @@ def test_the_probe_walks_exact_container_types_only():
     13-character state refused as `60000 > 50000`. No HTTP request can reach it -- `json.loads`
     builds exact types -- but the 400 branch exists for in-process callers.
     """
-    import laya.serve as serve_mod
+    import veya.serve as serve_mod
 
     class Lying(dict):
         def values(self):
@@ -2782,7 +2783,7 @@ def test_the_probe_walks_exact_container_types_only():
 # --------------------------------------------------------------------- per-call controls
 #
 # `Router.predict` takes nine arguments beyond `state` and `questions` that a JSON body could
-# state. `laya/serve.py` splits them into the two lists the tests below read, and the first test
+# state. `veya/serve.py` splits them into the two lists the tests below read, and the first test
 # pins those lists against core's own signature: a control added to `predict` cannot be silently
 # ignored by the HTTP surface, because it has to be placed on one side of that line first.
 
@@ -2793,7 +2794,7 @@ NEW_CONTROL_VALUES = {"task": "typed-decisions", "lang": "de", "lang_guess": "de
 
 def test_every_predict_control_is_forwarded_or_refused():
     """`BODY_CONTROLS` and `BODY_REFUSALS` must cover `Router.predict` exactly, both directions."""
-    from laya.router import Router
+    from veya.router import Router
 
     taken = set(inspect.signature(Router.predict).parameters) - {"self", "state", "questions"}
     declared = set(BODY_CONTROLS) | set(BODY_REFUSALS)
@@ -2854,13 +2855,13 @@ def test_a_language_control_must_be_a_code_string(monkeypatch, key, value):
 
 @pytest.mark.parametrize("value", [1.5, -0.1, True, "0.9"])
 def test_min_confidence_is_validated_by_core(monkeypatch, value):
-    """The bounds belong to `laya.confidence`, so serve must report core's own message.
+    """The bounds belong to `veya.confidence`, so serve must report core's own message.
 
     Comparing against the `ValueError` core raises for the same value is what keeps the accepted
     range from drifting: a restated `[0.0, 1.0]` check here would pass CI on the day core widened
     it and start rejecting requests the abstention gate would have honoured.
     """
-    from laya.confidence import check_min_confidence
+    from veya.confidence import check_min_confidence
 
     try:
         check_min_confidence(value)
@@ -2900,7 +2901,7 @@ def test_an_unknown_task_gets_cores_answer_not_a_500(monkeypatch):
     reports as a 422 carrying its message. Listing the accepted tasks in `serve` instead would be
     a second registry to keep in step -- the failure mode #544 and #638 removed elsewhere.
     """
-    from laya.router import normalise_name
+    from veya.router import normalise_name
 
     class RoutingRouter(BudgetRouter):
         def predict(self, state, questions, model=None, **kwargs):
@@ -2908,7 +2909,7 @@ def test_an_unknown_task_gets_cores_answer_not_a_500(monkeypatch):
                 normalise_name(kwargs["task"])  # core's guard, called exactly as route() calls it
             return super().predict(state, questions, model=model, **kwargs)
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     client = TestClient(create_app(router=RoutingRouter()), raise_server_exceptions=False)
 
     r = client.post("/v1/systemone", json={**REQ, "task": "not-a-task"})
@@ -2923,7 +2924,7 @@ def test_an_unknown_task_gets_cores_answer_not_a_500(monkeypatch):
 def test_a_hook_control_is_refused_not_dropped(monkeypatch, key):
     """All five used to be read into the body and ignored, so a client got a silent no.
 
-    `laya.integrations.langchain::_reject_remote_hooks` already refuses the same five on a node
+    `veya.integrations.langchain::_reject_remote_hooks` already refuses the same five on a node
     with a `base_url`, on the grounds that a hook runs in the server's process. The endpoint now
     says that itself instead of answering as though the control had been honoured.
     """
@@ -3009,7 +3010,7 @@ class BatchRecordingRouter(FakeRouter):
         self.batch_calls.append(([dict(r) for r in requests], dict(kwargs)))
         return [
             {
-                "model": "laya-rl-agent",
+                "model": "veya-rl-agent",
                 "answers": {
                     "dept": {
                         "type": "choice",
@@ -3042,7 +3043,7 @@ BATCH_ITEM_VALUES = {"max_len": 64, "head_max_len": 32, "task": "typed-decisions
 
 
 def _batch_client(monkeypatch):
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     fake = BatchRecordingRouter()
     return TestClient(create_app(router=fake)), fake
 
@@ -3057,7 +3058,7 @@ def test_batch_call_controls_are_exactly_predict_batch_kwargs_or_refusal():
     to the batch path -- a caller cannot shorten the deadline on which the operator's own hooks
     execute.
     """
-    from laya.router import Router
+    from veya.router import Router
 
     taken = set(inspect.signature(Router.predict_batch).parameters) - {"self", "requests"}
     declared = (set(BATCH_BODY_CALL_CONTROLS) | set(BODY_REFUSALS)
@@ -3169,7 +3170,7 @@ def test_batch_strict_predict_batch_router_answers_a_quiet_body(monkeypatch):
     and the endpoint would 500 on a body that sent nothing -- which is exactly the mutation this
     witness kills.
     """
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     fake = StrictBatchRouter()
     client = TestClient(create_app(router=fake))
     r = client.post("/v1/systemone/batch", json=BATCH_REQ)
@@ -3259,7 +3260,7 @@ def test_batch_predict_fallback_forwards_every_control(monkeypatch):
     abstention gate apply per item on the fallback path, not silently skip it because
     ``predict_batch`` was unavailable.
     """
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     fake = BudgetRouter()
     client = TestClient(create_app(router=fake))
     body = {**BATCH_REQ, "max_len": 64, "head_max_len": 32, "task": "typed-decisions",
@@ -3284,7 +3285,7 @@ def test_batch_predict_fallback_sends_no_kwargs_when_body_is_quiet(monkeypatch):
     would 500 on that shape and would override a deployment's own ``Router(lang_guess=...)``
     on a modern one.
     """
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     fake = FakeRouter()
     client = TestClient(create_app(router=fake))
     r = client.post("/v1/systemone/batch", json=BATCH_REQ)
@@ -3313,7 +3314,7 @@ def test_health_liveness_is_open_but_the_detail_needs_the_bearer(monkeypatch):
     """#812: `/health` answered deployment internals to an unauthenticated caller.
 
     `POST /v1/systemone` was gated and `GET /health` was not, so on a server the operator had
-    locked down with `LAYA_API_KEY` anyone could read the resident checkpoint names, each one's
+    locked down with `VEYA_API_KEY` anyone could read the resident checkpoint names, each one's
     exact Hugging Face revision SHA, the device state, and `last_fallback_reason`, which quotes
     host hardware ("GPU 0 total 8.00 GiB"). Reconnaissance rather than a data path, but it is
     exactly the inventory you would want before targeting a revision.
@@ -3324,7 +3325,7 @@ def test_health_liveness_is_open_but_the_detail_needs_the_bearer(monkeypatch):
     """
     from fastapi.testclient import TestClient
 
-    monkeypatch.setenv("LAYA_API_KEY", "s3cret")
+    monkeypatch.setenv("VEYA_API_KEY", "s3cret")
     client = TestClient(create_app(router=FakeRouter()))
 
     # a probe with no credential still gets its 200, which is all a healthcheck reads
@@ -3352,8 +3353,8 @@ def test_health_without_an_api_key_is_unchanged(monkeypatch):
     """A deployment that set no key never asked to be gated, so it gets the whole payload."""
     from fastapi.testclient import TestClient
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
-    monkeypatch.delenv("LAYA_IDLE_UNLOAD_SECONDS", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_IDLE_UNLOAD_SECONDS", raising=False)
     client = TestClient(create_app(router=FakeRouter()))
     _, returned = _health_return_keys()
     assert sorted(client.get("/health").json()) == sorted(returned)
@@ -3361,7 +3362,7 @@ def test_health_without_an_api_key_is_unchanged(monkeypatch):
 
 def _health_return_keys():
     """The keys `health()` hands back, read out of its own `return` statement."""
-    path = os.path.join(ROOT, "laya", "serve.py")
+    path = os.path.join(ROOT, "veya", "serve.py")
     with open(path, encoding="utf-8") as handle:
         tree = ast.parse(handle.read(), filename=path)
     for node in ast.walk(tree):
@@ -3370,7 +3371,7 @@ def _health_return_keys():
                 if isinstance(stmt, ast.Return) and isinstance(stmt.value, ast.Dict):
                     return node, [k.value for k in stmt.value.keys
                                   if isinstance(k, ast.Constant) and isinstance(k.value, str)]
-    raise AssertionError("no `def health()` returning a dict literal in laya/serve.py")
+    raise AssertionError("no `def health()` returning a dict literal in veya/serve.py")
 
 
 def test_http_api_page_documents_exactly_the_health_fields():
@@ -3380,7 +3381,7 @@ def test_http_api_page_documents_exactly_the_health_fields():
     `checkpoint_devices` and `cpu_fallbacks` arrived with the device-fact reporting and #574's
     fallback counters, and both were written up in docs/docker.md -- the page a reader opens before
     pointing a probe at a server was the one page nobody updated. Its sample also printed
-    `"device": "auto"`, which is what `LAYA_DEVICE` defaults to, not a value the handler can return.
+    `"device": "auto"`, which is what `VEYA_DEVICE` defaults to, not a value the handler can return.
 
     So the key list is read out of `health()`'s `return` rather than typed here, in both directions
     like the request-body gate above, and the sample is checked for internal coherence too: it is one
@@ -3414,7 +3415,7 @@ def test_http_api_page_documents_exactly_the_health_fields():
 
     # `device` is a device label, not the configuration word: the labels come from the only function
     # that can produce one when nothing is resident.
-    dev_path = os.path.join(ROOT, "laya", "mcp", "device.py")
+    dev_path = os.path.join(ROOT, "veya", "mcp", "device.py")
     with open(dev_path, encoding="utf-8") as handle:
         dev_tree = ast.parse(handle.read(), filename=dev_path)
     labels = set()
@@ -3455,7 +3456,7 @@ def test_security_page_health_sample_matches_handler_shape():
 
     #811 pinned docs/http-api.md to `health()`'s own `return` dict. The same payload was
     quoted on docs/security.md as a four-key line ending in `"device":"auto"`; the handler
-    returns seven keys, and `"auto"` is what `LAYA_DEVICE` defaults to, not a value the
+    returns seven keys, and `"auto"` is what `VEYA_DEVICE` defaults to, not a value the
     handler emits (see the docstring on `test_http_api_page_documents_exactly_the_health_fields`).
     A reader following that snippet's shape -- to check an SDK, a shell probe, or the shape
     their own healthcheck parses -- would find their code silently ignores three fields.
@@ -3542,14 +3543,14 @@ def _decision_response_site(rel):
 
 def _route_decision_keys():
     """Every keyword some `RouteDecision(...)` is built with, across all of `_route`'s branches."""
-    path = os.path.join(ROOT, "laya", "router.py")
+    path = os.path.join(ROOT, "veya", "router.py")
     with open(path, encoding="utf-8") as handle:
         tree = ast.parse(handle.read(), filename=path)
     keys = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "RouteDecision":
             keys.update(kw.arg for kw in node.keywords if kw.arg)
-    assert keys, "no RouteDecision(...) call with keywords in laya/router.py; retarget this"
+    assert keys, "no RouteDecision(...) call with keywords in veya/router.py; retarget this"
     return sorted(keys)
 
 
@@ -3572,7 +3573,7 @@ def test_http_api_page_documents_the_decision_response_keys():
     `Agent.predict_batch` builds six keys and `OnnxAgent._infer_batch` builds the same six -- the
     truncation report #174 asked for, and the only place a caller can see that the state it sent was
     cut before the model read it. It showed three of the four `routing` keys (`workflow` is on every
-    branch of `_route`) and four of the eight `laya.lang.analyse()` returns. And it named a
+    branch of `_route`) and four of the eight `veya.lang.analyse()` returns. And it named a
     `lang_guess` key of `routing` that no code path has ever set: `lang_guess` is a *request* control
     (`BODY_CONTROLS`), and the evidence a hint acted on is spelled out in `reason`.
 
@@ -3589,14 +3590,14 @@ def test_http_api_page_documents_the_decision_response_keys():
     response to the request the page itself prints, so the coherence checks at the end can read it as
     one server's answer rather than as six unrelated numbers.
     """
-    from laya.lang import analyse
+    from veya.lang import analyse
 
     page = open(os.path.join(ROOT, "docs", "http-api.md"), encoding="utf-8").read()
     section = page[page.index("### Response"):page.index("### Confidence")]
     sample = json.loads(section.split("```json", 1)[1].split("```", 1)[0])
 
-    torch_site = _decision_response_site(os.path.join("laya", "agent.py"))
-    onnx_site = _decision_response_site(os.path.join("laya", "onnx_agent.py"))
+    torch_site = _decision_response_site(os.path.join("veya", "agent.py"))
+    onnx_site = _decision_response_site(os.path.join("veya", "onnx_agent.py"))
     top, always, optional = torch_site["keys"], torch_site["usage"], torch_site["optional"]
     assert {k: v for k, v in onnx_site.items() if k != "head"} == \
         {k: v for k, v in torch_site.items() if k != "head"}, (
@@ -3688,8 +3689,8 @@ def _answer_literal_keys(rel):
 
 
 def _gate_written_keys():
-    """Every key the abstention gate writes onto an answer, from `laya/confidence.py` itself."""
-    path = os.path.join(ROOT, "laya", "confidence.py")
+    """Every key the abstention gate writes onto an answer, from `veya/confidence.py` itself."""
+    path = os.path.join(ROOT, "veya", "confidence.py")
     with open(path, encoding="utf-8") as handle:
         tree = ast.parse(handle.read(), filename=path)
     written = set()
@@ -3763,14 +3764,14 @@ def test_http_api_page_documents_the_gate_report_on_an_answer():
     section = page[page.index("### Response"):page.index("### Confidence")]
     rows = _md_answer_table(section)
 
-    torch_site = _answer_literal_keys(os.path.join("laya", "agent.py"))
-    onnx_site = _answer_literal_keys(os.path.join("laya", "onnx_agent.py"))
+    torch_site = _answer_literal_keys(os.path.join("veya", "agent.py"))
+    onnx_site = _answer_literal_keys(os.path.join("veya", "onnx_agent.py"))
     assert torch_site == onnx_site, (
         "the two agents build different answers, so the page cannot describe both: torch %s, onnx %s"
         % (torch_site, onnx_site))
 
     gate = _gate_written_keys()
-    assert gate, "the gate writes no `a[...] = ...` in laya/confidence.py; retarget this"
+    assert gate, "the gate writes no `a[...] = ...` in veya/confidence.py; retarget this"
     assert sorted(rows["gate"]) == gate, (
         "the gate report says %s, `apply_confidence_gate` and `flag_low_confidence` write %s"
         % (sorted(rows["gate"]), gate))
@@ -3827,14 +3828,14 @@ class IdleRouter(FakeRouter):
 ])
 def test_idle_unload_setting_is_finite_and_opt_in(monkeypatch, raw, expected):
     if raw is None:
-        monkeypatch.delenv("LAYA_IDLE_UNLOAD_SECONDS", raising=False)
+        monkeypatch.delenv("VEYA_IDLE_UNLOAD_SECONDS", raising=False)
     else:
-        monkeypatch.setenv("LAYA_IDLE_UNLOAD_SECONDS", raw)
+        monkeypatch.setenv("VEYA_IDLE_UNLOAD_SECONDS", raw)
     assert _resolve_idle_unload_seconds() == expected
 
 
 def test_idle_unload_is_off_by_default(monkeypatch):
-    monkeypatch.delenv("LAYA_IDLE_UNLOAD_SECONDS", raising=False)
+    monkeypatch.delenv("VEYA_IDLE_UNLOAD_SECONDS", raising=False)
     router = IdleRouter()
     with TestClient(create_app(router)) as client:
         assert not router.unloaded.wait(0.15)
@@ -3843,8 +3844,8 @@ def test_idle_unload_is_off_by_default(monkeypatch):
 
 
 def test_idle_unload_reloads_on_the_next_request(monkeypatch):
-    monkeypatch.setenv("LAYA_IDLE_UNLOAD_SECONDS", "0.1")
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_IDLE_UNLOAD_SECONDS", "0.1")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     router = IdleRouter()
     with TestClient(create_app(router)) as client:
         first = client.post("/v1/systemone", json=REQ).json()
@@ -3854,12 +3855,12 @@ def test_idle_unload_reloads_on_the_next_request(monkeypatch):
         assert health["idle_seconds"] >= 0.1
         assert client.post("/v1/systemone", json=REQ).json() == first
         assert router.loaded == ["english"]
-    assert all(name.startswith("laya-infer") for name in router.unload_threads)
+    assert all(name.startswith("veya-infer") for name in router.unload_threads)
 
 
 def test_idle_details_stay_authenticated(monkeypatch):
-    monkeypatch.setenv("LAYA_IDLE_UNLOAD_SECONDS", "300")
-    monkeypatch.setenv("LAYA_API_KEY", "key")
+    monkeypatch.setenv("VEYA_IDLE_UNLOAD_SECONDS", "300")
+    monkeypatch.setenv("VEYA_API_KEY", "key")
     with TestClient(create_app(IdleRouter())) as client:
         assert client.get("/health").json() == {"status": "ok"}
         assert client.get("/health", headers={"Authorization": "Bearer key"}).json()["idle_unload_seconds"] == 300
@@ -3873,8 +3874,8 @@ def test_idle_window_starts_after_worker_finishes_even_on_cancel_or_failure(monk
     import time
     from concurrent.futures import ThreadPoolExecutor
 
-    monkeypatch.setenv("LAYA_IDLE_UNLOAD_SECONDS", "0.2")
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_IDLE_UNLOAD_SECONDS", "0.2")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
 
     class BlockingRouter(IdleRouter):
         def __init__(self):
@@ -3942,7 +3943,7 @@ def test_idle_window_starts_after_worker_finishes_even_on_cancel_or_failure(monk
 
 
 def test_idle_unload_retries_failure_and_stops_at_shutdown(monkeypatch):
-    monkeypatch.setenv("LAYA_IDLE_UNLOAD_SECONDS", "0.05")
+    monkeypatch.setenv("VEYA_IDLE_UNLOAD_SECONDS", "0.05")
 
     class RetryRouter(IdleRouter):
         attempts = 0
@@ -3969,8 +3970,8 @@ def test_idle_unload_retries_failure_and_stops_at_shutdown(monkeypatch):
 # "cannot schedule new futures after shutdown", and the idle reaper logged the same each tick.
 @pytest.mark.parametrize("batch", [False, True])
 def test_an_app_serves_again_after_its_lifespan_restarts(monkeypatch, batch):
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
-    monkeypatch.delenv("LAYA_IDLE_UNLOAD_SECONDS", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_IDLE_UNLOAD_SECONDS", raising=False)
     app = create_app(FakeRouter())
     path = "/v1/systemone/batch" if batch else "/v1/systemone"
     body = {"states": [REQ["state"]], "questions": REQ["questions"]} if batch else REQ
@@ -3982,8 +3983,8 @@ def test_an_app_serves_again_after_its_lifespan_restarts(monkeypatch, batch):
 
 
 def test_idle_unload_runs_again_after_a_restart(monkeypatch):
-    monkeypatch.setenv("LAYA_IDLE_UNLOAD_SECONDS", "0.05")
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
+    monkeypatch.setenv("VEYA_IDLE_UNLOAD_SECONDS", "0.05")
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
     router = IdleRouter()
     app = create_app(router)
     with TestClient(app):
@@ -4002,8 +4003,8 @@ def test_a_restarted_app_still_queues_concurrent_requests(monkeypatch):
     import time
     from concurrent.futures import ThreadPoolExecutor
 
-    monkeypatch.delenv("LAYA_API_KEY", raising=False)
-    monkeypatch.delenv("LAYA_IDLE_UNLOAD_SECONDS", raising=False)
+    monkeypatch.delenv("VEYA_API_KEY", raising=False)
+    monkeypatch.delenv("VEYA_IDLE_UNLOAD_SECONDS", raising=False)
 
     class SlowRouter(FakeRouter):
         def __init__(self):
@@ -4032,7 +4033,7 @@ def test_a_restarted_app_still_queues_concurrent_requests(monkeypatch):
 
 # -------------------------------- docs/typescript-sdk.md must list the keys the /health handler returns
 # The SDK page's contract sentence used to say "public `/health` returns `status`, `loaded`,
-# and `device`" while `laya/serve.py`'s authorized branch returns seven keys -- `status`,
+# and `device`" while `veya/serve.py`'s authorized branch returns seven keys -- `status`,
 # `loaded`, `revisions`, `device`, `device_is_preference`, `checkpoint_devices`, and
 # `cpu_fallbacks` -- and the unauthenticated branch returns only `LIVENESS_ONLY = {"status":
 # "ok"}`. Two docs (#811 gated `docs/http-api.md`, and README:103 advertises the CPU-fallback
@@ -4042,12 +4043,12 @@ def test_a_restarted_app_still_queues_concurrent_requests(monkeypatch):
 # Reading only the return dict's own keys left one kind of field out: `**idle` spreads a local
 # conditional dict, so `idle_unload_seconds` and `idle_seconds` were invisible to the gate and the
 # page under-reported the shape by two fields on a deployment that sets
-# `LAYA_IDLE_UNLOAD_SECONDS`. `test_idle_details_stay_authenticated` and
+# `VEYA_IDLE_UNLOAD_SECONDS`. `test_idle_details_stay_authenticated` and
 # `test_idle_unload_reloads_on_the_next_request` read both of them off a live handler, so the gate
 # now resolves a starred spread to the local dict it unpacks.
 TS_SDK_PAGE = os.path.join(ROOT, "docs", "typescript-sdk.md")
 TS_SDK_OLD_CLAIM = (
-    "Laya's public `/health` returns `status`, `loaded`, and `device`. "
+    "Veya's public `/health` returns `status`, `loaded`, and `device`. "
     "Prediction never probes health first."
 )
 
@@ -4069,8 +4070,8 @@ def _serve_health_return_keys():
     a `**name` spread contributes the keys of the dict `name` was assigned -- that is how the two
     conditional idle fields reach the response, and reading the return dict's own keys missed them.
     """
-    with open(os.path.join(ROOT, "laya", "serve.py"), encoding="utf-8") as handle:
-        tree = ast.parse(handle.read(), filename="laya/serve.py")
+    with open(os.path.join(ROOT, "veya", "serve.py"), encoding="utf-8") as handle:
+        tree = ast.parse(handle.read(), filename="veya/serve.py")
     module_dicts = {}
     for node in tree.body:
         if isinstance(node, ast.Assign) and isinstance(node.value, ast.Dict):
@@ -4101,7 +4102,7 @@ def _serve_health_return_keys():
                     keys.update(local_dicts.get(value.id, ()))
                     keys.update(module_dicts.get(value.id, ()))
             return keys
-    raise AssertionError("no `health` handler found in laya/serve.py -- gate is checking a moved symbol")
+    raise AssertionError("no `health` handler found in veya/serve.py -- gate is checking a moved symbol")
 
 
 def _ts_sdk_health_claim_keys():
@@ -4127,7 +4128,7 @@ def _ts_sdk_health_claim_keys():
 
 
 def test_ts_sdk_health_claim_matches_the_handler():
-    """The SDK page must name exactly the keys `laya/serve.py`'s `health` handler returns."""
+    """The SDK page must name exactly the keys `veya/serve.py`'s `health` handler returns."""
     assert "returns `status`, `loaded`, and `device`" in TS_SDK_OLD_CLAIM, (
         "the pre-fix literal must itself carry the wrong key set, otherwise this ban is vacuous")
     # Sanity-check the AST extraction: the shipped code returns seven keys on the authorized branch
@@ -4142,11 +4143,11 @@ def test_ts_sdk_health_claim_matches_the_handler():
     assert {"idle_unload_seconds", "idle_seconds"} <= handler_keys, (
         "`health` no longer spreads a conditional dict into its return, or the spread is now a shape "
         "this reader cannot resolve. The handler answers nine keys on a deployment with "
-        "LAYA_IDLE_UNLOAD_SECONDS set and docs/typescript-sdk.md names all nine; re-read the "
+        "VEYA_IDLE_UNLOAD_SECONDS set and docs/typescript-sdk.md names all nine; re-read the "
         "handler before re-pinning either side.")
     documented = _ts_sdk_health_claim_keys()
     assert documented == handler_keys, (
-        "docs/typescript-sdk.md's /health sentence names %s, but `laya/serve.py`'s `health` "
+        "docs/typescript-sdk.md's /health sentence names %s, but `veya/serve.py`'s `health` "
         "handler returns %s. Any drift here misleads a caller who reads only the SDK page." % (
             sorted(documented), sorted(handler_keys)))
 
@@ -4163,7 +4164,7 @@ def test_ts_sdk_health_claim_drops_the_three_key_version():
     banned = "returns `status`, `loaded`, and `device`"
     assert banned not in page, (
         "docs/typescript-sdk.md again says `/health` returns only `status`, `loaded`, and "
-        "`device`. `laya/serve.py`'s authorized branch has seven keys and the unauthenticated "
+        "`device`. `veya/serve.py`'s authorized branch has seven keys and the unauthenticated "
         "branch has one; if either shape has since changed, update this ban's literal too.")
 
 
@@ -4189,10 +4190,10 @@ def test_jev_strict_projection_page_names_the_projected_keys():
     import re
     from pathlib import Path
 
-    from laya.serve import _project_jev_strict
+    from veya.serve import _project_jev_strict
 
     fixture = {
-        "model": "laya-rl-agent",
+        "model": "veya-rl-agent",
         "answers": {
             "queue": {"type": "choice", "choice": "billing",
                       "probabilities": {"billing": 0.95, "tech": 0.05},
@@ -4230,26 +4231,26 @@ def test_jev_strict_projection_page_names_the_projected_keys():
     assert "noul only" not in page, "pre-fix 'noul only' wording is still on the page"
 
 # Serving a fine-tune today means rebuilding the package: `Router` has grown
-# `register` / `models=`, but `laya-serve` reads its whole configuration from the
+# `register` / `models=`, but `veya-serve` reads its whole configuration from the
 # environment, so an operator with a local checkpoint had no way to reach either.
-# LAYA_EXTRA_MODELS is the JSON-object form of `Router(models=...)`, parsed once
+# VEYA_EXTRA_MODELS is the JSON-object form of `Router(models=...)`, parsed once
 # at startup; the request handlers then resolve `model` against the Router's own
 # registry rather than the built-in table, so a registered name pins its
 # checkpoint the same way `english` does.
 def test_extra_models_option_parses_the_json_object(monkeypatch):
-    from laya.serve import _extra_models_option
+    from veya.serve import _extra_models_option
 
     # Unset and blank are "not asked for", like every other option here.
-    monkeypatch.delenv("LAYA_EXTRA_MODELS", raising=False)
+    monkeypatch.delenv("VEYA_EXTRA_MODELS", raising=False)
     assert _extra_models_option() == {}
     for blank in ("", "   ", "\n"):
-        monkeypatch.setenv("LAYA_EXTRA_MODELS", blank)
+        monkeypatch.setenv("VEYA_EXTRA_MODELS", blank)
         assert _extra_models_option() == {}, repr(blank)
 
     # The two source shapes Router.register accepts: a plain string (Hub repo id
     # or local directory) and a [repo, subfolder] pair, which arrives as a tuple
     # because JSON has no tuple.
-    monkeypatch.setenv("LAYA_EXTRA_MODELS", json.dumps({
+    monkeypatch.setenv("VEYA_EXTRA_MODELS", json.dumps({
         "my-ckpt": "/tmp/ckpt",
         "nested": ["org/repo", "folder"],
         "hub-only": "org/repo",
@@ -4263,25 +4264,25 @@ def test_extra_models_option_parses_the_json_object(monkeypatch):
 
 
 def test_extra_models_option_refuses_a_malformed_value(monkeypatch):
-    from laya.serve import _extra_models_option
+    from veya.serve import _extra_models_option
 
     # The fail-closed rule is `_default_model_option`'s: a checkpoint silently
     # absent from the registry would auto-route its traffic to a different one,
     # which is the wrong answer -- so the server refuses to start and the
     # message names the variable and the offending shape.
     for raw in ("{", "not json", '"english"', '["english"]', "42", "null"):
-        monkeypatch.setenv("LAYA_EXTRA_MODELS", raw)
+        monkeypatch.setenv("VEYA_EXTRA_MODELS", raw)
         with pytest.raises(SystemExit) as raised:
             _extra_models_option()
-        assert "invalid LAYA_EXTRA_MODELS" in str(raised.value), raw
+        assert "invalid VEYA_EXTRA_MODELS" in str(raised.value), raw
 
     # A source that is not a string or a pair fails the same way, naming the
     # checkpoint it was meant to register.
-    monkeypatch.setenv("LAYA_EXTRA_MODELS", json.dumps({"my-ckpt": 7}))
+    monkeypatch.setenv("VEYA_EXTRA_MODELS", json.dumps({"my-ckpt": 7}))
     with pytest.raises(SystemExit) as raised:
         _extra_models_option()
     message = str(raised.value)
-    assert "invalid LAYA_EXTRA_MODELS" in message
+    assert "invalid VEYA_EXTRA_MODELS" in message
     assert "'my-ckpt'" in message, message
 
     # A list was believed on its type alone, so `[]` reached the Router and became
@@ -4289,18 +4290,18 @@ def test_extra_models_option_refuses_a_malformed_value(monkeypatch):
     # and `["a", "b", "c"]` or `["a", 5]` became the wrong repo id in silence. Same
     # refusal, same naming, at startup.
     for bad in ([], ["a", "b", "c"], ["a", 5], [None, None]):
-        monkeypatch.setenv("LAYA_EXTRA_MODELS", json.dumps({"my-ckpt": bad}))
+        monkeypatch.setenv("VEYA_EXTRA_MODELS", json.dumps({"my-ckpt": bad}))
         with pytest.raises(SystemExit) as raised:
             _extra_models_option()
         message = str(raised.value)
-        assert "invalid LAYA_EXTRA_MODELS" in message, (bad, message)
+        assert "invalid VEYA_EXTRA_MODELS" in message, (bad, message)
         assert "'my-ckpt'" in message, (bad, message)
 
 
 def test_extra_models_reach_the_router_the_server_builds(monkeypatch):
     # Registration happens before preload, so the names resolve on the Router
     # itself and `registered` reports them beside the bundled checkpoints.
-    router, built = _server_router(monkeypatch, LAYA_EXTRA_MODELS=json.dumps({
+    router, built = _server_router(monkeypatch, VEYA_EXTRA_MODELS=json.dumps({
         "my-ckpt": "/tmp/ckpt",
         "nested": ["org/repo", "folder"],
     }))
@@ -4310,12 +4311,12 @@ def test_extra_models_reach_the_router_the_server_builds(monkeypatch):
     assert built == []  # registering is lazy: nothing loads until a request names it
 
     # The built-ins are untouched, and an extra name is accepted as
-    # LAYA_DEFAULT_MODEL now that the Router knows it.
+    # VEYA_DEFAULT_MODEL now that the Router knows it.
     assert set(router.registered) == {"my-ckpt", "nested"}
     defaulted, _ = _server_router(
         monkeypatch,
-        LAYA_EXTRA_MODELS='{"my-ckpt": "/tmp/ckpt"}',
-        LAYA_DEFAULT_MODEL="my-ckpt",
+        VEYA_EXTRA_MODELS='{"my-ckpt": "/tmp/ckpt"}',
+        VEYA_DEFAULT_MODEL="my-ckpt",
     )
     assert defaulted.default == "my-ckpt"
 
@@ -4325,24 +4326,24 @@ def test_extra_models_refuse_the_names_router_refuses(monkeypatch):
     # so a name that cannot be a checkpoint is fatal with core's own message.
     for name in ("auto", "Bad Name", "not/a/checkpoint"):
         with pytest.raises(SystemExit) as raised:
-            _server_router(monkeypatch, LAYA_EXTRA_MODELS=json.dumps({name: "/tmp/ckpt"}))
+            _server_router(monkeypatch, VEYA_EXTRA_MODELS=json.dumps({name: "/tmp/ckpt"}))
         assert "checkpoint name" in str(raised.value), name
 
     # And a default that names nothing registered is still fatal, unchanged.
-    from laya.serve import build_router
+    from veya.serve import build_router
 
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
-    monkeypatch.setenv("LAYA_EXTRA_MODELS", '{"my-ckpt": "/tmp/ckpt"}')
-    monkeypatch.setenv("LAYA_DEFAULT_MODEL", "other-ckpt")
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
+    monkeypatch.setenv("VEYA_EXTRA_MODELS", '{"my-ckpt": "/tmp/ckpt"}')
+    monkeypatch.setenv("VEYA_DEFAULT_MODEL", "other-ckpt")
     with pytest.raises(SystemExit) as raised:
         build_router()
-    assert "invalid LAYA_DEFAULT_MODEL" in str(raised.value)
+    assert "invalid VEYA_DEFAULT_MODEL" in str(raised.value)
 
 
 def test_extra_models_pin_over_http_and_do_not_leak_into_routing(monkeypatch):
     # The end-to-end contract: `model=my-ckpt` reaches `predict` as the pin, a
     # Jev id still means "let the router choose", and a path is still a 422.
-    router, built = _server_router(monkeypatch, LAYA_EXTRA_MODELS='{"my-ckpt": "/tmp/ckpt"}')
+    router, built = _server_router(monkeypatch, VEYA_EXTRA_MODELS='{"my-ckpt": "/tmp/ckpt"}')
     client = TestClient(create_app(router=router))
 
     pinned = client.post("/v1/systemone", json={**REQ, "model": "my-ckpt"})
@@ -4372,7 +4373,7 @@ def test_extra_models_pin_over_http_and_do_not_leak_into_routing(monkeypatch):
 
 # --------------------------------------------------------------------------- body-read deadline
 #
-# `_admit()` takes a `LAYA_MAX_CONCURRENT` slot BEFORE the body is read, which is what bounds how
+# `_admit()` takes a `VEYA_MAX_CONCURRENT` slot BEFORE the body is read, which is what bounds how
 # many bodies are buffered at once. A peer that sends a request head and one partial chunk and then
 # stops writing used to hold that slot for as long as it kept the socket open, so a few idle sockets
 # took both decision routes out of service while `/health` kept reporting the process healthy.
@@ -4419,8 +4420,8 @@ async def _asgi_post(app, path, body, *, stall_after=None, timeout=10.0):
 def test_a_stalled_body_answers_408_and_frees_its_admission_slot(monkeypatch):
     # One slot, so the second request proves the first one gave its slot back rather than merely
     # that a second request is allowed to take one.
-    monkeypatch.setenv("LAYA_MAX_CONCURRENT", "1")
-    monkeypatch.setenv("LAYA_BODY_READ_TIMEOUT", "0.05")
+    monkeypatch.setenv("VEYA_MAX_CONCURRENT", "1")
+    monkeypatch.setenv("VEYA_BODY_READ_TIMEOUT", "0.05")
     app = create_app(router=FakeRouter())
 
     async def run():
@@ -4446,15 +4447,15 @@ def test_a_stalled_body_answers_408_and_frees_its_admission_slot(monkeypatch):
     ("nan", DEFAULT_BODY_READ_TIMEOUT),
 ])
 def test_body_read_timeout_resolution(monkeypatch, raw, want):
-    monkeypatch.delenv("LAYA_BODY_READ_TIMEOUT", raising=False)
+    monkeypatch.delenv("VEYA_BODY_READ_TIMEOUT", raising=False)
     if raw is not None:
-        monkeypatch.setenv("LAYA_BODY_READ_TIMEOUT", raw)
+        monkeypatch.setenv("VEYA_BODY_READ_TIMEOUT", raw)
     assert _resolve_body_read_timeout() == want
 
 
 def test_a_body_delivered_in_time_still_answers(monkeypatch):
     # The deadline adds no behaviour to the ordinary path: same status, same payload.
-    monkeypatch.setenv("LAYA_BODY_READ_TIMEOUT", "5")
+    monkeypatch.setenv("VEYA_BODY_READ_TIMEOUT", "5")
     app = create_app(router=FakeRouter())
     status, payload = asyncio.run(_asgi_post(app, "/v1/systemone", _ASGI_BODY))
     assert status == 200

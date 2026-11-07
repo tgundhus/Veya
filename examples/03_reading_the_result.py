@@ -11,7 +11,7 @@ from _common import banner, device_line, heading, load
 banner("03", "Reading the result", """
     Every `predict()` call returns one plain dict with three keys:
 
-        {"model": "laya-rl-agent",
+        {"model": "veya-rl-agent",
          "answers": {<question id>: <answer>, ...},
          "usage": {"input_tokens": <batch total>, "output_tokens": 0,
                    "state_tokens": <the whole state>, "state_tokens_dropped": <worst case>,
@@ -24,7 +24,7 @@ banner("03", "Reading the result", """
 
     `usage` is the part readers misread: `input_tokens` is the whole batch, with the state
     counted once per question, so it grows with the number of questions rather than being a
-    context length. `output_tokens` is always 0 -- Laya never generates text. The keys after
+    context length. `output_tokens` is always 0 -- Veya never generates text. The keys after
     them are how much of your state the model actually read: `state_tokens` is the whole
     serialized state, `state_tokens_dropped` the most of it any one question's head gave up,
     and `truncated` / `truncated_questions` name the questions that gave something up. One more

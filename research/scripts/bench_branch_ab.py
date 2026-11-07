@@ -50,13 +50,15 @@ def scenarios():
 def worker(job):
     started = time.perf_counter()
     sys.path.insert(0, job["root"])
-    import laya
+    import importlib
+    package = "veya" if os.path.isdir(os.path.join(job["root"], "veya")) else "laya"
+    veya = importlib.import_module(package)
     import_s = time.perf_counter() - started
     import torch
 
-    import laya.router as router_mod
-    from laya import Router
-    from laya.agent import Agent
+    router_mod = importlib.import_module(package + ".router")
+    Router = veya.Router
+    Agent = importlib.import_module(package + ".agent").Agent
 
     try:
         import psutil
@@ -64,8 +66,8 @@ def worker(job):
     except ImportError:
         rss = lambda: None  # noqa: E731
 
-    assert os.path.dirname(os.path.dirname(os.path.abspath(laya.__file__))) == os.path.abspath(job["root"]), \
-        "imported laya from %s, not %s" % (laya.__file__, job["root"])
+    assert os.path.dirname(os.path.dirname(os.path.abspath(veya.__file__))) == os.path.abspath(job["root"]), \
+        "imported laya from %s, not %s" % (veya.__file__, job["root"])
     memo = getattr(router_mod, "_DETECTIONS", None)
 
     def forget():
@@ -77,7 +79,7 @@ def worker(job):
         torch.set_num_threads(job["threads"])
     router = Router(device=device)
     agents = {name: router.load(name) for name in ("english", "multilingual")}
-    out = {"meta": {"root": job["root"], "laya": laya.__version__, "import_laya_s": round(import_s, 3),
+    out = {"meta": {"root": job["root"], "laya": veya.__version__, "import_laya_s": round(import_s, 3),
                     "torch": torch.__version__, "device": str(next(iter(agents.values())).device),
                     "torch_threads": torch.get_num_threads(), "rss_mb_loaded": rss()}}
 

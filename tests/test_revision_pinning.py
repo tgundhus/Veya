@@ -16,14 +16,14 @@ os.environ.setdefault("USE_TF", "0")
 os.environ.setdefault("USE_TORCH", "1")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from laya.agent import Agent  # noqa: E402
-from laya.revisions import (  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.revisions import (  # noqa: E402
     PINNED_REVISIONS,
     resolve_revision,
     snapshot_revision,
     verify_digests,
 )
-from laya.router import Router, _digests_from_env, _merge_expected_digests  # noqa: E402
+from veya.router import Router, _digests_from_env, _merge_expected_digests  # noqa: E402
 
 
 class _StopLoad(Exception):
@@ -39,12 +39,12 @@ def _capturing_snapshot(captured):
 
 class PublicApiTests(unittest.TestCase):
     def test_pinned_revisions_is_importable_from_the_package_root(self):
-        """`from laya import PINNED_REVISIONS` is what the checkpoint-integrity guide tells
-        operators to use, and laya-ts already exports its mirror from the package root."""
-        import laya
+        """`from veya import PINNED_REVISIONS` is what the checkpoint-integrity guide tells
+        operators to use, and veya-ts already exports its mirror from the package root."""
+        import veya
 
-        self.assertIn("PINNED_REVISIONS", laya.__all__)
-        self.assertIs(laya.PINNED_REVISIONS, PINNED_REVISIONS)
+        self.assertIn("PINNED_REVISIONS", veya.__all__)
+        self.assertIs(veya.PINNED_REVISIONS, PINNED_REVISIONS)
 
     def test_pins_are_usable_revision_strings(self):
         # Not asserting a 40-hex shape: `resolve_revision` and the checkpoint-integrity guide both
@@ -72,7 +72,7 @@ class ResolveRevisionTests(unittest.TestCase):
     def test_reviewed_finds_the_pin_whatever_case_the_repo_is_spelled_in(self):
         """Hugging Face resolves repo ids case-insensitively, so the pin lookup must too.
 
-        `laya.load("ConvaiInnovations/Laya")` under `LAYA_REVISION=reviewed` is the same
+        `veya.load("ConvaiInnovations/Veya")` under `VEYA_REVISION=reviewed` is the same
         repository as the table's lowercase key. An exact-match lookup called it unpinned and
         refused the load -- reporting a missing reviewed SHA for one that exists, the
         opposite of what this control is for.
@@ -80,14 +80,14 @@ class ResolveRevisionTests(unittest.TestCase):
         repo = "convaiinnovations/laya"
         sha = PINNED_REVISIONS[repo]
         for spelling in (repo, repo.upper(), repo.title(), repo.capitalize()):
-            with patch.dict(os.environ, {"LAYA_REVISION": "reviewed"}):
+            with patch.dict(os.environ, {"VEYA_REVISION": "reviewed"}):
                 self.assertEqual(resolve_revision(spelling), sha, spelling)
             # the explicit-argument form reaches the same branch
             self.assertEqual(resolve_revision(spelling, "reviewed"), sha, spelling)
 
     def test_reviewed_still_refuses_a_repo_the_table_does_not_have(self):
         for spelling in ("Acme/Some-Model", "ACME/SOME-MODEL"):
-            with patch.dict(os.environ, {"LAYA_REVISION": "reviewed"}):
+            with patch.dict(os.environ, {"VEYA_REVISION": "reviewed"}):
                 with self.assertRaises(ValueError, msg=spelling):
                     resolve_revision(spelling)
 
@@ -130,7 +130,7 @@ class VerifyDigestsTests(unittest.TestCase):
                 verify_digests(self.dir, {rel: self.digest})
 
     def test_digest_map_can_come_from_environment(self):
-        with patch.dict(os.environ, {"LAYA_SHA256_DIGESTS": json.dumps({"weights.bin": self.digest})}):
+        with patch.dict(os.environ, {"VEYA_SHA256_DIGESTS": json.dumps({"weights.bin": self.digest})}):
             verify_digests(self.dir)
 
     def test_external_onnx_digest_is_supported(self):
@@ -189,7 +189,7 @@ class RouterRevisionTests(unittest.TestCase):
         self.assertEqual(Router().revisions, {})
 
     def test_router_forwards_only_the_selected_per_model_revision(self):
-        import laya.agent
+        import veya.agent
 
         captured = []
 
@@ -197,7 +197,7 @@ class RouterRevisionTests(unittest.TestCase):
             def __init__(self, repo, **kwargs):
                 captured.append((repo, kwargs))
 
-        with patch.object(laya.agent, "Agent", FakeAgent):
+        with patch.object(veya.agent, "Agent", FakeAgent):
             router = Router(revision="default", revisions={"multilingual": "multi-sha"})
             router.load("english")
             router.load("multi")
@@ -206,7 +206,7 @@ class RouterRevisionTests(unittest.TestCase):
         self.assertEqual(captured[1][1]["revision"], "multi-sha")
 
     def test_router_omits_revision_when_none_is_configured(self):
-        import laya.agent
+        import veya.agent
 
         captured = {}
 
@@ -214,7 +214,7 @@ class RouterRevisionTests(unittest.TestCase):
             def __init__(self, repo, **kwargs):
                 captured.update(kwargs)
 
-        with patch.object(laya.agent, "Agent", FakeAgent):
+        with patch.object(veya.agent, "Agent", FakeAgent):
             Router().load("english")
 
         self.assertNotIn("revision", captured)
@@ -240,13 +240,13 @@ class RouterAgentKwargsTests(unittest.TestCase):
     def _fake_agent():
         """(module holding Agent, the fake, the list each build is appended to).
 
-        `check_agent_kwargs` reads the option names out of whatever `laya.agent.Agent` currently
+        `check_agent_kwargs` reads the option names out of whatever `veya.agent.Agent` currently
         is, so the stand-in has to carry the real signature or these tests would be refused before
         they ever reached a build.
         """
         import inspect
 
-        import laya.agent
+        import veya.agent
 
         captured = []
 
@@ -256,7 +256,7 @@ class RouterAgentKwargsTests(unittest.TestCase):
 
             __init__.__signature__ = inspect.signature(Agent.__init__)
 
-        return laya.agent, FakeAgent, captured
+        return veya.agent, FakeAgent, captured
 
     def test_agent_kwargs_reach_the_agent_build(self):
         module, fake, captured = self._fake_agent()
@@ -321,7 +321,7 @@ class RouterAgentKwargsTests(unittest.TestCase):
         """The anti-drift check: this file must not grow its own list of checkpoint options."""
         import inspect
 
-        from laya.router import _ROUTER_OWNED_AGENT_ARGS, check_agent_kwargs
+        from veya.router import _ROUTER_OWNED_AGENT_ARGS, check_agent_kwargs
 
         owned = set(_ROUTER_OWNED_AGENT_ARGS)
         accepted = set(inspect.signature(Agent.__init__).parameters) - {"self"} - owned
@@ -348,7 +348,7 @@ class RouterDigestTests(unittest.TestCase):
     """`Router(sha256_digests=...)` is the per-checkpoint sibling of `revisions`."""
 
     def _capture(self):
-        import laya.agent
+        import veya.agent
 
         captured: list = []
 
@@ -356,7 +356,7 @@ class RouterDigestTests(unittest.TestCase):
             def __init__(self, repo, **kwargs):
                 captured.append(kwargs)
 
-        return patch.object(laya.agent, "Agent", FakeAgent), captured
+        return patch.object(veya.agent, "Agent", FakeAgent), captured
 
     def test_router_normalises_digest_keys_like_revision_keys(self):
         router = Router(sha256_digests={"ml": {"w.bin": "a" * 64}, "typed": None})
@@ -441,7 +441,7 @@ class RouterDigestEndToEndTests(unittest.TestCase):
         self._assert_past_the_digest_gate(router, "multilingual")
 
     def test_environment_digest_still_applies_when_no_map_is_given(self):
-        env = {"LAYA_SHA256_DIGESTS": json.dumps({"model.safetensors": self.digests["english"]})}
+        env = {"VEYA_SHA256_DIGESTS": json.dumps({"model.safetensors": self.digests["english"]})}
         router = self._router({})
         with patch.dict(os.environ, env):
             self._assert_past_the_digest_gate(router, "english")
@@ -449,7 +449,7 @@ class RouterDigestEndToEndTests(unittest.TestCase):
                 router.load("multilingual")
 
     def test_explicit_none_list_skips_the_environment_digest(self):
-        env = {"LAYA_SHA256_DIGESTS": json.dumps({"model.safetensors": self.digests["english"]})}
+        env = {"VEYA_SHA256_DIGESTS": json.dumps({"model.safetensors": self.digests["english"]})}
         router = self._router({"multilingual": None})
         with patch.dict(os.environ, env):
             self._assert_past_the_digest_gate(router, "multilingual")
@@ -457,7 +457,7 @@ class RouterDigestEndToEndTests(unittest.TestCase):
     def test_nested_environment_pins_both_checkpoints(self):
         """The shape a server with two resident checkpoints has to write.
 
-        Before this, `LAYA_SHA256_DIGESTS` was read only by `laya.revisions`, which treats every
+        Before this, `VEYA_SHA256_DIGESTS` was read only by `veya.revisions`, which treats every
         key as a path -- so a model-named map failed with `cannot verify 'english': no such file`
         on the *first* checkpoint and the flat map refused the second one.
         """
@@ -485,7 +485,7 @@ class RouterDigestEndToEndTests(unittest.TestCase):
             self._assert_past_the_digest_gate(router, "multilingual")
 
     def _env(self, per_model):
-        return patch.dict(os.environ, {"LAYA_SHA256_DIGESTS": json.dumps(per_model)})
+        return patch.dict(os.environ, {"VEYA_SHA256_DIGESTS": json.dumps(per_model)})
 
     # An `agent_kwargs` map is the third channel, and neither of the other two may cancel it:
     # `expected_sha256` is reachable there on purpose, and a caller that pins a file is asking
@@ -513,19 +513,19 @@ class RouterDigestEndToEndTests(unittest.TestCase):
 
 
 class RouterEnvDigestTests(unittest.TestCase):
-    """How `Router` reads the two shapes of `LAYA_SHA256_DIGESTS`.
+    """How `Router` reads the two shapes of `VEYA_SHA256_DIGESTS`.
 
     `serve.build_router()` builds its Router from the environment and nothing else, so the
-    environment is the only channel a container, a compose stack or a `services.laya-serve`
+    environment is the only channel a container, a compose stack or a `services.veya-serve`
     host has. These pin down which shape `Router` takes over and which it leaves to
-    `laya.revisions`, without weights: the `Agent` builds are captured, not run.
+    `veya.revisions`, without weights: the `Agent` builds are captured, not run.
     """
 
     ENGLISH = {"model.safetensors": "a" * 64}
     MULTI = {"model.safetensors": "b" * 64}
 
     def _capture(self):
-        import laya.agent
+        import veya.agent
 
         captured: list = []
 
@@ -533,10 +533,10 @@ class RouterEnvDigestTests(unittest.TestCase):
             def __init__(self, repo, **kwargs):
                 captured.append(kwargs)
 
-        return patch.object(laya.agent, "Agent", FakeAgent), captured
+        return patch.object(veya.agent, "Agent", FakeAgent), captured
 
     def _env(self, value):
-        return patch.dict(os.environ, {"LAYA_SHA256_DIGESTS": value})
+        return patch.dict(os.environ, {"VEYA_SHA256_DIGESTS": value})
 
     def test_flat_map_is_left_to_revisions(self):
         with self._env(json.dumps({"model.safetensors": "a" * 64})):
@@ -596,10 +596,10 @@ class RouterEnvDigestTests(unittest.TestCase):
         with self._env(env):
             with self.assertRaises(ValueError) as cm:
                 Router()
-        self.assertIn("LAYA_SHA256_DIGESTS", str(cm.exception))
+        self.assertIn("VEYA_SHA256_DIGESTS", str(cm.exception))
 
     def test_unparseable_environment_is_not_this_layers_error(self):
-        # `laya.revisions.verify_digests` owns the message a malformed value gets; a Router
+        # `veya.revisions.verify_digests` owns the message a malformed value gets; a Router
         # that repeated it would be a second copy of a rule it does not enforce.
         for value in ("", "   ", "{not json", "[]", '"digests"', "{}"):
             with self._env(value):
@@ -612,7 +612,7 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
     `expected_sha256` is deliberately *not* router-owned -- `test_accepted_names_are_read_from_
     agent_rather_than_copied_here` asserts that, and the class docstring advertises
     `Router(agent_kwargs={"expected_sha256": ...})` -- so a Router can hold digests from three
-    places at once: that argument, `sha256_digests`, and a nested `LAYA_SHA256_DIGESTS`. These
+    places at once: that argument, `sha256_digests`, and a nested `VEYA_SHA256_DIGESTS`. These
     pin down that none of them silently turns another one off.
     """
 
@@ -620,7 +620,7 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
     PER_MODEL = {"model.safetensors": "b" * 64}
 
     def setUp(self):
-        """Start every test from an unset `LAYA_SHA256_DIGESTS`.
+        """Start every test from an unset `VEYA_SHA256_DIGESTS`.
 
         Several checks here assert that *no* `expected_sha256` reaches `Agent`, which is only true of
         an unconfigured process. A developer machine or CI runner that exports a **nested** variable --
@@ -630,14 +630,14 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
         """
         patcher = patch.dict(os.environ, {}, clear=False)
         patcher.start()
-        os.environ.pop("LAYA_SHA256_DIGESTS", None)
+        os.environ.pop("VEYA_SHA256_DIGESTS", None)
         self.addCleanup(patcher.stop)
 
     def _capture(self):
         """Agent stand-in carrying the real signature, so `check_agent_kwargs` still applies."""
         import inspect
 
-        import laya.agent
+        import veya.agent
 
         captured: list = []
 
@@ -647,10 +647,10 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
 
             __init__.__signature__ = inspect.signature(Agent.__init__)
 
-        return patch.object(laya.agent, "Agent", FakeAgent), captured
+        return patch.object(veya.agent, "Agent", FakeAgent), captured
 
     def _env(self, per_model):
-        return patch.dict(os.environ, {"LAYA_SHA256_DIGESTS": json.dumps(per_model)})
+        return patch.dict(os.environ, {"VEYA_SHA256_DIGESTS": json.dumps(per_model)})
 
     def _load(self, name, **router_kwargs):
         capture, captured = self._capture()
@@ -732,7 +732,7 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
         """Filling in the placeholder the variable left is a pin, and has to be honoured.
 
         `_digests_from_env` leaves an empty entry for every checkpoint a nested
-        `LAYA_SHA256_DIGESTS` does not name, tagged as "not something anyone asked for" so it cannot
+        `VEYA_SHA256_DIGESTS` does not name, tagged as "not something anyone asked for" so it cannot
         cancel an `agent_kwargs` map. But `sha256_digests` is public: an operator may add digests to
         that entry in place. Treating it as unpinned for ever dropped them silently -- and only when
         an `agent_kwargs` map happened to be present, so the behaviour was config-dependent.
@@ -749,7 +749,7 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
     def test_an_untouched_environment_placeholder_still_reaches_agent_as_an_empty_map(self):
         """A placeholder must arrive as `{}`, NOT be omitted -- omitting it is a refusal.
 
-        This looks backwards until you run it: with a *nested* `LAYA_SHA256_DIGESTS` and no
+        This looks backwards until you run it: with a *nested* `VEYA_SHA256_DIGESTS` and no
         `expected_sha256` kwarg at all, `verify_digests` reads that nested map as an artifact map and
         raises `cannot verify 'english': no such file` -- on a checkpoint the variable never named.
         The empty map is what masks that fallback. Passing nothing is only correct when no channel
@@ -770,7 +770,7 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
     def test_an_explicit_none_entry_masks_a_flat_environment_map(self):
         """`sha256_digests={"english": None}` means "load this one unverified", and has to hold.
 
-        A *flat* `LAYA_SHA256_DIGESTS` is applied by `verify_digests` itself, for every checkpoint.
+        A *flat* `VEYA_SHA256_DIGESTS` is applied by `verify_digests` itself, for every checkpoint.
         Saying "not this one" therefore cannot be expressed by passing nothing -- that is exactly
         what lets the flat map through. It has to arrive as an empty map.
         """
@@ -840,7 +840,7 @@ class RouterDigestPrecedenceTests(unittest.TestCase):
 
     def test_nothing_configured_still_passes_no_map_at_all(self):
         # #332's opt-in guarantee: an unconfigured Router must leave `verify_digests` its own
-        # `LAYA_SHA256_DIGESTS` fallback, so an existing HF_HUB_OFFLINE=1 cache loads as before.
+        # `VEYA_SHA256_DIGESTS` fallback, so an existing HF_HUB_OFFLINE=1 cache loads as before.
         self.assertNotIn("expected_sha256", self._load("english"))
 
 
@@ -854,7 +854,7 @@ class RouterRevisionFallbackTests(unittest.TestCase):
     def _capture(self):
         import inspect
 
-        import laya.agent
+        import veya.agent
 
         captured: list = []
 
@@ -864,17 +864,17 @@ class RouterRevisionFallbackTests(unittest.TestCase):
 
             __init__.__signature__ = inspect.signature(Agent.__init__)
 
-        return patch.object(laya.agent, "Agent", FakeAgent), captured
+        return patch.object(veya.agent, "Agent", FakeAgent), captured
 
     def _load(self, name="english", env="", **router_kwargs):
         capture, captured = self._capture()
-        with patch.dict(os.environ, {"LAYA_REVISION": env}), capture:
+        with patch.dict(os.environ, {"VEYA_REVISION": env}), capture:
             Router(**router_kwargs).load(name)
         return captured[0]
 
     def _effective(self, kwargs, env=""):
         """What `Agent` would download: `resolve_revision` applied to the kwarg it was handed."""
-        with patch.dict(os.environ, {"LAYA_REVISION": env}):
+        with patch.dict(os.environ, {"VEYA_REVISION": env}):
             return resolve_revision("convaiinnovations/laya", kwargs.get("revision"))
 
     def test_a_none_entry_inherits_the_router_wide_revision(self):
@@ -899,7 +899,7 @@ class RouterRevisionFallbackTests(unittest.TestCase):
         self.assertEqual(kwargs["revision"], "ccc")
 
     def test_an_unconfigured_router_still_leaves_the_revision_to_the_environment(self):
-        # The other half of #332: nothing asked for means the deployment's `LAYA_REVISION` (or
+        # The other half of #332: nothing asked for means the deployment's `VEYA_REVISION` (or
         # huggingface_hub's default) applies, exactly as it does for a hand-built `Agent`.
         kwargs = self._load(env="bbb")
         self.assertNotIn("revision", kwargs)
@@ -927,13 +927,13 @@ class ReviewGapTests(unittest.TestCase):
     def test_a_blank_revision_suppresses_the_environment_through_agent(self):
         """`(revision or env).strip()`: a truthy-but-blank argument wins the `or`, then strips away.
 
-        The Router drops a blank before it reaches here, and that is tested. `Agent`/`laya.load` do
+        The Router drops a blank before it reaches here, and that is tested. `Agent`/`veya.load` do
         not, so a config line that ends up whitespace silently loses the deployment's pin and gets
         huggingface_hub's default. Undocumented and untested before: the mutant that makes a blank
         behave like an absent value survived every lane. Pinned as the behaviour that exists, so a
         change to it is a decision rather than an accident.
         """
-        with patch.dict(os.environ, {"LAYA_REVISION": "deadbeef"}, clear=False):
+        with patch.dict(os.environ, {"VEYA_REVISION": "deadbeef"}, clear=False):
             self.assertEqual(resolve_revision("some/repo", None), "deadbeef")
             self.assertEqual(resolve_revision("some/repo", ""), "deadbeef")
             self.assertIsNone(resolve_revision("some/repo", "   "))
@@ -943,13 +943,13 @@ class ReviewGapTests(unittest.TestCase):
     def test_a_flat_environment_map_is_masked_by_any_other_pin(self):
         """The documented exception, asserted so the class docstring cannot drift from it again.
 
-        `verify_digests` reads a flat `LAYA_SHA256_DIGESTS` only `if expected is None`, so anything
+        `verify_digests` reads a flat `VEYA_SHA256_DIGESTS` only `if expected is None`, so anything
         reaching `Agent` as `expected_sha256` means the flat variable is not consulted. An earlier
         revision of the class docstring said the two were "merged file by file", which is true of
         the per-checkpoint shape and false of this one.
         """
         with patch.dict(os.environ,
-                             {"LAYA_SHA256_DIGESTS": json.dumps({"model.safetensors": "a" * 64})},
+                             {"VEYA_SHA256_DIGESTS": json.dumps({"model.safetensors": "a" * 64})},
                              clear=False):
             self.assertEqual(_digests_from_env(["english"]), {})   # flat: not a layer here
             merged = _merge_expected_digests({"tokenizer.json": "b" * 64}, None)

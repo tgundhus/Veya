@@ -9,7 +9,7 @@ Run from the repository root:
 """
 import json
 
-import laya
+import veya
 
 
 def on_predict_end(ctx):
@@ -40,7 +40,7 @@ QUESTIONS = {
 
 
 # Direct Agent use.
-agent = laya.load("convaiinnovations/laya", on_predict_end=on_predict_end)
+agent = veya.load("convaiinnovations/laya", on_predict_end=on_predict_end)
 agent.system_one("I was charged twice for the same invoice.", QUESTIONS)
 
 # One call, several states: the hook still fires once, and writes one record per decision.
@@ -53,7 +53,7 @@ agent.predict_batch(
 )
 
 # Router use: the hook also sees ctx.decision (which checkpoint was chosen).
-from laya import Router  # noqa: E402
+from veya import Router  # noqa: E402
 
 router = Router(on_predict_end=on_predict_end)
 router.predict("I was charged twice for the same invoice.", QUESTIONS)

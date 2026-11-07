@@ -178,14 +178,14 @@ def main() -> int:
     parser.add_argument("--json", default="")
     args = parser.parse_args()
 
-    import laya
-    print("laya %s | torch %s | cuda %s" % (
-        laya.__version__, __import__("torch").__version__,
+    import veya
+    print("veya %s | torch %s | cuda %s" % (
+        veya.__version__, __import__("torch").__version__,
         __import__("torch").cuda.get_device_name(0) if __import__("torch").cuda.is_available() else "off"))
 
     out = {"bench": [], "consistency": [], "router": []}
     if args.router:
-        from laya import Router
+        from veya import Router
 
         router = Router(preload=True)
         print("== Router.predict_batch: 50/50 mixed EN/Hindi states (median of %d) ==" % args.repeats)
@@ -210,7 +210,7 @@ def main() -> int:
         return 0 if out.get("router_consistency", {}).get("flips", 1) == 0 else 1
 
     for checkpoint in [c.strip() for c in args.checkpoints.split(",")]:
-        agent = laya.load(BUNDLE, subfolder=None if checkpoint == "english" else checkpoint)
+        agent = veya.load(BUNDLE, subfolder=None if checkpoint == "english" else checkpoint)
         if not args.consistency:
             print("\n== %s: %d questions/state (median of %d) ==" % (checkpoint, args.questions, args.repeats))
             print("| states | looped ms | batched ms | speedup | looped q/s | batched q/s |")

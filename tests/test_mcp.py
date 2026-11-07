@@ -1,14 +1,14 @@
 """MCP layer tests: schema, shape and registration. No model weights, no network.
 
-Requires the mcp extra:  pip install "laya[mcp]"
+Requires the mcp extra:  pip install "veya[mcp]"
 
 Run: python tests/test_mcp.py
 Skips cleanly (exit 0) when the mcp package is not installed, so the core
 install keeps working.
 
-Device and preload-list tests follow the laya.serve environment contract
-(LAYA_DEVICE / LAYA_PRELOAD / LAYA_MODELS / LAYA_THREADS / LAYA_AUTO_TASK /
-LAYA_DEFAULT_MODEL).
+Device and preload-list tests follow the veya.serve environment contract
+(VEYA_DEVICE / VEYA_PRELOAD / VEYA_MODELS / VEYA_THREADS / VEYA_AUTO_TASK /
+VEYA_DEFAULT_MODEL).
 """
 import asyncio
 import os
@@ -24,12 +24,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 try:
     import mcp  # noqa: F401
 except ImportError:
-    print("SKIP: mcp extra not installed (pip install 'laya[mcp]')")
+    print("SKIP: mcp extra not installed (pip install 'veya[mcp]')")
     sys.exit(0)
 
-from laya.mcp.device import agent_device, device_report, env_device, resolve_device, router_agent  # noqa: E402
-from laya.mcp.server import _models_from_env, server as mcp_server  # noqa: E402
-from laya.mcp.tools import (  # noqa: E402
+from veya.mcp.device import agent_device, device_report, env_device, resolve_device, router_agent  # noqa: E402
+from veya.mcp.server import _models_from_env, server as mcp_server  # noqa: E402
+from veya.mcp.tools import (  # noqa: E402
     BATCH_ITEM_OVERRIDES,
     PRESETS,
     PRESET_ALIASES,
@@ -37,14 +37,14 @@ from laya.mcp.tools import (  # noqa: E402
     _overrides,
     batch_item_key_doc,
     get_available_presets,
-    laya_decide,
-    laya_predict,
-    laya_predict_batch,
-    laya_preset,
-    laya_route,
-    laya_route_batch,
-    laya_shortlist,
-    laya_status,
+    veya_decide,
+    veya_predict,
+    veya_predict_batch,
+    veya_preset,
+    veya_route,
+    veya_route_batch,
+    veya_shortlist,
+    veya_status,
     validate_batch_requests,
     validate_budget,
     validate_lang,
@@ -81,49 +81,49 @@ def expect_tool_error(name, fn, want_code):
 def test_device():
     ok("device/force_cpu", resolve_device("cpu") == "cpu")
     ok("device/force_cuda", resolve_device("cuda") == "cuda")
-    old = os.environ.get("LAYA_DEVICE")
+    old = os.environ.get("VEYA_DEVICE")
     try:
-        os.environ["LAYA_DEVICE"] = "cpu"
+        os.environ["VEYA_DEVICE"] = "cpu"
         ok("device/env_cpu", resolve_device() == "cpu")
-        os.environ["LAYA_DEVICE"] = "CUDA"
+        os.environ["VEYA_DEVICE"] = "CUDA"
         ok("device/env_case_insensitive", resolve_device() == "cuda")
-        os.environ["LAYA_DEVICE"] = "cpu"
+        os.environ["VEYA_DEVICE"] = "cpu"
         ok("device/force_beats_env", resolve_device("cuda") == "cuda")
     finally:
         if old is None:
-            os.environ.pop("LAYA_DEVICE", None)
+            os.environ.pop("VEYA_DEVICE", None)
         else:
-            os.environ["LAYA_DEVICE"] = old
+            os.environ["VEYA_DEVICE"] = old
     ok("device/fallback", resolve_device(None) in ("cuda", "mps", "xpu", "cpu"))
-    # laya.serve contract: LAYA_DEVICE is normalised to what torch's device parser accepts --
+    # veya.serve contract: VEYA_DEVICE is normalised to what torch's device parser accepts --
     # the device type is lower-cased, the optional index is left alone -- and the same string is
     # both handed to torch and reported by `resolve_device`.
-    old_dev = os.environ.get("LAYA_DEVICE")
+    old_dev = os.environ.get("VEYA_DEVICE")
     try:
-        os.environ["LAYA_DEVICE"] = "cuda:1"
+        os.environ["VEYA_DEVICE"] = "cuda:1"
         ok("device/env_for_torch", env_device() == "cuda:1")
         ok("device/env_label", resolve_device() == "cuda:1")
         # torch's parser is case-sensitive, so the type is normalised rather than passed through.
-        os.environ["LAYA_DEVICE"] = "CUDA"
+        os.environ["VEYA_DEVICE"] = "CUDA"
         ok("device/env_upper_type_lowercased", env_device() == "cuda")
         ok("device/env_upper_matches_label", env_device() == resolve_device())
-        os.environ["LAYA_DEVICE"] = "CUDA:0"
+        os.environ["VEYA_DEVICE"] = "CUDA:0"
         ok("device/env_upper_index_kept", env_device() == "cuda:0")
-        os.environ["LAYA_DEVICE"] = "  CPU  "
+        os.environ["VEYA_DEVICE"] = "  CPU  "
         ok("device/env_padded_upper_lowercased", env_device() == "cpu")
-        os.environ["LAYA_DEVICE"] = "   "
+        os.environ["VEYA_DEVICE"] = "   "
         ok("device/env_blank_none", env_device() is None)
     finally:
         if old_dev is None:
-            os.environ.pop("LAYA_DEVICE", None)
+            os.environ.pop("VEYA_DEVICE", None)
         else:
-            os.environ["LAYA_DEVICE"] = old_dev
+            os.environ["VEYA_DEVICE"] = old_dev
     rep = device_report()
     ok("device/report_keys", set(rep) >= {"device", "torch_cuda", "torch_version"})
     ok("device/report_cuda_bool", isinstance(rep["torch_cuda"], bool))
 
     # The auto-detect branch is a second implementation of the availability chain inside
-    # `laya/agent.py::Agent.__init__`, so it has to be exercised on devices the runner does not have.
+    # `veya/agent.py::Agent.__init__`, so it has to be exercised on devices the runner does not have.
     # `resolve_device` imports torch inside its body, which makes the module the seam: a fake
     # here forces every branch without CUDA, MPS or XPU hardware. Before this block the only
     # auto-detect assertion was the domain check above, and it passed on a narrower chain.
@@ -150,7 +150,7 @@ def test_device():
             else:
                 sys.modules["torch"] = real
 
-    old_env = os.environ.pop("LAYA_DEVICE", None)
+    old_env = os.environ.pop("VEYA_DEVICE", None)
     try:
         ok("device/auto_cuda_beats_mps",
            labelled_with(fake_torch(cuda=True, mps=True)) == "cuda")
@@ -170,7 +170,7 @@ def test_device():
         # must still label cpu rather than raising out of a status call.
         ok("device/auto_old_torch_no_attributes",
            labelled_with(fake_torch(mps_attr=False, xpu_attr=False)) == "cpu")
-        # laya_status reads the label through device_report, so the payload has to move with it.
+        # veya_status reads the label through device_report, so the payload has to move with it.
         real = sys.modules.get("torch")
         sys.modules["torch"] = fake_torch(mps=True)
         try:
@@ -192,7 +192,7 @@ def test_device():
                hasattr(torch.backends, "mps") and torch.backends.mps.is_available()))
     finally:
         if old_env is not None:
-            os.environ["LAYA_DEVICE"] = old_env
+            os.environ["VEYA_DEVICE"] = old_env
 
 
 # --- schema -----------------------------------------------------------------
@@ -258,12 +258,12 @@ def test_schema():
 def test_model_names():
     """`model` is core's registry, not a second list kept here.
 
-    The names and aliases live in `laya.router`, and `router.predict(model=...)` runs whatever
+    The names and aliases live in `veya.router`, and `router.predict(model=...)` runs whatever
     arrives through `normalise_name` a few lines after `validate_model` sees it. So any name core
     resolves has to survive this layer, and it has to come back canonical: the `routing.model` a
     caller reads should not depend on how the checkpoint was spelled in the request.
     """
-    from laya.router import DEFAULT_MODELS, _ALIASES, normalise_name
+    from veya.router import DEFAULT_MODELS, _ALIASES, normalise_name
 
     for name in sorted(DEFAULT_MODELS):
         ok("model/canonical_%s" % name, validate_model(name) == name)
@@ -275,7 +275,7 @@ def test_model_names():
         ok("model/casing_and_spacing_%r" % spelling, validate_model(spelling) == want)
     for auto in (None, "auto", "Auto", " auto "):
         ok("model/auto_%r" % (auto,), validate_model(auto) == "auto")
-    for bad in ("gpt4", "", "   ", "english-ish", "laya-typed", 5, [], {}):
+    for bad in ("gpt4", "", "   ", "english-ish", "veya-typed", 5, [], {}):
         expect_tool_error("model/rejected_%r" % (bad,), lambda b=bad: validate_model(b),
                           "invalid_model")
 
@@ -297,15 +297,15 @@ def test_presets():
     Two things used to be able to drift here: the table of names (which was missing `email`, so a
     caller had no way to ask for the preset the CLI has), and which field of the state a preset's
     questions read. A preset says that out loud -- "What does the customer want in `message`?" -- so
-    the field is read back out of the questions instead of kept beside them, and `laya_preset` puts a
+    the field is read back out of the questions instead of kept beside them, and `veya_preset` puts a
     caller's lone string under it. Nothing else about the state is touched: more than one key is the
     caller's shape, and guessing there would be a worse failure than the honest one.
     """
-    import laya
-    from laya.presets import state_field
+    import veya
+    from veya.presets import state_field
 
     def build(attr):
-        return getattr(laya, attr)()
+        return getattr(veya, attr)()
 
     class StateRouter(FakeRouter):
         def predict(self, state, questions, **kwargs):
@@ -329,16 +329,16 @@ def test_presets():
 
     for name, field in sorted(fields.items()):
         router = StateRouter()
-        laya_preset(name, {"text": "the request"}, router=router, preset_builder=build)
+        veya_preset(name, {"text": "the request"}, router=router, preset_builder=build)
         ok("preset/lone_string_placed_%s" % name, router.state == {field: "the request"},
            repr(router.state))
-        laya_preset(name, {field: "the request"}, router=router, preset_builder=build)
+        veya_preset(name, {field: "the request"}, router=router, preset_builder=build)
         ok("preset/right_key_untouched_%s" % name, router.state == {field: "the request"},
            repr(router.state))
-        laya_preset(name, {"text": "the request", "lang": "en"}, router=router, preset_builder=build)
+        veya_preset(name, {"text": "the request", "lang": "en"}, router=router, preset_builder=build)
         ok("preset/multi_key_untouched_%s" % name,
            router.state == {"text": "the request", "lang": "en"}, repr(router.state))
-        laya_preset(name, {"payload": {"nested": 1}}, router=router, preset_builder=build)
+        veya_preset(name, {"payload": {"nested": 1}}, router=router, preset_builder=build)
         ok("preset/lone_non_string_untouched_%s" % name,
            router.state == {"payload": {"nested": 1}}, repr(router.state))
         # the questions that get answered are the preset's own, not a hand-copied set
@@ -350,7 +350,7 @@ def test_presets():
         ok("preset/alias_%s" % alias, validate_preset(alias) == canonical)
         # an alias has to reach the same preset through the tool, not just the validator
         router = StateRouter()
-        laya_preset(alias, {"text": "the request"}, router=router, preset_builder=build)
+        veya_preset(alias, {"text": "the request"}, router=router, preset_builder=build)
         ok("preset/alias_through_tool_%s" % alias,
            router.questions == build(PRESETS[canonical]), repr(router.questions))
     ok("preset/aliases_are_not_names", not (set(PRESET_ALIASES) & set(PRESETS)))
@@ -371,7 +371,7 @@ def test_presets():
     ok("preset/info_alias_names_are_not_entries", "router" not in info, repr(sorted(info)))
 
     description = next(t.description for t in asyncio.run(mcp_server.list_tools())
-                       if t.name == "laya_preset")
+                       if t.name == "veya_preset")
     for name in sorted(PRESETS):
         ok("preset/desc_names_%s" % name, "'%s'" % name in description, description)
     for name, field in sorted(fields.items()):
@@ -396,14 +396,14 @@ def test_model_forwarding():
             return {"answers": {"department": {"choice": "billing", "confidence": 0.94}}}
 
     router = EchoRouter()
-    by_alias = laya_predict(STATE, QUESTIONS, model="laya", router=router)
-    by_name = laya_predict(STATE, QUESTIONS, model="english", router=router)
+    by_alias = veya_predict(STATE, QUESTIONS, model="veya", router=router)
+    by_name = veya_predict(STATE, QUESTIONS, model="english", router=router)
     ok("forward/model_seen_by_core", [c.get("model") for c in router.calls] == ["english", "english"],
        repr(router.calls))
     ok("forward/reports_canonical", by_alias["routing"]["model"] == "english", repr(by_alias["routing"]))
     ok("forward/answers_identical", by_alias["answers"] == by_name["answers"])
 
-    laya_predict(STATE, QUESTIONS, model=None, router=router)
+    veya_predict(STATE, QUESTIONS, model=None, router=router)
     ok("forward/model_none_resolves_auto", router.calls[-1].get("model") == "auto",
        repr(router.calls[-1]))
 
@@ -449,7 +449,7 @@ class FakeRouter:
                 answers[name] = {"score": 1.84, "confidence": 0.8, "distribution": [0.1, 0.3, 0.6]}
             else:
                 answers[name] = {"noul": 0.892, "confidence": 0.89}
-        return {"answers": answers, "routing": {"model": "english", "repo": "fake/laya", "reason": "latin script"}}
+        return {"answers": answers, "routing": {"model": "english", "repo": "fake/veya", "reason": "latin script"}}
 
     def route(self, state, questions):
         class D:
@@ -469,7 +469,7 @@ class FakeRouterNoRouting(FakeRouter):
 
 
 def test_shape():
-    out = laya_predict(STATE, QUESTIONS, model="auto", router=FakeRouter())
+    out = veya_predict(STATE, QUESTIONS, model="auto", router=FakeRouter())
     ok("shape/predict_keys", set(out) >= {"answers", "routing", "latency_ms"})
     ok("shape/predict_choice", out["answers"]["department"]["choice"] == "billing")
     ok("shape/predict_noul_float", isinstance(out["answers"]["churn_risk"]["noul"], float))
@@ -483,10 +483,10 @@ def test_shape():
         def predict(self, state, questions, **kwargs):
             return {"answers": {}, "routing": {"model": "english"}}
 
-    out = laya_predict(STATE, QUESTIONS, model="auto", router=RouterNoAgents())
+    out = veya_predict(STATE, QUESTIONS, model="auto", router=RouterNoAgents())
     ok("shape/predict_device_absent_when_unreadable", "device" not in out, repr(set(out)))
 
-    out = laya_route(STATE, QUESTIONS, router=FakeRouter())
+    out = veya_route(STATE, QUESTIONS, router=FakeRouter())
     ok("shape/route_dict", out == {"model": "multilingual", "repo": "fake/repo",
                                    "reason": "non-Latin script (devanagari)"})
 
@@ -494,33 +494,33 @@ def test_shape():
         assert attr == "triage_questions"
         return {"intent": {"type": "choice", "instructions": "i", "criteria": {"a": "A"}}}
 
-    out = laya_preset("triage", {"message": "help"}, router=FakeRouter(), preset_builder=builder)
+    out = veya_preset("triage", {"message": "help"}, router=FakeRouter(), preset_builder=builder)
     ok("shape/preset_answers", "intent" in out["answers"])
 
-    out = laya_status(router=FakeRouter(), loaded=["english"], preload=True)
+    out = veya_status(router=FakeRouter(), loaded=["english"], preload=True)
     ok("shape/status_ready", out["router_ready"] is True)
     ok("shape/status_loaded", out["loaded"] == ["english"])
-    ok("shape/status_versions", "laya" in out["package_versions"])
+    ok("shape/status_versions", "veya" in out["package_versions"])
     ok("shape/status_device", out["device"] == "cpu", repr(out.get("device")))
     ok("shape/status_device_is_fact", out["device_is_preference"] is False)
     ok("shape/status_checkpoint_devices", out["checkpoint_devices"] == {"english": "cpu"},
        repr(out.get("checkpoint_devices")))
-    out = laya_status(router=None, loaded=None, preload=True)
+    out = veya_status(router=None, loaded=None, preload=True)
     ok("shape/status_pref_before_load",
        out["device_is_preference"] is True and out["checkpoint_devices"] == {}
        and out["device"] in ("cpu", "cuda", "mps"),
        repr(out.get("device")))
 
     expect_tool_error("shape/predict_missing_router",
-                      lambda: laya_predict(STATE, QUESTIONS, model="auto", router=None),
+                      lambda: veya_predict(STATE, QUESTIONS, model="auto", router=None),
                       "models_not_ready")
     expect_tool_error("shape/predict_bad_questions",
-                      lambda: laya_predict(STATE, {}, model="auto", router=FakeRouter()),
+                      lambda: veya_predict(STATE, {}, model="auto", router=FakeRouter()),
                       "invalid_questions")
 
     # #444: model='auto' with an Agent and no Router runs the Agent directly and
     # reports a null model -- 'auto' is a routing directive, not a checkpoint name.
-    out = laya_predict(STATE, QUESTIONS, model="auto", agent=FakeAgentDirect())
+    out = veya_predict(STATE, QUESTIONS, model="auto", agent=FakeAgentDirect())
     ok("shape/predict_auto_agent_model_null",
        out["routing"] == {"model": None, "repo": None, "reason": "auto routing without router"},
        repr(out.get("routing")))
@@ -528,16 +528,16 @@ def test_shape():
     ok("shape/predict_auto_agent_no_device", "device" not in out, repr(set(out)))
     # auto with neither Router nor Agent still errors, as before.
     expect_tool_error("shape/predict_auto_needs_router_or_agent",
-                      lambda: laya_predict(STATE, QUESTIONS, model="auto"),
+                      lambda: veya_predict(STATE, QUESTIONS, model="auto"),
                       "models_not_ready")
     # a Router payload without a 'routing' key hits the same null-model fallback.
-    out = laya_predict(STATE, QUESTIONS, model="auto", router=FakeRouterNoRouting())
+    out = veya_predict(STATE, QUESTIONS, model="auto", router=FakeRouterNoRouting())
     ok("shape/predict_auto_fallback_model_null",
        out["routing"] == {"model": None, "repo": None, "reason": "auto routing without router"},
        repr(out.get("routing")))
     ok("shape/predict_auto_fallback_answers", out["answers"]["department"]["choice"] == "billing")
     # an explicit checkpoint still names itself in the same fallback.
-    out = laya_predict(STATE, QUESTIONS, model="english", router=FakeRouterNoRouting())
+    out = veya_predict(STATE, QUESTIONS, model="english", router=FakeRouterNoRouting())
     ok("shape/predict_explicit_fallback_names_checkpoint",
        out["routing"] == {"model": "english", "repo": None, "reason": "explicit model"},
        repr(out.get("routing")))
@@ -572,8 +572,8 @@ def test_question_forwarding():
             return super().route(state, received)
 
     router = CapturingRouter()
-    laya_predict(STATE, questions, router=router)
-    laya_route(STATE, questions, router=router)
+    veya_predict(STATE, questions, router=router)
+    veya_route(STATE, questions, router=router)
     ok("questions/predict_preserves_supported_values", router.predicted_questions == questions)
     ok("questions/route_preserves_supported_values", router.routed_questions == questions)
 
@@ -585,7 +585,7 @@ def test_option_order_forwarding():
                         "option_order": [2, 0, 1]}}
 
     router = BatchRouter()
-    laya_predict_batch([{"state": STATE, "questions": order_q},
+    veya_predict_batch([{"state": STATE, "questions": order_q},
                         {"state": STATE, "questions": QUESTIONS}], router=router)
     forwarded = router.predict_batch_calls[0][0]
     ok("option_order/batch_item_forwarded",
@@ -595,14 +595,14 @@ def test_option_order_forwarding():
     router = BatchRouter()
     bad = {"team": dict(order_q["team"], option_order=[0, 0, 0])}
     expect_tool_error("option_order/batch_item_invalid",
-                      lambda: laya_predict_batch([{"state": STATE, "questions": bad}], router=router),
+                      lambda: veya_predict_batch([{"state": STATE, "questions": bad}], router=router),
                       "invalid_questions")
     ok("option_order/batch_invalid_not_called", router.predict_batch_calls == [])
 
     # Shortlist passthrough (n <= k): the question is answered as given, so the order applies
     # and nothing was dropped.
     router = ShortlistRouter({"english": ShortlistAgent()})
-    out = laya_shortlist(STATE, order_q, model="english", k=5, router=router, embed_fn=_raising_embed)
+    out = veya_shortlist(STATE, order_q, model="english", k=5, router=router, embed_fn=_raising_embed)
     ok("option_order/shortlist_passthrough_forwarded",
        router.seen_questions["team"].get("option_order") == [2, 0, 1], repr(router.seen_questions))
     ok("option_order/shortlist_passthrough_no_drop_signal",
@@ -613,7 +613,7 @@ def test_option_order_forwarding():
     # and kept option counts: core's RuntimeWarning never reaches an MCP client.
     router = ShortlistRouter({"english": ShortlistAgent()})
     narrowed = {"topic": dict(SHORTLIST_QUESTIONS["topic"], option_order=[4, 3, 2, 1, 0])}
-    out = laya_shortlist(STATE, narrowed, model="english", k=2,
+    out = veya_shortlist(STATE, narrowed, model="english", k=2,
                          router=router, embed_fn=_tie_embed)
     ok("option_order/shortlist_narrowed_answers",
        out["answers"]["topic"]["choice"] == "billing", repr(out["answers"]))
@@ -632,7 +632,7 @@ def test_option_order_forwarding():
     buf = io.StringIO()
     router = ShortlistRouter({"english": ShortlistAgent()})
     with contextlib.redirect_stdout(buf):
-        laya_shortlist(STATE, narrowed, model="english", k=2,
+        veya_shortlist(STATE, narrowed, model="english", k=2,
                        router=router, embed_fn=_tie_embed)
     ok("option_order/shortlist_narrowed_stdout_clean",
        buf.getvalue() == "", repr(buf.getvalue()[:100]))
@@ -641,7 +641,7 @@ def test_option_order_forwarding():
     router = ShortlistRouter({"english": ShortlistAgent()})
     bad = {"topic": dict(SHORTLIST_QUESTIONS["topic"], option_order=[0, 0, 0, 0, 0])}
     expect_tool_error("option_order/shortlist_invalid_rejected",
-                      lambda: laya_shortlist(STATE, bad, model="english", k=2,
+                      lambda: veya_shortlist(STATE, bad, model="english", k=2,
                                              router=router, embed_fn=_tie_embed),
                       "invalid_questions")
     ok("option_order/shortlist_invalid_not_called", router.seen_questions is None)
@@ -649,11 +649,11 @@ def test_option_order_forwarding():
     # returns, so the drop has to come back under its real key name after json round-trip.
     import json
 
-    from laya.mcp import server as server_mod
+    from veya.mcp import server as server_mod
 
     router = ShortlistRouter({"english": ShortlistAgent()})
     payload = json.loads(server_mod._wrap(
-        laya_shortlist, state=STATE, questions=narrowed, model="english", k=2,
+        veya_shortlist, state=STATE, questions=narrowed, model="english", k=2,
         router=router, embed_fn=_tie_embed))
     ok("option_order/shortlist_narrowed_mcp_json_drop_signal",
        payload.get("option_order_dropped") == {"topic": {"n": 5, "kept": 2}},
@@ -661,7 +661,7 @@ def test_option_order_forwarding():
     # Non-choice questions are never narrowed, so their order is forwarded whatever k is.
     router = ShortlistRouter({"english": ShortlistAgent()})
     scored = {"urgency": dict(SHORTLIST_QUESTIONS["urgency"], option_order=[1, 0])}
-    out = laya_shortlist(STATE, scored, model="english", k=1, router=router, embed_fn=_raising_embed)
+    out = veya_shortlist(STATE, scored, model="english", k=1, router=router, embed_fn=_raising_embed)
     ok("option_order/shortlist_non_choice_forwarded",
        router.seen_questions["urgency"].get("option_order") == [1, 0], repr(router.seen_questions))
     ok("option_order/shortlist_non_choice_no_drop_signal",
@@ -700,27 +700,27 @@ def test_real_device():
         def predict(self, state, questions, **kwargs):
             return {"answers": {}, "routing": {"model": "english"}}
 
-    out = laya_predict(STATE, QUESTIONS, model="auto", router=RouterLoadIsASideEffect())
+    out = veya_predict(STATE, QUESTIONS, model="auto", router=RouterLoadIsASideEffect())
     ok("device/load_never_called", out.get("device") == "cpu", repr(out.get("device")))
 
 
 # --- contract on the private Router._agents name (no weights, no network) ----
 
 def test_private_contract():
-    # Why this test exists: laya.mcp.device.router_agent reads the private
+    # Why this test exists: veya.mcp.device.router_agent reads the private
     # Router._agents mapping, because it is the only side-effect-free way to
     # read a loaded agent's real device. If the core ever renames _agents,
-    # the device would silently disappear from the laya_status/laya_predict
+    # the device would silently disappear from the veya_status/veya_predict
     # answers: every other test in this file uses fakes that carry their own
     # _agents attribute, so only a test built on a real Router would notice.
     # A rename must break CI loudly instead of degrading the answers silently.
-    import laya
+    import veya
 
     # A real Router with preload=False (the default) loads nothing on
     # construction: no checkpoint build, no download (downloads only happen
     # inside load()/preload()). If that ever changed, this line would fail
     # here rather than on the network.
-    r = laya.Router()
+    r = veya.Router()
     ok("contract/no_download_on_construct", list(r.loaded) == [], repr(list(r.loaded)))
 
     class MpsDevice:  # torch.device-like: a .type attribute
@@ -731,7 +731,7 @@ def test_private_contract():
     ok("contract/attach_resident", list(r.loaded) == ["english"], repr(list(r.loaded)))
     ok("contract/router_agents_readable", router_agent(r, "english") is fake)
     ok("contract/agent_device_mps", agent_device(router_agent(r, "english")) == "mps")
-    out = laya_status(router=r, preload=False)
+    out = veya_status(router=r, preload=False)
     ok("contract/status_mps",
        out.get("checkpoint_devices") == {"english": "mps"}
        and out.get("device") == "mps" and out.get("device_is_preference") is False,
@@ -828,29 +828,29 @@ def _raising_embed(texts):
 
 def test_shortlist():
     expect_tool_error("shortlist/state_bad",
-                      lambda: laya_shortlist([], SHORTLIST_QUESTIONS), "invalid_state")
+                      lambda: veya_shortlist([], SHORTLIST_QUESTIONS), "invalid_state")
     expect_tool_error("shortlist/questions_bad",
-                      lambda: laya_shortlist(STATE, {}), "invalid_questions")
+                      lambda: veya_shortlist(STATE, {}), "invalid_questions")
     expect_tool_error("shortlist/model_bad",
-                      lambda: laya_shortlist(STATE, SHORTLIST_QUESTIONS, model="gpt4"), "invalid_model")
+                      lambda: veya_shortlist(STATE, SHORTLIST_QUESTIONS, model="gpt4"), "invalid_model")
     for bad_k in (0, -3, True, 2.5, "3"):
         expect_tool_error("shortlist/k_bad_%r" % (bad_k,),
-                          lambda b=bad_k: laya_shortlist(
+                          lambda b=bad_k: veya_shortlist(
                               STATE, SHORTLIST_QUESTIONS, k=b,
                               router=ShortlistRouter({"english": ShortlistAgent()})),
                           "invalid_k")
     expect_tool_error("shortlist/auto_needs_router",
-                      lambda: laya_shortlist(STATE, SHORTLIST_QUESTIONS), "models_not_ready")
+                      lambda: veya_shortlist(STATE, SHORTLIST_QUESTIONS), "models_not_ready")
     # Explicit model whose checkpoint is neither resident nor loadable.
     expect_tool_error("shortlist/explicit_not_loaded",
-                      lambda: laya_shortlist(STATE, SHORTLIST_QUESTIONS, model="english",
+                      lambda: veya_shortlist(STATE, SHORTLIST_QUESTIONS, model="english",
                                              router=ShortlistRouter({})),
                       "models_not_ready")
 
     # Passthrough: every choice has <= k labels, so embed_fn is never called.
     small = {"dept": {"type": "choice", "instructions": "pick", "criteria": {"a": "A", "b": "B"}}}
     router = ShortlistRouter({"english": ShortlistAgent()})
-    out = laya_shortlist(STATE, small, model="english", k=5, router=router, embed_fn=_raising_embed)
+    out = veya_shortlist(STATE, small, model="english", k=5, router=router, embed_fn=_raising_embed)
     meta = out["shortlist"]["dept"]
     ok("shortlist/passthrough_meta", meta["passthrough"] is True and meta["scores"] is None
        and meta["k"] == 5 and meta["n"] == 2, repr(meta))
@@ -863,15 +863,15 @@ def test_shortlist():
        repr(out["routing"]))
     ok("shortlist/passthrough_latency", isinstance(out["latency_ms"], float))
 
-    # Default k comes from laya.shortlist: a choice smaller than it passes through.
+    # Default k comes from veya.shortlist: a choice smaller than it passes through.
     # Read from the library rather than copied, so raising DEFAULT_SHORTLIST_K cannot
     # make this assert a stale value against a tool layer that moved correctly.
-    from laya.shortlist import DEFAULT_SHORTLIST_K
+    from veya.shortlist import DEFAULT_SHORTLIST_K
 
     router = ShortlistRouter({"english": ShortlistAgent()})
     three = {"dept": {"type": "choice", "instructions": "pick",
                       "criteria": {"a": "A", "b": "B", "c": "C"}}}
-    out = laya_shortlist(STATE, three, model="english", router=router, embed_fn=_raising_embed)
+    out = veya_shortlist(STATE, three, model="english", router=router, embed_fn=_raising_embed)
     ok("shortlist/default_k_passthrough", out["shortlist"]["dept"]["k"] == DEFAULT_SHORTLIST_K
        and out["shortlist"]["dept"]["passthrough"] is True, repr(out["shortlist"]))
 
@@ -883,7 +883,7 @@ def test_shortlist():
         return _tie_embed(texts)
 
     router = ShortlistRouter({"english": ShortlistAgent()})
-    out = laya_shortlist(STATE, SHORTLIST_QUESTIONS, model="english", k=2,
+    out = veya_shortlist(STATE, SHORTLIST_QUESTIONS, model="english", k=2,
                          router=router, embed_fn=recording_embed)
     meta = out["shortlist"]["topic"]
     ok("shortlist/meta_shape", meta["k"] == 2 and meta["n"] == 5 and meta["passthrough"] is False,
@@ -906,23 +906,23 @@ def test_shortlist():
     # Auto mode: route once, then answer with an explicit model= so the forward
     # pass does not re-route; the reported routing is the real route decision.
     router = ShortlistRouter({"multilingual": ShortlistAgent()}, routed="multilingual")
-    out = laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=router, embed_fn=_tie_embed)
+    out = veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=router, embed_fn=_tie_embed)
     ok("shortlist/auto_routing_reported",
        out["routing"] == {"model": "multilingual", "repo": "fake/repo", "reason": "unit-test route"},
        repr(out["routing"]))
     ok("shortlist/auto_explicit_model", router.seen_kwargs == {"model": "multilingual"},
        repr(router.seen_kwargs))
 
-    # Lazy server (LAYA_PRELOAD=0): a routed checkpoint that is not resident is
+    # Lazy server (VEYA_PRELOAD=0): a routed checkpoint that is not resident is
     # loaded on demand, the same on-demand build Router.predict performs.
     router = LoadingRouter({}, routed="multilingual")
-    out = laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=router, embed_fn=_tie_embed)
+    out = veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=router, embed_fn=_tie_embed)
     ok("shortlist/lazy_load_once", router.load_calls == ["multilingual"], repr(router.load_calls))
     ok("shortlist/lazy_device", out.get("device") == "cpu", repr(out.get("device")))
 
-    # Direct agent injection (no router), mirroring laya_predict's agent= path.
+    # Direct agent injection (no router), mirroring veya_predict's agent= path.
     agent = ShortlistDirectAgent()
-    out = laya_shortlist(STATE, small, model="english", k=5, agent=agent, embed_fn=_raising_embed)
+    out = veya_shortlist(STATE, small, model="english", k=5, agent=agent, embed_fn=_raising_embed)
     ok("shortlist/direct_agent", out["answers"]["dept"]["choice"] == "a"
        and out["routing"]["reason"] == "explicit model", repr(out["routing"]))
 
@@ -947,7 +947,7 @@ class BatchRouter(FakeRouter):
                 answers[name] = {"noul": 0.7, "confidence": 0.9}
         return {"answers": answers,
                 "routing": {"model": request.get("model") or "english",
-                            "repo": "fake/laya", "reason": "batch route"}}
+                            "repo": "fake/veya", "reason": "batch route"}}
 
     def predict_batch(self, requests, batch_size=None, **kwargs):
         self.predict_batch_calls.append((list(requests), batch_size, kwargs))
@@ -955,7 +955,7 @@ class BatchRouter(FakeRouter):
 
     def route_batch(self, requests, hooks_timeout=None):
         self.route_batch_calls.append((list(requests), hooks_timeout))
-        return [{"model": request.get("model") or "english", "repo": "fake/laya",
+        return [{"model": request.get("model") or "english", "repo": "fake/veya",
                  "reason": "batch route"} for request in requests]
 
 
@@ -972,14 +972,14 @@ class ShortRouter:
 class StrictRouteRouter:
     """A Router stub that predates the hooks_timeout kwarg on route_batch.
 
-    laya_route_batch must send `route_batch(items)` when the caller did not
+    veya_route_batch must send `route_batch(items)` when the caller did not
     ask for a hook deadline -- sending `route_batch(items, hooks_timeout=None)`
     would break every caller that attached a pre-#577 Router (or a stub like
     this one). This is the witness for M2 in the PR's mutation harness.
     """
 
     def route_batch(self, requests):
-        return [{"model": "english", "repo": "fake/laya",
+        return [{"model": "english", "repo": "fake/veya",
                  "reason": "strict route"} for _ in requests]
 
 
@@ -1065,19 +1065,19 @@ def test_batch_validation():
 
 def test_batch_predict():
     expect_tool_error("batch/predict_no_router",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, router=None), "models_not_ready")
+                      lambda: veya_predict_batch(BATCH_REQUESTS, router=None), "models_not_ready")
     expect_tool_error("batch/predict_no_method",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, router=FakeRouter()),
+                      lambda: veya_predict_batch(BATCH_REQUESTS, router=FakeRouter()),
                       "internal_error")
     for bad_size in (True, 0, -2, 2.5, "3"):
         expect_tool_error("batch/predict_bad_size_%r" % (bad_size,),
-                          lambda s=bad_size: laya_predict_batch(
+                          lambda s=bad_size: veya_predict_batch(
                               BATCH_REQUESTS, batch_size=s, router=BatchRouter()),
                           "invalid_batch_size")
     # Validation runs before the router is touched: one bad item, no partial batch.
     router = BatchRouter()
     expect_tool_error("batch/predict_validates_first",
-                      lambda: laya_predict_batch([{"state": STATE}, {"state": STATE, "questions": QUESTIONS}],
+                      lambda: veya_predict_batch([{"state": STATE}, {"state": STATE, "questions": QUESTIONS}],
                                                  router=router),
                       "invalid_questions")
     ok("batch/predict_not_called_on_bad_input", router.predict_batch_calls == [])
@@ -1086,18 +1086,18 @@ def test_batch_predict():
     # raw -- a non-string otherwise reached core and silently misrouted the item.
     router = BatchRouter()
     expect_tool_error("batch/predict_item_lang_guess_type",
-                      lambda: laya_predict_batch([{"state": STATE, "questions": QUESTIONS,
+                      lambda: veya_predict_batch([{"state": STATE, "questions": QUESTIONS,
                                                    "lang_guess": {"not": "a string"}}], router=router),
                       "invalid_lang_guess")
     ok("batch/predict_bad_lang_guess_not_called", router.predict_batch_calls == [])
     router = BatchRouter()
-    laya_predict_batch([{"state": STATE, "questions": QUESTIONS, "lang_guess": "de"}], router=router)
+    veya_predict_batch([{"state": STATE, "questions": QUESTIONS, "lang_guess": "de"}], router=router)
     ok("batch/predict_item_lang_guess_forwarded",
        router.predict_batch_calls[0][0][0].get("lang_guess") == "de",
        repr(router.predict_batch_calls[0][0][0]))
 
     router = BatchRouter()
-    out = laya_predict_batch(BATCH_REQUESTS, batch_size=8, router=router)
+    out = veya_predict_batch(BATCH_REQUESTS, batch_size=8, router=router)
     ok("batch/predict_one_call", len(router.predict_batch_calls) == 1,
        repr(len(router.predict_batch_calls)))
     forwarded, size, kwargs = router.predict_batch_calls[0]
@@ -1108,7 +1108,7 @@ def test_batch_predict():
     # max_len/head_max_len off each item and splits items that ask for different budgets into
     # separate calls, so an item that loses them is answered at the checkpoint's default window.
     router = BatchRouter()
-    laya_predict_batch([{"state": STATE, "questions": QUESTIONS,
+    veya_predict_batch([{"state": STATE, "questions": QUESTIONS,
                          "max_len": 1024, "head_max_len": 512},
                         {"state": {"body": "no budget asked for"}, "questions": QUESTIONS}],
                        router=router)
@@ -1136,31 +1136,31 @@ def test_batch_predict():
 
     # batch_size unset must not be forwarded as None (strict old stubs included).
     router = BatchRouter()
-    laya_predict_batch(BATCH_REQUESTS, router=router)
+    veya_predict_batch(BATCH_REQUESTS, router=router)
     _, size, _ = router.predict_batch_calls[0]
     ok("batch/predict_size_default", size is None)
 
     # Test that hooks_timeout parameter is forwarded correctly
     router = BatchRouter()
-    out = laya_predict_batch(BATCH_REQUESTS, hooks_timeout=5.5, router=router)
+    out = veya_predict_batch(BATCH_REQUESTS, hooks_timeout=5.5, router=router)
     _, kwargs = router.predict_batch_calls[0][1], router.predict_batch_calls[0][2]
     ok("batch/hooks_timeout_forwarded", kwargs.get("hooks_timeout") == 5.5, repr(kwargs))
     
     # Test that min_confidence parameter is forwarded correctly  
     router = BatchRouter()
-    out = laya_predict_batch(BATCH_REQUESTS, min_confidence=0.75, router=router)
+    out = veya_predict_batch(BATCH_REQUESTS, min_confidence=0.75, router=router)
     _, kwargs = router.predict_batch_calls[0][1], router.predict_batch_calls[0][2]
     ok("batch/min_confidence_forwarded", kwargs.get("min_confidence") == 0.75, repr(kwargs))
     
     # Test that sort_by_length parameter is forwarded correctly
     router = BatchRouter()
-    out = laya_predict_batch(BATCH_REQUESTS, sort_by_length=True, router=router)
+    out = veya_predict_batch(BATCH_REQUESTS, sort_by_length=True, router=router)
     _, kwargs = router.predict_batch_calls[0][1], router.predict_batch_calls[0][2]
     ok("batch/sort_by_length_forwarded", kwargs.get("sort_by_length") is True, repr(kwargs))
     
     # Test that defaults don't pollute kwargs
     router = BatchRouter()
-    out = laya_predict_batch(BATCH_REQUESTS, router=router)
+    out = veya_predict_batch(BATCH_REQUESTS, router=router)
     _, kwargs = router.predict_batch_calls[0][1], router.predict_batch_calls[0][2]
     ok("batch/defaults_not_in_kwargs", "hooks_timeout" not in kwargs and 
        "min_confidence" not in kwargs and "sort_by_length" not in kwargs, repr(kwargs))
@@ -1169,31 +1169,31 @@ def test_batch_predict():
     # ToolError, not an internal_error that escaped the TypeError-only handler, and not a silent
     # 1-second hook deadline from core's float(True) == 1.0.
     expect_tool_error("batch/min_confidence_out_of_range",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, min_confidence=1.5, router=BatchRouter()),
+                      lambda: veya_predict_batch(BATCH_REQUESTS, min_confidence=1.5, router=BatchRouter()),
                       "invalid_min_confidence")
     expect_tool_error("batch/hooks_timeout_bool_rejected",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, hooks_timeout=True, router=BatchRouter()),
+                      lambda: veya_predict_batch(BATCH_REQUESTS, hooks_timeout=True, router=BatchRouter()),
                       "invalid_hooks_timeout")
     # min_confidence=0.0 is a real gate (abstain over nothing) and must still be forwarded.
     router = BatchRouter()
-    laya_predict_batch(BATCH_REQUESTS, min_confidence=0.0, router=router)
+    veya_predict_batch(BATCH_REQUESTS, min_confidence=0.0, router=router)
     _, kwargs = router.predict_batch_calls[0][1], router.predict_batch_calls[0][2]
     ok("batch/min_confidence_zero_forwarded", kwargs.get("min_confidence") == 0.0, repr(kwargs))
 
     expect_tool_error("batch/predict_count_mismatch",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, router=ShortRouter()),
+                      lambda: veya_predict_batch(BATCH_REQUESTS, router=ShortRouter()),
                       "internal_error")
 
 
 def test_batch_tool_control_forwarding():
     """A control the tool cannot honour must reach the layer that rejects it, not vanish.
 
-    `laya_predict_batch` owns validation and answers an out-of-range `hooks_timeout` or
+    `veya_predict_batch` owns validation and answers an out-of-range `hooks_timeout` or
     `min_confidence` with a ToolError naming the value. Collapsing those to None before the call
     turned an invalid deadline into "no deadline" and an invalid gate into "no gate": the client
     got a clean response and no way to tell the control it asked for had been dropped (#707).
     """
-    import laya.mcp.server as server_mod
+    import veya.mcp.server as server_mod
 
     seen = {}
 
@@ -1211,17 +1211,17 @@ def test_batch_tool_control_forwarding():
     try:
         # Unset stays unset: 0 is what an eager MCP client sends for a default, and the
         # declaration defaults are unset too.
-        server_mod.laya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=0)
+        server_mod.veya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=0)
         ok("batch_tool/hooks_timeout_zero_is_unset", seen["kwargs"]["hooks_timeout"] is None,
            repr(seen["kwargs"]["hooks_timeout"]))
-        server_mod.laya_predict_batch_tool(requests=BATCH_REQUESTS)
+        server_mod.veya_predict_batch_tool(requests=BATCH_REQUESTS)
         ok("batch_tool/hooks_timeout_default_is_unset", seen["kwargs"]["hooks_timeout"] is None,
            repr(seen["kwargs"]["hooks_timeout"]))
         ok("batch_tool/min_confidence_default_is_unset", seen["kwargs"]["min_confidence"] is None,
            repr(seen["kwargs"]["min_confidence"]))
 
         # A value in range is forwarded as given.
-        server_mod.laya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=1.5,
+        server_mod.veya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=1.5,
                                            min_confidence=0.75)
         ok("batch_tool/hooks_timeout_forwarded", seen["kwargs"]["hooks_timeout"] == 1.5,
            repr(seen["kwargs"]["hooks_timeout"]))
@@ -1231,22 +1231,22 @@ def test_batch_tool_control_forwarding():
         # A bool is never an unset marker: `False == 0` in Python, so a plain equality or
         # `or None` fold would hide the tools layer's explicit refusal of booleans.
         for bad in (True, False):
-            server_mod.laya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=bad)
+            server_mod.veya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=bad)
             ok("batch_tool/hooks_timeout_%r_reaches_tools" % (bad,),
                seen["kwargs"]["hooks_timeout"] is bad, repr(seen["kwargs"]["hooks_timeout"]))
-            server_mod.laya_predict_batch_tool(requests=BATCH_REQUESTS, batch_size=bad)
+            server_mod.veya_predict_batch_tool(requests=BATCH_REQUESTS, batch_size=bad)
             ok("batch_tool/batch_size_%r_reaches_tools" % (bad,),
                seen["kwargs"]["batch_size"] is bad, repr(seen["kwargs"]["batch_size"]))
-            server_mod.laya_route_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=bad)
+            server_mod.veya_route_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=bad)
             ok("batch_tool/route_timeout_%r_reaches_tools" % (bad,),
                seen["kwargs"]["hooks_timeout"] is bad, repr(seen["kwargs"]["hooks_timeout"]))
 
         # Out of range reaches the tools layer untouched instead of being folded into "unset".
         for bad in (-1.0, -0.5):
-            server_mod.laya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=bad)
+            server_mod.veya_predict_batch_tool(requests=BATCH_REQUESTS, hooks_timeout=bad)
             ok("batch_tool/hooks_timeout_%r_reaches_tools" % (bad,),
                seen["kwargs"]["hooks_timeout"] == bad, repr(seen["kwargs"]["hooks_timeout"]))
-            server_mod.laya_predict_batch_tool(requests=BATCH_REQUESTS, min_confidence=bad)
+            server_mod.veya_predict_batch_tool(requests=BATCH_REQUESTS, min_confidence=bad)
             ok("batch_tool/min_confidence_%r_reaches_tools" % (bad,),
                seen["kwargs"]["min_confidence"] == bad, repr(seen["kwargs"]["min_confidence"]))
     finally:
@@ -1254,33 +1254,33 @@ def test_batch_tool_control_forwarding():
 
     # And the tools layer does refuse them, which is what makes the forwarding observable.
     expect_tool_error("batch_tool/hooks_timeout_rejected_downstream",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, hooks_timeout=-0.5,
+                      lambda: veya_predict_batch(BATCH_REQUESTS, hooks_timeout=-0.5,
                                                  router=BatchRouter()),
                       "invalid_hooks_timeout")
     expect_tool_error("batch_tool/hooks_timeout_false_rejected_downstream",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, hooks_timeout=False,
+                      lambda: veya_predict_batch(BATCH_REQUESTS, hooks_timeout=False,
                                                  router=BatchRouter()),
                       "invalid_hooks_timeout")
     expect_tool_error("batch_tool/min_confidence_rejected_downstream",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, min_confidence=-0.5,
+                      lambda: veya_predict_batch(BATCH_REQUESTS, min_confidence=-0.5,
                                                  router=BatchRouter()),
                       "invalid_min_confidence")
     expect_tool_error("batch_tool/bool_size_rejected_downstream",
-                      lambda: laya_predict_batch(BATCH_REQUESTS, batch_size=False, router=BatchRouter()),
+                      lambda: veya_predict_batch(BATCH_REQUESTS, batch_size=False, router=BatchRouter()),
                       "invalid_batch_size")
     expect_tool_error("batch_tool/bool_route_timeout_rejected_downstream",
-                      lambda: laya_route_batch(BATCH_REQUESTS, hooks_timeout=False, router=BatchRouter()),
+                      lambda: veya_route_batch(BATCH_REQUESTS, hooks_timeout=False, router=BatchRouter()),
                       "invalid_hooks_timeout")
 
 
 def test_batch_route():
     expect_tool_error("batch/route_no_router",
-                      lambda: laya_route_batch(BATCH_REQUESTS, router=None), "models_not_ready")
+                      lambda: veya_route_batch(BATCH_REQUESTS, router=None), "models_not_ready")
     expect_tool_error("batch/route_no_method",
-                      lambda: laya_route_batch(BATCH_REQUESTS, router=FakeRouter()),
+                      lambda: veya_route_batch(BATCH_REQUESTS, router=FakeRouter()),
                       "internal_error")
     router = BatchRouter()
-    out = laya_route_batch(BATCH_REQUESTS, router=router)
+    out = veya_route_batch(BATCH_REQUESTS, router=router)
     ok("batch/route_one_call", len(router.route_batch_calls) == 1)
     ok("batch/route_decisions", len(out["decisions"]) == 3
        and set(out["decisions"][0]) == {"model", "repo", "reason"}, repr(out["decisions"][0]))
@@ -1296,7 +1296,7 @@ def test_batch_route():
     # break every caller with an older or hand-rolled router. Wrapped so the
     # TypeError shows as a NAMED FAIL rather than crashing the whole suite.
     try:
-        strict_out = laya_route_batch(BATCH_REQUESTS, router=StrictRouteRouter())
+        strict_out = veya_route_batch(BATCH_REQUESTS, router=StrictRouteRouter())
         strict_ok = (len(strict_out["decisions"]) == 3
                      and strict_out["model_counts"] == {"english": 3})
         detail = repr(strict_out)
@@ -1306,14 +1306,14 @@ def test_batch_route():
     ok("batch/route_strict_router_no_kwarg", strict_ok, detail)
     # hooks_timeout is forwarded verbatim (post-validate_timeout) to
     # Router.route_batch's per-call override of the operator-installed hook
-    # deadline. Same shape as laya_predict_batch (see #766).
+    # deadline. Same shape as veya_predict_batch (see #766).
     router = BatchRouter()
-    laya_route_batch(BATCH_REQUESTS, hooks_timeout=2.5, router=router)
+    veya_route_batch(BATCH_REQUESTS, hooks_timeout=2.5, router=router)
     _, timeout = router.route_batch_calls[0]
     ok("batch/route_hooks_timeout_forwarded", timeout == 2.5, repr(timeout))
     # An int is a valid timeout -- validate_timeout coerces to float.
     router = BatchRouter()
-    laya_route_batch(BATCH_REQUESTS, hooks_timeout=1, router=router)
+    veya_route_batch(BATCH_REQUESTS, hooks_timeout=1, router=router)
     _, timeout = router.route_batch_calls[0]
     ok("batch/route_hooks_timeout_int_coerced", timeout == 1.0 and isinstance(timeout, float),
        repr(timeout))
@@ -1321,18 +1321,18 @@ def test_batch_route():
     # boundary check exists so a caller gets a real code back over MCP.
     for bad in (0, -1, -0.5, "soon", True, [1.0]):
         expect_tool_error("batch/route_bad_hooks_timeout_%r" % (bad,),
-                          lambda b=bad: laya_route_batch(
+                          lambda b=bad: veya_route_batch(
                               BATCH_REQUESTS, hooks_timeout=b, router=BatchRouter()),
                           "invalid_hooks_timeout")
     # Validation happens before the router is touched: one bad timeout, no
     # partial dispatch.
     router = BatchRouter()
     expect_tool_error("batch/route_bad_hooks_timeout_zero_router_untouched",
-                      lambda: laya_route_batch(BATCH_REQUESTS, hooks_timeout=0, router=router),
+                      lambda: veya_route_batch(BATCH_REQUESTS, hooks_timeout=0, router=router),
                       "invalid_hooks_timeout")
     ok("batch/route_no_dispatch_on_bad_timeout", router.route_batch_calls == [])
     expect_tool_error("batch/route_count_mismatch",
-                      lambda: laya_route_batch(BATCH_REQUESTS, router=ShortRouter()),
+                      lambda: veya_route_batch(BATCH_REQUESTS, router=ShortRouter()),
                       "internal_error")
 
 
@@ -1352,7 +1352,7 @@ DECIDE_SCHEMA = {
 class TypeEchoRouter(FakeRouter):
     """FakeRouter that also answers with the real payload shape: the `type`
     key and a probabilities dict keyed by option/level, like system_one does,
-    so laya.structured's per-field probabilities are exercised."""
+    so veya.structured's per-field probabilities are exercised."""
 
     def predict(self, state, questions, **kwargs):
         out = super().predict(state, questions, **kwargs)
@@ -1365,10 +1365,10 @@ class TypeEchoRouter(FakeRouter):
 
 
 def test_decide():
-    import laya
+    import veya
 
     router = TypeEchoRouter()
-    out = laya_decide(STATE, DECIDE_SCHEMA, router=router)
+    out = veya_decide(STATE, DECIDE_SCHEMA, router=router)
     ok("decide/keys", set(out) >= {"values", "confidence", "probabilities", "routing", "latency_ms"},
        repr(sorted(out)))
     ok("decide/values_choice", out["values"]["department"] == "billing", repr(out["values"]))
@@ -1387,7 +1387,7 @@ def test_decide():
 
     # Same values the core decide() returns for the same runner: the tool is a
     # thin MCP surface over the documented schema projection, not a second one.
-    core = laya.decide(router, STATE, schema=DECIDE_SCHEMA)
+    core = veya.decide(router, STATE, schema=DECIDE_SCHEMA)
     ok("decide/parity_with_core", out["values"] == core, "tool=%r core=%r" % (out["values"], core))
 
     # Score projection follows the argmax of the distribution, offset by minimum.
@@ -1398,25 +1398,25 @@ def test_decide():
                                          "probabilities": {"0": 0.6, "1": 0.3, "2": 0.1}}
             return out
 
-    out = laya_decide(STATE, DECIDE_SCHEMA, router=LowUrgencyRouter())
+    out = veya_decide(STATE, DECIDE_SCHEMA, router=LowUrgencyRouter())
     ok("decide/score_argmax", out["values"]["urgency"] == 0, repr(out["values"]["urgency"]))
 
-    expect_tool_error("decide/bad_state", lambda: laya_decide({}, DECIDE_SCHEMA, router=router),
+    expect_tool_error("decide/bad_state", lambda: veya_decide({}, DECIDE_SCHEMA, router=router),
                       "invalid_state")
     for bad, why in (({"type": "object"}, "no properties"),
                      ({"type": "object", "properties": {"x": {"type": "string"}}}, "free string"),
                      ({"type": "object", "properties": {"x": {"type": "array"}}}, "array"),
                      ({}, "empty"), ([], "not an object")):
         expect_tool_error("decide/bad_schema_%s" % why,
-                          lambda b=bad: laya_decide(STATE, b, router=router), "invalid_schema")
+                          lambda b=bad: veya_decide(STATE, b, router=router), "invalid_schema")
     expect_tool_error("decide/bad_model",
-                      lambda: laya_decide(STATE, DECIDE_SCHEMA, model="gpt4", router=router),
+                      lambda: veya_decide(STATE, DECIDE_SCHEMA, model="gpt4", router=router),
                       "invalid_model")
     expect_tool_error("decide/no_router",
-                      lambda: laya_decide(STATE, DECIDE_SCHEMA), "models_not_ready")
+                      lambda: veya_decide(STATE, DECIDE_SCHEMA), "models_not_ready")
     # Explicit model with a direct agent: answered by the agent, no Router needed.
     # A bare Agent payload carries no routing, which is when the tool synthesises
-    # the "explicit model" routing entry (laya_predict does the same).
+    # the "explicit model" routing entry (veya_predict does the same).
     class BareAgent:
         device = "cpu"
 
@@ -1433,7 +1433,7 @@ def test_decide():
                     answers[name] = {"type": "noul", "noul": 0.2, "confidence": 0.8}
             return {"answers": answers}
 
-    out = laya_decide(STATE, DECIDE_SCHEMA, model="english", agent=BareAgent())
+    out = veya_decide(STATE, DECIDE_SCHEMA, model="english", agent=BareAgent())
     ok("decide/direct_agent", out["values"]["department"] == "billing"
        and out["routing"] == {"model": "english", "repo": None, "reason": "explicit model"},
        repr(out["routing"]))
@@ -1442,7 +1442,7 @@ def test_decide():
 
 def test_shortlist_lang_parity():
     """Auto mode must forward the routed language, so per-language temperatures
-    behave as they do in laya_predict. Passing an explicit model= makes
+    behave as they do in veya_predict. Passing an explicit model= makes
     Router.predict re-route with that model, and an explicit-model decision
     carries no detection -- so the language is lost unless shortlist passes it on.
     """
@@ -1456,7 +1456,7 @@ def test_shortlist_lang_parity():
             }
 
     router = DetectingRouter({"multilingual": ShortlistAgent()}, routed="multilingual")
-    out = laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=router, embed_fn=_tie_embed)
+    out = veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=router, embed_fn=_tie_embed)
     ok("shortlist_lang/auto_forwards_lang", (router.seen_kwargs or {}).get("lang") == "de",
        repr(router.seen_kwargs))
     ok("shortlist_lang/auto_still_explicit_model",
@@ -1466,13 +1466,13 @@ def test_shortlist_lang_parity():
 
     # A decision without a usable language must not invent one.
     plain = ShortlistRouter({"english": ShortlistAgent()}, routed="english")
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=plain, embed_fn=_tie_embed)
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, router=plain, embed_fn=_tie_embed)
     ok("shortlist_lang/no_detection_adds_nothing", plain.seen_kwargs == {"model": "english"},
        repr(plain.seen_kwargs))
 
     # Explicit-model mode is unchanged: no routing, so no language to forward.
     agent = ShortlistDirectAgent()
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="multilingual", agent=agent,
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="multilingual", agent=agent,
                    embed_fn=_tie_embed)
     ok("shortlist_lang/explicit_model_untouched", agent.seen is not None)
 
@@ -1534,7 +1534,7 @@ def test_shortlist_embed_cache():
     def texts_since(mark):
         return sum(len(b) for b in agent.tok.batches[mark:])
 
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=router)
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=router)
     first_texts = texts_since(0)
     ok("shortlist_cache/first_call_embeds_query_and_options", first_texts == 6,
        "texts=%d batches=%r" % (first_texts, agent.tok.batches))
@@ -1542,14 +1542,14 @@ def test_shortlist_embed_cache():
     # An identical repeat call embeds nothing at all: the query text is the same
     # too, and cached_embed_fn matches on exact strings.
     mark = len(agent.tok.batches)
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=router)
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=router)
     ok("shortlist_cache/identical_repeat_embeds_nothing", texts_since(mark) == 0,
        "texts=%d batches=%r" % (texts_since(mark), agent.tok.batches[mark:]))
 
     # A different state is a new query, so a repeat with that state embeds the
     # query alone and reuses the five cached option rows.
     mark = len(agent.tok.batches)
-    laya_shortlist({"text": "a completely different customer message"},
+    veya_shortlist({"text": "a completely different customer message"},
                    SHORTLIST_QUESTIONS, k=2, model="english", router=router)
     ok("shortlist_cache/new_state_still_embedded", texts_since(mark) == 1,
        "texts=%d batches=%r" % (texts_since(mark), agent.tok.batches[mark:]))
@@ -1557,7 +1557,7 @@ def test_shortlist_embed_cache():
     # A different answering checkpoint must not share another one's embeddings.
     other = make_agent()
     other_router = ShortlistRouter({"multilingual": other})
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="multilingual", router=other_router)
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="multilingual", router=other_router)
     ok("shortlist_cache/other_checkpoint_embeds_its_own",
        sum(len(b) for b in other.tok.batches) == 6,
        "texts=%d" % sum(len(b) for b in other.tok.batches))
@@ -1566,7 +1566,7 @@ def test_shortlist_embed_cache():
 
     # Replacing the agent (a reload) starts a fresh cache rather than reusing rows.
     reloaded = make_agent()
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english",
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english",
                    router=ShortlistRouter({"english": reloaded}))
     ok("shortlist_cache/reloaded_agent_re_embeds",
        sum(len(b) for b in reloaded.tok.batches) == 6,
@@ -1582,9 +1582,9 @@ def test_shortlist_embed_cache():
         return [[0.0, 0.0] for _ in texts]
 
     inj_router = ShortlistRouter({"english": make_agent()})
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=inj_router,
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=inj_router,
                    embed_fn=counting_embed)
-    laya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=inj_router,
+    veya_shortlist(STATE, SHORTLIST_QUESTIONS, k=2, model="english", router=inj_router,
                    embed_fn=counting_embed)
     ok("shortlist_cache/injected_embed_not_wrapped", len(calls) == 2,
        "calls=%d" % len(calls))
@@ -1638,7 +1638,7 @@ class ControlAgent:
 
 def test_controls_validation():
     """Each control is checked the way core checks it, and refused in this layer's words."""
-    from laya.router import DEFAULT_MODELS, _ALIASES
+    from veya.router import DEFAULT_MODELS, _ALIASES
 
     ok("task/none_is_unset", validate_task(None) is None)
     for name in sorted(DEFAULT_MODELS):
@@ -1650,7 +1650,7 @@ def test_controls_validation():
         ok("task/alias_%s" % alias, validate_task(alias) == alias, repr(validate_task(alias)))
     # What the sweep really protects: every name core's registry holds is accepted here, so this
     # layer can never be narrower than `router.predict(task=...)` the way a copied list was.
-    from laya.router import normalise_name
+    from veya.router import normalise_name
 
     for alias in sorted(_ALIASES):
         ok("task/resolves_%s" % alias, normalise_name(validate_task(alias)) == _ALIASES[alias],
@@ -1703,18 +1703,18 @@ def test_controls_validation():
 
 
 def test_controls_predict():
-    """What `laya_predict` forwards, and what it refuses to forward."""
+    """What `veya_predict` forwards, and what it refuses to forward."""
     # The baseline these checks protect: a call that sets no control reaches core exactly as it did
     # before the controls existed -- no keywords at all.
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, router=router)
+    veya_predict(STATE, QUESTIONS, router=router)
     ok("predict/no_controls_call", router.predict_calls == [{}], repr(router.predict_calls))
-    laya_predict(STATE, QUESTIONS, model="english", router=router)
+    veya_predict(STATE, QUESTIONS, model="english", router=router)
     ok("predict/pinned_model_only_kwarg", router.predict_calls[-1] == {"model": "english"},
        repr(router.predict_calls[-1]))
 
     router = ControlRouter()
-    out = laya_predict(STATE, QUESTIONS, task="typed_decisions", lang="de",
+    out = veya_predict(STATE, QUESTIONS, task="typed_decisions", lang="de",
                        max_len=1024, head_max_len=512, router=router)
     ok("predict/all_controls_forwarded",
        router.predict_calls == [{"task": "typed_decisions", "lang": "de",
@@ -1723,19 +1723,19 @@ def test_controls_predict():
     ok("predict/answers_untouched", out["answers"]["department"]["choice"] == "billing")
 
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, lang="de", router=router)
+    veya_predict(STATE, QUESTIONS, lang="de", router=router)
     ok("predict/lang_only", router.predict_calls == [{"lang": "de"}], repr(router.predict_calls))
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, head_max_len=384, router=router)
+    veya_predict(STATE, QUESTIONS, head_max_len=384, router=router)
     ok("predict/budget_only", router.predict_calls == [{"head_max_len": 384}],
        repr(router.predict_calls))
 
     # A pinned checkpoint plus a task is two answers to one question: `Router._route` checks model
     # first and never reads the task, and `Agent.system_one` does not accept it at all.
-    for model in ("english", "laya", "ML"):
+    for model in ("english", "veya", "ML"):
         router = ControlRouter()
         expect_tool_error("predict/model_plus_task_%s" % model,
-                          lambda m=model: laya_predict(STATE, QUESTIONS, model=m,
+                          lambda m=model: veya_predict(STATE, QUESTIONS, model=m,
                                                        task="typed_decisions", router=router),
                           "invalid_task")
         ok("predict/model_plus_task_no_call_%s" % model, router.predict_calls == [],
@@ -1744,28 +1744,28 @@ def test_controls_predict():
     # Everything is checked before core is called, so a bad value costs no forward pass.
     router = ControlRouter()
     expect_tool_error("predict/bad_budget_before_core",
-                      lambda: laya_predict(STATE, QUESTIONS, max_len=0, router=router),
+                      lambda: veya_predict(STATE, QUESTIONS, max_len=0, router=router),
                       "invalid_max_len")
     ok("predict/bad_budget_no_call", router.predict_calls == [], repr(router.predict_calls))
     router = ControlRouter()
     expect_tool_error("predict/bad_task_before_core",
-                      lambda: laya_predict(STATE, QUESTIONS, task="nope", router=router),
+                      lambda: veya_predict(STATE, QUESTIONS, task="nope", router=router),
                       "invalid_task")
     ok("predict/bad_task_no_call", router.predict_calls == [], repr(router.predict_calls))
 
     # The agent branch: budget and lang reach a checkpoint directly, task cannot mean anything.
     agent = ControlAgent()
-    laya_predict(STATE, QUESTIONS, model="english", agent=agent)
+    veya_predict(STATE, QUESTIONS, model="english", agent=agent)
     ok("predict/agent_no_controls_call", agent.calls == [{}], repr(agent.calls))
     agent = ControlAgent()
-    out = laya_predict(STATE, QUESTIONS, model="english", lang="de", max_len=1024,
+    out = veya_predict(STATE, QUESTIONS, model="english", lang="de", max_len=1024,
                        head_max_len=512, agent=agent)
     ok("predict/agent_budget_forwarded",
        agent.calls == [{"lang": "de", "max_len": 1024, "head_max_len": 512}], repr(agent.calls))
     ok("predict/agent_routing_recorded", out["routing"]["model"] == "english", repr(out["routing"]))
     agent = ControlAgent()
     expect_tool_error("predict/agent_task_refused",
-                      lambda a=agent: laya_predict(STATE, QUESTIONS, model="english",
+                      lambda a=agent: veya_predict(STATE, QUESTIONS, model="english",
                                                    task="typed_decisions", agent=a),
                       "invalid_task")
     ok("predict/agent_task_no_call", agent.calls == [], repr(agent.calls))
@@ -1777,18 +1777,18 @@ def test_controls_predict():
         def predict(self, state, questions):
             return {"answers": {"department": {"choice": "other", "confidence": 0.6}}}
 
-    out = laya_predict(STATE, QUESTIONS, router=LegacyRouter())
+    out = veya_predict(STATE, QUESTIONS, router=LegacyRouter())
     ok("predict/legacy_router_untouched", out["answers"]["department"]["choice"] == "other")
 
 
 def test_controls_route():
-    """`laya_route` takes the routing overrides, so a route can explain a pinned predict."""
+    """`veya_route` takes the routing overrides, so a route can explain a pinned predict."""
     router = ControlRouter(routed="multilingual")
-    laya_route(STATE, QUESTIONS, router=router)
+    veya_route(STATE, QUESTIONS, router=router)
     ok("route/no_overrides_call", router.route_calls == [{}], repr(router.route_calls))
 
     router = ControlRouter(routed="multilingual")
-    out = laya_route(STATE, QUESTIONS, task="typed_decisions", lang="de", router=router)
+    out = veya_route(STATE, QUESTIONS, task="typed_decisions", lang="de", router=router)
     ok("route/overrides_forwarded",
        router.route_calls == [{"task": "typed_decisions", "lang": "de"}], repr(router.route_calls))
     ok("route/decision_shape", set(out) == {"model", "repo", "reason"}, repr(out))
@@ -1797,32 +1797,32 @@ def test_controls_route():
     # dropped rather than forwarded as a checkpoint that does not exist.
     for unset in (None, "auto", "AUTO", " auto "):
         router = ControlRouter()
-        laya_route(STATE, QUESTIONS, model=unset, router=router)
+        veya_route(STATE, QUESTIONS, model=unset, router=router)
         ok("route/auto_is_absent_%r" % (unset,), router.route_calls == [{}], repr(router.route_calls))
     router = ControlRouter()
-    laya_route(STATE, QUESTIONS, model="en", router=router)
+    veya_route(STATE, QUESTIONS, model="en", router=router)
     ok("route/model_canonical", router.route_calls == [{"model": "english"}],
        repr(router.route_calls))
     router = ControlRouter()
     expect_tool_error("route/model_plus_task",
-                      lambda: laya_route(STATE, QUESTIONS, model="english",
+                      lambda: veya_route(STATE, QUESTIONS, model="english",
                                          task="typed_decisions", router=router),
                       "invalid_task")
     ok("route/refused_before_core", router.route_calls == [], repr(router.route_calls))
     for bad in ("nope", 5, []):
         router = ControlRouter()
         expect_tool_error("route/bad_task_%r" % (bad,),
-                          lambda b=bad: laya_route(STATE, QUESTIONS, task=b, router=router),
+                          lambda b=bad: veya_route(STATE, QUESTIONS, task=b, router=router),
                           "invalid_task")
         ok("route/bad_task_no_call_%r" % (bad,), router.route_calls == [], repr(router.route_calls))
     router = ControlRouter()
     expect_tool_error("route/bad_lang",
-                      lambda: laya_route(STATE, QUESTIONS, lang=["de"], router=router),
+                      lambda: veya_route(STATE, QUESTIONS, lang=["de"], router=router),
                       "invalid_lang")
     ok("route/bad_lang_no_call", router.route_calls == [], repr(router.route_calls))
     # No budget on a route: there is no forward pass to size, so the parameter does not exist.
     try:
-        laya_route(STATE, QUESTIONS, max_len=512, router=ControlRouter())
+        veya_route(STATE, QUESTIONS, max_len=512, router=ControlRouter())
         ok("route/no_budget_param", False, "accepted max_len")
     except TypeError:
         ok("route/no_budget_param", True)
@@ -1834,13 +1834,13 @@ def test_controls_shortlist():
                       "criteria": {"a": "A", "b": "B", "c": "C", "d": "D", "e": "E"}}}
 
     router = ControlRouter(routed="multilingual")
-    laya_shortlist(STATE, small, k=2, router=router, embed_fn=_tie_embed)
+    veya_shortlist(STATE, small, k=2, router=router, embed_fn=_tie_embed)
     ok("shortlist/no_controls_route", router.route_calls == [{}], repr(router.route_calls))
     ok("shortlist/no_controls_predict", router.predict_calls == [{"model": "multilingual"}],
        repr(router.predict_calls))
 
     router = ControlRouter(routed="multilingual")
-    out = laya_shortlist(STATE, small, k=2, task="typed_decisions", lang="de",
+    out = veya_shortlist(STATE, small, k=2, task="typed_decisions", lang="de",
                          max_len=1024, head_max_len=384, router=router, embed_fn=_tie_embed)
     ok("shortlist/route_sees_task",
        router.route_calls == [{"task": "typed_decisions", "lang": "de"}], repr(router.route_calls))
@@ -1852,7 +1852,7 @@ def test_controls_shortlist():
        and len(out["shortlist"]["dept"]["labels"]) == 2, repr(out["shortlist"]["dept"]))
 
     router = ControlRouter(routed="multilingual")
-    laya_shortlist(STATE, small, k=2, model="english", lang="de", head_max_len=384,
+    veya_shortlist(STATE, small, k=2, model="english", lang="de", head_max_len=384,
                    router=router, embed_fn=_tie_embed)
     ok("shortlist/pinned_skips_route", router.route_calls == [], repr(router.route_calls))
     ok("shortlist/pinned_budget",
@@ -1861,20 +1861,20 @@ def test_controls_shortlist():
 
     router = ControlRouter()
     expect_tool_error("shortlist/pinned_plus_task",
-                      lambda: laya_shortlist(STATE, small, k=2, model="english",
+                      lambda: veya_shortlist(STATE, small, k=2, model="english",
                                              task="typed_decisions", router=router,
                                              embed_fn=_tie_embed),
                       "invalid_task")
     ok("shortlist/pinned_plus_task_no_call", router.predict_calls == [], repr(router.predict_calls))
 
     agent = ControlAgent()
-    laya_shortlist(STATE, small, k=2, model="english", agent=agent, lang="de",
+    veya_shortlist(STATE, small, k=2, model="english", agent=agent, lang="de",
                    head_max_len=384, embed_fn=_tie_embed)
     ok("shortlist/agent_budget", agent.calls == [{"lang": "de", "head_max_len": 384}],
        repr(agent.calls))
     agent = ControlAgent()
     expect_tool_error("shortlist/agent_task_refused",
-                      lambda a=agent: laya_shortlist(STATE, small, k=2, model="english",
+                      lambda a=agent: veya_shortlist(STATE, small, k=2, model="english",
                                                      task="typed", agent=a, embed_fn=_tie_embed),
                       "invalid_task")
     ok("shortlist/agent_task_no_call", agent.calls == [], repr(agent.calls))
@@ -1888,7 +1888,7 @@ def test_controls_shortlist():
 
     router = ControlRouter()
     expect_tool_error("shortlist/bad_budget_before_embedding",
-                      lambda: laya_shortlist(STATE, small, k=2, head_max_len="384", router=router,
+                      lambda: veya_shortlist(STATE, small, k=2, head_max_len="384", router=router,
                                              embed_fn=counting_embed),
                       "invalid_head_max_len")
     ok("shortlist/bad_budget_no_embedding", calls == [], repr(calls))
@@ -1900,11 +1900,11 @@ def test_controls_preset():
         return {"probe": {"type": "noul", "instructions": "Does the `body` need a human?"}}
 
     router = ControlRouter()
-    laya_preset("guard", STATE, router=router, preset_builder=builder)
+    veya_preset("guard", STATE, router=router, preset_builder=builder)
     ok("preset/no_controls_call", router.predict_calls == [{}], repr(router.predict_calls))
 
     router = ControlRouter()
-    out = laya_preset("guard", STATE, task="typed_decisions", lang="de", max_len=1024,
+    out = veya_preset("guard", STATE, task="typed_decisions", lang="de", max_len=1024,
                       head_max_len=384, router=router, preset_builder=builder)
     ok("preset/controls_forwarded",
        router.predict_calls == [{"task": "typed_decisions", "lang": "de",
@@ -1922,7 +1922,7 @@ def test_controls_preset():
                        ({"head_max_len": "512"}, "invalid_head_max_len")):
         router = ControlRouter()
         expect_tool_error("preset/rejected_%r" % (args,),
-                          lambda a=args: laya_preset("guard", STATE, router=router,
+                          lambda a=args: veya_preset("guard", STATE, router=router,
                                                      preset_builder=builder, **a),
                           code)
         ok("preset/rejected_no_call_%r" % (args,), router.predict_calls == [],
@@ -1938,8 +1938,8 @@ def test_controls_signature_and_schema():
     import inspect
 
     controls = ["task", "lang", "lang_guess", "max_len", "head_max_len"]
-    for fn, want in ((laya_predict, controls), (laya_shortlist, controls),
-                     (laya_preset, controls), (laya_route, ["model", "task", "lang", "lang_guess"])):
+    for fn, want in ((veya_predict, controls), (veya_shortlist, controls),
+                     (veya_preset, controls), (veya_route, ["model", "task", "lang", "lang_guess"])):
         params = inspect.signature(fn).parameters
         for name in want:
             ok("signature/%s_has_%s" % (fn.__name__, name), name in params, repr(sorted(params)))
@@ -1948,12 +1948,12 @@ def test_controls_signature_and_schema():
             ok("signature/%s_%s_keyword_only" % (fn.__name__, name),
                params[name].kind is inspect.Parameter.KEYWORD_ONLY)
     ok("signature/predict_positionals_kept",
-       list(inspect.signature(laya_predict).parameters)[:3] == ["state", "questions", "model"],
-       repr(list(inspect.signature(laya_predict).parameters)))
+       list(inspect.signature(veya_predict).parameters)[:3] == ["state", "questions", "model"],
+       repr(list(inspect.signature(veya_predict).parameters)))
 
     by_name = {t.name: t for t in asyncio.run(mcp_server.list_tools())}
-    for name, want in (("laya_predict", controls), ("laya_shortlist", controls),
-                       ("laya_preset", controls), ("laya_route", ["model", "task", "lang"])):
+    for name, want in (("veya_predict", controls), ("veya_shortlist", controls),
+                       ("veya_preset", controls), ("veya_route", ["model", "task", "lang"])):
         tool = by_name[name]
         schema = tool.input_schema if hasattr(tool, "input_schema") else tool.inputSchema
         props = schema.get("properties", {})
@@ -1968,13 +1968,13 @@ def test_controls_signature_and_schema():
             ok("schema/%s_%s_not_required" % (name, arg), arg not in required, repr(required))
             ok("schema/%s_desc_documents_%s" % (name, arg), arg in tool.description.lower())
         ok("schema/%s_required_unchanged" % name,
-           required == (["preset", "state"] if name == "laya_preset" else ["state", "questions"]),
+           required == (["preset", "state"] if name == "veya_preset" else ["state", "questions"]),
            repr(required))
 
-    from laya.mcp import server as server_mod
+    from veya.mcp import server as server_mod
 
     model_schemas = []
-    for name in ("laya_predict", "laya_shortlist", "laya_decide", "laya_route"):
+    for name in ("veya_predict", "veya_shortlist", "veya_decide", "veya_route"):
         parameter = inspect.signature(getattr(server_mod, name + "_tool")).parameters["model"]
         ok("signature/%s_model_default_none" % name, parameter.default is None, repr(parameter.default))
         tool = by_name[name]
@@ -1985,7 +1985,7 @@ def test_controls_signature_and_schema():
         model_schemas.append(model_schema)
     ok("schema/model_specs_consistent", all(model_schema == model_schemas[0] for model_schema in model_schemas),
        repr(model_schemas))
-    for name in ("laya_predict", "laya_shortlist"):
+    for name in ("veya_predict", "veya_shortlist"):
         description = by_name[name].description.lower()
         ok("schema/%s_model_doc_matches_nullable_default" % name,
            all(option in description for option in ("null (default)", "'auto'", "omitted")),
@@ -1996,7 +1996,7 @@ def test_lang_guess_control():
     """`lang_guess` -- core's soft routing hint (#489 family) -- reaches the single-request tools.
 
     The batch surface already forwards it (``BATCH_ITEM_OVERRIDES`` advertises the key, and
-    ``laya_predict_batch``/``laya_route_batch`` hand it to ``Router.*_batch``), and ``laya-serve`` and
+    ``veya_predict_batch``/``veya_route_batch`` hand it to ``Router.*_batch``), and ``veya-serve`` and
     the CLI forward it, so a client scoring one state over MCP could ask for a probable language to
     nudge the checkpoint only by sending a batch of one. `lang_guess` is routing-only, so it is
     treated like ``task``: forwarded to a router call, refused on a pinned model (a pinned call has
@@ -2017,102 +2017,102 @@ def test_lang_guess_control():
     expect_tool_error("langguess/callable_rejected",
                       lambda: validate_lang_guess(lambda state: "de"), "invalid_lang_guess")
 
-    # laya_predict forwards lang_guess to core's predict, and only when set: a call with no hint
+    # veya_predict forwards lang_guess to core's predict, and only when set: a call with no hint
     # reaches core exactly as before the keyword was exposed here.
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, router=router)
+    veya_predict(STATE, QUESTIONS, router=router)
     ok("predict/langguess_unset_absent", router.predict_calls == [{}], repr(router.predict_calls))
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, lang_guess="de", router=router)
+    veya_predict(STATE, QUESTIONS, lang_guess="de", router=router)
     ok("predict/langguess_forwarded", router.predict_calls == [{"lang_guess": "de"}],
        repr(router.predict_calls))
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, lang_guess="de", task="typed_decisions", router=router)
+    veya_predict(STATE, QUESTIONS, lang_guess="de", task="typed_decisions", router=router)
     ok("predict/langguess_alongside_task",
        router.predict_calls == [{"task": "typed_decisions", "lang_guess": "de"}],
        repr(router.predict_calls))
     # An explicit lang and a soft hint are distinct keywords: both reach core, and core orders them.
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, lang="fr", lang_guess="de", router=router)
+    veya_predict(STATE, QUESTIONS, lang="fr", lang_guess="de", router=router)
     ok("predict/lang_and_langguess_distinct",
        router.predict_calls == [{"lang": "fr", "lang_guess": "de"}], repr(router.predict_calls))
 
     # Pinned: refused before core, exactly like task -- there is nothing to route.
-    for model in ("english", "laya", "ML"):
+    for model in ("english", "veya", "ML"):
         router = ControlRouter()
         expect_tool_error("predict/model_plus_langguess_%s" % model,
-                          lambda m=model: laya_predict(STATE, QUESTIONS, model=m,
+                          lambda m=model: veya_predict(STATE, QUESTIONS, model=m,
                                                        lang_guess="de", router=router),
                           "invalid_lang_guess")
         ok("predict/model_plus_langguess_no_call_%s" % model, router.predict_calls == [],
            repr(router.predict_calls))
     router = ControlRouter()
     expect_tool_error("predict/bad_langguess_before_core",
-                      lambda: laya_predict(STATE, QUESTIONS, lang_guess=["de"], router=router),
+                      lambda: veya_predict(STATE, QUESTIONS, lang_guess=["de"], router=router),
                       "invalid_lang_guess")
     ok("predict/bad_langguess_no_call", router.predict_calls == [], repr(router.predict_calls))
 
     # The direct-agent branch: Agent.predict does not accept lang_guess, so it is stripped -- a
     # no-router auto call answers through the agent without ever naming the hint to core.
     agent = ControlAgent()
-    laya_predict(STATE, QUESTIONS, lang_guess="de", agent=agent)
+    veya_predict(STATE, QUESTIONS, lang_guess="de", agent=agent)
     ok("predict/agent_langguess_stripped", agent.calls == [{}], repr(agent.calls))
     agent = ControlAgent()
-    laya_predict(STATE, QUESTIONS, lang="de", lang_guess="en", agent=agent)
+    veya_predict(STATE, QUESTIONS, lang="de", lang_guess="en", agent=agent)
     ok("predict/agent_keeps_lang_drops_langguess", agent.calls == [{"lang": "de"}],
        repr(agent.calls))
 
-    # laya_route: a routing tool, so lang_guess reaches route and is refused on a pin.
+    # veya_route: a routing tool, so lang_guess reaches route and is refused on a pin.
     router = ControlRouter(routed="multilingual")
-    out = laya_route(STATE, QUESTIONS, lang_guess="de", router=router)
+    out = veya_route(STATE, QUESTIONS, lang_guess="de", router=router)
     ok("route/langguess_forwarded", router.route_calls == [{"lang_guess": "de"}],
        repr(router.route_calls))
     ok("route/langguess_decision_shape", set(out) == {"model", "repo", "reason"}, repr(out))
     router = ControlRouter()
     expect_tool_error("route/model_plus_langguess",
-                      lambda: laya_route(STATE, QUESTIONS, model="english",
+                      lambda: veya_route(STATE, QUESTIONS, model="english",
                                          lang_guess="de", router=router),
                       "invalid_lang_guess")
     ok("route/refused_langguess_before_core", router.route_calls == [], repr(router.route_calls))
 
-    # laya_shortlist: lang_guess reaches the route that chose the checkpoint, and is stripped from
+    # veya_shortlist: lang_guess reaches the route that chose the checkpoint, and is stripped from
     # the answering pass (which pins the routed model, so the hint has nothing left to decide).
     small = {"dept": {"type": "choice", "instructions": "pick",
                       "criteria": {"a": "A", "b": "B", "c": "C", "d": "D", "e": "E"}}}
     router = ControlRouter(routed="multilingual")
-    laya_shortlist(STATE, small, k=2, lang_guess="de", router=router, embed_fn=_tie_embed)
+    veya_shortlist(STATE, small, k=2, lang_guess="de", router=router, embed_fn=_tie_embed)
     ok("shortlist/route_sees_langguess", router.route_calls == [{"lang_guess": "de"}],
        repr(router.route_calls))
     ok("shortlist/predict_drops_langguess",
        router.predict_calls == [{"model": "multilingual"}], repr(router.predict_calls))
     router = ControlRouter()
     expect_tool_error("shortlist/pinned_plus_langguess",
-                      lambda: laya_shortlist(STATE, small, k=2, model="english",
+                      lambda: veya_shortlist(STATE, small, k=2, model="english",
                                              lang_guess="de", router=router,
                                              embed_fn=_tie_embed),
                       "invalid_lang_guess")
     ok("shortlist/pinned_plus_langguess_no_call", router.predict_calls == [],
        repr(router.predict_calls))
 
-    # laya_preset threads it through laya_predict (always auto, so never refused).
+    # veya_preset threads it through veya_predict (always auto, so never refused).
     def builder(attr):
         return {"probe": {"type": "noul", "instructions": "Does the `body` need a human?"}}
     router = ControlRouter()
-    laya_preset("guard", STATE, lang_guess="de", router=router, preset_builder=builder)
+    veya_preset("guard", STATE, lang_guess="de", router=router, preset_builder=builder)
     ok("preset/langguess_forwarded", router.predict_calls == [{"lang_guess": "de"}],
        repr(router.predict_calls))
 
     # Cross-surface drift guard: lang_guess is a real core routing control (serve forwards it as a
     # body control; the batch item overrides already name it) and Router.route/predict accept it, so
     # this layer can never advertise a keyword core would reject.
-    from laya import serve as serve_mod
+    from veya import serve as serve_mod
 
     ok("drift/langguess_in_body_controls", "lang_guess" in serve_mod.BODY_CONTROLS,
        repr(serve_mod.BODY_CONTROLS))
     ok("drift/langguess_in_batch_overrides", "lang_guess" in BATCH_ITEM_OVERRIDES,
        repr(BATCH_ITEM_OVERRIDES))
     for method in ("route", "predict"):
-        params = inspect.signature(getattr(__import__("laya.router", fromlist=["Router"]).Router,
+        params = inspect.signature(getattr(__import__("veya.router", fromlist=["Router"]).Router,
                                            method)).parameters
         ok("drift/router_%s_accepts_langguess" % method, "lang_guess" in params,
            repr(sorted(params)))
@@ -2123,8 +2123,8 @@ def test_min_confidence_control():
 
     #567 forwarded every other per-call control (task/lang/max_len/head_max_len) to these tools,
     but not this one: a client could pin a checkpoint and size its budget over the wire, yet could
-    not ask Laya to abstain on an unsure answer -- even though `min_confidence` is a validated
-    keyword of `Agent.predict`, `Router.predict`/`predict_batch` and `laya.decide` on `main`.
+    not ask Veya to abstain on an unsure answer -- even though `min_confidence` is a validated
+    keyword of `Agent.predict`, `Router.predict`/`predict_batch` and `veya.decide` on `main`.
     """
     import inspect
 
@@ -2138,65 +2138,65 @@ def test_min_confidence_control():
         expect_tool_error("minconf/rejected_%r" % (bad,),
                           lambda b=bad: validate_min_confidence(b), "invalid_min_confidence")
 
-    # laya_predict forwards it to core's predict, and only when set: a no-abstention call reaches
+    # veya_predict forwards it to core's predict, and only when set: a no-abstention call reaches
     # core exactly as it did before the keyword was exposed here.
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, router=router)
+    veya_predict(STATE, QUESTIONS, router=router)
     ok("predict/minconf_unset_absent", router.predict_calls == [{}], repr(router.predict_calls))
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, min_confidence=0.85, router=router)
+    veya_predict(STATE, QUESTIONS, min_confidence=0.85, router=router)
     ok("predict/minconf_forwarded", router.predict_calls == [{"min_confidence": 0.85}],
        repr(router.predict_calls))
     router = ControlRouter()
-    laya_predict(STATE, QUESTIONS, lang="de", max_len=1024, min_confidence=0.9, router=router)
+    veya_predict(STATE, QUESTIONS, lang="de", max_len=1024, min_confidence=0.9, router=router)
     ok("predict/minconf_alongside_controls",
        router.predict_calls == [{"lang": "de", "max_len": 1024, "min_confidence": 0.9}],
        repr(router.predict_calls))
     router = ControlRouter()
     expect_tool_error("predict/bad_minconf",
-                      lambda: laya_predict(STATE, QUESTIONS, min_confidence=2, router=router),
+                      lambda: veya_predict(STATE, QUESTIONS, min_confidence=2, router=router),
                       "invalid_min_confidence")
     ok("predict/bad_minconf_no_call", router.predict_calls == [], repr(router.predict_calls))
     agent = ControlAgent()
-    laya_predict(STATE, QUESTIONS, model="english", min_confidence=0.5, agent=agent)
+    veya_predict(STATE, QUESTIONS, model="english", min_confidence=0.5, agent=agent)
     ok("predict/agent_minconf", agent.calls == [{"min_confidence": 0.5}], repr(agent.calls))
 
-    # laya_shortlist carries it to the answering pass beside the budget (route stays budget-free).
+    # veya_shortlist carries it to the answering pass beside the budget (route stays budget-free).
     small = {"dept": {"type": "choice", "instructions": "pick",
                       "criteria": {"a": "A", "b": "B", "c": "C", "d": "D", "e": "E"}}}
     router = ControlRouter(routed="multilingual")
-    laya_shortlist(STATE, small, k=2, head_max_len=384, min_confidence=0.8,
+    veya_shortlist(STATE, small, k=2, head_max_len=384, min_confidence=0.8,
                    router=router, embed_fn=_tie_embed)
     ok("shortlist/minconf_reaches_predict",
        router.predict_calls == [{"model": "multilingual", "head_max_len": 384,
                                  "min_confidence": 0.8}], repr(router.predict_calls))
     router = ControlRouter(routed="multilingual")
-    laya_shortlist(STATE, small, k=2, router=router, embed_fn=_tie_embed)
+    veya_shortlist(STATE, small, k=2, router=router, embed_fn=_tie_embed)
     ok("shortlist/minconf_unset_absent",
        "min_confidence" not in router.predict_calls[0], repr(router.predict_calls))
     router = ControlRouter()
     expect_tool_error("shortlist/bad_minconf",
-                      lambda: laya_shortlist(STATE, small, k=2, min_confidence=-1, router=router,
+                      lambda: veya_shortlist(STATE, small, k=2, min_confidence=-1, router=router,
                                              embed_fn=_tie_embed),
                       "invalid_min_confidence")
 
-    # laya_preset inherits the control through laya_predict.
+    # veya_preset inherits the control through veya_predict.
     def builder(attr):
         return {"probe": {"type": "noul", "instructions": "Does the `body` need a human?"}}
     router = ControlRouter()
-    laya_preset("guard", STATE, min_confidence=0.7, router=router, preset_builder=builder)
+    veya_preset("guard", STATE, min_confidence=0.7, router=router, preset_builder=builder)
     ok("preset/minconf_forwarded", router.predict_calls == [{"min_confidence": 0.7}],
        repr(router.predict_calls))
 
-    # The flagship: laya_decide uses core's abstention to null an unsure field while still
+    # The flagship: veya_decide uses core's abstention to null an unsure field while still
     # reporting its confidence -- the one thing a values-consuming client needs and cannot get
     # any other way over MCP. FakeRouter answers department at 0.94, urgency at 0.8, needs_human
     # at 0.89, so a 0.9 gate keeps the first and nulls the other two.
     router = TypeEchoRouter()
-    plain = laya_decide(STATE, DECIDE_SCHEMA, router=router)
+    plain = veya_decide(STATE, DECIDE_SCHEMA, router=router)
     ok("decide/minconf_unset_no_nul", plain["values"]["urgency"] == 2
        and plain["values"]["needs_human"] is True, repr(plain["values"]))
-    abstained = laya_decide(STATE, DECIDE_SCHEMA, min_confidence=0.9, router=router)
+    abstained = veya_decide(STATE, DECIDE_SCHEMA, min_confidence=0.9, router=router)
     ok("decide/keeps_confident_field", abstained["values"]["department"] == "billing",
        repr(abstained["values"]))
     ok("decide/nulls_low_score", abstained["values"]["urgency"] is None,
@@ -2207,24 +2207,24 @@ def test_min_confidence_control():
        set(abstained["confidence"]) == {"department", "urgency", "needs_human"}
        and abstained["confidence"]["urgency"] == 0.8, repr(abstained["confidence"]))
     # A threshold of 0 abstains over nothing -- the raw answers are byte-identical to no call.
-    zero = laya_decide(STATE, DECIDE_SCHEMA, min_confidence=0.0, router=router)
+    zero = veya_decide(STATE, DECIDE_SCHEMA, min_confidence=0.0, router=router)
     ok("decide/zero_is_no_abstention", zero["values"] == plain["values"], repr(zero["values"]))
 
     # The tool is a thin surface over the documented core abstention, not a second projection.
-    import laya
+    import veya
 
-    core = laya.decide(router, STATE, schema=DECIDE_SCHEMA, min_confidence=0.9)
+    core = veya.decide(router, STATE, schema=DECIDE_SCHEMA, min_confidence=0.9)
     ok("decide/abstention_parity_with_core", abstained["values"] == core,
        "tool=%r core=%r" % (abstained["values"], core))
 
     # Refused before core, so a bad threshold costs no forward pass.
     router = TypeEchoRouter()
     expect_tool_error("decide/bad_minconf",
-                      lambda: laya_decide(STATE, DECIDE_SCHEMA, min_confidence=1.5, router=router),
+                      lambda: veya_decide(STATE, DECIDE_SCHEMA, min_confidence=1.5, router=router),
                       "invalid_min_confidence")
 
     # Every tool that answers exposes the keyword, defaults it to None, and documents it.
-    tools = [laya_predict, laya_shortlist, laya_preset, laya_decide]
+    tools = [veya_predict, veya_shortlist, veya_preset, veya_decide]
     for fn in tools:
         params = inspect.signature(fn).parameters
         ok("sig/%s_has_min_confidence" % fn.__name__, "min_confidence" in params,
@@ -2234,7 +2234,7 @@ def test_min_confidence_control():
         ok("sig/%s_min_confidence_keyword_only" % fn.__name__,
            params["min_confidence"].kind is inspect.Parameter.KEYWORD_ONLY)
     by_name = {t.name: t for t in asyncio.run(mcp_server.list_tools())}
-    for name in ("laya_predict", "laya_shortlist", "laya_preset", "laya_decide"):
+    for name in ("veya_predict", "veya_shortlist", "veya_preset", "veya_decide"):
         tool = by_name[name]
         schema = tool.input_schema if hasattr(tool, "input_schema") else tool.inputSchema
         props = schema.get("properties", {})
@@ -2265,7 +2265,7 @@ def test_question_validation_matches_the_agent():
     router: no weights, and the core guard is the oracle rather than a second hand-written
     copy of the rules.
     """
-    from laya.agent import Agent
+    from veya.agent import Agent
 
     def core_rejects(qid, qdef):
         try:
@@ -2383,13 +2383,13 @@ def test_a_bad_question_is_a_caller_error_not_a_server_fault():
     """
     import json as _json
 
-    from laya.mcp import server as server_mod
+    from veya.mcp import server as server_mod
 
     class ValidatingAgent:
         """The real guard, no checkpoint: what `Agent.system_one` runs before encoding."""
 
         def predict(self, state, questions, **kwargs):
-            from laya.agent import Agent
+            from veya.agent import Agent
             for qid, qdef in questions.items():
                 Agent._check_question(qid, qdef)
             return {"answers": {qid: {"type": "noul", "noul": 0.5, "noul_label": None}
@@ -2419,7 +2419,7 @@ def test_a_bad_question_is_a_caller_error_not_a_server_fault():
                                  "option_order": [0, 0]}),
     ):
         try:
-            server_mod._wrap(server_mod.laya_predict, state=STATE, questions={"q": qdef},
+            server_mod._wrap(server_mod.veya_predict, state=STATE, questions={"q": qdef},
                              model="english", router=Router())
             ok("caller_error/rejected_%s" % label, False, "no error raised")
         except Exception as exc:  # noqa: BLE001 -- the wrapper raises McpToolError
@@ -2437,10 +2437,10 @@ def test_timeout_removed():
     # functions no longer accept a timeout argument.
     import inspect
 
-    import laya.mcp.tools as tools_mod
+    import veya.mcp.tools as tools_mod
 
-    for fn in (laya_predict, laya_route, laya_preset, laya_shortlist,
-               laya_predict_batch, laya_route_batch, laya_decide):
+    for fn in (veya_predict, veya_route, veya_preset, veya_shortlist,
+               veya_predict_batch, veya_route_batch, veya_decide):
         ok("timeout/param_absent_%s" % fn.__name__, "timeout" not in inspect.signature(fn).parameters)
     ok("timeout/executor_absent", "ThreadPoolExecutor" not in inspect.getsource(tools_mod))
 
@@ -2454,12 +2454,12 @@ def test_batch_item_shape_as_documented():
     message (checked against the validator in test_batch_validation), each batch tool's registered
     description, and the README's MCP section. A client reads them as the schema, so all three are
     compared to `BATCH_ITEM_OVERRIDES` -- the tuple `_validate_batch_item` branches on.
-    `laya_route_batch` leaves the two token budgets out, because routing runs no forward pass and
+    `veya_route_batch` leaves the two token budgets out, because routing runs no forward pass and
     a budget there would be ignored.
     """
     by_name = {t.name: t for t in asyncio.run(mcp_server.list_tools())}
-    for tool, omit in (("laya_predict_batch", ()),
-                       ("laya_route_batch", ("max_len", "head_max_len"))):
+    for tool, omit in (("veya_predict_batch", ()),
+                       ("veya_route_batch", ("max_len", "head_max_len"))):
         want = batch_item_key_doc(omit=omit)
         ok("schema/%s_item_shape" % tool, want in (by_name[tool].description or ""),
            "documents %r" % want)
@@ -2485,8 +2485,8 @@ def test_cli_mcp_page_batch_rows():
 
     `docs/cli-mcp.md` is the page a client reads before opening the tools/list response, so the
     `requests` cell is a fourth copy of the shape. Until now the three-copy gate above covered
-    the tool descriptions and the README but not this table, and the `laya_route_batch` row read
-    "same shape as `laya_predict_batch`" -- which is wrong, because `server.py:310` registers the
+    the tool descriptions and the README but not this table, and the `veya_route_batch` row read
+    "same shape as `veya_predict_batch`" -- which is wrong, because `server.py:310` registers the
     route tool with `batch_item_key_doc(omit=("max_len", "head_max_len"))`. Routing runs no
     forward pass, so the token budgets are dropped; the row has to say the six keys the tool
     actually accepts.
@@ -2508,8 +2508,8 @@ def test_cli_mcp_page_batch_rows():
                     return cells[2]
         return None
 
-    for tool, omit in (("laya_predict_batch", ()),
-                       ("laya_route_batch", ("max_len", "head_max_len"))):
+    for tool, omit in (("veya_predict_batch", ()),
+                       ("veya_route_batch", ("max_len", "head_max_len"))):
         cell = row_cell(tool)
         ok("docs-mcp/%s_row_present" % tool, cell is not None, "row not found")
         if cell is None:
@@ -2525,56 +2525,56 @@ def test_cli_mcp_page_batch_rows():
            "row=%r want=%r" % (sorted(named), sorted(want)))
 
     ok("docs-mcp/route_batch_row_drops_sibling_reference",
-       "same shape as `laya_predict_batch`" not in page)
+       "same shape as `veya_predict_batch`" not in page)
 
 
 def test_models_from_env():
-    old = os.environ.get("LAYA_MODELS")
+    old = os.environ.get("VEYA_MODELS")
     try:
-        os.environ.pop("LAYA_MODELS", None)
+        os.environ.pop("VEYA_MODELS", None)
         ok("models/mcp_default", _models_from_env() == ["english", "multilingual"])
-        os.environ["LAYA_MODELS"] = ""
+        os.environ["VEYA_MODELS"] = ""
         ok("models/empty_default", _models_from_env() == ["english", "multilingual"])
-        os.environ["LAYA_MODELS"] = " english , multilingual "
+        os.environ["VEYA_MODELS"] = " english , multilingual "
         ok("models/whitespace", _models_from_env() == ["english", "multilingual"])
-        os.environ["LAYA_MODELS"] = "typed-decisions"
+        os.environ["VEYA_MODELS"] = "typed-decisions"
         ok("models/explicit_single", _models_from_env() == ["typed-decisions"])
-        os.environ["LAYA_MODELS"] = "english, multilingual, typed-decisions,"
+        os.environ["VEYA_MODELS"] = "english, multilingual, typed-decisions,"
         ok("models/trailing_comma", _models_from_env() == ["english", "multilingual", "typed-decisions"])
     finally:
         if old is None:
-            os.environ.pop("LAYA_MODELS", None)
+            os.environ.pop("VEYA_MODELS", None)
         else:
-            os.environ["LAYA_MODELS"] = old
+            os.environ["VEYA_MODELS"] = old
 
 
 def test_auto_task_env():
-    """LAYA_AUTO_TASK must reach the Router the MCP server builds, as it does the serve one.
+    """VEYA_AUTO_TASK must reach the Router the MCP server builds, as it does the serve one.
 
-    README's MCP section says these variables follow the contract at the top of laya.serve, so the
-    check is built through both surfaces' real builders -- `laya.mcp.server._ensure_router()` and
-    `laya.serve.build_router()` -- rather than by reading a flag off a hand-made Router.
+    README's MCP section says these variables follow the contract at the top of veya.serve, so the
+    check is built through both surfaces' real builders -- `veya.mcp.server._ensure_router()` and
+    `veya.serve.build_router()` -- rather than by reading a flag off a hand-made Router.
     `Router.route()` delegates to the private `_route`, documented as deciding "without loading or
     running anything", so no checkpoint is downloaded here.
     """
-    import laya.mcp.server as mcp_mod  # the module, not the MCPServer instance
-    from laya.router import _TYPED_DECISION_WORKFLOWS
-    from laya.serve import build_router
+    import veya.mcp.server as mcp_mod  # the module, not the MCPServer instance
+    from veya.router import _TYPED_DECISION_WORKFLOWS
+    from veya.serve import build_router
 
     state = {"body": "I was charged twice, please refund the duplicate"}
     schemas = {name: {qid: {"type": "choice", "options": ["yes", "no"]}
                       for qid in sorted(ids)}
                for name, ids in sorted(_TYPED_DECISION_WORKFLOWS.items())}
-    saved = {k: os.environ.get(k) for k in ("LAYA_AUTO_TASK", "LAYA_PRELOAD")}
+    saved = {k: os.environ.get(k) for k in ("VEYA_AUTO_TASK", "VEYA_PRELOAD")}
     saved_router = mcp_mod._ROUTER
     try:
-        os.environ["LAYA_PRELOAD"] = "0"  # neither surface may build a checkpoint here
+        os.environ["VEYA_PRELOAD"] = "0"  # neither surface may build a checkpoint here
 
         def build(value):
             if value is None:
-                os.environ.pop("LAYA_AUTO_TASK", None)
+                os.environ.pop("VEYA_AUTO_TASK", None)
             else:
-                os.environ["LAYA_AUTO_TASK"] = value
+                os.environ["VEYA_AUTO_TASK"] = value
             mcp_mod._ROUTER = None  # the server caches the Router it built
             return mcp_mod._ensure_router(), build_router()
 
@@ -2615,32 +2615,32 @@ def test_auto_task_env():
 
 
 def test_default_model_env():
-    """LAYA_DEFAULT_MODEL has to reach both servers' Routers, with one meaning.
+    """VEYA_DEFAULT_MODEL has to reach both servers' Routers, with one meaning.
 
-    README's MCP section says these variables follow the contract at the top of laya.serve, so
-    both halves are built through the real builders -- `laya.mcp.server._ensure_router()` and
-    `laya.serve.build_router()` -- and read off the Router each one actually returns. The
+    README's MCP section says these variables follow the contract at the top of veya.serve, so
+    both halves are built through the real builders -- `veya.mcp.server._ensure_router()` and
+    `veya.serve.build_router()` -- and read off the Router each one actually returns. The
     variable itself is the routing fallback README prescribes for a mostly-non-English deployment
     (`Router(default="multilingual")`), which until now only examples/server.py could be told.
     The one place the two surfaces part is what an unresolvable name costs: serve refuses to
     start, a stdio server has no startup to refuse, so MCP has to carry the same words in a
     tool error.
     """
-    import laya.mcp.server as mcp_mod  # the module, not the MCPServer instance
-    from laya.serve import build_router
+    import veya.mcp.server as mcp_mod  # the module, not the MCPServer instance
+    from veya.serve import build_router
 
     saved = {k: os.environ.get(k)
-             for k in ("LAYA_DEFAULT_MODEL", "LAYA_PRELOAD", "LAYA_AUTO_TASK")}
+             for k in ("VEYA_DEFAULT_MODEL", "VEYA_PRELOAD", "VEYA_AUTO_TASK")}
     saved_router = mcp_mod._ROUTER
     try:
-        os.environ["LAYA_PRELOAD"] = "0"    # neither surface may build a checkpoint here
-        os.environ["LAYA_AUTO_TASK"] = "0"  # leaves the fallback the only thing moving
+        os.environ["VEYA_PRELOAD"] = "0"    # neither surface may build a checkpoint here
+        os.environ["VEYA_AUTO_TASK"] = "0"  # leaves the fallback the only thing moving
 
         def build(value):
             if value is None:
-                os.environ.pop("LAYA_DEFAULT_MODEL", None)
+                os.environ.pop("VEYA_DEFAULT_MODEL", None)
             else:
-                os.environ["LAYA_DEFAULT_MODEL"] = value
+                os.environ["VEYA_DEFAULT_MODEL"] = value
             mcp_mod._ROUTER = None  # the server caches the Router it built
             return mcp_mod._ensure_router(), build_router()
 
@@ -2686,7 +2686,7 @@ def test_default_model_env():
            == nonenglish_serve.route({"body": "Please refund the duplicate charge"}).model)
 
         serve_message = mcp_message = ""
-        os.environ["LAYA_DEFAULT_MODEL"] = "mutli-lingual"
+        os.environ["VEYA_DEFAULT_MODEL"] = "mutli-lingual"
         try:
             build_router()
             ok("default_model/serve_refuses_to_start", False, "build_router() returned a Router")
@@ -2710,7 +2710,7 @@ def test_default_model_env():
         # One message, both surfaces: the operator fixes the typo from what they were told,
         # whether or not the server came up.
         ok("default_model/both_surfaces_name_the_variable_and_the_value",
-           all("invalid LAYA_DEFAULT_MODEL 'mutli-lingual'" in m for m in (serve_message, mcp_message)),
+           all("invalid VEYA_DEFAULT_MODEL 'mutli-lingual'" in m for m in (serve_message, mcp_message)),
            "serve=%r mcp=%r" % (serve_message, mcp_message))
         ok("default_model/both_surfaces_carry_core_s_words",
            all("unknown model" in m for m in (serve_message, mcp_message)),
@@ -2729,30 +2729,32 @@ def test_default_model_env():
 
 def test_server_registration():
     tools = asyncio.run(mcp_server.list_tools())
-    names = sorted(t.name for t in tools)
-    ok("server/tool_names", names == ["laya_decide", "laya_predict", "laya_predict_batch", "laya_predict_long",
-                                      "laya_preset", "laya_route", "laya_route_batch",
-                                      "laya_shortlist", "laya_status", "laya_tournament"], repr(names))
-    decision = {"laya_predict", "laya_route", "laya_preset", "laya_shortlist",
-                "laya_predict_batch", "laya_route_batch", "laya_decide", "laya_predict_long", "laya_tournament"}
+    names = sorted(t.name for t in tools if t.name.startswith("veya_"))
+    ok("server/legacy tool aliases", {t.name for t in tools if t.name.startswith("laya_")}
+       == {n.replace("veya_", "laya_", 1) for n in names})
+    ok("server/tool_names", names == ["veya_decide", "veya_predict", "veya_predict_batch", "veya_predict_long",
+                                      "veya_preset", "veya_route", "veya_route_batch",
+                                      "veya_shortlist", "veya_status", "veya_tournament"], repr(names))
+    decision = {"veya_predict", "veya_route", "veya_preset", "veya_shortlist",
+                "veya_predict_batch", "veya_route_batch", "veya_decide", "veya_predict_long", "veya_tournament"}
     for t in tools:
         desc = (t.description or "").lower()
         ok("server/desc_%s_nonempty" % t.name, bool(desc.strip()), repr(desc))
         # The guardrails constant is on the decision tools only;
-        # laya_status reports instead of deciding.
+        # veya_status reports instead of deciding.
         if t.name in decision:
             ok("server/desc_%s_guardrail" % t.name, "do not use" in desc)
-        if t.name == "laya_predict":
+        if t.name == "veya_predict":
             ok("server/desc_noul_labels", "optional labels" in desc)
         if t.name.endswith("_batch"):
             ok("server/desc_%s_requests" % t.name, "non-empty array" in desc)
 
 
 def test_server_shortlist_k_default():
-    """The shortlist tool's advertised `k` default must be `laya.shortlist`'s.
+    """The shortlist tool's advertised `k` default must be `veya.shortlist`'s.
 
-    `laya/mcp/server.py` registers the tool with `k: int = 20` written out as a literal,
-    because the module stays importable without numpy -- `laya.shortlist` imports numpy at
+    `veya/mcp/server.py` registers the tool with `k: int = 20` written out as a literal,
+    because the module stays importable without numpy -- `veya.shortlist` imports numpy at
     module level, so deriving the default from it would put numpy on the MCP server's import
     path. The literal is therefore necessary, and necessary hand-copies get a drift gate.
 
@@ -2763,17 +2765,17 @@ def test_server_shortlist_k_default():
     """
     import inspect
 
-    from laya.mcp import server as server_mod
-    from laya.shortlist import DEFAULT_SHORTLIST_K
+    from veya.mcp import server as server_mod
+    from veya.shortlist import DEFAULT_SHORTLIST_K
 
-    params = inspect.signature(server_mod.laya_shortlist_tool).parameters
+    params = inspect.signature(server_mod.veya_shortlist_tool).parameters
     ok("server/shortlist_k_default", params["k"].default == DEFAULT_SHORTLIST_K,
        "signature=%r library=%r" % (params["k"].default, DEFAULT_SHORTLIST_K))
 
     by_name = {t.name: t for t in asyncio.run(mcp_server.list_tools())}
-    schema = by_name["laya_shortlist"].input_schema \
-        if hasattr(by_name["laya_shortlist"], "input_schema") \
-        else by_name["laya_shortlist"].inputSchema
+    schema = by_name["veya_shortlist"].input_schema \
+        if hasattr(by_name["veya_shortlist"], "input_schema") \
+        else by_name["veya_shortlist"].inputSchema
     advertised = schema.get("properties", {}).get("k", {}).get("default", "<absent>")
     ok("schema/shortlist_k_default", advertised == DEFAULT_SHORTLIST_K,
        "schema=%r library=%r" % (advertised, DEFAULT_SHORTLIST_K))
@@ -2782,7 +2784,7 @@ def test_server_shortlist_k_default():
 def test_shortlist_metadata_keys_are_documented():
     """Every key `predict_shortlist` publishes must be named by all three surfaces that list it.
 
-    `laya/shortlist.py` writes a five-key block per question: ``labels``, ``scores``, ``k``,
+    `veya/shortlist.py` writes a five-key block per question: ``labels``, ``scores``, ``k``,
     ``n`` and ``passthrough``. The tool description, the README and `docs/cli-mcp.md` each
     paraphrase that block, and all three stopped at four -- they dropped ``passthrough``, the
     one key that tells a caller whether the shortlist actually narrowed anything. A question
@@ -2790,7 +2792,7 @@ def test_shortlist_metadata_keys_are_documented():
     so a client that assumes a real ranking was produced reads ``None`` as "no scores" rather
     than "nothing to rank".
 
-    The key set is read out of `laya/shortlist.py`'s AST rather than typed here, so a sixth key
+    The key set is read out of `veya/shortlist.py`'s AST rather than typed here, so a sixth key
     added to the metadata fails this gate on all three pages at once.
     """
     import ast
@@ -2799,8 +2801,8 @@ def test_shortlist_metadata_keys_are_documented():
     root = Path(__file__).resolve().parents[1]
     # `encoding="utf-8"` on every read below, for the reason recorded at the README read in the
     # batch-shape gate: `Path.read_text()` and `open()` default to the locale encoding, which is
-    # cp1252 on the Windows runner, and these pages and `laya/shortlist.py` carry UTF-8.
-    with open(root / "laya" / "shortlist.py", encoding="utf-8") as f:
+    # cp1252 on the Windows runner, and these pages and `veya/shortlist.py` carry UTF-8.
+    with open(root / "veya" / "shortlist.py", encoding="utf-8") as f:
         shortlist_src = f.read()
     # Scoped to predict_shortlist's own body: predict_tournament also builds a `meta[qid]` dict,
     # and a module-wide walk would depend on which one ast.walk happens to reach first.
@@ -2816,7 +2818,7 @@ def test_shortlist_metadata_keys_are_documented():
             break
     ok("shortlist/meta_keys read from the AST",
        meta_keys == ["labels", "scores", "k", "n", "passthrough"],
-       "AST read %r from laya/shortlist.py" % (meta_keys,))
+       "AST read %r from veya/shortlist.py" % (meta_keys,))
 
     # Each key needs a concept word on the page; the paraphrase never uses the raw key names.
     REQUIRED = {
@@ -2829,7 +2831,7 @@ def test_shortlist_metadata_keys_are_documented():
 
     by_name = {t.name: t for t in asyncio.run(mcp_server.list_tools())}
     surfaces = {
-        "tool description": by_name["laya_shortlist"].description,
+        "tool description": by_name["veya_shortlist"].description,
         "docs/guide.md": (root / "docs" / "guide.md").read_text(encoding="utf-8"),  # Veya: was README.md
         "docs/cli-mcp.md": (root / "docs" / "cli-mcp.md").read_text(encoding="utf-8"),
     }
@@ -2862,8 +2864,8 @@ def test_cli_mcp_page_tool_argument_rows():
     tool's registered description, and the README. The existing gate at
     `test_batch_item_shape_as_documented` covers the batch rows' per-request keys but does not
     read the six single-shot rows, so a whole control can fall off the table while the tool
-    accepts it. The `laya_decide` row was in that state: the server registers
-    `laya_decide_tool(state, schema, model='auto', min_confidence=None)` and the tool's own
+    accepts it. The `veya_decide` row was in that state: the server registers
+    `veya_decide_tool(state, schema, model='auto', min_confidence=None)` and the tool's own
     description spells out `min_confidence`, but the docs row read
     "`state`, `schema`, optional `model`" -- so a caller who trusts the table hand-rolls the
     abstention check on `values`, never learning the tool already nulls an unsure field.
@@ -2872,11 +2874,11 @@ def test_cli_mcp_page_tool_argument_rows():
     `inspect.signature()` sees on the registered handler must appear backticked in the cell.
     Batch tools are skipped because their cell uses a `{...}` item shape that the sibling gate
     above already holds against `batch_item_key_doc`. The pre-fix wording is banned by direct
-    substring so the check fails if the `laya_decide` row reverts.
+    substring so the check fails if the `veya_decide` row reverts.
     """
     import inspect
 
-    from laya.mcp import server as server_mod
+    from veya.mcp import server as server_mod
 
     page = (Path(__file__).resolve().parents[1] / "docs" / "cli-mcp.md").read_text(encoding="utf-8")
 
@@ -2888,8 +2890,8 @@ def test_cli_mcp_page_tool_argument_rows():
                     return cells[2]
         return None
 
-    for tool in ("laya_status", "laya_route", "laya_predict",
-                 "laya_shortlist", "laya_preset", "laya_decide", "laya_tournament", "laya_predict_long"):
+    for tool in ("veya_status", "veya_route", "veya_predict",
+                 "veya_shortlist", "veya_preset", "veya_decide", "veya_tournament", "veya_predict_long"):
         cell = row_cell(tool)
         ok("docs-mcp/args_row_%s_present" % tool, cell is not None, "row not found")
         if cell is None:

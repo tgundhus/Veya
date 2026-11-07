@@ -5,7 +5,7 @@ For every checkpoint:
      layout (`rope_parameters` on transformers 5; `global_rope_theta` / `local_rope_theta` on
      4.x).
   2. Run-to-run determinism (same model, same input, twice) -- the float32 noise floor.
-  3. SDPA (what Laya asks transformers for) vs eager (reference math), on the outputs the
+  3. SDPA (what Veya asks transformers for) vs eager (reference math), on the outputs the
      answers are built from. Every number in the answer payload is rounded to 4 dp on the
      way out (`_decode_answers`), which quantises backend noise away: sdpa and eager move
      the hidden states by ~2e-5 here and the rounded answers by exactly 0, so comparing
@@ -25,14 +25,14 @@ os.environ.setdefault("USE_TORCH", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)          # repository root; <root>/laya/email.py must not shadow stdlib email
+sys.path.insert(0, ROOT)          # repository root; <root>/veya/email.py must not shadow stdlib email
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
 from transformers import AutoConfig  # noqa: E402
 
-import laya  # noqa: E402
-from laya.common import _apply_rope_config  # noqa: E402
+import veya  # noqa: E402
+from veya.common import _apply_rope_config  # noqa: E402
 
 QUESTIONS = {
     "department": {"type": "choice", "instructions": "Which department should handle this request?",
@@ -143,7 +143,7 @@ def rope_pair(source):
 def main():
     print("torch %s" % torch.__version__)
     failures = []
-    for name, rel in [("english", "models/laya"), ("multilingual", "models/laya-multilingual"),
+    for name, rel in [("english", "models/veya"), ("multilingual", "models/laya-multilingual"),
                       ("typed-decisions", "models/laya-typed-decisions")]:
         path = os.path.join(ROOT, rel)
         raw = json.load(open(os.path.join(path, "encoder", "config.json")))
@@ -160,7 +160,7 @@ def main():
         if not rope_ok:
             failures.append("%s rope theta" % name)
 
-        agent = laya.load(path, device="cpu")
+        agent = veya.load(path, device="cpu")
         first, first_decisions = run(agent)
         second, _ = run(agent)                   # noise floor: identical input, same weights
         floor = max(compare("", a, b)[0] for a, b in zip(first, second))

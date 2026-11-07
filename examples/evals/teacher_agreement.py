@@ -1,16 +1,16 @@
-"""Compare a local Laya checkpoint with two published teacher observations.
+"""Compare a local Veya checkpoint with two published teacher observations.
 
 From a checkout::
 
     python -m pip install -e . pyarrow
-    python examples/evals/teacher_agreement.py --output-dir /tmp/laya-agreement
-    laya-evals agreement /tmp/laya-agreement/reference.json \
-        /tmp/laya-agreement/repeat.json /tmp/laya-agreement/student.json
+    python examples/evals/teacher_agreement.py --output-dir /tmp/veya-agreement
+    veya-evals agreement /tmp/veya-agreement/reference.json \
+        /tmp/veya-agreement/repeat.json /tmp/veya-agreement/student.json
 
 The first 32 test rows and teacher repeats 0/1 are fixed before student inference.
 The parquet is downloaded once, checked against its SHA256, and kept in the output
 directory. Pass --parquet to reuse a downloaded copy. Only the example needs pyarrow.
-The pinned English Laya checkpoint runs locally on CPU; no teacher API is called.
+The pinned English Veya checkpoint runs locally on CPU; no teacher API is called.
 
 Data credit: LocalGate's MIT-licensed localgate/mmlu-pro-closed dataset, derived
 from TIGER-Lab/MMLU-Pro. The publisher's protocol and generation manifest are at:
@@ -19,7 +19,7 @@ https://huggingface.co/datasets/localgate/mmlu-pro-closed/blob/de3c3d7bd8870e6ec
 
 Teacher picks are real saved generations, not reconstructed from aggregate scores.
 The publisher did not record the teacher's immutable model revision; null preserves
-that uncertainty. Laya receives the same question and ordered options as typed
+that uncertainty. Veya receives the same question and ordered options as typed
 inputs, not the teacher's chain-of-thought prompt. This small panel demonstrates
 the evaluation pipeline: agreement is neither accuracy nor a performance ceiling.
 """
@@ -69,7 +69,7 @@ def teacher_runs(parquet: Path) -> tuple[dict, dict]:
         data = parquet.read_bytes()
     else:
         request = urllib.request.Request(
-            PARQUET_URL, headers={"User-Agent": "Laya-agreement-example"}
+            PARQUET_URL, headers={"User-Agent": "Veya-agreement-example"}
         )
         with urllib.request.urlopen(request, timeout=120) as response:
             data = response.read()
@@ -111,7 +111,7 @@ def teacher_runs(parquet: Path) -> tuple[dict, dict]:
                 "language": "en",
             })
         runs.append({
-            "schema": "laya-agreement-run/1",
+            "schema": "veya-agreement-run/1",
             "run_id": f"gemma-seed-{seed}",
             "provenance": {
                 "model": "google/gemma-4-E2B-it",
@@ -170,7 +170,7 @@ def student_run(reference: dict, report: dict) -> dict:
     for record in report["cases"]:
         by_id[record["case_id"]]["answers"][record["qid"]] = record["student"]
     return {
-        "schema": "laya-agreement-run/1",
+        "schema": "veya-agreement-run/1",
         "run_id": report["config"]["run_ids"]["student"],
         "provenance": report["config"]["provenance"]["student"],
         "cases": cases,
@@ -191,8 +191,8 @@ def main() -> None:
     import torch
     import transformers
 
-    import laya
-    from laya import evals
+    import veya
+    from veya import evals
 
     torch.set_num_threads(2)
     torch.manual_seed(0)
@@ -202,13 +202,13 @@ def main() -> None:
         "settings": {
             "device": "cpu", "backend": "eager", "lang": "en",
             "min_confidence": None, "torch_threads": 2,
-            "laya_version": laya.__version__, "torch_version": str(torch.__version__),
+            "veya_version": veya.__version__, "torch_version": str(torch.__version__),
             "transformers_version": transformers.__version__,
         },
         "seed": 0,
     }
     print(f"Loading {MODEL}@{MODEL_REVISION} on CPU", file=sys.stderr, flush=True)
-    with laya.load(MODEL, device="cpu", revision=MODEL_REVISION, backend="eager") as agent:
+    with veya.load(MODEL, device="cpu", revision=MODEL_REVISION, backend="eager") as agent:
         report = evals.evaluate_agreement(
             LocalRunner(agent), reference, repeat, student_provenance=provenance,
             bootstrap_samples=2000, seed=0,

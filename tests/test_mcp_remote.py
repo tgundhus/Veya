@@ -1,6 +1,6 @@
-"""Remote mode of the MCP server (LAYA_BASE_URL): answers come from a laya-serve over HTTP.
+"""Remote mode of the MCP server (VEYA_BASE_URL): answers come from a veya-serve over HTTP.
 
-A stdlib HTTP server stands in for laya-serve, so these tests need no checkpoint, no torch
+A stdlib HTTP server stands in for veya-serve, so these tests need no checkpoint, no torch
 and no external network. Run: python -m pytest tests/test_mcp_remote.py
 """
 import json
@@ -11,16 +11,16 @@ import pytest
 
 pytest.importorskip("mcp")
 
-from laya import __version__  # noqa: E402
-from laya.mcp import server as mcp_server  # noqa: E402
-from laya.mcp.tools import (  # noqa: E402
-    ToolError, laya_decide, laya_predict, laya_predict_batch, laya_preset, laya_route, laya_route_batch,
-    laya_shortlist, laya_status, laya_tournament,
+from veya import __version__  # noqa: E402
+from veya.mcp import server as mcp_server  # noqa: E402
+from veya.mcp.tools import (  # noqa: E402
+    ToolError, veya_decide, veya_predict, veya_predict_batch, veya_preset, veya_route, veya_route_batch,
+    veya_shortlist, veya_status, veya_tournament,
 )
-from laya.mcp.remote import DEFAULT_TIMEOUT_S, RemoteError, RemoteRouter  # noqa: E402
+from veya.mcp.remote import DEFAULT_TIMEOUT_S, RemoteError, RemoteRouter  # noqa: E402
 
 ANSWER = {
-    "model": "laya-rl-agent",
+    "model": "veya-rl-agent",
     "answers": {"dept": {"type": "choice", "choice": "billing",
                          "probabilities": {"billing": 0.9, "tech": 0.1}, "confidence": 0.9}},
     "usage": {"input_tokens": 40, "output_tokens": 0},
@@ -31,7 +31,7 @@ HEALTH = {"status": "ok", "loaded": ["english"], "revisions": {"english": "abc"}
 
 
 class FakeServe(BaseHTTPRequestHandler):
-    """Records every request; answers /health and /v1/systemone like laya-serve."""
+    """Records every request; answers /health and /v1/systemone like veya-serve."""
 
     requests: list = []
     user_agents: list = []
@@ -75,7 +75,7 @@ class FakeServe(BaseHTTPRequestHandler):
 
 @pytest.fixture(autouse=True)
 def isolated_user_agent(monkeypatch):
-    monkeypatch.delenv("LAYA_USER_AGENT", raising=False)
+    monkeypatch.delenv("VEYA_USER_AGENT", raising=False)
 
 
 @pytest.fixture
@@ -132,7 +132,7 @@ def test_user_agent_identifies_every_remote_request(monkeypatch, serve, source):
     expected = "veya/" + __version__
     kwargs = {}
     if source != "default":
-        monkeypatch.setenv("LAYA_USER_AGENT", "deployment/1.0")
+        monkeypatch.setenv("VEYA_USER_AGENT", "deployment/1.0")
         expected = "deployment/1.0"
     if source == "argument":
         kwargs["user_agent"] = "embedded/2.0"
@@ -159,7 +159,7 @@ def test_user_agent_identifies_every_remote_request(monkeypatch, serve, source):
 ])
 @pytest.mark.parametrize("source", ["environment", "argument"])
 def test_user_agent_trims_only_outer_spaces_and_tabs(monkeypatch, serve, raw, expected, source):
-    monkeypatch.setenv("LAYA_USER_AGENT", raw if source == "environment" else "environment/1.0")
+    monkeypatch.setenv("VEYA_USER_AGENT", raw if source == "environment" else "environment/1.0")
     kwargs = {"user_agent": raw} if source == "argument" else {}
     RemoteRouter(serve, **kwargs).health()
     assert FakeServe.user_agents == [[expected or "veya/" + __version__]]
@@ -169,16 +169,16 @@ def test_user_agent_trims_only_outer_spaces_and_tabs(monkeypatch, serve, raw, ex
 @pytest.mark.parametrize("source", ["environment", "argument"])
 def test_user_agent_rejects_invalid_header_values_before_http(monkeypatch, serve, raw, source):
     if source == "environment":
-        monkeypatch.setenv("LAYA_USER_AGENT", raw)
+        monkeypatch.setenv("VEYA_USER_AGENT", raw)
     kwargs = {"user_agent": raw} if source == "argument" else {}
-    with pytest.raises(ValueError, match="LAYA_USER_AGENT"):
+    with pytest.raises(ValueError, match="VEYA_USER_AGENT"):
         RemoteRouter(serve, **kwargs)
     assert not FakeServe.requests
 
 
 def test_user_agent_rejects_nul_and_non_string_arguments(serve):
     # NUL cannot be put in an OS environment variable, but can reach the constructor.
-    with pytest.raises(ValueError, match="LAYA_USER_AGENT"):
+    with pytest.raises(ValueError, match="VEYA_USER_AGENT"):
         RemoteRouter(serve, user_agent="x\x00")
     for value in (False, 42, b"client/1.0"):
         with pytest.raises(TypeError, match="user_agent"):
@@ -187,15 +187,15 @@ def test_user_agent_rejects_nul_and_non_string_arguments(serve):
 
 
 def test_user_agent_argument_does_not_read_an_invalid_environment(monkeypatch, serve):
-    monkeypatch.setenv("LAYA_USER_AGENT", "bad\nvalue")
+    monkeypatch.setenv("VEYA_USER_AGENT", "bad\nvalue")
     RemoteRouter(serve, user_agent="embedded/1.0").health()
     assert FakeServe.user_agents == [["embedded/1.0"]]
 
 
 def test_user_agent_is_resolved_once_per_router(monkeypatch, serve):
-    monkeypatch.setenv("LAYA_USER_AGENT", "first/1.0")
+    monkeypatch.setenv("VEYA_USER_AGENT", "first/1.0")
     first = RemoteRouter(serve)
-    monkeypatch.setenv("LAYA_USER_AGENT", "second/1.0")
+    monkeypatch.setenv("VEYA_USER_AGENT", "second/1.0")
     second = RemoteRouter(serve)
     first.health()
     second.health()
@@ -269,15 +269,15 @@ def test_tools_translate_remote_errors(serve):
     FakeServe.status_override = 422
     FakeServe.detail_override = "question 'dept': unknown type"
     with pytest.raises(ToolError) as info:
-        laya_predict({"text": "x"}, _questions(), router=RemoteRouter(serve))
+        veya_predict({"text": "x"}, _questions(), router=RemoteRouter(serve))
     assert info.value.code == "invalid_request" and "unknown type" in info.value.message
     with pytest.raises(ToolError) as info:
-        laya_predict_batch([{"state": {"text": "x"}, "questions": _questions()}], router=RemoteRouter(serve))
+        veya_predict_batch([{"state": {"text": "x"}, "questions": _questions()}], router=RemoteRouter(serve))
     assert info.value.code == "invalid_request"
 
 
 def test_predict_tool_shape_through_a_remote_router(serve):
-    out = laya_predict({"text": "billed twice"}, _questions(), router=RemoteRouter(serve))
+    out = veya_predict({"text": "billed twice"}, _questions(), router=RemoteRouter(serve))
     assert out["answers"] == ANSWER["answers"]
     assert out["routing"]["model"] == "english"
     assert "device" not in out          # no in-process agent to read a device from
@@ -285,19 +285,19 @@ def test_predict_tool_shape_through_a_remote_router(serve):
 
 
 def test_status_reports_the_server_not_local_torch(serve):
-    out = laya_status(router=RemoteRouter(serve), preload=False)
+    out = veya_status(router=RemoteRouter(serve), preload=False)
     assert out["mode"] == "remote" and out["base_url"] == serve
     assert out["loaded"] == ["english"] and out["device"] == "mps"
     assert out["server"]["status"] == "ok"
     assert "torch_version" not in out
-    down = laya_status(router=RemoteRouter("http://127.0.0.1:9", timeout=2))
+    down = veya_status(router=RemoteRouter("http://127.0.0.1:9", timeout=2))
     assert down["mode"] == "remote" and down["loaded"] == [] and "server_error" in down
 
 
 def test_shortlist_is_refused_in_remote_mode(serve):
     many = {"pick": {"type": "choice", "instructions": "pick", "criteria": {"opt%d" % i: None for i in range(60)}}}
     with pytest.raises(ToolError) as info:
-        laya_shortlist({"text": "x"}, many, k=5, router=RemoteRouter(serve))
+        veya_shortlist({"text": "x"}, many, k=5, router=RemoteRouter(serve))
     assert info.value.code == "unsupported_remote"
 
 
@@ -306,29 +306,29 @@ def test_tournament_is_refused_before_remote_requests(serve, n):
     questions = {"pick": {"type": "choice", "instructions": "pick",
                           "criteria": {"opt%d" % i: None for i in range(n)}}}
     with pytest.raises(ToolError) as info:
-        laya_tournament({"text": "x"}, questions, router=RemoteRouter(serve))
+        veya_tournament({"text": "x"}, questions, router=RemoteRouter(serve))
     assert info.value.code == "unsupported_remote"
-    assert "laya_predict" in info.value.message and "LAYA_TOURNAMENT_GROUP" in info.value.message
+    assert "veya_predict" in info.value.message and "VEYA_TOURNAMENT_GROUP" in info.value.message
     assert FakeServe.requests == []
 
 
 @pytest.mark.parametrize("model", ["auto", "english"])
 def test_predict_long_is_refused_before_remote_requests(monkeypatch, serve, model):
-    # laya-serve has no long-state endpoint, so the scan has nowhere to run. Without this refusal
+    # veya-serve has no long-state endpoint, so the scan has nowhere to run. Without this refusal
     # the call reached Router.predict_long and came back as internal_error ("hooks are callables").
     monkeypatch.setattr(mcp_server, "_ROUTER", RemoteRouter(serve))
     with pytest.raises(Exception) as info:
-        mcp_server.laya_predict_long_tool({"text": "x"}, _questions(), model=model)
+        mcp_server.veya_predict_long_tool({"text": "x"}, _questions(), model=model)
     payload = json.loads(str(info.value))
     assert payload["error"] == "unsupported_remote", payload
-    assert "laya_predict" in payload["message"] and "LAYA_BASE_URL" in payload["message"]
+    assert "veya_predict" in payload["message"] and "VEYA_BASE_URL" in payload["message"]
     assert FakeServe.requests == []
 
 
 def test_server_builds_a_remote_router_from_the_environment(monkeypatch, serve):
-    monkeypatch.setenv("LAYA_BASE_URL", serve + "/")
-    monkeypatch.setenv("LAYA_API_KEY", "k")
-    monkeypatch.setenv("LAYA_USER_AGENT", "mcp-deployment/1.0")
+    monkeypatch.setenv("VEYA_BASE_URL", serve + "/")
+    monkeypatch.setenv("VEYA_API_KEY", "k")
+    monkeypatch.setenv("VEYA_USER_AGENT", "mcp-deployment/1.0")
     monkeypatch.setattr(mcp_server, "_ROUTER", None)
     router = mcp_server._ensure_router()
     assert isinstance(router, RemoteRouter)
@@ -339,32 +339,32 @@ def test_server_builds_a_remote_router_from_the_environment(monkeypatch, serve):
 
 
 def test_user_agent_configuration_error_is_remote_only(monkeypatch, serve):
-    monkeypatch.setenv("LAYA_BASE_URL", serve)
-    monkeypatch.setenv("LAYA_USER_AGENT", "bad\nvalue")
+    monkeypatch.setenv("VEYA_BASE_URL", serve)
+    monkeypatch.setenv("VEYA_USER_AGENT", "bad\nvalue")
     monkeypatch.setattr(mcp_server, "_ROUTER", None)
-    with pytest.raises(ToolError, match="LAYA_USER_AGENT") as info:
+    with pytest.raises(ToolError, match="VEYA_USER_AGENT") as info:
         mcp_server._ensure_router()
     assert info.value.code == "internal_error"
     assert mcp_server._ROUTER is None
     assert not FakeServe.requests
-    monkeypatch.delenv("LAYA_BASE_URL")
-    monkeypatch.delenv("LAYA_THREADS", raising=False)
-    monkeypatch.setenv("LAYA_PRELOAD", "0")
+    monkeypatch.delenv("VEYA_BASE_URL")
+    monkeypatch.delenv("VEYA_THREADS", raising=False)
+    monkeypatch.setenv("VEYA_PRELOAD", "0")
     router = mcp_server._ensure_router()
     assert not isinstance(router, RemoteRouter)
     assert not router._agents
 
 
 @pytest.mark.parametrize("raw, expected", [("", None), ("  ", None), ("127.0.0.1:8123", "http://127.0.0.1:8123"),
-                                           ("http://h:1/", "http://h:1"), ("https://laya.example", "https://laya.example")])
+                                           ("http://h:1/", "http://h:1"), ("https://veya.example", "https://veya.example")])
 def test_base_url_normalisation(monkeypatch, raw, expected):
-    monkeypatch.setenv("LAYA_BASE_URL", raw)
+    monkeypatch.setenv("VEYA_BASE_URL", raw)
     assert mcp_server._remote_base_url() == expected
 
 
 @pytest.mark.parametrize("raw", ["bad", "0", "-1", "nan", "inf", "1e999"])
 def test_remote_timeout_rejects_invalid_environment(monkeypatch, raw):
-    monkeypatch.setenv("LAYA_REMOTE_TIMEOUT", raw)
+    monkeypatch.setenv("VEYA_REMOTE_TIMEOUT", raw)
     assert RemoteRouter("http://localhost:8000").timeout == DEFAULT_TIMEOUT_S
 
 
@@ -399,14 +399,14 @@ def test_remote_batch_refuses_hook_timeouts_and_item_hooks(serve):
 def test_remote_decide_and_preset_use_the_server(serve):
     router = RemoteRouter(serve)
     schema = {"type": "object", "properties": {"dept": {"type": "string", "enum": ["billing", "tech"]}}}
-    result = laya_decide({"text": "billed twice"}, schema, router=router)
+    result = veya_decide({"text": "billed twice"}, schema, router=router)
     assert result["values"] == {"dept": "billing"}
     assert FakeServe.requests[-1][2]["questions"]["dept"]["criteria"] == {"billing": None, "tech": None}
-    laya_preset("triage", {"text": "billed twice"}, router=router, preset_builder=mcp_server._preset_builder)
+    veya_preset("triage", {"text": "billed twice"}, router=router, preset_builder=mcp_server._preset_builder)
     assert FakeServe.requests[-1][1] == "/v1/systemone"
     FakeServe.status_override = 503
-    for fn in (lambda: laya_decide({"text": "x"}, schema, router=router),
-               lambda: laya_preset("triage", {"text": "x"}, router=router, preset_builder=mcp_server._preset_builder)):
+    for fn in (lambda: veya_decide({"text": "x"}, schema, router=router),
+               lambda: veya_preset("triage", {"text": "x"}, router=router, preset_builder=mcp_server._preset_builder)):
         with pytest.raises(ToolError) as info:
             fn()
         assert info.value.code == "busy"
@@ -416,8 +416,8 @@ def test_remote_decide_and_preset_use_the_server(serve):
 def test_remote_route_tools_do_not_contact_the_server(serve, explain):
     router = RemoteRouter(serve)
     state = {"text": "Mein Konto wurde zweimal belastet"}
-    single = laya_route(state, _questions(), router=router, explain=explain)
-    batch = laya_route_batch([{"state": state, "questions": _questions()}], router=router, explain=explain)
+    single = veya_route(state, _questions(), router=router, explain=explain)
+    batch = veya_route_batch([{"state": state, "questions": _questions()}], router=router, explain=explain)
     assert single["model"] == "multilingual"
     assert batch == {"decisions": [single], "model_counts": {"multilingual": 1}}
     assert ("diagnostic" in single) is explain
@@ -446,7 +446,7 @@ def test_remote_mcp_startup_and_every_tool_avoid_torch(serve):
                 raise AssertionError("remote MCP imported torch")
             return original_import(name, *args, **kwargs)
         builtins.__import__ = no_torch
-        from laya.mcp import server
+        from veya.mcp import server
         server.server.run = lambda: None
         server.main([])
         state = {"text": "billed twice"}
@@ -454,13 +454,13 @@ def test_remote_mcp_startup_and_every_tool_avoid_torch(serve):
                               "criteria": {"billing": "payments", "tech": "bugs"}}}
         schema = {"type": "object", "properties": {"dept": {"type": "string", "enum": ["billing", "tech"]}}}
         items = [{"state": state, "questions": questions}]
-        calls = [lambda: server.laya_status_tool(),
-                 lambda: server.laya_predict_tool(state, questions),
-                 lambda: server.laya_predict_batch_tool(items),
-                 lambda: server.laya_decide_tool(state, schema),
-                 lambda: server.laya_preset_tool("triage", state),
-                 lambda: server.laya_route_tool(state, questions),
-                 lambda: server.laya_route_batch_tool(items)]
+        calls = [lambda: server.veya_status_tool(),
+                 lambda: server.veya_predict_tool(state, questions),
+                 lambda: server.veya_predict_batch_tool(items),
+                 lambda: server.veya_decide_tool(state, schema),
+                 lambda: server.veya_preset_tool("triage", state),
+                 lambda: server.veya_route_tool(state, questions),
+                 lambda: server.veya_route_batch_tool(items)]
         for call in calls:
             out = json.loads(call())
             assert "error" not in out, out
@@ -469,14 +469,14 @@ def test_remote_mcp_startup_and_every_tool_avoid_torch(serve):
         def no_http(*args, **kwargs):
             raise AssertionError("routing diagnostics attempted an HTTP request")
         server._ROUTER._request = no_http
-        for name, arguments in (("laya_route", {"state": state, "questions": questions}),
-                                ("laya_route_batch", {"requests": items})):
+        for name, arguments in (("veya_route", {"state": state, "questions": questions}),
+                                ("veya_route_batch", {"requests": items})):
             result = asyncio.run(server.server.call_tool(name, dict(arguments, explain=True)))
             assert not result.is_error, result
             out = json.loads(result.content[0].text)
-            decisions = out["decisions"] if name == "laya_route_batch" else [out]
+            decisions = out["decisions"] if name == "veya_route_batch" else [out]
             assert all(set(d["diagnostic"]) == {"stage", "reason", "source"} for d in decisions)
-        for tool in (server.laya_shortlist_tool, server.laya_tournament_tool, server.laya_predict_long_tool):
+        for tool in (server.veya_shortlist_tool, server.veya_tournament_tool, server.veya_predict_long_tool):
             try:
                 tool(state, questions)
             except Exception as exc:
@@ -485,16 +485,16 @@ def test_remote_mcp_startup_and_every_tool_avoid_torch(serve):
             else:
                 raise AssertionError("remote in-process tool did not refuse the call")
         assert "torch" not in sys.modules
-        assert "laya.shortlist" not in sys.modules
+        assert "veya.shortlist" not in sys.modules
         assert not server._ROUTER._agents
     ''')
-    env = dict(os.environ, LAYA_BASE_URL=serve, LAYA_THREADS="2", LAYA_PRELOAD="1")
+    env = dict(os.environ, VEYA_BASE_URL=serve, VEYA_THREADS="2", VEYA_PRELOAD="1")
     result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, timeout=15)
     assert result.returncode == 0, result.stderr
 
 
 def test_remote_timeout_is_forwarded_and_http_failures_are_validated(monkeypatch, serve):
-    monkeypatch.setenv("LAYA_REMOTE_TIMEOUT", "0.25")
+    monkeypatch.setenv("VEYA_REMOTE_TIMEOUT", "0.25")
     router = RemoteRouter(serve)
     assert router.timeout == 0.25
     assert RemoteRouter(serve, timeout=3).timeout == 3

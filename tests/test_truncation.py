@@ -14,7 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.common import build_sequence  # noqa: E402
+from veya.common import build_sequence  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -150,7 +150,7 @@ check("compat/return_truncation_stats does not change the markers", mk_a, mk_b)
 # Checked on the source: exercising it for real needs a checkpoint on disk (tests/test_local_e2e.py).
 import inspect  # noqa: E402
 
-from laya import agent as _agent  # noqa: E402
+from veya import agent as _agent  # noqa: E402
 
 _src = inspect.getsource(_agent.Agent._encode_state) + inspect.getsource(_agent.Agent._infer_batch)
 check_true("usage/asks build_sequence for the stats", "return_truncation_stats=True" in _src)
@@ -166,7 +166,7 @@ check_true("usage/keeps the existing token counts",
 # really truncated. tests/test_structured_docs.py already holds examples/03's drawn shape to the same
 # literal, so this covers only what that gate cannot see -- that each example reads and names every
 # key the agents publish, and that the prose about which end of the state survives matches the code
-# that decides it. The key set is read out of `laya/agent.py` by AST rather than repeated here, so a
+# that decides it. The key set is read out of `veya/agent.py` by AST rather than repeated here, so a
 # key added to the dict has to be taught and one renamed fails the example still pointing at it.
 import ast  # noqa: E402
 import re  # noqa: E402
@@ -223,7 +223,7 @@ def _usage_reads(rel):
     return tuple(sorted(found))
 
 
-published = _published("laya/agent.py")
+published = _published("veya/agent.py")
 # The two token totals are example 03's subject; everything else in the dict is this report (#174).
 report = tuple(k for k in published if k not in ("input_tokens", "output_tokens"))
 check_true("report/the report is more than the two token totals",
@@ -265,7 +265,7 @@ for tag, rel in EXAMPLES:
 # Read as a pattern rather than a string: #687 moves the same expression inline into the
 # `build_sequence` call, and the examples' claim has to survive that reformatting or keep its meaning.
 CLAMP = re.compile(r"truncate_left[^\n]*?isinstance\(state, ?list\)")
-for rel in ("laya/agent.py", "laya/onnx_agent.py"):
+for rel in ("veya/agent.py", "veya/onnx_agent.py"):
     with open(os.path.join(ROOT, rel), encoding="utf-8") as fh:
         src = fh.read()
     check_true("clamp/%s clamps from the state's type" % rel, CLAMP.search(src) is not None,

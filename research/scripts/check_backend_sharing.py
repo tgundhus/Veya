@@ -46,10 +46,10 @@ def main():
     parser.add_argument("--onnx", required=True, help="ONNX export of that checkpoint")
     args = parser.parse_args()
 
-    from laya import DecisionCache
-    from laya.agent import Agent
-    from laya.consistency import _fingerprint
-    from laya.onnx_agent import ONNXAgent
+    from veya import DecisionCache
+    from veya.agent import Agent
+    from veya.consistency import _fingerprint
+    from veya.onnx_agent import ONNXAgent
 
     fp32 = Agent(args.model, device="cpu")
     backends = [("torch-fp32", fp32), ("torch-int8", int8_clone(fp32)),

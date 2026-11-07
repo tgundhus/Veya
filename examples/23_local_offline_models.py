@@ -1,6 +1,6 @@
 """Example 23 -- where the weights come from: ./models, or the Hub.
 
-Laya takes either a local directory (no network, no token) when a copy is in `models/`, or a Hub
+Veya takes either a local directory (no network, no token) when a copy is in `models/`, or a Hub
 repo id. This prints what each name resolves to, cross-checks the local weights against
 verify/checkpoints.json when they are there, and runs one prediction.
 """
@@ -8,7 +8,7 @@ import json
 import os
 
 from _common import (LOCAL_MODELS, MODELS, ROOT, STATE_EN, banner, describe, has_local, heading,
-                     laya, load, router)
+                     veya, load, router)
 
 banner("23", "Where the weights come from: ./models or the Hub", """
     Keep the three checkpoints in `models/` and `_common` prefers them: an absolute directory
@@ -20,7 +20,7 @@ banner("23", "Where the weights come from: ./models or the Hub", """
     way; only where they are read from changes.
     """)
 
-print("   laya %s" % laya.__version__)
+print("   veya %s" % veya.__version__)
 
 heading("what each name resolves to")
 for name in MODELS:
@@ -68,9 +68,9 @@ print("   device: %s   tokens: %d in, %d out" %
 heading("Router(models=...) vs the default Router()")
 configured = router()
 print("   Router().models['english']       %r" % (configured.models["english"],))
-print("   DEFAULT_MODELS['english']        %r" % (laya.DEFAULT_MODELS["english"],))
+print("   DEFAULT_MODELS['english']        %r" % (veya.DEFAULT_MODELS["english"],))
 print("   Router().models['multilingual']  %r" % (configured.models["multilingual"],))
-print("   DEFAULT_MODELS['multilingual']   %r" % (laya.DEFAULT_MODELS["multilingual"],))
+print("   DEFAULT_MODELS['multilingual']   %r" % (veya.DEFAULT_MODELS["multilingual"],))
 print("""
    With a local copy the configured value is an absolute directory, so `Agent` never calls the
    hub. Without one it is the same Hub spec `DEFAULT_MODELS` uses, and the weights land in

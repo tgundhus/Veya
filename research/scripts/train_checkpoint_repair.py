@@ -26,8 +26,8 @@ def training_rows(groups):
 def extract(agent, rows, *, rotate_kinds=()):
     import torch
     from torch.nn.functional import pad
-    from laya.common import collate_items
-    from laya.train import encode_item, items_from_rows
+    from veya.common import collate_items
+    from veya.train import encode_item, items_from_rows
 
     max_len, head_len = (agent.cfg[key] for key in ("max_len", "head_max_len"))
     items, skipped = items_from_rows(agent.tok, rows, max_len, head_len)
@@ -103,7 +103,7 @@ def measure(model, features, temperatures):
 
 def fit_temperatures(model, features, retained=None, *, score_mse=False):
     import torch
-    from laya.calibrate import MIN_TYPE_N, fit_one_temperature
+    from veya.calibrate import MIN_TYPE_N, fit_one_temperature
     records = defaultdict(list)
     with torch.no_grad():
         for batch, target in features:
@@ -164,9 +164,9 @@ def main():
     import torch
     from safetensors import safe_open
     from safetensors.torch import load_file, save_file
-    from laya.agent import Agent
-    from laya.qualification import _artifact_identity, _file_sha, load_document, validate_corpus
-    from laya.inference_common import temp_bucket
+    from veya.agent import Agent
+    from veya.qualification import _artifact_identity, _file_sha, load_document, validate_corpus
+    from veya.inference_common import temp_bucket
 
     torch.set_num_threads(args.threads)
     torch.set_num_interop_threads(1)

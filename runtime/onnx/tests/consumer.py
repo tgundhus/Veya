@@ -14,12 +14,12 @@ class HeavyImportForbidden(BaseException):
 
 class NoHeavyImports(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
-        if fullname.split(".")[0] in ("torch", "transformers", "laya"):
+        if fullname.split(".")[0] in ("torch", "transformers", "veya"):
             raise HeavyImportForbidden("light runtime imported " + fullname)
 
 
 sys.meta_path.insert(0, NoHeavyImports())
-import laya_onnx  # noqa: E402
+import veya_onnx  # noqa: E402
 
 
 FIXTURE = Path(sys.argv[1])
@@ -33,18 +33,18 @@ QUESTIONS = {
 
 class RuntimeTests(unittest.TestCase):
     def setUp(self):
-        self.agent = laya_onnx.ONNXAgent(str(FIXTURE), str(FIXTURE / "model.onnx"), performance_mode=1)
+        self.agent = veya_onnx.ONNXAgent(str(FIXTURE), str(FIXTURE / "model.onnx"), performance_mode=1)
 
     def test_distribution_is_independent_and_has_only_light_dependencies(self):
         for name in ("torch", "transformers", "veya", "onnx", "onnxscript", "safetensors"):
             with self.assertRaises(importlib.metadata.PackageNotFoundError):
                 importlib.metadata.distribution(name)
-        self.assertEqual(importlib.metadata.version("veya-onnx"), laya_onnx.__version__)
+        self.assertEqual(importlib.metadata.version("veya-onnx"), veya_onnx.__version__)
         self.assertEqual(self.agent.session.get_providers(), ["CPUExecutionProvider"])
         self.assertEqual(self.agent.performance_mode, 1)
-        self.assertIs(laya_onnx.Agent, laya_onnx.ONNXAgent)
-        loaded = laya_onnx.load(str(FIXTURE), onnx_path=str(FIXTURE / "model.onnx"), performance_mode="default")
-        self.assertIsInstance(loaded, laya_onnx.ONNXAgent)
+        self.assertIs(veya_onnx.Agent, veya_onnx.ONNXAgent)
+        loaded = veya_onnx.load(str(FIXTURE), onnx_path=str(FIXTURE / "model.onnx"), performance_mode="default")
+        self.assertIsInstance(loaded, veya_onnx.ONNXAgent)
         self.assertIsNone(loaded.performance_mode)
 
     def test_predict_batch_preserves_typed_labels_and_order(self):
@@ -68,7 +68,7 @@ class RuntimeTests(unittest.TestCase):
 
         self.agent.session = Session()
         with tempfile.TemporaryDirectory() as tmp:
-            cache = laya_onnx.DecisionCache(str(Path(tmp) / "decisions.sqlite"), ttl=30)
+            cache = veya_onnx.DecisionCache(str(Path(tmp) / "decisions.sqlite"), ttl=30)
             try:
                 with self.agent.hooks_installed(cache):
                     first = self.agent.predict("billing help", QUESTIONS)
@@ -90,7 +90,7 @@ class RuntimeTests(unittest.TestCase):
             self.agent.load_calibration(str(calibration))
             self.assertEqual(self.agent.temperature, [1.5, 2, 1])
             self.agent.predict("hello", QUESTIONS)
-        self.assertFalse(any(name.split(".")[0] in ("torch", "transformers", "laya") for name in sys.modules))
+        self.assertFalse(any(name.split(".")[0] in ("torch", "transformers", "veya") for name in sys.modules))
 
 
 if __name__ == "__main__":

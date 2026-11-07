@@ -7,10 +7,10 @@ import pytest
 
 pytest.importorskip("mcp")
 
-from laya import BaseHook, Router  # noqa: E402
-from laya.mcp import server as server_mod  # noqa: E402
-from laya.mcp.tools import (  # noqa: E402
-    ToolError, laya_predict_batch, laya_predict_long, laya_route_batch, laya_tournament,
+from veya import BaseHook, Router  # noqa: E402
+from veya.mcp import server as server_mod  # noqa: E402
+from veya.mcp.tools import (  # noqa: E402
+    ToolError, veya_predict_batch, veya_predict_long, veya_route_batch, veya_tournament,
 )
 
 STATE = {"body": "I need help with my payment"}
@@ -49,7 +49,7 @@ class RecordingAgent:
         return result
 
 
-@pytest.mark.parametrize("tool", [laya_tournament, laya_predict_long])
+@pytest.mark.parametrize("tool", [veya_tournament, veya_predict_long])
 @pytest.mark.parametrize("control", ["model", "task"])
 def test_registered_models_are_resolved_for_new_tools(tool, control):
     agent = RecordingAgent()
@@ -64,13 +64,13 @@ def test_batch_task_accepts_registered_names_and_refuses_unknown_names_before_ru
     router = Router()
     router.attach("special", RecordingAgent())
     request = {"state": STATE, "questions": QUESTIONS, "task": "SPECIAL"}
-    assert laya_route_batch([request], router=router, explain=True)["decisions"][0] == {
+    assert veya_route_batch([request], router=router, explain=True)["decisions"][0] == {
         "model": "special", "repo": None, "reason": "explicit task='special'", "diagnostic": None,
     }
-    assert laya_predict_batch([request], router=router)["model_counts"] == {"special": 1}
+    assert veya_predict_batch([request], router=router)["model_counts"] == {"special": 1}
     request["task"] = "unknown"
     with pytest.raises(ToolError) as error:
-        laya_route_batch([request], router=router)
+        veya_route_batch([request], router=router)
     assert error.value.code == "invalid_task"
 
 
@@ -91,7 +91,7 @@ def test_tournament_routes_original_workflow_and_pins_model_and_language_for_eve
                              "option_order": list(reversed(range(10)))}
     original = copy.deepcopy(questions)
     with pytest.warns(RuntimeWarning, match="option_order"):
-        out = laya_tournament(STATE, questions, group_size=3, lang="de", max_len=128,
+        out = veya_tournament(STATE, questions, group_size=3, lang="de", max_len=128,
                               head_max_len=64, router=router)
     assert out["routing"]["model"] == "typed-decisions"
     assert routes[0][0] == set(questions)
@@ -121,18 +121,18 @@ def test_tournament_refuses_missing_or_out_of_group_winners_before_more_passes(b
     agent = Invalid()
     questions = {"pick": dict(QUESTIONS["pick"], criteria={str(i): None for i in range(8)})}
     with pytest.raises(ToolError) as error:
-        laya_tournament(STATE, questions, group_size=2, model="english", agent=agent)
+        veya_tournament(STATE, questions, group_size=2, model="english", agent=agent)
     assert error.value.code == "internal_error"
     assert len(agent.calls) == 1
 
 
 @pytest.mark.parametrize(("tool", "option", "value", "code"), [
-    (laya_tournament, "group_size", True, "invalid_group_size"),
-    (laya_tournament, "group_size", 1, "invalid_group_size"),
-    (laya_tournament, "group_size", 2.0, "invalid_group_size"),
-    (laya_predict_long, "window", False, "invalid_window"),
-    (laya_predict_long, "stride", 0, "invalid_stride"),
-    (laya_predict_long, "window", "64", "invalid_window"),
+    (veya_tournament, "group_size", True, "invalid_group_size"),
+    (veya_tournament, "group_size", 1, "invalid_group_size"),
+    (veya_tournament, "group_size", 2.0, "invalid_group_size"),
+    (veya_predict_long, "window", False, "invalid_window"),
+    (veya_predict_long, "stride", 0, "invalid_stride"),
+    (veya_predict_long, "window", "64", "invalid_window"),
 ])
 def test_new_controls_are_type_preserving_and_checked_before_inference(tool, option, value, code):
     agent = RecordingAgent()
@@ -146,27 +146,27 @@ def test_new_controls_are_type_preserving_and_checked_before_inference(tool, opt
 def test_container_question_type_is_a_caller_error(bad_type):
     agent = RecordingAgent()
     with pytest.raises(ToolError) as error:
-        laya_predict_long(STATE, {"q": {"type": bad_type, "instructions": "Pick"}}, agent=agent)
+        veya_predict_long(STATE, {"q": {"type": bad_type, "instructions": "Pick"}}, agent=agent)
     assert error.value.code == "invalid_questions"
     assert agent.calls == []
 
 
 def test_long_scan_preserves_window_attribution_and_only_forwards_set_controls():
     agent = RecordingAgent()
-    out = laya_predict_long(STATE, QUESTIONS, agent=agent, window=24, stride=12, lang="de")
+    out = veya_predict_long(STATE, QUESTIONS, agent=agent, window=24, stride=12, lang="de")
     assert out["windows"] == 3
     assert out["answers"]["pick"]["window"] == {"index": 2, "token_start": 20, "token_end": 40}
     assert out["routing"]["model"] is None
     assert "device" not in out
     assert agent.calls[0][1] == {"window": 24, "stride": 12, "lang": "de"}
-    laya_predict_long(STATE, QUESTIONS, model="english", agent=agent)
+    veya_predict_long(STATE, QUESTIONS, model="english", agent=agent)
     assert agent.calls[1][1] == {}
     with pytest.raises(ToolError) as error:
-        laya_predict_long(STATE, QUESTIONS, agent=object())
+        veya_predict_long(STATE, QUESTIONS, agent=object())
     assert error.value.code == "internal_error"
 
 
-@pytest.mark.parametrize("tool", ["laya_tournament", "laya_predict_long"])
+@pytest.mark.parametrize("tool", ["veya_tournament", "veya_predict_long"])
 @pytest.mark.parametrize("model", [{}, {"model": None}, {"model": "auto"}])
 def test_new_tools_are_callable_through_real_mcp_parser(tool, model, monkeypatch):
     router = Router()

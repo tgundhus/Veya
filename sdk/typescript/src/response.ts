@@ -1,9 +1,9 @@
-import { LayaResponseError } from './errors.js';
+import { VeyaResponseError } from './errors.js';
 import type { Questions } from './types.js';
 import { isRecord } from './validation.js';
 
 function expect(condition: unknown, field: string): asserts condition {
-  if (!condition) throw new LayaResponseError(`Invalid Laya response: ${field}`);
+  if (!condition) throw new VeyaResponseError(`Invalid Veya response: ${field}`);
 }
 const number = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 const count = (value: unknown): value is number => Number.isInteger(value);
@@ -25,7 +25,7 @@ export function validateRoute(value: unknown): void {
   // Checked when the server sends it, like the optional fields of `health` and of `usage`: one
   // field the route report added (#384) must not fail every prediction on a deployment that
   // predates it. When it is there it is `null` or the segment text, as every branch of
-  // `laya.lang.analyse()` reports it.
+  // `veya.lang.analyse()` reports it.
   if (detection.mixed_segment !== undefined) {
     expect(detection.mixed_segment === null || typeof detection.mixed_segment === 'string',
       'detection mixed segment');
@@ -34,7 +34,7 @@ export function validateRoute(value: unknown): void {
 
 export function validateHealth(value: unknown): void {
   // Liveness is the only field every caller gets. The rest is withheld from an unauthenticated
-  // probe on a server with LAYA_API_KEY set, so requiring it here would reject a healthy
+  // probe on a server with VEYA_API_KEY set, so requiring it here would reject a healthy
   // response; each field is still checked when the server does send it.
   expect(isRecord(value) && value.status === 'ok', 'health');
   if (value.device !== undefined) expect(typeof value.device === 'string', 'device');

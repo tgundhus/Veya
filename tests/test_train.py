@@ -1,4 +1,4 @@
-"""laya.train: data prep, option-order augmentation, losses and an end-to-end run.
+"""veya.train: data prep, option-order augmentation, losses and an end-to-end run.
 
 CPU only and weight-free: the checkpoint is a one-layer BERT with a word-level tokenizer built
 in a temp directory, so nothing is downloaded.
@@ -30,8 +30,8 @@ from tokenizers.models import WordLevel  # noqa: E402
 from tokenizers.pre_tokenizers import Whitespace  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
 
-from laya import load  # noqa: E402
-from laya.common import (  # noqa: E402
+from veya import load  # noqa: E402
+from veya.common import (  # noqa: E402
     DecisionModel,
     QTYPES,
     TEMP_MAX,
@@ -41,7 +41,7 @@ from laya.common import (  # noqa: E402
     render_options,
     unpermute_probs,
 )
-from laya.train import (  # noqa: E402
+from veya.train import (  # noqa: E402
     TrainConfig,
     draw_option_order,
     encode_item,
@@ -60,7 +60,7 @@ from laya.train import (  # noqa: E402
     to_internal,
     train_model,
 )
-from laya.train_cli import build_parser as build_train_parser, main as train_cli_main  # noqa: E402
+from veya.train_cli import build_parser as build_train_parser, main as train_cli_main  # noqa: E402
 
 WORDS = ["refund", "invoice", "charged", "twice", "crash", "error", "app", "screen", "please",
          "billing", "technical", "other", "is", "it", "urgent", "low", "high", "level", "question",
@@ -172,7 +172,7 @@ class DataTests(unittest.TestCase):
         self.assertEqual(target(LEVEL, 1), [0.0, 1.0])
         self.assertEqual(target(LEVEL, "1"), [0.0, 1.0])
 
-        # Fractional score answers (e.g. from laya-evals ScoreMAE / ScoreWithin)
+        # Fractional score answers (e.g. from veya-evals ScoreMAE / ScoreWithin)
         three_level = {"type": "score", "instructions": "which level ?", "criteria": ["low", "mid", "high"]}
         self.assertEqual(target(three_level, 1.5), [0.0, 0.5, 0.5])
         res_frac2 = target(three_level, 0.2)
@@ -209,7 +209,7 @@ class DataTests(unittest.TestCase):
                 target_from_expected(to_internal("q", DEPARTMENT), "billing", label_smoothing=bad_smooth)
 
     def test_resolve_checkpoint_dir(self):
-        from laya.train import resolve_checkpoint_dir
+        from veya.train import resolve_checkpoint_dir
         with tempfile.TemporaryDirectory() as tmpdir:
             p = Path(tmpdir)
             (p / "rl_agent_config.json").write_text("{}", encoding="utf-8")
@@ -274,7 +274,7 @@ class DataTests(unittest.TestCase):
     def test_questions_are_rendered_exactly_as_inference_renders_them(self):
         # The sequence a training item produces must be the one `Agent` builds for the same
         # question, or the model is trained on option texts it never sees.
-        from laya.agent import Agent
+        from veya.agent import Agent
 
         questions = [
             DEPARTMENT, URGENT, LEVEL,
@@ -325,7 +325,7 @@ class DataTests(unittest.TestCase):
     def test_options_past_max_len_are_skipped_like_inference_refuses_them(self):
         # With a head longer than max_len, build_sequence drops the last options' markers and the
         # batch would crash on a target longer than its markers. Agent refuses the same question.
-        from laya.common import build_head
+        from veya.common import build_head
 
         question = {"type": "choice", "instructions": "which ?",
                     "criteria": ["one", "two", "three", "four", "five", "six", "seven"]}
@@ -369,7 +369,7 @@ class DataTests(unittest.TestCase):
     def test_permuted_training_input_is_what_inference_scores_for_that_order(self):
         # Inference with option_order builds the same tokens in the same slots, and
         # unpermute_probs maps the slot-ordered target back to the canonical one.
-        from laya.agent import Agent
+        from veya.agent import Agent
 
         order = [1, 2, 0]
         item = self.item(DEPARTMENT, [0.6, 0.3, 0.1])
@@ -496,11 +496,11 @@ class TrainingLoopTests(unittest.TestCase):
             log_every=0,
         )
 
-        with patch("laya.train.encode_item", return_value={}), \
-                patch("laya.train.collate_items", return_value=batch), \
-                patch("laya.train._forward", side_effect=lambda current, *_args: current.value), \
-                patch("laya.train.soft_ce_loss", side_effect=lambda logits, *_args: logits), \
-                patch("laya.train.torch.optim.AdamW",
+        with patch("veya.train.encode_item", return_value={}), \
+                patch("veya.train.collate_items", return_value=batch), \
+                patch("veya.train._forward", side_effect=lambda current, *_args: current.value), \
+                patch("veya.train.soft_ce_loss", side_effect=lambda logits, *_args: logits), \
+                patch("veya.train.torch.optim.AdamW",
                       side_effect=lambda groups, weight_decay: torch.optim.SGD(
                           groups, weight_decay=weight_decay)):
             train_model(model, tok, [item] * 3, config, torch.device("cpu"), 1, 1)
@@ -544,7 +544,7 @@ class EndToEndTests(unittest.TestCase):
         # The inherited bucket would override the new fit at inference; too few items to refit it.
         self.assertNotIn("temperature_by_options", saved)
         self.assertTrue(all(TEMP_MIN <= t <= TEMP_MAX for t in saved["temperature"]))
-        self.assertEqual(saved["training"]["laya_train"]["loss"], "soft-ce")
+        self.assertEqual(saved["training"]["veya_train"]["loss"], "soft-ce")
         self.assertTrue((self.root / "out" / "checkpoint_latest" / "model.safetensors").exists())
 
         with patch("huggingface_hub.snapshot_download", side_effect=AssertionError("unexpected download")):
@@ -557,7 +557,7 @@ class EndToEndTests(unittest.TestCase):
     def test_shuffled_run_saves_a_loadable_checkpoint(self):
         report = self.run_finetune("out_shuffled", shuffle_options=("choice",), epochs=1)
         saved = json.loads((self.root / "out_shuffled" / "rl_agent_config.json").read_text())
-        self.assertEqual(saved["training"]["laya_train"]["shuffle_options"], ["choice"])
+        self.assertEqual(saved["training"]["veya_train"]["shuffle_options"], ["choice"])
         self.assertEqual(len(report["epoch_loss"]), 1)
         agent = load(str(self.root / "out_shuffled"), device="cpu")
         self.assertIn(agent.predict("app", {"department": DEPARTMENT})["answers"]["department"]["choice"],
@@ -567,7 +567,7 @@ class EndToEndTests(unittest.TestCase):
         import contextlib
         import io
 
-        from laya.train import optimizer_updates
+        from veya.train import optimizer_updates
 
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
@@ -593,7 +593,7 @@ class EndToEndTests(unittest.TestCase):
         # finetune scores the base checkpoint before train_model moves the model, which crashed
         # on CUDA and MPS (inputs on the device, weights on CPU). CPU cannot show the crash, so
         # record the order instead: the model must be moved before the first calibration_records.
-        import laya.train as lt
+        import veya.train as lt
 
         events = []
         real_load, real_records = lt.load_checkpoint, lt.calibration_records
@@ -613,15 +613,15 @@ class EndToEndTests(unittest.TestCase):
             events.append(("records", device))
             return real_records(model, tok, items, device, *args, **kwargs)
 
-        with patch("laya.train.load_checkpoint", load_checkpoint), \
-                patch("laya.train.calibration_records", calibration_records):
+        with patch("veya.train.load_checkpoint", load_checkpoint), \
+                patch("veya.train.calibration_records", calibration_records):
             self.run_finetune("out_device", epochs=1)
         cpu = torch.device("cpu")
         first_eval = events.index(("records", cpu))
         self.assertIn(("to", cpu), events[:first_eval], events)
 
     def test_frozen_encoder_runs_without_dropout(self):
-        from laya.train import load_checkpoint
+        from veya.train import load_checkpoint
 
         model, tok, _cfg = load_checkpoint(str(self.root / "base"))
         modes = []
@@ -636,7 +636,7 @@ class EndToEndTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             train_model(None, self.tok, [], TrainConfig(), torch.device("cpu"), 64, 40)
 
-    def test_laya_train_cli_parser_and_validation(self):
+    def test_veya_train_cli_parser_and_validation(self):
         parser = build_train_parser()
         args = parser.parse_args(["--data", "train.csv", "--eval", "eval.csv", "--target-error", "0.05",
                                   "--min-abstain-n", "5", "--out", "./out", "--label-smoothing", "0.1",
@@ -716,7 +716,7 @@ class EndToEndTests(unittest.TestCase):
         warm = evaluate_records(choice_recs, temperature=[5.0, 5.0, 5.0])
         self.assertLess(warm["mean_confidence"], metrics["by_type"]["choice"]["mean_confidence"])
 
-    def test_laya_train_cli_runs_on_csv(self):
+    def test_veya_train_cli_runs_on_csv(self):
         csv_path = self.root / "tickets.csv"
         lines = ["text,department"]
         for s in BILLING_STATES:
@@ -784,7 +784,7 @@ class EndToEndTests(unittest.TestCase):
         ])
         self.assertEqual(dry_code, 0)
 
-    def test_laya_train_cli_with_eval_file(self):
+    def test_veya_train_cli_with_eval_file(self):
         train_path = self.root / "train_eval_test.csv"
         eval_path = self.root / "eval_eval_test.csv"
         train_lines = ["text,department"]
@@ -836,7 +836,7 @@ class EndToEndTests(unittest.TestCase):
         self.assertIn("delta_brier", report["comparison"])
         self.assertIn("delta_brier_top1", report["comparison"])
 
-    def test_laya_train_cli_with_overlapping_eval_file(self):
+    def test_veya_train_cli_with_overlapping_eval_file(self):
         train_path = self.root / "train_overlap.csv"
         eval_path = self.root / "eval_overlap.csv"
         train_lines = ["text,department"]
@@ -875,7 +875,7 @@ class EndToEndTests(unittest.TestCase):
         self.assertIn("delta_brier", report["comparison"])
         self.assertIn("delta_brier_top1", report["comparison"])
 
-    def test_laya_train_cli_with_empty_or_skipped_eval_file(self):
+    def test_veya_train_cli_with_empty_or_skipped_eval_file(self):
         train_path = self.root / "train_norm.csv"
         eval_path = self.root / "eval_empty.jsonl"
         train_lines = ["text,department"]
@@ -974,7 +974,7 @@ class EndToEndTests(unittest.TestCase):
         self.assertFalse(report["is_held_out"])
         self.assertIn("overlap calibration data", report["note"])
 
-    def test_laya_train_in_sample_calibration_mode(self):
+    def test_veya_train_in_sample_calibration_mode(self):
         csv_path = self.root / "calib_tickets.csv"
         lines = ["text,department"]
         for s in BILLING_STATES:
@@ -1014,7 +1014,7 @@ class CalibrationReportTests(unittest.TestCase):
         return [(qtype, [scale] + [0.0] * (k - 1), [1.0] + [0.0] * (k - 1), k) for _ in range(n)]
 
     def test_each_kind_of_weak_fit_is_named(self):
-        from laya.train import CALIB_WARN_N, calibration_report
+        from veya.train import CALIB_WARN_N, calibration_report
 
         records = (self.records(QTYPES["choice"], 5) + self.records(QTYPES["noul"], 30, k=2)
                    + self.records(QTYPES["score"], CALIB_WARN_N + 10))
@@ -1028,7 +1028,7 @@ class CalibrationReportTests(unittest.TestCase):
         self.assertAlmostEqual(report["score"]["accuracy"], 1.0)
 
     def test_clamped_and_healthy_fits(self):
-        from laya.train import CALIB_WARN_N, calibration_report
+        from veya.train import CALIB_WARN_N, calibration_report
 
         n = CALIB_WARN_N
         records = self.records(QTYPES["choice"], n) + self.records(QTYPES["score"], n)
@@ -1051,14 +1051,14 @@ class CalibrationReportTests(unittest.TestCase):
             # warnings.catch_warnings, not assertWarns: assertWarns walks every loaded module, and
             # transformers' lazy modules then try to import optional packages such as torchvision.
             with patch("huggingface_hub.snapshot_download", side_effect=AssertionError("unexpected download")), \
-                    patch("laya.train.read_jsonl", return_value=rows(2)), \
+                    patch("veya.train.read_jsonl", return_value=rows(2)), \
                     warnings.catch_warnings(record=True) as caught:
                 warnings.simplefilter("always")
                 report = finetune("rows.jsonl", str(root / "base"), str(root / "out"), config, device="cpu")
             saved = json.loads((root / "out" / "rl_agent_config.json").read_text())
         messages = [str(w.message) for w in caught if issubclass(w.category, RuntimeWarning)]
-        self.assertTrue(any(re.match(r"laya\.train: \w+ calibration: not fitted", m) for m in messages), messages)
-        self.assertEqual(saved["training"]["laya_train_calibration"], report["calibration"])
+        self.assertTrue(any(re.match(r"veya\.train: \w+ calibration: not fitted", m) for m in messages), messages)
+        self.assertEqual(saved["training"]["veya_train_calibration"], report["calibration"])
         self.assertEqual(sum(e["items"] for e in report["calibration"].values()), report["calibration_items"])
 
 
@@ -1072,7 +1072,7 @@ class PriorCollapseTests(unittest.TestCase):
         return [(qtype, list(logits), list(target), k) for _ in range(n)]
 
     def test_constant_logits_match_the_prior_and_warn(self):
-        from laya.train import COLLAPSE_LOGIT_RANGE, collapse_stats, prior_collapse_message
+        from veya.train import COLLAPSE_LOGIT_RANGE, collapse_stats, prior_collapse_message
 
         # Tiny 4-way set: every row is the same logit, so the predicted distribution is the
         # uniform prior. This is the measured failure in #963 (range 0.01, CE at ln 4).
@@ -1089,7 +1089,7 @@ class PriorCollapseTests(unittest.TestCase):
         self.assertIn("another seed", msg)
 
     def test_peaked_logits_on_a_learnable_set_do_not_warn(self):
-        from laya.train import prior_collapse_message
+        from veya.train import prior_collapse_message
 
         records = self.rows_of([5.0, 0.0, 0.0, 0.0], [1.0, 0.0, 0.0, 0.0])
         self.assertIsNone(prior_collapse_message(records))
@@ -1097,7 +1097,7 @@ class PriorCollapseTests(unittest.TestCase):
         self.assertIsNone(prior_collapse_message(self.rows_of([0.0], [1.0], k=1)))
 
     def test_ce_stuck_at_ln_k_warns_even_when_logit_range_is_not_tiny(self):
-        from laya.train import COLLAPSE_LOGIT_RANGE, collapse_stats, prior_collapse_message
+        from veya.train import COLLAPSE_LOGIT_RANGE, collapse_stats, prior_collapse_message
 
         # Softmax is still near-uniform, so CE sits on ln K, but the within-row range is
         # above the constant-logit cutoff -- the other #963 trigger.
@@ -1110,7 +1110,7 @@ class PriorCollapseTests(unittest.TestCase):
         self.assertIn("cross-entropy", msg)
 
     def test_finetune_emits_the_collapse_warning_only_when_logits_collapse(self):
-        from laya.train import prior_collapse_message
+        from veya.train import prior_collapse_message
 
         collapsed = self.rows_of([0.01, 0.0, -0.01], [1.0, 0.0, 0.0], n=12)
         peaked = self.rows_of([4.0, 0.0, 0.0], [1.0, 0.0, 0.0], n=12)
@@ -1124,8 +1124,8 @@ class PriorCollapseTests(unittest.TestCase):
                 config = TrainConfig(epochs=1, micro_batch=8, grad_accum=1, calib_frac=0.2, log_every=0)
                 with patch("huggingface_hub.snapshot_download",
                            side_effect=AssertionError("unexpected download")), \
-                        patch("laya.train.read_jsonl", return_value=rows(2)), \
-                        patch("laya.train.calibration_records", return_value=records), \
+                        patch("veya.train.read_jsonl", return_value=rows(2)), \
+                        patch("veya.train.calibration_records", return_value=records), \
                         warnings.catch_warnings(record=True) as caught:
                     warnings.simplefilter("always")
                     finetune("rows.jsonl", str(root / "base"), str(root / "out"), config, device="cpu")
@@ -1141,7 +1141,7 @@ class OptimizerBudgetTests(unittest.TestCase):
     """#963 proposal 3: the optimizer-update budget is derived once and surfaced before a run."""
 
     def test_updates_count_every_accumulation_window_including_the_final_partial_one(self):
-        from laya.train import optimizer_updates
+        from veya.train import optimizer_updates
 
         # steps_per_epoch = ceil(N / micro_batch); one update per full window plus the final
         # partial window of every epoch. typed-decisions and the #963 set are the reference points.
@@ -1155,7 +1155,7 @@ class OptimizerBudgetTests(unittest.TestCase):
             optimizer_updates(0, 8, 8, 4)
 
     def test_train_model_takes_exactly_optimizer_updates_steps(self):
-        from laya.train import optimizer_updates
+        from veya.train import optimizer_updates
 
         class ScalarModel(torch.nn.Module):
             def __init__(self):
@@ -1186,11 +1186,11 @@ class OptimizerBudgetTests(unittest.TestCase):
                     head_lr=1.0, min_lr=1.0, weight_decay=0.0, grad_clip=100.0,
                     loss="soft-ce", freeze_encoder=True, amp=False, log_every=0,
                 )
-                with patch("laya.train.encode_item", return_value={}), \
-                        patch("laya.train.collate_items", return_value=batch), \
-                        patch("laya.train._forward", side_effect=lambda current, *_args: current.value), \
-                        patch("laya.train.soft_ce_loss", side_effect=lambda logits, *_args: logits), \
-                        patch("laya.train.torch.optim.AdamW",
+                with patch("veya.train.encode_item", return_value={}), \
+                        patch("veya.train.collate_items", return_value=batch), \
+                        patch("veya.train._forward", side_effect=lambda current, *_args: current.value), \
+                        patch("veya.train.soft_ce_loss", side_effect=lambda logits, *_args: logits), \
+                        patch("veya.train.torch.optim.AdamW",
                               side_effect=lambda groups, weight_decay: CountingSGD(
                                   groups, weight_decay=weight_decay)):
                     train_model(model, tok, [item] * n_items, config, torch.device("cpu"), 1, 1)
@@ -1201,7 +1201,7 @@ class OptimizerBudgetTests(unittest.TestCase):
         import contextlib
         import io
 
-        from laya.train import dry_run, optimizer_updates
+        from veya.train import dry_run, optimizer_updates
 
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -1209,7 +1209,7 @@ class OptimizerBudgetTests(unittest.TestCase):
             config = TrainConfig(epochs=3, micro_batch=4, grad_accum=2, calib_frac=0.25, log_every=0)
 
             buf = io.StringIO()
-            with patch("laya.train.read_data", return_value=rows(2)), contextlib.redirect_stdout(buf):
+            with patch("veya.train.read_data", return_value=rows(2)), contextlib.redirect_stdout(buf):
                 summary = dry_run("synthetic.jsonl", str(root / "base"), config)
 
             # The budget must come from the post-calibration split, not the raw valid-item count.
@@ -1225,7 +1225,7 @@ class OptimizerBudgetTests(unittest.TestCase):
         import contextlib
         import io
 
-        from laya.train import dry_run
+        from veya.train import dry_run
 
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -1233,7 +1233,7 @@ class OptimizerBudgetTests(unittest.TestCase):
             for dataset in ([], [{"state": None}]):
                 with self.subTest(dataset=dataset):
                     buf = io.StringIO()
-                    with patch("laya.train.read_data", return_value=dataset), contextlib.redirect_stdout(buf):
+                    with patch("veya.train.read_data", return_value=dataset), contextlib.redirect_stdout(buf):
                         summary = dry_run("synthetic.jsonl", str(root / "base"))
                     self.assertEqual(summary["valid_items"], 0)
                     self.assertEqual(summary["optimizer_updates"], 0)

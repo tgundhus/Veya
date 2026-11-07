@@ -19,7 +19,7 @@ python examples/01_first_call_minimal.py         # any Python with torch + trans
 * Each example is its own process, so each loads its own checkpoints: 30-60 s on CPU, faster on
   MPS, and the first MPS call pays ~13 s of Metal kernel compilation. Without a local `../models`
   copy, the first run also downloads the checkpoint it needs into `HF_HOME`.
-* `device=None` lets Laya pick CUDA → MPS → CPU. `_common.load(name, device="cpu")` forces CPU.
+* `device=None` lets Veya pick CUDA → MPS → CPU. `_common.load(name, device="cpu")` forces CPU.
 * `_common.py` holds the shared states, question sets and printing helpers. Examples import it, so
   you can copy any example out and it keeps working.
 * Where a weak spot is visible in an example's output, the example says so rather than hiding it:
@@ -62,7 +62,7 @@ python examples/01_first_call_minimal.py         # any Python with torch + trans
 | `14_conversation_turns.py` | a list of turns as the state, so a whole exchange can be judged at once. |
 | `15_truncation_basics.py` | what happens when the state does not fit `max_len`, and how to see it in `usage`. |
 
-**You can now** feed Laya text, JSON, email or a conversation, and know what happens when it is too long.
+**You can now** feed Veya text, JSON, email or a conversation, and know what happens when it is too long.
 
 ## Stage 4 — cost, confidence and batching (16-19)
 
@@ -123,7 +123,7 @@ python examples/01_first_call_minimal.py         # any Python with torch + trans
 | `40_caching_and_monitoring.py` | an in-memory answer cache, and a confidence monitor over a batch. |
 | `41_production_triage_service.py` | the capstone: route, triage, apply policy, emit a structured decision record. |
 
-**You can now** run Laya as a component of a real system.
+**You can now** run Veya as a component of a real system.
 
 ---
 

@@ -1,10 +1,10 @@
 """Example 29 -- router preset turns a request into a model tier.
 
-Runs `laya.router_questions()` over a trivial lookup, a hard refactor and a sensitive
+Runs `veya.router_questions()` over a trivial lookup, a hard refactor and a sensitive
 legal question, then derives a "small vs frontier model" policy from the answers.
 """
 
-from _common import laya, banner, describe, heading, load
+from _common import veya, banner, describe, heading, load
 
 banner("29", "Preset: small vs frontier routing", """
     `router_questions()` scores an arbitrary request on four axes -- difficulty (0-3),
@@ -30,7 +30,7 @@ agent = load("english")
 results = {}
 for label, request in REQUESTS:
     heading(label)
-    answers = agent.predict({"request": request}, laya.router_questions())["answers"]
+    answers = agent.predict({"request": request}, veya.router_questions())["answers"]
     results[label] = answers
     describe(answers)
 

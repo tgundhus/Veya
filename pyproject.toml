@@ -35,19 +35,19 @@ dependencies = [
 
 [tool.setuptools]
 # assets/, research/ and notebooks/ sit in the root, so auto-discovery bails out.
-packages = ["laya", "laya.backends", "laya.mcp", "laya.integrations"]
+packages = ["laya", "veya", "veya.backends", "veya.mcp", "veya.integrations"]
 
 [project.optional-dependencies]
-# `pip install veya[serve]` adds the HTTP server (laya.serve / the laya-serve CLI).
+# `pip install veya[serve]` adds the HTTP server (veya.serve / the veya-serve CLI).
 serve = [
     "fastapi>=0.110.0",
     "uvicorn>=0.27.0",
     "python-multipart>=0.0.9",  # examples/server.py form uploads
 ]
-# `pip install veya[fast]` adds the TileLang GPU fast path (laya/fast.py); everything else works without it.
+# `pip install veya[fast]` adds the TileLang GPU fast path (veya/fast.py); everything else works without it.
 fast = ["tilelang>=0.1.14"]
 
-# `pip install veya[mcp]` adds the MCP stdio server (laya.mcp / the laya-mcp-server CLI).
+# `pip install veya[mcp]` adds the MCP stdio server (veya.mcp / the veya-mcp-server CLI).
 mcp = ["mcp>=2.2.0"]
 
 # Local JavaScript sandbox for the opt-in MCP code interface.
@@ -57,10 +57,10 @@ codemode = ["mcp>=2.2.0", "quickjs-ng>=0.18.0.1,<0.19", "psutil>=5.9.8"]
 # Consuming a prepared replay manifest does not import ONNX.
 replay = ["onnx>=1.20.0"]
 
-# `pip install veya[structured]` adds pydantic for the typed-model helpers (laya/structured.py).
+# `pip install veya[structured]` adds pydantic for the typed-model helpers (veya/structured.py).
 structured = ["pydantic>=2.0.0"]
 
-# `pip install veya[onnx]` adds ONNX Runtime for `laya.onnx_agent` and `onnxscript`, which
+# `pip install veya[onnx]` adds ONNX Runtime for `veya.onnx_agent` and `onnxscript`, which
 # `torch.onnx.export` requires (`scripts/export_onnx.py`, `tests/test_onnx.py`).
 #
 # The NumPy cap is not about ONNX: the extra's own resolution (onnx -> ml-dtypes) otherwise
@@ -70,7 +70,7 @@ structured = ["pydantic>=2.0.0"]
 # declared floor cannot use.
 #
 # It is scoped by marker rather than written as a blanket `numpy<2`, because a hard upper cap
-# binds every `laya[onnx]` install -- including the many on a current torch -- and makes the
+# binds every `veya[onnx]` install -- including the many on a current torch -- and makes the
 # extra unresolvable next to anything else requiring `numpy>=2`. The marker names the stack this
 # actually affects: the macOS/Intel checkout (#948), where torch tops out at 2.2.2 and NumPy 1.26
 # satisfies onnx, onnxruntime and onnxscript. Every other platform resolves what `onnx` wants,
@@ -78,7 +78,7 @@ structured = ["pydantic>=2.0.0"]
 onnx = ["onnx", "onnxruntime", "onnxscript",
         "numpy<2; platform_system == 'Darwin' and platform_machine == 'x86_64'"]
 
-# `pip install veya[langchain]` adds the LangChain / LangGraph integrations (laya.integrations).
+# `pip install veya[langchain]` adds the LangChain / LangGraph integrations (veya.integrations).
 langchain = [
     "langchain-core>=0.2.0",
     "langgraph>=0.1.0",
@@ -88,12 +88,12 @@ langgraph = [
     "langgraph>=0.1.0",
 ]
 
-# `pip install veya[llamaindex]` adds the LlamaIndex query router & selector integrations (laya.integrations).
+# `pip install veya[llamaindex]` adds the LlamaIndex query router & selector integrations (veya.integrations).
 llamaindex = [
     "llama-index-core>=0.10.0",
 ]
 
-# `pip install veya[crewai]` adds the CrewAI multi-agent delegation router (laya.integrations).
+# `pip install veya[crewai]` adds the CrewAI multi-agent delegation router (veya.integrations).
 # 1.15.6 is the first CrewAI that pins a patched json-repair (GHSA-xf7x-x43h-rpqh). Those releases
 # also pin mcp~=1.28, so this extra cannot share an install with the `mcp` extra (mcp>=2.2).
 crewai = [
@@ -104,12 +104,19 @@ crewai = [
 agno = ["agno>=3.1.12,<4"]
 
 [project.scripts]
-laya = "laya.cli:main"
-laya-serve = "laya.serve:main"
-laya-evals = "laya.evals_cli:main"
-laya-replay = "laya.replay:main"
-laya-mcp-server = "laya.mcp.server:main"
-laya-train = "laya.train_cli:main"
+veya = "veya.cli:main"
+veya-serve = "veya.serve:main"
+veya-evals = "veya.evals_cli:main"
+veya-replay = "veya.replay:main"
+veya-mcp-server = "veya.mcp.server:main"
+veya-train = "veya.train_cli:main"
+
+laya = "veya.cli:main"
+laya-serve = "veya.serve:main"
+laya-evals = "veya.evals_cli:main"
+laya-replay = "veya.replay:main"
+laya-mcp-server = "veya.mcp.server:main"
+laya-train = "veya.train_cli:main"
 
 [project.urls]
 Homepage = "https://tgundhus.github.io/Veya/"

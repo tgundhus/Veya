@@ -4,13 +4,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from laya import cli
+from veya import cli
 
 
 @pytest.fixture(autouse=True)
 def clean_mode(monkeypatch):
-    monkeypatch.delenv("LAYA_PERFORMANCE_MODE", raising=False)
-    monkeypatch.delenv("LAYA_THREADS", raising=False)
+    monkeypatch.delenv("VEYA_PERFORMANCE_MODE", raising=False)
+    monkeypatch.delenv("VEYA_THREADS", raising=False)
 
 
 @pytest.mark.parametrize("level", range(1, 6))
@@ -27,33 +27,33 @@ def test_presets_reach_router_without_becoming_prediction_controls(level, monkey
             calls.append(kwargs)
             return {"answers": {"team": {"choice": "billing"}}}
 
-    monkeypatch.setattr(cli.laya, "Router", Router)
+    monkeypatch.setattr(cli.veya, "Router", Router)
     assert cli.main(["--performance-mode", str(level), "--predict", "--json", "Billing help"]) == 0
     out = capsys.readouterr()
     assert constructors == [{"device": None, "performance_mode": level}]
     assert "performance_mode" not in calls[0]
     assert json.loads(out.out)["answers"]["team"]["choice"] == "billing"
-    assert "laya performance:" in out.err
+    assert "veya performance:" in out.err
 
 
 def test_routing_never_preloads_checkpoints_even_with_dedicated_preset(monkeypatch):
     constructors = []
-    monkeypatch.setattr(cli.laya, "Router", lambda **kwargs: constructors.append(kwargs) or object())
+    monkeypatch.setattr(cli.veya, "Router", lambda **kwargs: constructors.append(kwargs) or object())
     cli.make_router(cli.build_parser().parse_args(["--performance-mode", "5", "Hello"]))
     assert constructors == [{"device": None, "performance_mode": 5, "preload": False}]
 
 
 def test_omitted_mode_preserves_lazy_cli_constructor(monkeypatch):
     constructors = []
-    monkeypatch.setattr(cli.laya, "Router", lambda **kwargs: constructors.append(kwargs) or object())
+    monkeypatch.setattr(cli.veya, "Router", lambda **kwargs: constructors.append(kwargs) or object())
     cli.make_router(cli.build_parser().parse_args(["--predict", "Hello"]))
     assert constructors == [{"device": None, "preload": False}]
 
 
 def test_environment_preset_and_explicit_default(monkeypatch):
     constructors = []
-    monkeypatch.setenv("LAYA_PERFORMANCE_MODE", "4")
-    monkeypatch.setattr(cli.laya, "Router", lambda **kwargs: constructors.append(kwargs) or object())
+    monkeypatch.setenv("VEYA_PERFORMANCE_MODE", "4")
+    monkeypatch.setattr(cli.veya, "Router", lambda **kwargs: constructors.append(kwargs) or object())
     cli.make_router(cli.build_parser().parse_args(["--predict", "Hello"]))
     cli.make_router(cli.build_parser().parse_args(["--performance-mode", "default", "--predict", "Hello"]))
     assert constructors == [{"device": None, "performance_mode": 4},
@@ -69,7 +69,7 @@ def test_invalid_cli_mode_fails_before_router_construction(value, monkeypatch):
 
 
 def test_invalid_environment_is_a_friendly_error(monkeypatch, capsys):
-    monkeypatch.setenv("LAYA_PERFORMANCE_MODE", "99")
+    monkeypatch.setenv("VEYA_PERFORMANCE_MODE", "99")
     monkeypatch.setattr(cli, "make_router", lambda args: pytest.fail("invalid mode reached startup"))
     assert cli.main(["Hello"]) == 2
     assert "performance" in capsys.readouterr().err.lower()

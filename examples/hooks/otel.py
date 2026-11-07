@@ -4,7 +4,7 @@ Works without any dependency; uncomment the OpenTelemetry lines if it is install
 
     python examples/hooks/otel.py
 """
-import laya
+import veya
 
 COUNTS = {}
 LATENCIES = []
@@ -17,12 +17,12 @@ def on_predict_end(ctx):
         LATENCIES.append(ctx.elapsed_ms)
     # With OpenTelemetry installed (`pip install opentelemetry-api`):
     #   from opentelemetry import metrics
-    #   meter = metrics.get_meter("laya")
-    #   meter.create_counter("laya.decisions").add(1, {"model": model})
-    #   meter.create_histogram("laya.decision.latency_ms").record(ctx.elapsed_ms or 0.0)
+    #   meter = metrics.get_meter("veya")
+    #   meter.create_counter("veya.decisions").add(1, {"model": model})
+    #   meter.create_histogram("veya.decision.latency_ms").record(ctx.elapsed_ms or 0.0)
 
 
-agent = laya.load("convaiinnovations/laya", on_predict_end=on_predict_end)
+agent = veya.load("convaiinnovations/laya", on_predict_end=on_predict_end)
 agent.system_one("I was charged twice.", {"urgent": {"type": "noul", "instructions": "Urgent?"}})
 print("counts:", COUNTS)
 print("latency samples:", len(LATENCIES))

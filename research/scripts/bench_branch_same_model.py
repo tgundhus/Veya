@@ -2,7 +2,7 @@
 
 bench_branch_ab.py runs each checkout in its own process, which on a busy machine lets load that
 differs between processes decide a close comparison. Here the other checkout's `laya` package is
-copied under the name `laya_base` and imported beside this one. Both Routers get Agents that share
+copied under the name `veya_base` and imported beside this one. Both Routers get Agents that share
 the same model object -- the forward pass is literally the same module -- and requests alternate
 between them in adjacent pairs, base first on even pairs and head first on odd ones, so each pair
 sees the same load. What differs is only the code around the model: routing and language
@@ -12,8 +12,8 @@ Reported per scenario: the median of per-pair ratios (base time / head time; abo
 checkout is faster) with a 95% bootstrap interval over pairs, both medians, and whether every
 pair's answers were identical.
 
-    git worktree add ../laya-main main
-    python research/scripts/bench_branch_same_model.py --base ../laya-main --device cpu --out same_model_cpu.json
+    git worktree add ../veya-main main
+    python research/scripts/bench_branch_same_model.py --base ../veya-main --device cpu --out same_model_cpu.json
 """
 import argparse
 import copy
@@ -34,22 +34,22 @@ sys.path.insert(0, HERE)
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
-import laya.router as router_mod  # noqa: E402
-from laya import Router  # noqa: E402
+import veya  # noqa: E402
+import veya.router as router_mod  # noqa: E402
+from veya import Router  # noqa: E402
 
 
 def import_base(path):
-    """The other checkout's package, importable as `laya_base` next to this `laya`."""
-    tmp = tempfile.mkdtemp(prefix="laya_base_")
-    shutil.copytree(os.path.join(path, "laya"), os.path.join(tmp, "laya_base"),
+    """The other checkout's package, importable as `veya_base` next to this `laya`."""
+    tmp = tempfile.mkdtemp(prefix="veya_base_")
+    shutil.copytree(os.path.join(path, "veya" if os.path.isdir(os.path.join(path, "veya")) else "laya"), os.path.join(tmp, "veya_base"),
                     ignore=shutil.ignore_patterns("__pycache__"))
     sys.path.insert(0, tmp)
-    import laya_base
-    import laya_base.agent
-    import laya_base.router
+    import veya_base
+    import veya_base.agent
+    import veya_base.router
 
-    return laya_base
+    return veya_base
 
 
 def base_agent(agent, base):
@@ -95,7 +95,7 @@ def main():
         sync()
         return time.perf_counter() - t, out
 
-    report = {"meta": {"head": laya.__file__, "base": base.__file__, "device": args.device,
+    report = {"meta": {"head": veya.__file__, "base": base.__file__, "device": args.device,
                        "torch": torch.__version__, "torch_threads": torch.get_num_threads(),
                        "platform": platform.platform(), "pairs": args.pairs, "load_average_at_start": os.getloadavg()},
               "scenarios": {}}

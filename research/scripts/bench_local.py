@@ -31,10 +31,10 @@ import numpy as np  # noqa: E402
 import torch  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, REPO)   # `import laya` works without an installed package
+sys.path.insert(0, REPO)   # `import veya` works without an installed package
 
-import laya  # noqa: E402
-from laya.common import QTYPES, build_sequence, collate_items, render_options, temp_bucket  # noqa: E402
+import veya  # noqa: E402
+from veya.common import QTYPES, build_sequence, collate_items, render_options, temp_bucket  # noqa: E402
 
 ROOT = os.environ.get("LAYA_MODELS", os.path.expanduser("~/laya_models"))
 MODELS = {"english": os.path.join(ROOT, "laya"),
@@ -149,7 +149,7 @@ def metrics(rows):
 
 
 def load(name):
-    ag = laya.load(MODELS[name], device="cpu")
+    ag = veya.load(MODELS[name], device="cpu")
     ag.model.eval()
     return ag
 
@@ -319,7 +319,7 @@ def main():
     a = ap.parse_args()
 
     results = {"meta": {"timestamp": time.strftime("%Y-%m-%d %H:%M:%S"), "device": "cpu",
-                        "torch": torch.__version__, "laya": laya.__version__,
+                        "torch": torch.__version__, "laya": veya.__version__,
                         "threads": torch.get_num_threads()}}
     if os.path.exists(OUT):
         try:

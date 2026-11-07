@@ -1,4 +1,4 @@
-import { LayaValidationError } from './errors.js';
+import { VeyaValidationError } from './errors.js';
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -9,12 +9,12 @@ export function validateJson(value: unknown, path = 'request', ancestors = new S
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return;
   if (typeof value === 'number' && Number.isFinite(value)) return;
   if (typeof value !== 'object' || value === null) {
-    throw new LayaValidationError(`${path} must contain only JSON values`);
+    throw new VeyaValidationError(`${path} must contain only JSON values`);
   }
-  if (ancestors.has(value)) throw new LayaValidationError(`${path} contains a circular reference`);
-  if (ancestors.size > 100) throw new LayaValidationError(`${path} exceeds the JSON nesting limit (100)`);
+  if (ancestors.has(value)) throw new VeyaValidationError(`${path} contains a circular reference`);
+  if (ancestors.size > 100) throw new VeyaValidationError(`${path} exceeds the JSON nesting limit (100)`);
   if (!Array.isArray(value) && Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) {
-    throw new LayaValidationError(`${path} must be a plain JSON object`);
+    throw new VeyaValidationError(`${path} must be a plain JSON object`);
   }
   ancestors.add(value);
   if (Array.isArray(value)) {
@@ -27,10 +27,10 @@ export function validateJson(value: unknown, path = 'request', ancestors = new S
 
 export function validateQuestions(questions: unknown): void {
   if (!isRecord(questions) || Object.keys(questions).length === 0) {
-    throw new LayaValidationError('questions must be an object containing at least one question');
+    throw new VeyaValidationError('questions must be an object containing at least one question');
   }
   for (const [id, q] of Object.entries(questions)) {
-    const invalid = (message: string): never => { throw new LayaValidationError(`questions.${id}: ${message}`); };
+    const invalid = (message: string): never => { throw new VeyaValidationError(`questions.${id}: ${message}`); };
     if (!isRecord(q)) invalid('expected a question object');
     const question = q as Record<string, unknown>;
     if (!Object.hasOwn(question, 'instructions')) invalid('instructions is required');
@@ -85,6 +85,6 @@ export function validateQuestions(questions: unknown): void {
 
 export function validateTimeout(value: number): void {
   if (!Number.isFinite(value) || value < 0 || value > 2_147_483_647) {
-    throw new LayaValidationError('timeoutMs must be between 0 and 2147483647');
+    throw new VeyaValidationError('timeoutMs must be between 0 and 2147483647');
   }
 }

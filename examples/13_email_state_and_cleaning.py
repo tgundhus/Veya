@@ -5,10 +5,10 @@ Real mail arrives with quoted replies, signatures and legal footers attached.
 or `clean_email_body()` lets you see exactly what was thrown away.
 """
 
-from _common import laya, banner, describe, device_line, heading, load
+from _common import veya, banner, describe, device_line, heading, load
 
 banner("13", "Email cleaning, and why it matters", """
-    `laya.email_state(subject, body, sender)` returns a state dict and, by default,
+    `veya.email_state(subject, body, sender)` returns a state dict and, by default,
     runs `clean_email_body()` over the body first. That helper drops quoted history
     (everything from an "On ... wrote:" header), lines starting with ">", trailing
     signature blocks, and confidentiality disclaimers.
@@ -21,7 +21,7 @@ banner("13", "Email cleaning, and why it matters", """
 
 agent = load("english")
 device_line(agent)
-EMAIL_QUESTIONS = laya.email_questions()
+EMAIL_QUESTIONS = veya.email_questions()
 
 LEGIT_BODY = """Hi billing team,
 
@@ -53,7 +53,7 @@ On Mon, 11 Mar 2024 at 09:12, Billing Support <billing@vendor.example> wrote:
 """
 
 heading("the same email, raw and cleaned")
-cleaned_body = laya.clean_email_body(LEGIT_BODY)
+cleaned_body = veya.clean_email_body(LEGIT_BODY)
 print("   raw body     : %d lines, %d chars" % (len(LEGIT_BODY.splitlines()), len(LEGIT_BODY)))
 print("   cleaned body : %d lines, %d chars" % (len(cleaned_body.splitlines()),
                                                  len(cleaned_body)))
@@ -67,8 +67,8 @@ for name, body in (("RAW BODY", LEGIT_BODY), ("CLEANED BODY", cleaned_body)):
         print("   | %s" % line)
 
 heading("triage of the legitimate email: cleaned vs raw")
-cleaned_state = laya.email_state("Invoice 4411 duplicate charge", LEGIT_BODY, "dana@acme.example")
-raw_state = laya.email_state("Invoice 4411 duplicate charge", LEGIT_BODY, "dana@acme.example",
+cleaned_state = veya.email_state("Invoice 4411 duplicate charge", LEGIT_BODY, "dana@acme.example")
+raw_state = veya.email_state("Invoice 4411 duplicate charge", LEGIT_BODY, "dana@acme.example",
                              clean=False)
 clean_result = agent.predict(cleaned_state, EMAIL_QUESTIONS)
 raw_result = agent.predict(raw_state, EMAIL_QUESTIONS)
@@ -99,9 +99,9 @@ On Mon, 11 Mar 2024 at 09:12, Billing Support <billing@vendor.example> wrote:
 """
 
 heading("a phishing lure with an innocent quoted tail")
-phish_clean = laya.email_state("Urgent: your account is locked", PHISH_BODY,
+phish_clean = veya.email_state("Urgent: your account is locked", PHISH_BODY,
                                "security@secure-bank-verify.example")
-phish_raw = laya.email_state("Urgent: your account is locked", PHISH_BODY,
+phish_raw = veya.email_state("Urgent: your account is locked", PHISH_BODY,
                              "security@secure-bank-verify.example", clean=False)
 print("   cleaned state:")
 describe(agent.predict(phish_clean, EMAIL_QUESTIONS)["answers"], indent="   ")

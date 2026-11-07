@@ -1,11 +1,11 @@
 # Schema-driven decisions
 
-Turn a JSON schema, or a pydantic model, into Laya questions, and get back typed values with
-calibrated confidence. This is the bridge that makes Laya a structured-output engine: you describe
-the shape you want, Laya answers it in one forward pass.
+Turn a JSON schema, or a pydantic model, into Veya questions, and get back typed values with
+calibrated confidence. This is the bridge that makes Veya a structured-output engine: you describe
+the shape you want, Veya answers it in one forward pass.
 
 ```python
-import laya
+import veya
 
 schema = {
     "type": "object",
@@ -17,12 +17,12 @@ schema = {
     },
 }
 
-agent = laya.load("convaiinnovations/laya")
+agent = veya.load("convaiinnovations/laya")
 values = agent.decide("I was charged twice, refund me.", schema=schema)
 # {"department": "billing", "urgency": 2, "needs_human": True}
 ```
 
-With pydantic (install `laya[structured]`):
+With pydantic (install `veya[structured]`):
 
 ```python
 from typing import Literal
@@ -45,7 +45,7 @@ asserts the question the compiler actually produces, so this table cannot drift 
 is either a property schema on its own, a whole schema when the row needs its `$defs` (the field is
 named `field`), or a call to an entry point.
 
-| JSON schema | Laya question | Returned value |
+| JSON schema | Veya question | Returned value |
 |---|---|---|
 | `{"enum": ["billing", "support"]}` | `choice` | the chosen value, with its original type |
 | `{"const": "billing"}` | `choice` | that one value |
@@ -74,7 +74,7 @@ level between `minimum` and `maximum`; a boolean is `noul >= 0.5`.
 
 ## Rejections
 
-A schema that cannot be answered from a fixed option set raises `laya.structured.SchemaError`
+A schema that cannot be answered from a fixed option set raises `veya.structured.SchemaError`
 (a `ValueError`) naming the exact path. Each row is executed too, with the field named `name`:
 
 | property schema | message |
@@ -112,10 +112,10 @@ Limits: `MAX_PROPERTIES = 32`, `MAX_OPTIONS = 32`, `MAX_SCORE_LEVELS = 10`.
 
 | function | purpose |
 |---|---|
-| `laya.decide(runner, state, schema=..., *, questions=..., return_details=..., min_confidence=..., **predict_kwargs)` | the free function, works for `Agent` and `Router` |
+| `veya.decide(runner, state, schema=..., *, questions=..., return_details=..., min_confidence=..., **predict_kwargs)` | the free function, works for `Agent` and `Router` |
 | `agent.decide(state, schema=..., ...)` / `router.decide(state, schema=..., ...)` | convenience methods |
-| `laya.decide_batch(runner, states, schema=..., ...)` / `agent.decide_batch(...)` / `router.decide_batch(...)` | the same over many states, one batched call |
-| `questions_from_json_schema(schema)` | schema to Laya questions |
+| `veya.decide_batch(runner, states, schema=..., ...)` / `agent.decide_batch(...)` / `router.decide_batch(...)` | the same over many states, one batched call |
+| `questions_from_json_schema(schema)` | schema to Veya questions |
 | `questions_from_pydantic(model)` | pydantic model to questions (requires pydantic) |
 | `answers_to_json(answers, schema)` | project raw answers onto schema values |
 | `answer_to_pydantic(model, answers)` | project raw answers into a pydantic instance |
@@ -207,7 +207,7 @@ The shipped checkpoints are over-confident as shipped and `laya-multilingual` sh
 temperatures at all — see
 [Calibration](limits.md#calibration) and
 [Known limits](limits.md#known-limits), and the
-[fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb)
+[fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/veya_finetune_typed_decisions_2xT4_kaggle.ipynb)
 for the fitting loop. Fit before you rely on the level; report it because it is the quantity the
 gate and the eval harness both use.
 
@@ -237,4 +237,4 @@ gate and the eval harness both use.
 
 - [Prediction hooks](hooks/index.md): observe, shape, cache or gate the decisions this produces.
 - [Decision primitives](index.md): `choice`, `score` and `noul` in depth.
-- [LangChain and LangGraph](langchain.md): `LayaDecision` is this call as a runnable in a chain.
+- [LangChain and LangGraph](langchain.md): `VeyaDecision` is this call as a runnable in a chain.

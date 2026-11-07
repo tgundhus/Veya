@@ -11,8 +11,8 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.common import collate_items  # noqa: E402
-from laya.onnx_agent import _collate_items_numpy  # noqa: E402
+from veya.common import collate_items  # noqa: E402
+from veya.onnx_agent import _collate_items_numpy  # noqa: E402
 
 
 class CollationContract(unittest.TestCase):

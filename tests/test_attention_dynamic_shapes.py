@@ -21,7 +21,7 @@ import torch.nn as nn  # noqa: E402
 import torch.nn.functional as F  # noqa: E402
 from transformers import BertConfig, BertModel  # noqa: E402
 
-from laya.common import DecisionModel, _DynamicMultiheadAttention  # noqa: E402
+from veya.common import DecisionModel, _DynamicMultiheadAttention  # noqa: E402
 
 PASS, FAIL = [], []
 

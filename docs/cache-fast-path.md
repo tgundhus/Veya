@@ -12,8 +12,8 @@ is computing another request. Misses continue through the existing bounded
 prediction path. The explicit batch endpoint uses the Router's normal batch API,
 which also supports verified replay before loading a model.
 
-This is opt-in through `LAYA_REPLAY_MANIFEST`. With no manifest, HTTP scheduling
-keeps its existing behavior. `LAYA_HTTP_REPLAY_FAST_PATH` defaults to `1` when
+This is opt-in through `VEYA_REPLAY_MANIFEST`. With no manifest, HTTP scheduling
+keeps its existing behavior. `VEYA_HTTP_REPLAY_FAST_PATH` defaults to `1` when
 a manifest is configured. Set it to `0` to retain the Router's model-free replay
 while keeping HTTP calls on the ordinary scheduling path. Invalid boolean values
 fail startup. Inference remains entirely local.
@@ -26,7 +26,7 @@ store identity. Using the deployment's checkpoint and cache environment, approve
 the chosen checkpoints with:
 
 ```bash
-python -m laya.replay --output /persistent/review-policy.json --models english
+python -m veya.replay --output /persistent/review-policy.json --models english
 ```
 
 The command loads the listed checkpoints and prints the approved store identity.
@@ -45,30 +45,30 @@ For subsequent serving, preserve the same checkpoint and calibration settings an
 configure:
 
 ```text
-LAYA_CACHE_PATH=/persistent/decisions.sqlite
-LAYA_CACHE_REQUIRED=1
-LAYA_CACHE_REQUIRE_EXISTING=1
-LAYA_CACHE_EXPECTED_STORE_ID=<the UUID printed during approval>
-LAYA_CACHE_FINGERPRINT=review-policy-v1
-LAYA_CACHE_TTL=none
-LAYA_CACHE_MAXSIZE=none
-LAYA_REPLAY_MANIFEST=/persistent/review-policy.json
-LAYA_HTTP_REPLAY_FAST_PATH=1
-LAYA_PRELOAD=0
+VEYA_CACHE_PATH=/persistent/decisions.sqlite
+VEYA_CACHE_REQUIRED=1
+VEYA_CACHE_REQUIRE_EXISTING=1
+VEYA_CACHE_EXPECTED_STORE_ID=<the UUID printed during approval>
+VEYA_CACHE_FINGERPRINT=review-policy-v1
+VEYA_CACHE_TTL=none
+VEYA_CACHE_MAXSIZE=none
+VEYA_REPLAY_MANIFEST=/persistent/review-policy.json
+VEYA_HTTP_REPLAY_FAST_PATH=1
+VEYA_PRELOAD=0
 ```
 
-`LAYA_PRELOAD=0` allows a process whose traffic is entirely retained hits to keep
+`VEYA_PRELOAD=0` allows a process whose traffic is entirely retained hits to keep
 weights unloaded. A miss still loads its routed checkpoint normally. If the store
 or approved metadata is lost, corrupt or incompatible, required replay returns an
 unavailable error rather than bypassing storage. Re-export deliberately after
 changing the policy, checkpoint or relevant configuration.
 
-`LAYA_REPLAY_MANIFEST` requires a persistent `LAYA_CACHE_PATH`; an in-memory cache
+`VEYA_REPLAY_MANIFEST` requires a persistent `VEYA_CACHE_PATH`; an in-memory cache
 cannot match the manifest's store identity. The existing-store flag and expected
 UUID are validated before SQLite can create
-a replacement file. They require `LAYA_CACHE_PATH`; an in-memory cache cannot
+a replacement file. They require `VEYA_CACHE_PATH`; an in-memory cache cannot
 provide a persistent store identity. An empty flag uses its disabled default;
-invalid boolean spellings fail configuration. `LAYA_CACHE_EXPECTED_STORE_ID`
+invalid boolean spellings fail configuration. `VEYA_CACHE_EXPECTED_STORE_ID`
 also implies that the identified SQLite store must already exist.
 
 ## Resource and correctness boundaries
@@ -79,7 +79,7 @@ lookups outside the event loop. It drains currently queued requests without an
 intentional collection delay, and authorizes each request separately through
 `Router.try_replay`. It never reads private store internals or constructs a model.
 
-The cache queue holds at most `LAYA_MAX_CONCURRENT` waiting jobs, independently of
+The cache queue holds at most `VEYA_MAX_CONCURRENT` waiting jobs, independently of
 the HTTP admission limit. At most 64 jobs are active in a drain. Cancelled waiting
 jobs are skipped; cancelling an active caller cannot interrupt an already running
 SQLite operation. Its operation remains bounded by the worker and queue, so
@@ -124,7 +124,7 @@ includes lookup timings plus its usual inference and optional model-queue timing
 The separate cache probe adds work to misses. Fully queued cache-hit groups can
 already complete quickly through ordinary microbatching. Choose this path using
 representative traffic and queue-inclusive latency, particularly cache hits mixed
-with slow model work. Use `LAYA_HTTP_REPLAY_FAST_PATH=0` when that tradeoff does
+with slow model work. Use `VEYA_HTTP_REPLAY_FAST_PATH=0` when that tradeoff does
 not help the deployment. It does not increase neural-model speed or make a retained
 decision more accurate.
 
@@ -139,7 +139,7 @@ The benchmark alternates queued and fast-path serving with equivalent approved
 policy/configuration metadata against fresh SQLite FULL stores. Each run exports
 a manifest for that store's own UUID. It uses either a controlled fixed-overhead
 fixture (requiring the ONNX extra for manifest export) or existing English CPU
-fp32 weights. `LAYA_HTTP_REPLAY_FAST_PATH` is the scheduling difference between each pair.
+fp32 weights. `VEYA_HTTP_REPLAY_FAST_PATH` is the scheduling difference between each pair.
 It records all-hit, mixed-repeat and all-miss traces; raw
 p50/p95/p99, throughput, cache/model counters, source/checkpoint identities and
 response parity are retained. ASGI transport omits TCP, and client latency starts

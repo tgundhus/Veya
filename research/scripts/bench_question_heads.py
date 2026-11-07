@@ -17,10 +17,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import laya.agent as agent_mod  # noqa: E402
+import veya.agent as agent_mod  # noqa: E402
 from bench_stages import EMAIL, TEN, TICKET, TRIAGE  # noqa: E402
-from laya.agent import Agent, _load_tokenizer  # noqa: E402
-from laya.common import encode_text, render_options, serialize_state  # noqa: E402
+from veya.agent import Agent, _load_tokenizer  # noqa: E402
+from veya.common import encode_text, render_options, serialize_state  # noqa: E402
 
 
 def uncached_build_sequence(tok, state, q, max_len=512, head_max_len=192, option_order=None,

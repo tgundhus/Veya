@@ -5,7 +5,7 @@ description: Opt-in local pruning of replayable tool history, with conservative 
 
 # Experimental context compaction
 
-`ContextCompactor` uses a local Laya predictor to prune older tool calls and
+`ContextCompactor` uses a local Veya predictor to prune older tool calls and
 results. It does not summarize conversation text. Nothing invokes it automatically;
 your application explicitly supplies a transcript and decides whether to use the
 returned copy. The original transcript remains unchanged and should be retained.
@@ -17,10 +17,10 @@ before using it in an agent loop.
 ## Local usage
 
 ```python
-from laya import Agent, ContextCompactor
+from veya import Agent, ContextCompactor
 
 # A directory containing an already downloaded checkpoint; inference stays local.
-agent = Agent("/models/laya", device="cpu", performance_mode="default")
+agent = Agent("/models/veya", device="cpu", performance_mode="default")
 compactor = ContextCompactor(agent)
 
 messages = [
@@ -140,7 +140,7 @@ Run the offline benchmark using existing local checkpoints:
 
 ```bash
 python research/scripts/bench_compaction.py \
-  --checkpoint /models/laya \
+  --checkpoint /models/veya \
   --checkpoint /models/laya-multilingual \
   --out research/results/compaction.json
 ```
@@ -152,7 +152,7 @@ evidence retention, token counts and warm CPU timings over three repetitions.
 It sets offline flags and accepts only local weight directories. It uses the
 checkpoint tokenizer over canonical transcript JSON, not a downstream chat template.
 CPU autocast is explicitly disabled for this fp32 benchmark, including when the
-parent process sets `LAYA_CPU_AMP=bf16`; the runtime precision is checked after loading.
+parent process sets `VEYA_CPU_AMP=bf16`; the runtime precision is checked after loading.
 
 The twelve synthetic cases cover stale reads/searches, relevant source, exact
 errors, non-repeatable receipts, pins, recency, evidence in output middles, required

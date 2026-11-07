@@ -1,7 +1,7 @@
-"""LAYA_DEVICE normalisation *and* parseability: the laya.mcp.device env contract.
+"""VEYA_DEVICE normalisation *and* parseability: the veya.mcp.device env contract.
 
 The variable is read once, in `env_device`, and the same string is handed to torch
-(``Router(device=...)``) and reported by `resolve_device` / `laya_status`. Case and
+(``Router(device=...)``) and reported by `resolve_device` / `veya_status`. Case and
 whitespace normalisation was already covered (``CUDA:0 -> cuda:0``); what this suite
 adds is the other half of "torch can use what we return": ``cuda:`` (or ``gpu``, or
 ``cuda: 0``) normalises cleanly and is still refused by torch -- so on a lazy Router it
@@ -35,7 +35,7 @@ except ImportError:
     print("SKIP: torch not importable, so there is no device parser to check")
     sys.exit(0)
 
-from laya.mcp.device import agent_device, env_device, resolve_device  # noqa: E402
+from veya.mcp.device import agent_device, env_device, resolve_device  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -46,19 +46,19 @@ def ok(name, cond, detail=""):
 
 
 def env_device_with(raw):
-    """`env_device()` with LAYA_DEVICE set to raw (None = unset); the old value is restored."""
-    old = os.environ.get("LAYA_DEVICE")
+    """`env_device()` with VEYA_DEVICE set to raw (None = unset); the old value is restored."""
+    old = os.environ.get("VEYA_DEVICE")
     try:
         if raw is None:
-            os.environ.pop("LAYA_DEVICE", None)
+            os.environ.pop("VEYA_DEVICE", None)
         else:
-            os.environ["LAYA_DEVICE"] = raw
+            os.environ["VEYA_DEVICE"] = raw
         return env_device()
     finally:
         if old is None:
-            os.environ.pop("LAYA_DEVICE", None)
+            os.environ.pop("VEYA_DEVICE", None)
         else:
-            os.environ["LAYA_DEVICE"] = old
+            os.environ["VEYA_DEVICE"] = old
 
 
 def rejection(raw):
@@ -94,7 +94,7 @@ def test_unparseable_values_are_rejected_by_name():
     for raw in ("cuda:", "gpu", "cuda: 0"):
         message = rejection(raw)
         ok("%r -> ValueError" % raw, bool(message) and "wrong exception" not in message, message or "no error")
-        ok("%r names LAYA_DEVICE" % raw, "LAYA_DEVICE" in message, message)
+        ok("%r names VEYA_DEVICE" % raw, "VEYA_DEVICE" in message, message)
         ok("%r quotes the offending value" % raw, raw.strip() in message, message)
     ok("'cuda:' carries torch's own reason",
        "Invalid device string" in rejection("cuda:"), rejection("cuda:"))
@@ -103,9 +103,9 @@ def test_unparseable_values_are_rejected_by_name():
 
 
 def test_the_env_path_raises_and_force_passes_through():
-    old = os.environ.get("LAYA_DEVICE")
+    old = os.environ.get("VEYA_DEVICE")
     try:
-        os.environ["LAYA_DEVICE"] = "cuda:"
+        os.environ["VEYA_DEVICE"] = "cuda:"
         try:
             resolve_device()
         except ValueError:
@@ -114,9 +114,9 @@ def test_the_env_path_raises_and_force_passes_through():
             ok("resolve_device() refuses it too", False, "returned a label for 'cuda:'")
     finally:
         if old is None:
-            os.environ.pop("LAYA_DEVICE", None)
+            os.environ.pop("VEYA_DEVICE", None)
         else:
-            os.environ["LAYA_DEVICE"] = old
+            os.environ["VEYA_DEVICE"] = old
     # force= is the documented tests hook: it is returned verbatim, exactly like the
     # CLI --device flag, which never reads the environment. Guarded, because the check is
     # about the pass-through: a version that parses `force` has to fail by name, not abort.
@@ -190,8 +190,8 @@ def test_the_rewrite_refusal_is_attributed_to_the_variable():
         print("   NOTE no torch-rewritten index on this version, so the message arms below do not run")
     for raw in rewritten:
         message = rejection(raw)
-        ok("%r is refused with a ValueError naming LAYA_DEVICE" % raw,
-           "LAYA_DEVICE" in message, message or "no error")
+        ok("%r is refused with a ValueError naming VEYA_DEVICE" % raw,
+           "VEYA_DEVICE" in message, message or "no error")
         ok("%r's refusal quotes the value the operator wrote" % raw, raw in message, message)
         ok("%r's refusal quotes torch's own answer (%s)" % (raw, str(torch.device(raw))),
            str(torch.device(raw)) in message, message)
@@ -221,16 +221,16 @@ def test_force_is_the_only_path_that_can_label_a_refused_device():
                "raised %s: %s" % (type(exc).__name__, exc))
             continue
         ok("env %r labels a device torch accepts" % raw, parses(value), repr(value))
-    old = os.environ.get("LAYA_DEVICE")
+    old = os.environ.get("VEYA_DEVICE")
     try:
-        os.environ.pop("LAYA_DEVICE", None)
+        os.environ.pop("VEYA_DEVICE", None)
         label = resolve_device()
         ok("auto-detected label parses", parses(label), repr(label))
     finally:
         if old is None:
-            os.environ.pop("LAYA_DEVICE", None)
+            os.environ.pop("VEYA_DEVICE", None)
         else:
-            os.environ["LAYA_DEVICE"] = old
+            os.environ["VEYA_DEVICE"] = old
     # force= is the one path that can, and it is returned verbatim on purpose. Checked
     # defensively: a future edit that parses `force` too must fail a named check, not the run.
     for raw in ("cuda:", "gpu", "cuda: 0"):
@@ -286,15 +286,15 @@ def test_agent_device_answers_by_input_shape():
 
 
 def test_reported_equals_handed_to_torch():
-    old = os.environ.get("LAYA_DEVICE")
+    old = os.environ.get("VEYA_DEVICE")
     try:
-        os.environ["LAYA_DEVICE"] = "CUDA:1"
+        os.environ["VEYA_DEVICE"] = "CUDA:1"
         ok("env_device == resolve_device", env_device() == resolve_device() == "cuda:1")
     finally:
         if old is None:
-            os.environ.pop("LAYA_DEVICE", None)
+            os.environ.pop("VEYA_DEVICE", None)
         else:
-            os.environ["LAYA_DEVICE"] = old
+            os.environ["VEYA_DEVICE"] = old
 
 
 def main():

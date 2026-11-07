@@ -19,7 +19,7 @@ they are not a speed ranking.
 | 5 | dedicated | 16 | 16 | 3 | preload | 131,072 | 16 |
 
 Profile threads are capped at the logical CPUs available to the process, including affinity
-where the platform exposes it. An explicit `LAYA_THREADS` overrides that cap. Model residency
+where the platform exposes it. An explicit `VEYA_THREADS` overrides that cap. Model residency
 is an LRU bound, not a RAM quota. A single checkpoint still needs its normal memory.
 Padded-token and admission budgets apply to HTTP serving. Padded tokens count question rows
 times their padded width; a larger batch is split across forwards rather than shortening its
@@ -28,30 +28,30 @@ inputs. The budget cannot split one state's question set, so that state's rows m
 ## Python
 
 ```python
-import laya
-from laya import Agent, Router
-from laya.onnx_agent import ONNXAgent
+import veya
+from veya import Agent, Router
+from veya.onnx_agent import ONNXAgent
 
 router = Router(performance_mode=3)
 agent = Agent("/path/to/checkpoint", device="cpu", performance_mode=1)
-agent = laya.load("/path/to/checkpoint", performance_mode=2)
-onnx = ONNXAgent("/path/to/checkpoint", onnx_path="/path/to/laya.onnx", performance_mode=2)
+agent = veya.load("/path/to/checkpoint", performance_mode=2)
+onnx = ONNXAgent("/path/to/checkpoint", onnx_path="/path/to/veya.onnx", performance_mode=2)
 ```
 
-`performance_mode=None` reads `LAYA_PERFORMANCE_MODE`. Integers `1` through `5` and their
+`performance_mode=None` reads `VEYA_PERFORMANCE_MODE`. Integers `1` through `5` and their
 string forms select a mode. Use `performance_mode="default"` to ignore that environment
 variable for this instance. The environment accepts `default` too.
 
-`laya.parse_performance_mode(value)` validates a value and returns its numeric level, or
-`None` for the default. `laya.resolve_performance_mode(value=None)` also reads the environment
+`veya.parse_performance_mode(value)` validates a value and returns its numeric level, or
+`None` for the default. `veya.resolve_performance_mode(value=None)` also reads the environment
 when omitted and returns a fresh effective configuration dictionary, or `None` for the default.
 Neither helper loads a backend or changes thread settings.
 
 Existing explicit settings take precedence. For example, `Router(performance_mode=1,
 max_loaded=2)` allows up to two resident models, and `predict_batch(..., batch_size=8)` uses
-eight states per batch. Explicit `LAYA_THREADS`, `LAYA_MAX_LOADED`, `LAYA_PRELOAD`,
-`LAYA_MAX_CONCURRENT` and `LAYA_MAX_BATCH_TOKENS` override the corresponding profile settings
-in entry points that support them. An explicit `preload()` or `LAYA_MODELS` preload list can
+eight states per batch. Explicit `VEYA_THREADS`, `VEYA_MAX_LOADED`, `VEYA_PRELOAD`,
+`VEYA_MAX_CONCURRENT` and `VEYA_MAX_BATCH_TOKENS` override the corresponding profile settings
+in entry points that support them. An explicit `preload()` or `VEYA_MODELS` preload list can
 raise the resident-model cap to retain the requested models. Model and device selection
 remain independent.
 
@@ -67,31 +67,31 @@ and labels on representative inputs when changing modes, particularly near decis
 ## CLI, HTTP and MCP
 
 ```bash
-laya "Payment failed twice" --preset triage --performance-mode 2
-laya "Payment failed twice" --preset triage --performance-mode default
+veya "Payment failed twice" --preset triage --performance-mode 2
+veya "Payment failed twice" --preset triage --performance-mode default
 ```
 
-Set `LAYA_PERFORMANCE_MODE=2` in the environment of `laya-serve` or `laya-mcp-server` to use
+Set `VEYA_PERFORMANCE_MODE=2` in the environment of `veya-serve` or `veya-mcp-server` to use
 the same profile, or pass `--performance-mode 2` to either entry point. On PowerShell:
 
 ```powershell
-$env:LAYA_PERFORMANCE_MODE = "2"
-laya-serve
+$env:VEYA_PERFORMANCE_MODE = "2"
+veya-serve
 ```
 
-HTTP `/health` and MCP `laya_status` report `performance_mode` and `performance_config`;
+HTTP `/health` and MCP `veya_status` report `performance_mode` and `performance_config`;
 the latter includes effective settings and explicit overrides. With no profile, both are null.
-The detailed HTTP health response requires authentication when `LAYA_API_KEY` is configured.
+The detailed HTTP health response requires authentication when `VEYA_API_KEY` is configured.
 
 `create_app(performance_mode=2)` constructs and configures its own Router. When injecting an
 existing Router, configure it first with `Router(performance_mode=2)`, then call
 `create_app(router=router)`. An explicit app mode must match the injected Router's mode;
 a mismatch raises `ValueError`. Omitting the app mode keeps the Router's existing profile,
 including its thread, residency and preload settings, and ignores later changes to
-`LAYA_PERFORMANCE_MODE`. HTTP-only `LAYA_MAX_BATCH_TOKENS` and `LAYA_MAX_CONCURRENT` are
+`VEYA_PERFORMANCE_MODE`. HTTP-only `VEYA_MAX_BATCH_TOKENS` and `VEYA_MAX_CONCURRENT` are
 captured when the app is created and take precedence over that profile's HTTP budgets.
 
-When MCP uses `LAYA_BASE_URL`, resources belong to the HTTP server. Set the profile in the
+When MCP uses `VEYA_BASE_URL`, resources belong to the HTTP server. Set the profile in the
 server's environment. MCP status reports that server's mode; setting a local MCP profile does
 not change server resources or load a local model. [HTTP configuration](http-api.md) and
 [MCP configuration](cli-mcp.md) describe the other controls.

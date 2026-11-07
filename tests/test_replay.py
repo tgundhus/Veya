@@ -17,12 +17,12 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from laya import DecisionCache, Router  # noqa: E402
-from laya.agent import Agent  # noqa: E402
-from laya.checkpoint import _checkpoint_signature  # noqa: E402
-from laya.errors import DecisionCacheError  # noqa: E402
-from laya.hooks import clear_default_hooks, set_default_hooks  # noqa: E402
-from laya.replay import load_manifest, _onnx_artifacts  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.checkpoint import _checkpoint_signature  # noqa: E402
+from veya.errors import DecisionCacheError  # noqa: E402
+from veya.hooks import clear_default_hooks, set_default_hooks  # noqa: E402
+from veya.replay import load_manifest, _onnx_artifacts  # noqa: E402
 
 
 QUESTIONS = {"keep": {"type": "noul", "instructions": "Keep this?"}}
@@ -125,17 +125,17 @@ class ReplayTests(unittest.TestCase):
             cache.close()
 
     def test_ttl_renewal_and_expiry_follow_existing_cache_policy(self):
-        with tempfile.TemporaryDirectory() as directory, patch("laya.consistency._now", return_value=100):
+        with tempfile.TemporaryDirectory() as directory, patch("veya.consistency._now", return_value=100):
             router, cache, _ = fixture(directory, ttl=16, renew_on_hit=True)
             router.predict("hello", QUESTIONS, model="english")
             manifest = Path(directory) / "replay.json"
             router.export_replay_manifest(manifest)
             cold = restarted(directory, cache, manifest)
-            with patch("laya.consistency._now", return_value=108):
+            with patch("veya.consistency._now", return_value=108):
                 self.assertIsNotNone(cold.try_replay("hello", QUESTIONS, model="english"))
-            with patch("laya.consistency._now", return_value=123):
+            with patch("veya.consistency._now", return_value=123):
                 self.assertIsNotNone(cold.try_replay("hello", QUESTIONS, model="english"))
-            with patch("laya.consistency._now", return_value=140):
+            with patch("veya.consistency._now", return_value=140):
                 self.assertIsNone(cold.try_replay("hello", QUESTIONS, model="english"))
             cache.close()
 
@@ -143,14 +143,14 @@ class ReplayTests(unittest.TestCase):
         for operation in ("read", "decode", "renew"):
             with self.subTest(operation=operation), tempfile.TemporaryDirectory() as directory:
                 router, cache, _ = fixture(directory, ttl=16, renew_on_hit=True)
-                with patch("laya.consistency._now", return_value=100):
+                with patch("veya.consistency._now", return_value=100):
                     router.predict("hello", QUESTIONS, model="english")
                 manifest = Path(directory) / "replay.json"
                 router.export_replay_manifest(manifest)
                 cold = restarted(directory, cache, manifest)
                 method = "renew" if operation == "renew" else "get"
                 kwargs = {"return_value": (b"corrupt", 116)} if operation == "decode" else {"side_effect": OSError("private path")}
-                with patch("laya.consistency._now", return_value=108), patch.object(cache._store, method, **kwargs):
+                with patch("veya.consistency._now", return_value=108), patch.object(cache._store, method, **kwargs):
                     with self.assertRaises(DecisionCacheError):
                         cold.try_replay("hello", QUESTIONS, model="english")
                 cache.close()
@@ -216,7 +216,7 @@ class ReplayTests(unittest.TestCase):
             router, cache, agent = fixture(directory, required=False, ttl=16, renew_on_hit=True)
             with cache:
                 router.hooks_raise = False
-                with patch("laya.consistency._now", return_value=100):
+                with patch("veya.consistency._now", return_value=100):
                     router.predict("hello", QUESTIONS, model="english")
                 manifest = Path(directory) / "replay.json"
                 router.export_replay_manifest(manifest)
@@ -224,7 +224,7 @@ class ReplayTests(unittest.TestCase):
                 cold._agents["english"] = agent
                 cache.ttl = lambda *_: (_ for _ in ()).throw(ValueError("custom policy failed"))
                 self.assertFalse(cold.validate_replay_manifest())
-                with patch("laya.consistency._now", return_value=108), warnings.catch_warnings(record=True) as caught:
+                with patch("veya.consistency._now", return_value=108), warnings.catch_warnings(record=True) as caught:
                     warnings.simplefilter("always", RuntimeWarning)
                     self.assertEqual(cold.predict("hello", QUESTIONS, model="english")["answers"]["keep"]["noul"], 0.51)
                 self.assertTrue(any(issubclass(item.category, RuntimeWarning)
@@ -241,7 +241,7 @@ class ReplayTests(unittest.TestCase):
                         active -= 1
                     return 16
                 cache.ttl = policy
-                with patch("laya.consistency._now", return_value=108):
+                with patch("veya.consistency._now", return_value=108):
                     workers = [threading.Thread(target=lambda: cold.predict("hello", QUESTIONS, model="english")) for _ in range(2)]
                     for worker in workers:
                         worker.start()
@@ -303,14 +303,14 @@ class ReplayTests(unittest.TestCase):
 
     def test_empty_compose_environment_matches_unset_revision_and_digests(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ):
-            for name in ("LAYA_REVISION", "LAYA_SHA256_DIGESTS"):
+            for name in ("VEYA_REVISION", "VEYA_SHA256_DIGESTS"):
                 os.environ.pop(name, None)
             router, cache, _ = fixture(directory)
             router.predict("hello", QUESTIONS, model="english")
             manifest = Path(directory) / "replay.json"
             router.export_replay_manifest(manifest)
-            os.environ["LAYA_REVISION"] = "  "
-            os.environ["LAYA_SHA256_DIGESTS"] = ""
+            os.environ["VEYA_REVISION"] = "  "
+            os.environ["VEYA_SHA256_DIGESTS"] = ""
             cold = restarted(directory, cache, manifest)
             self.assertIsNotNone(cold.try_replay("hello", QUESTIONS, model="english"))
             cache.close()
@@ -352,7 +352,7 @@ class Deny(importlib.abc.MetaPathFinder):
    attempted.append(name)
    raise AssertionError(name)
 sys.meta_path.insert(0,Deny())
-from laya import Router,DecisionCache
+from veya import Router,DecisionCache
 cache=DecisionCache(sys.argv[1],required=True,expected_store_id=sys.argv[4])
 router=Router(models={'english':sys.argv[2]},hooks=[cache],replay_manifest=sys.argv[3],
               agent_kwargs={'lang_temperatures':{}},performance_mode=2)
@@ -375,7 +375,7 @@ cache.close()
             router.predict("hello", QUESTIONS, model="english")
             manifest = Path(directory) / "replay.json"
             router.export_replay_manifest(manifest)
-            with patch("laya.router._apply_torch_threads") as apply:
+            with patch("veya.router._apply_torch_threads") as apply:
                 cold = Router(models={"english": str(Path(directory) / "checkpoint")}, hooks=[cache],
                               replay_manifest=str(manifest), performance_mode=2)
                 apply.assert_not_called()
@@ -503,7 +503,7 @@ cache.close()
                 cache.close()
 
     def test_explicit_policy_retains_unaffected_legacy_key_layout(self):
-        from laya.consistency import _canonical, _KEY_VERSION
+        from veya.consistency import _canonical, _KEY_VERSION
         with tempfile.TemporaryDirectory() as directory:
             router, cache, agent = fixture(directory)
             cache.fingerprint = "legacy-policy"
@@ -518,25 +518,25 @@ cache.close()
             cache.close()
 
     def test_preparation_cli_uses_server_configuration_and_restores_environment(self):
-        from laya.replay import main
+        from veya.replay import main
         with tempfile.TemporaryDirectory() as directory:
             router, cache, _ = fixture(directory)
-            router._laya_decision_cache = cache
+            router._veya_decision_cache = cache
             manifest = Path(directory) / "replay.json"
-            with patch.dict(os.environ, {"LAYA_PRELOAD": "1", "LAYA_REPLAY_MANIFEST": "stale.json"}):
+            with patch.dict(os.environ, {"VEYA_PRELOAD": "1", "VEYA_REPLAY_MANIFEST": "stale.json"}):
                 def build():
-                    self.assertEqual(os.environ["LAYA_PRELOAD"], "0")
-                    self.assertNotIn("LAYA_REPLAY_MANIFEST", os.environ)
+                    self.assertEqual(os.environ["VEYA_PRELOAD"], "0")
+                    self.assertEqual(os.environ["VEYA_REPLAY_MANIFEST"], "")
                     return router
-                with patch("laya.serve.build_router", side_effect=build):
+                with patch("veya.serve.build_router", side_effect=build):
                     self.assertEqual(main(["--output", str(manifest), "--models", "english"]), 0)
-                self.assertEqual(os.environ["LAYA_PRELOAD"], "1")
-                self.assertEqual(os.environ["LAYA_REPLAY_MANIFEST"], "stale.json")
+                self.assertEqual(os.environ["VEYA_PRELOAD"], "1")
+                self.assertEqual(os.environ["VEYA_REPLAY_MANIFEST"], "stale.json")
             self.assertIsNotNone(load_manifest(manifest))
-            self.assertIsNone(router._laya_decision_cache)
+            self.assertIsNone(router._veya_decision_cache)
 
     def test_hidden_explicit_language_has_distinct_single_batch_and_cold_keys(self):
-        from laya.consistency import _canonical, _KEY_VERSION, _fingerprint
+        from veya.consistency import _canonical, _KEY_VERSION, _fingerprint
         with tempfile.TemporaryDirectory() as directory:
             router, cache, agent = fixture(directory, lang_temperatures={"de": {"temperature": [1, 1, 1]}})
             original = agent.system_one
@@ -603,7 +603,7 @@ class ONNXArtifactTests(unittest.TestCase):
     def test_cold_native_replay_refuses_changed_external_weights(self):
         import onnx
         from onnx import helper
-        from laya.onnx_agent import _NativeONNXAgent
+        from veya.onnx_agent import _NativeONNXAgent
         with tempfile.TemporaryDirectory() as directory:
             router, cache, original = fixture(directory)
             graph = Path(directory) / "model.onnx"
@@ -632,7 +632,7 @@ class ONNXArtifactTests(unittest.TestCase):
 
 class StoreIdentityTests(unittest.TestCase):
     def test_cache_context_manager_releases_sqlite_and_preserves_prediction_errors(self):
-        from laya.consistency import _MemoryStore
+        from veya.consistency import _MemoryStore
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "context.sqlite"
             cache = DecisionCache(path, required=True)

@@ -17,9 +17,9 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from laya import router as router_mod  # noqa: E402
-from laya.lang import analyse  # noqa: E402
-from laya.router import Router  # noqa: E402
+from veya import router as router_mod  # noqa: E402
+from veya.lang import analyse  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 PASS, FAIL = [], []
 

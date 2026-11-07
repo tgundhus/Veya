@@ -2,9 +2,9 @@ import copy
 import json
 import unittest
 
-from laya_client import (
-    LayaAPIError, LayaClient, LayaConnectionError, LayaResponseError,
-    LayaTimeoutError, LayaValidationError,
+from veya_client import (
+    VeyaAPIError, VeyaClient, VeyaConnectionError, VeyaResponseError,
+    VeyaTimeoutError, VeyaValidationError,
 )
 from _support import PREDICTION, QUESTIONS, Server
 
@@ -27,7 +27,7 @@ class BatchTests(unittest.TestCase):
         states = ["hello नमस्ते", {"text": "billing", "flag": False}, ["technical", {"count": 0}]]
         payload = batch_payload(3)
         with Server(payload) as server:
-            result = LayaClient(base_url=server.url + "/proxy/", api_key="batch-token").predict_batch(
+            result = VeyaClient(base_url=server.url + "/proxy/", api_key="batch-token").predict_batch(
                 states, QUESTIONS)
         self.assertEqual(result, payload)
         self.assertEqual(len(server.requests), 1)
@@ -43,7 +43,7 @@ class BatchTests(unittest.TestCase):
         # The server owns its limit. The client sends each list once, without chunking.
         for count in (1, 64, 65):
             with self.subTest(count=count), Server(batch_payload(count)) as server:
-                result = LayaClient(base_url=server.url).predict_batch(["hello"] * count, QUESTIONS)
+                result = VeyaClient(base_url=server.url).predict_batch(["hello"] * count, QUESTIONS)
                 self.assertEqual(len(result["results"]), count)
                 self.assertEqual(len(server.requests), 1)
                 self.assertEqual(len(json.loads(server.requests[0][3])["states"]), count)
@@ -54,11 +54,11 @@ class BatchTests(unittest.TestCase):
                     "batch_size": 1, "sort_by_length": True}
         states = ["a longer state", "short"]
         with Server(batch_payload()) as server:
-            result = LayaClient(base_url=server.url).predict_batch(states, QUESTIONS, **controls, timeout=2)
+            result = VeyaClient(base_url=server.url).predict_batch(states, QUESTIONS, **controls, timeout=2)
         self.assertEqual(result, batch_payload())
         self.assertEqual(json.loads(server.requests[0][3]), {"states": states, "questions": QUESTIONS, **controls})
         with Server(batch_payload()) as server:
-            LayaClient(base_url=server.url).predict_batch(states, QUESTIONS, sort_by_length=False, min_confidence=0)
+            VeyaClient(base_url=server.url).predict_batch(states, QUESTIONS, sort_by_length=False, min_confidence=0)
         self.assertIs(json.loads(server.requests[0][3])["sort_by_length"], False)
 
     def test_invalid_states_never_send(self):
@@ -68,17 +68,17 @@ class BatchTests(unittest.TestCase):
                  ["valid", None], [{"nested": float("nan")}], [{"nested": float("inf")}],
                  [{1: "key"}], [{"nested": (1, 2)}], [cyclic], ["\ud800"]]
         with Server() as server:
-            client = LayaClient(base_url=server.url)
+            client = VeyaClient(base_url=server.url)
             for i, states in enumerate(cases):
-                with self.subTest(case=i), self.assertRaises(LayaValidationError):
+                with self.subTest(case=i), self.assertRaises(VeyaValidationError):
                     client.predict_batch(states, QUESTIONS)
             self.assertEqual(server.requests, [])
 
     def test_invalid_questions_and_controls_never_send(self):
         with Server() as server:
-            client = LayaClient(base_url=server.url)
+            client = VeyaClient(base_url=server.url)
             for questions in (None, [], {}, {"x": None}, {"x": {"type": "choice"}}):
-                with self.subTest(questions=questions), self.assertRaises(LayaValidationError):
+                with self.subTest(questions=questions), self.assertRaises(VeyaValidationError):
                     client.predict_batch(["hello"], questions)
             cases = [{"model": ""}, {"task": 1}, {"lang": False}, {"lang_guess": ""},
                      {"max_len": True}, {"head_max_len": 0}, {"min_confidence": True},
@@ -87,7 +87,7 @@ class BatchTests(unittest.TestCase):
                      *({"sort_by_length": v} for v in (0, 1, "false", [])),
                      *({"timeout": v} for v in (False, 0, -1, float("inf"), float("nan")))]
             for controls in cases:
-                with self.subTest(controls=controls), self.assertRaises(LayaValidationError):
+                with self.subTest(controls=controls), self.assertRaises(VeyaValidationError):
                     client.predict_batch(["hello"], QUESTIONS, **controls)
             with self.assertRaises(TypeError):
                 client.predict_batch(["hello"], QUESTIONS, hooks=[])
@@ -103,8 +103,8 @@ class BatchTests(unittest.TestCase):
             cases.append(payload)
         for payload in cases:
             with self.subTest(payload=payload), Server(payload) as server:
-                with self.assertRaises(LayaResponseError):
-                    LayaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS)
+                with self.assertRaises(VeyaResponseError):
+                    VeyaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS)
                 self.assertEqual(len(server.requests), 1)
 
     def test_total_usage_is_validated(self):
@@ -113,8 +113,8 @@ class BatchTests(unittest.TestCase):
                 payload = batch_payload()
                 payload["total_usage"][key] = value
                 with self.subTest(key=key, value=value), Server(payload) as server:
-                    with self.assertRaises(LayaResponseError):
-                        LayaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS)
+                    with self.assertRaises(VeyaResponseError):
+                        VeyaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS)
 
     def test_invalid_item_is_not_dropped_or_returned_as_partial_success(self):
         bad_answer = copy.deepcopy(PREDICTION)
@@ -125,8 +125,8 @@ class BatchTests(unittest.TestCase):
             payload = batch_payload()
             payload["results"][1] = item
             with self.subTest(item=item), Server(payload) as server:
-                with self.assertRaisesRegex(LayaResponseError, r"results\[1\]"):
-                    LayaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS)
+                with self.assertRaisesRegex(VeyaResponseError, r"results\[1\]"):
+                    VeyaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS)
                 self.assertEqual(len(server.requests), 1)
 
     def test_strict_and_extended_results_are_preserved(self):
@@ -140,22 +140,22 @@ class BatchTests(unittest.TestCase):
             probabilities={"billing": 1.0, "technical": 0.0}, confidence=0.0, answer_confidence=1.0,
             x_tournament={"finalists": ["billing"], "rounds": 2}, abstention="passed", abstention_threshold=0.8)
         with Server(payload) as server:
-            result = LayaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS, min_confidence=0.8)
+            result = VeyaClient(base_url=server.url).predict_batch(["first", "second"], QUESTIONS, min_confidence=0.8)
         self.assertEqual(result, payload)
         self.assertNotIn("abstention", result["results"][0]["answers"]["team"])
 
     def test_invalid_json_is_a_response_error(self):
         for raw in (b"not json", b"null", b'{"results": NaN}', b"\xff"):
             with self.subTest(raw=raw), Server(raw=raw) as server:
-                with self.assertRaises(LayaResponseError):
-                    LayaClient(base_url=server.url).predict_batch(["hello"], QUESTIONS)
+                with self.assertRaises(VeyaResponseError):
+                    VeyaClient(base_url=server.url).predict_batch(["hello"], QUESTIONS)
 
     def test_http_errors_and_unsupported_endpoints_do_not_retry_or_fall_back(self):
         for status in (400, 401, 404, 405, 413, 422, 500, 503):
             detail = {"message": "batch refused", "status": status}
             with self.subTest(status=status), Server({"detail": detail}, status=status) as server:
-                with self.assertRaises(LayaAPIError) as caught:
-                    LayaClient(base_url=server.url).predict_batch(["hello"], QUESTIONS)
+                with self.assertRaises(VeyaAPIError) as caught:
+                    VeyaClient(base_url=server.url).predict_batch(["hello"], QUESTIONS)
                 self.assertEqual(caught.exception.status_code, status)
                 self.assertEqual(caught.exception.detail, detail)
                 self.assertEqual([r[1] for r in server.requests], ["/v1/systemone/batch"])
@@ -163,8 +163,8 @@ class BatchTests(unittest.TestCase):
     def test_redirect_does_not_replay_batch_or_forward_credentials(self):
         with Server(batch_payload(1)) as destination:
             with Server({}, status=307, headers={"Location": destination.url}) as source:
-                with self.assertRaises(LayaAPIError) as caught:
-                    LayaClient(base_url=source.url, api_key="batch-token").predict_batch(["hello"], QUESTIONS)
+                with self.assertRaises(VeyaAPIError) as caught:
+                    VeyaClient(base_url=source.url, api_key="batch-token").predict_batch(["hello"], QUESTIONS)
                 self.assertEqual(caught.exception.status_code, 307)
                 self.assertEqual(len(source.requests), 1)
             self.assertEqual(destination.requests, [])
@@ -172,15 +172,15 @@ class BatchTests(unittest.TestCase):
     def test_timeouts_do_not_retry_or_fall_back(self):
         for overrides in ({}, {"timeout": 0.05}):
             with self.subTest(overrides=overrides), Server(batch_payload(1), slow=True) as server:
-                client = LayaClient(base_url=server.url, timeout=0.05 if not overrides else 2)
-                with self.assertRaises(LayaTimeoutError):
+                client = VeyaClient(base_url=server.url, timeout=0.05 if not overrides else 2)
+                with self.assertRaises(VeyaTimeoutError):
                     client.predict_batch(["hello"], QUESTIONS, **overrides)
                 self.assertEqual(len(server.requests), 1)
 
     def test_interrupted_response_is_a_connection_error(self):
         with Server(batch_payload(1), truncated=True) as server:
-            with self.assertRaises(LayaConnectionError):
-                LayaClient(base_url=server.url).predict_batch(["hello"], QUESTIONS)
+            with self.assertRaises(VeyaConnectionError):
+                VeyaClient(base_url=server.url).predict_batch(["hello"], QUESTIONS)
             self.assertEqual(len(server.requests), 1)
 
 
