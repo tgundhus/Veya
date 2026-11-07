@@ -179,6 +179,12 @@ that the original answer was correct.
   demand. Memory capacity is enforced on each write. SQLite checks the size bound periodically
   to amortize maintenance, so it can temporarily exceed `maxsize`, especially with several
   processes writing. Call `prune()` when a maintenance task must enforce the bound immediately.
+- **Memory eviction policy.** `DecisionCache(maxsize=1024, eviction="lru")` retains recently
+  read decisions when capacity is limited. A hit promotes an entry without extending its TTL;
+  `renew_on_hit` still controls renewal separately. The default `eviction="fifo"` preserves
+  insertion/renewal ordering. LRU is opt-in and only supported by the built-in memory store;
+  passing it with SQLite or a custom store raises `ValueError`. It improves hit rates on the
+  measured Zipf and changing-popularity traces, but cannot help an all-unique stream.
 - **Retention from last use.** With `renew_on_hit=True` a replay pushes the expiry out again, so
   a decision lasts as long as its request keeps coming and only one that stops coming expires.
   The renewal is written once the decision has aged a sixteenth of its lifetime, at most 16 times

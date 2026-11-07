@@ -372,7 +372,7 @@ for name in ("DecisionCache", "DecisionStore", "decision_margins"):
 check_param("DecisionCache.__init__", veya.DecisionCache.__init__, "path", None,
             inspect.Parameter.POSITIONAL_OR_KEYWORD)
 for param, default in (("ttl", None), ("maxsize", 100_000), ("fingerprint", None), ("renew_on_hit", False),
-                       ("store", None), ("coalesce", True)):
+                       ("store", None), ("coalesce", True), ("eviction", "fifo")):
     check_param("DecisionCache.__init__", veya.DecisionCache.__init__, param, default,
                 inspect.Parameter.KEYWORD_ONLY)
 for method in ("on_predict_start", "on_predict_end", "prune", "cache_info", "cache_clear", "close"):

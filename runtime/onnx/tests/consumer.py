@@ -78,6 +78,28 @@ class RuntimeTests(unittest.TestCase):
             finally:
                 cache.close()
 
+    def test_lru_keeps_hot_answers_without_another_graph_call(self):
+        calls = []
+        original = self.agent.session
+
+        class Session:
+            def run(self, *args, **kwargs):
+                calls.append(1)
+                return original.run(*args, **kwargs)
+
+        self.agent.session = Session()
+        with veya_onnx.DecisionCache(maxsize=2, eviction="lru") as cache:
+            with self.agent.hooks_installed(cache):
+                first = self.agent.predict("billing", QUESTIONS)
+                per_prediction = len(calls)
+                self.agent.predict("help", QUESTIONS)
+                self.agent.predict("billing", QUESTIONS)
+                self.agent.predict("hello", QUESTIONS)
+                self.assertEqual(self.agent.predict("billing", QUESTIONS)["answers"], first["answers"])
+                self.assertEqual(len(calls), 3 * per_prediction)
+                self.agent.predict("help", QUESTIONS)
+                self.assertEqual(len(calls), 4 * per_prediction)
+
     def test_long_scan_calibration_and_structured_decisions(self):
         scanned = self.agent.predict_long("hello billing help " * 30, QUESTIONS, window=16, stride=8)
         self.assertGreater(scanned["usage"]["windows"], 1)

@@ -270,6 +270,36 @@ check("maxsize/the oldest decision left first", len(en.calls), 4)
 r.predict("three", Q)
 check("maxsize/newer decisions stay", len(en.calls), 4)
 
+for required in (False, True):
+    cache = DecisionCache(maxsize=2, eviction="lru", required=required)
+    r, en, _ = router_with(cache)
+    r.predict("hot", Q)
+    r.predict("cold", Q)
+    en.answer = 0.2
+    replayed = r.predict("hot", Q)
+    r.predict("new", Q)
+    r.predict("hot", Q)
+    check("lru/%s/a live hit survives capacity eviction" % required, len(en.calls), 3)
+    check("lru/%s/promotion keeps the stored first answer" % required,
+          replayed["answers"]["billing"]["noul"], 0.7)
+    r.predict("cold", Q)
+    check("lru/%s/the unread entry was evicted" % required, len(en.calls), 4)
+    cache.close()
+
+memory = consistency._MemoryStore(2, eviction="lru")
+memory.add([(b"live", b"winner", 100), (b"expired", b"old", 1)], 0)
+memory.get(b"live", .5)
+memory.add([(b"fresh", b"new", 100)], 2)
+check("lru/expiry reclamation preserves promoted live entries", memory.get(b"live", 2), (b"winner", 100))
+check("lru/a hit does not extend expiry", memory.get(b"live", 100), None)
+memory.renew(b"live", 200, 101)
+check("lru/renewal cannot resurrect an expired entry", memory.get(b"live", 101), None)
+check_raises("lru/unknown policy is refused", ValueError, lambda: DecisionCache(eviction="lfu"))
+check_raises("lru/SQLite cannot silently ignore the policy", ValueError,
+             lambda: DecisionCache("unused.sqlite", eviction="lru"))
+check_raises("lru/a custom store owns its policy", ValueError,
+             lambda: DecisionCache(store=object(), eviction="lru"))
+
 cache = DecisionCache(maxsize=2, ttl=lambda questions, result: 1 if result["answers"]["billing"]["noul"] < 0.5 else 100)
 r, en, _ = router_with(cache)
 r.predict("live", Q)

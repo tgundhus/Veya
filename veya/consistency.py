@@ -300,8 +300,9 @@ _ENTRY = struct.Struct("<dd")  # touched at, expires at
 class _MemoryStore:
     """Decisions in this process, least recently stored or renewed first."""
 
-    def __init__(self, maxsize: Optional[int]):
+    def __init__(self, maxsize: Optional[int], *, eviction: str = "fifo"):
         self.maxsize = maxsize
+        self._lru = eviction == "lru"
         self._data: "OrderedDict[bytes, bytes]" = OrderedDict()
         self._lock = threading.Lock()
         self._adds_until_sweep = 4096
@@ -315,6 +316,8 @@ class _MemoryStore:
         if expires_at <= now:
             del self._data[key]
             return None
+        if self._lru and self.maxsize is not None:
+            self._data.move_to_end(key)
         return entry[_ENTRY.size:], expires_at
 
     def _sweep(self, now: float) -> int:
@@ -593,7 +596,8 @@ class DecisionCache:
     replay pushes the expiry out again, so a decision lasts as long as its request keeps coming;
     the renewal is written at most 16 times per lifetime. Otherwise a hit writes nothing. The
     built-in stores drop expired decisions and, past `maxsize`, the least recently stored or
-    renewed ones.
+    renewed ones. With `eviction="lru"`, the memory store instead evicts the least recently
+    accessed live decision. An access changes eviction order without renewing its TTL.
 
     An `Agent` call may pass `lang`, which a hook cannot see. On an `Agent` with per-language
     temperatures the default cache therefore stands aside rather than risk replaying an answer
@@ -627,13 +631,20 @@ class DecisionCache:
             A legacy store without identity metadata is explicitly adopted and assigned a UUID.
         expected_store_id: Require the existing SQLite store to have this UUID before any
             schema/journal writes. Missing, recreated or corrupt identities raise DecisionCacheError.
+        eviction: `"fifo"` preserves insertion/renewal ordering. `"lru"` promotes live memory
+            hits before capacity eviction. LRU is only supported by the built-in memory store;
+            SQLite and custom stores retain their own eviction policy.
     """
 
     def __init__(self, path: Optional[str] = None, *, ttl: Union[None, float, Callable[..., Any]] = None,
                  maxsize: Optional[int] = DEFAULT_MAXSIZE, fingerprint: Optional[str] = None,
                  renew_on_hit: bool = False, store: Optional[DecisionStore] = None, coalesce: bool = True,
                  required: bool = False, require_existing: bool = False,
-                 expected_store_id: Optional[str] = None):
+                 expected_store_id: Optional[str] = None, eviction: str = "fifo"):
+        if eviction not in ("fifo", "lru"):
+            raise ValueError("eviction must be 'fifo' or 'lru'")
+        if eviction != "fifo" and (path is not None or store is not None):
+            raise ValueError("eviction='lru' requires the built-in memory store, without path or store")
         if not isinstance(required, bool):
             raise TypeError("required must be a boolean")
         if not isinstance(require_existing, bool):
@@ -666,11 +677,12 @@ class DecisionCache:
             self._store = store
             self.maxsize = None
         else:
-            self._store = (_MemoryStore(maxsize) if path is None else
+            self._store = (_MemoryStore(maxsize, eviction=eviction) if path is None else
                            _SQLiteStore(path, maxsize, required=required, require_existing=require_existing,
                                         expected_store_id=expected_store_id))
             self.maxsize = maxsize
         self.path = path
+        self.eviction = eviction
         self.ttl = ttl
         self.fingerprint = fingerprint
         self.renew_on_hit = bool(renew_on_hit)
@@ -691,7 +703,8 @@ class DecisionCache:
 
     def __repr__(self) -> str:
         where = self.path if self.path is not None else type(self._store).__name__
-        return "DecisionCache(%r, ttl=%r, maxsize=%r)" % (where, self.ttl, self.maxsize)
+        policy = ", eviction='lru'" if self.eviction == "lru" else ""
+        return "DecisionCache(%r, ttl=%r, maxsize=%r%s)" % (where, self.ttl, self.maxsize, policy)
 
     def _failed(self, exc: BaseException, what: str) -> None:
         """A store call or a stored value failed: count it, warn once, and go on without the cache.

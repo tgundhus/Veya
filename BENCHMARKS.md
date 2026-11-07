@@ -30,6 +30,45 @@ its fresh holdout scored 20/36 within ±0.25 for ordinal answers, 10/15 choice a
 9/10 binary. Score and choice miss the 80% gates; the default checkpoint is unchanged.
 [6 November qualification and limits](docs/reports/ordinal-continuation-2026-11-06.md).
 
+## Bounded memory eviction — 7 November 2026
+
+The production memory store now supports opt-in `eviction="lru"`. A live read promotes
+the entry for eviction without extending expiry. The default remains `"fifo"`, which
+preserves insertion/renewal ordering. SQLite/custom stores reject the LRU option.
+No persistence, first-writer-wins, required-cache or renewal behavior is weakened.
+
+The comparison uses 60,000 seeded requests per trace, an empty cache, no expiry or
+renewal, and seven rotated timing repetitions. The table shows capacity 1,024; the raw
+results also cover 256 entries. LFU is a nonaging research implementation, not a
+production store; its hit rates inform selection, not a like-for-like timing claim.
+
+| Trace | FIFO hit rate | LRU hit rate | LFU candidate hit rate | LRU fewer misses | FIFO µs/request | LRU µs/request |
+|---|---:|---:|---:|---:|---:|---:|
+| Zipf popularity | 69.98% | 73.78% | 77.33% | 12.65% | 0.524 | 0.533 |
+| Hot set + one-off traffic | 87.48% | 89.63% | 89.63% | 17.13% | 0.435 | 0.455 |
+| Popularity shift | 54.71% | 64.27% | 48.26% | 21.10% | 0.613 | 0.601 |
+| All unique | 0.00% | 0.00% | 0.00% | 0.00% | 0.866 | 0.854 |
+
+LRU reduces misses on all three reuse traces; all-unique traffic gains no hits. LFU
+performs best on stable skew but falls below FIFO after the popularity shift. LRU was
+selected for its behavior across both stable and changing traffic. The timing columns
+measure complete get/add trace operations, not model inference or HTTP. Workstation
+load is uncontrolled; small timing differences are not universal lookup-speed claims.
+
+[Candidate experiment](research/results/cache_eviction_candidates_20261107.json) ·
+[Production-store comparison and samples](research/results/cache_eviction_production_20261107.json).
+
+```python
+from veya import DecisionCache, Router
+
+cache = DecisionCache(maxsize=1024, eviction="lru")
+router = Router(hooks=[cache])
+```
+
+```bash
+python research/scripts/bench_cache_eviction.py --production-lru --out eviction.json
+```
+
 ## Cache store scaling — 7 November 2026
 
 This additional Windows CPU run measures the stores directly, without a model, HTTP,
