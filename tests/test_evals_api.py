@@ -159,7 +159,8 @@ def _subparsers(parser):
 
 
 _subs = _subparsers(evals_cli._build_parser())
-check("veya-evals subcommands", sorted(_subs), ["agreement", "compare", "evidence", "run", "validate"])
+check("veya-evals subcommands", sorted(_subs),
+      ["agreement", "compare", "evidence", "qualify", "qualify-compare", "qualify-validate", "run", "validate"])
 
 _unhelped, _unstated, _options = [], [], {}
 for _sub, _parser in sorted(_subs.items()):

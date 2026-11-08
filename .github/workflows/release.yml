@@ -38,7 +38,7 @@ jobs:
           cache: npm
           cache-dependency-path: veya-ts/package-lock.json
       - name: Install live routing-contract toolchain
-        run: npm ci --prefix veya-ts --ignore-scripts --omit=optional
+        run: npm ci --prefix veya-ts --ignore-scripts
 
       - name: Install
         run: |

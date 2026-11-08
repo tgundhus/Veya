@@ -24,6 +24,7 @@ RUN pip install "torch==${TORCH_VERSION}" --index-url https://download.pytorch.o
 WORKDIR /src
 COPY pyproject.toml setup.py README.md LICENSE ./
 COPY veya/ ./veya/
+COPY laya/ ./laya/
 # The `serve` extra puts `veya-serve` (POST /v1/systemone, GET /health) in the image, so
 # the same image can run a one-shot request or serve the Jev-compatible API. It adds
 # fastapi and uvicorn only; torch was installed above.

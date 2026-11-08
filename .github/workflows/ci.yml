@@ -87,7 +87,7 @@ jobs:
           cache: npm
           cache-dependency-path: veya-ts/package-lock.json
       - name: Install live routing-contract toolchain
-        run: npm ci --prefix veya-ts --ignore-scripts --omit=optional
+        run: npm ci --prefix veya-ts --ignore-scripts
 
       - name: Install
         run: |
@@ -227,7 +227,7 @@ jobs:
           cache: npm
           cache-dependency-path: veya-ts/package-lock.json
       - name: Install live routing-contract toolchain
-        run: npm ci --prefix veya-ts --ignore-scripts --omit=optional
+        run: npm ci --prefix veya-ts --ignore-scripts
 
       # The +cpu index used on Linux is Linux/macOS only. On Windows the default PyPI wheel is
       # already CPU-only, so installing torch plainly is both correct and what a user gets.
@@ -354,7 +354,9 @@ jobs:
           cache: pip
           cache-dependency-path: runtime/onnx/pyproject.toml
       - name: Install build and offline-fixture tools
-        run: python -m pip install build onnx tokenizers "setuptools>=77"
+        # Replay preparation executes the graph in this toolchain; the receiving
+        # environment stays isolated and never installs the ONNX parser.
+        run: python -m pip install build onnx onnxruntime tokenizers huggingface_hub "setuptools>=77"
       - name: Build and verify base inference, HTTP and MCP wheel and source distribution
         run: |
           python -m build runtime/onnx --outdir runtime/onnx/dist

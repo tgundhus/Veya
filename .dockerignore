@@ -11,6 +11,8 @@
 !docker/check_torch.py
 !veya/
 !veya/**
+!laya/
+!laya/**
 !examples/
 !examples/docker/
 !examples/docker/quickstart.py

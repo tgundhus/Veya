@@ -73,10 +73,10 @@ the same requests and cached checkpoint. All 17 typed answers, checkpoint revisi
 and token counts match exactly. This is a small migration parity check, not a
 task-accuracy evaluation. GPU and multilingual benchmarks were not rerun here.
 
-- [Before measurement](../../research/results/veya_rename_before_cpu_20261107.json)
-- [Refreshed samples and stage timings](../../research/results/veya_rename_after_cpu_20261107.json)
-- [Raw before/after answers](../../research/results/veya_rename_parity_cpu_20261107.json)
-- [Summary and artifact digests](../../research/results/veya_refresh_cpu_20261107.json)
+- [Before measurement](https://github.com/tgundhus/Veya/blob/main/research/results/veya_rename_before_cpu_20261107.json)
+- [Refreshed samples and stage timings](https://github.com/tgundhus/Veya/blob/main/research/results/veya_rename_after_cpu_20261107.json)
+- [Raw before/after answers](https://github.com/tgundhus/Veya/blob/main/research/results/veya_rename_parity_cpu_20261107.json)
+- [Summary and artifact digests](https://github.com/tgundhus/Veya/blob/main/research/results/veya_refresh_cpu_20261107.json)
 
 The [6 November ordinal continuation](ordinal-continuation-2026-11-06.md) remains
 experimental. Its fresh holdout has 20/36 scores within ±0.25, 10/15 correct choices
@@ -96,7 +96,7 @@ checks. The Python HTTP client passes 69 installed-package tests with one platfo
 skip, both from its wheel and from a rebuilt sdist. The lightweight ONNX package
 passes isolated inference, HTTP, MCP, code mode and model-free replay consumers,
 including an outside-checkout source rebuild. Its
-[package report](../../research/results/veya_onnx_packaging_20261107.json) records
+[package report](https://github.com/tgundhus/Veya/blob/main/research/results/veya_onnx_packaging_20261107.json) records
 the bundled source digests. The full wheel also resolves both Python namespaces
 outside the checkout.
 

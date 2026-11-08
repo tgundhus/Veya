@@ -113,7 +113,7 @@ class RoutingContractTests(unittest.TestCase):
         if not node or not compiler.is_file():
             self.skipTest("Node and the local TypeScript dev toolchain are needed for live cross-runtime checks")
         subprocess.run([node, str(compiler), "-p", "tsconfig.json"], cwd=ROOT / "veya-ts", check=True,
-                       capture_output=True, encoding="utf-8", timeout=90)
+                       encoding="utf-8", timeout=90)
         rng = random.Random(231105)
         words = ["where", "why", "done", "already", "the", "and", "i", "please", "je", "nous", "pour",
                  "merci", "ich", "mir", "bitte", "heute", "para", "quero", "agora", "com", "come", "do",

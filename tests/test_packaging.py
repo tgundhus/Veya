@@ -364,6 +364,8 @@ check_true("compose.http/leaves the quickstart service alone",
 # `pip install .` alone puts no `veya-serve` in the image, so the extra is load-bearing.
 check_true("Dockerfile/installs the serve extra", '".[serve]"' in dockerfile, dockerfile[:400])
 check_true("Dockerfile/still runs pip check", "pip check" in dockerfile)
+check_true("Dockerfile/includes the legacy import alias", "COPY laya/ ./laya/" in dockerfile)
+check_true("Docker context/includes the legacy import alias", "!laya/**" in read(".dockerignore"))
 
 # torch 2.14's eager Triton kernels compile on the first CUDA inference and need a C compiler the
 # slim runtime image does not have (#365). The kill switch keeps the stock kernels.

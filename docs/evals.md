@@ -2,6 +2,9 @@
 
 For a versioned local backend/precision matrix, measured boundary coverage and reviewed
 baseline comparisons, use [release qualification](release-qualification.md).
+`veya-evals qualify --matrix matrix.json` runs that deployment matrix;
+`--diagnostic` records a diagnostic run without treating it as acceptance evidence.
+`veya-evals qualify-compare --diagnostic` permits comparison of those diagnostic reports.
 
 `veya.evals` turns a labelled dataset into a repeatable score, and a baseline into a
 pass/fail gate, so a quality change is a reviewable diff instead of a hand-check.
