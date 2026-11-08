@@ -1,16 +1,16 @@
 ---
-title: Laya-Pro review, October 2026
-description: Upstream reconciliation, cache and integration fixes, SDK validation and reproducible measurements for Laya-Pro.
+title: Veya review, October 2026
+description: Upstream reconciliation, cache and integration fixes, SDK validation and reproducible measurements for Veya.
 ---
 
-# Laya-Pro review, October 2026
+# Veya review, October 2026
 
 The review started on 8 October from `692cea9`, which still used upstream 0.3.21. The
 pending branch `merge/upstream-0.3.29` ended at `e29aa6d`, with merge `2d0be4e` incorporating
 upstream release `e08843b`. That branch is incorporated here. Selected correctness fixes and
 the Java and .NET SDK sources are taken from upstream 0.4.1, `1adc59f`.
 
-Laya-Pro retains the English default for ambiguous Latin text. Upstream 0.4 switched it to
+Veya retains the English default for ambiguous Latin text. Upstream 0.4 switched it to
 multilingual. Choice criteria retain insertion order: sorting them would change model inputs.
 This fork's version remains 0.3.29 and does not imply complete upstream 0.4.1 parity.
 
@@ -39,8 +39,8 @@ Existing hardware-specific results are retained as historical measurements.
 | Training and structured calls | Port upstream device and update-budget handling, UTF-8 evaluation output, explicit batch model selection and the final Kaggle convergence helper. Reject dry runs without usable training rows. |
 | Native SDKs | Restore Java and .NET sources and add CI builds. Java rejects reentrant async hooks and drains eviction callbacks even when one fails. |
 | Batch schema grouping | Numeric and string question IDs or choice labels could share a group and receive the wrong keys. Typed signatures keep those requests distinct while grouping identical schemas. |
-| Distribution | Metadata and install links named upstream or an old fork URL. Use the `laya-pro` distribution and this repository, retaining Python import compatibility. |
-| Documentation | Canonical URLs, navigation, sitemap and crawl directives now describe Laya-Pro's own site. |
+| Distribution | Metadata and install links named upstream or an old fork URL. Use the `veya` distribution and this repository, retaining Python import compatibility. |
+| Documentation | Canonical URLs, navigation, sitemap and crawl directives now describe Veya's own site. |
 
 The cache key layout changes to version 2. Existing entries are not replayed under the new
 layout; they remain on disk until expired entries are pruned or the store is cleared.
@@ -61,7 +61,7 @@ This does not establish CUDA, Apple MPS or TileLang behavior.
 
 The shared Python suite list, required lint and compile gates, SDK tests, packed-package
 consumers and the strict documentation build were run. The built site contains 47 sitemap
-URLs under `tgundhus.github.io/laya-pro/`; a runnable check verifies descriptions, canonical URLs and crawl
+URLs under `tgundhus.github.io/Veya/`; a runnable check verifies descriptions, canonical URLs and crawl
 directives on its entry pages.
 
 | Check | Result |
@@ -88,7 +88,7 @@ for two states asking choice, score and yes/no questions. Publicly rounded numer
 had maximum difference zero; available usage fields matched exactly. The exporter also
 checked three shapes within `1e-4`, with maximum logit difference `6e-7`. This small check
 does not establish multilingual accuracy or every native method.
-[Native checkpoint inputs and results](https://github.com/tgundhus/laya-pro/blob/main/research/results/native_sdk_smoke_windows_i9_20261009.json).
+[Native checkpoint inputs and results](https://github.com/tgundhus/Veya/blob/main/research/results/native_sdk_smoke_windows_i9_20261009.json).
 
 Docker and Nix deployment files passed static contract checks; this Windows environment did
 not have Docker or Nix for runtime builds. Hardware-specific fast paths and the full labelled
@@ -121,7 +121,7 @@ closing and reopening SQLite. Local fingerprint collection took a median 0.0799 
 Workstation load was uncontrolled: single-call samples ranged from 396.58 to 683.73 ms and an
 earlier exploratory run was faster. These figures establish the measured execution paths;
 they are too small and variable to support general latency or accuracy claims.
-[Raw checkpoint results](https://github.com/tgundhus/laya-pro/blob/main/research/results/review-2026-10-08-cpu.json).
+[Raw checkpoint results](https://github.com/tgundhus/Veya/blob/main/research/results/review-2026-10-08-cpu.json).
 
 ### Cache capacity and retention
 
@@ -137,7 +137,7 @@ the reviewed implementation, five repeats, 100,000-entry capacity:
 Reclaiming expired entries preserves 1,000 additional live decisions at the cost of a scan.
 An expiry guard avoids that scan when all entries are live. This is a byte-store benchmark,
 not a model or end-to-end service measurement; microsecond timings vary with host activity.
-[Raw capacity comparison](https://github.com/tgundhus/laya-pro/blob/main/research/results/cache_capacity_windows_i9_20261008.json).
+[Raw capacity comparison](https://github.com/tgundhus/Veya/blob/main/research/results/cache_capacity_windows_i9_20261008.json).
 
 The broader model-free cache benchmark records increased request overhead in the final run:
 
@@ -150,7 +150,7 @@ The broader model-free cache benchmark records increased request overhead in the
 Even uncached control timings moved substantially. Stronger payload validation has costs;
 these sequential runs cannot isolate its causal latency effect. There is no claim that every
 cache operation became faster.
-[Raw cache comparison](https://github.com/tgundhus/laya-pro/blob/main/research/results/cache_review_windows_i9_20261008.json).
+[Raw cache comparison](https://github.com/tgundhus/Veya/blob/main/research/results/cache_review_windows_i9_20261008.json).
 
 The retention harness exercised 320,000 requests with fixed, sliding and callable TTL policies
 across memory and SQLite stores, with zero outcome disagreements. Capacity workloads added
@@ -160,7 +160,7 @@ between periodic sweeps, confirming that its bound is a target rather than a str
 A fresh process replayed all 2,000 stored decisions without computation. A changed fingerprint
 and a simulated 31-day expiry each caused 2,000 fresh computations. Rows from the old model
 remained until maintenance; expiry prevents reuse without promising physical erasure.
-[Raw retention and restart results](https://github.com/tgundhus/laya-pro/blob/main/research/results/retention_review_windows_i9_20261008.json).
+[Raw retention and restart results](https://github.com/tgundhus/Veya/blob/main/research/results/retention_review_windows_i9_20261008.json).
 
 ### Reproducing the checks
 
@@ -190,8 +190,8 @@ Published pretrained accuracy tables are not recomputed by synthetic SDK tests. 
 
 ## Publishing the documentation
 
-The documentation workflow is scoped to `tgundhus/laya-pro`, with canonical site URL
-`https://tgundhus.github.io/laya-pro/`. GitHub Pages now uses **GitHub Actions** to publish
+The documentation workflow is scoped to `tgundhus/Veya`, with canonical site URL
+`https://tgundhus.github.io/Veya/`. GitHub Pages now uses **GitHub Actions** to publish
 the generated documentation. The earlier `laya.xgnd.me` address had no public DNS records;
 the working GitHub Pages address is used instead, with HTTPS enforced.
 
@@ -199,7 +199,7 @@ To move to a custom domain later, configure it in Pages settings and DNS, then u
 site URL, documentation links, robots sitemap and `scripts/check_site.py` together. A root
 CNAME file alone does not configure an Actions-based Pages deployment. See [GitHub's publishing
 source guide](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
-Verify the site in Google Search Console and submit `/laya-pro/sitemap.xml`. The project
+Verify the site in Google Search Console and submit `/veya/sitemap.xml`. The project
 `robots.txt` is published for reference; crawler rules apply only to the host's root
 `/robots.txt`. [Google's robots.txt specification](https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec).
 Canonical URLs and sitemap entries communicate the preferred pages; they do not guarantee indexing or

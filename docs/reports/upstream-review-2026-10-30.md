@@ -9,7 +9,7 @@ This selection follows the review of **724 commits, including 516 non-merge comm
 [`c73908d` (0.4.6)](https://github.com/NandhaKishorM/laya/commit/c73908d96ff73c0062c340a11bf7c54ec7d8bc4d)
 through [`118d361` (0.4.18)](https://github.com/NandhaKishorM/laya/commit/118d361a774c9a28cd02a78d6cf4d2af0614f422).
 The measurement baseline is Pro commit `55efeaa87ea10c334eefd0f7b5ac5fc84a1772ad`.
-Laya-Pro keeps its English fallback, typed schema identity, strict agreement validation and
+Veya keeps its English fallback, typed schema identity, strict agreement validation and
 decision retention policies. Model weights and deployed calibration are unchanged.
 
 ## Changes selected
@@ -26,7 +26,7 @@ decision retention policies. Model weights and deployed calibration are unchange
   64-question generated-call cap and ordered-choice limits. Compose and Nix forward the timeout.
 - **MCP:** expose opt-in routing diagnostics, in-process long scans and tournaments. Registered
   checkpoints remain valid on the new paths; remote-only deployments refuse unsupported tools
-  before loading a model. Remote requests identify themselves as `laya-pro/<version>` by default.
+  before loading a model. Remote requests identify themselves as `veya/<version>` by default.
 - **Integrations:** forward routing hints through the wrappers and reject malformed decisions.
   The optional Agno 3.x adapter supports local runners and self-hosted HTTP; its remote routing
   hints now reach the wire. Unknown agents and incomplete guardrail answers are refused.
@@ -63,10 +63,10 @@ Collation avoids 146 intermediate Torch tensor factory calls on the 48-row workl
 avoid at least 201,744 bytes of intermediate Torch storage there. This is allocation evidence,
 not a total-memory/RSS measurement.
 
-[Runnable harness](https://github.com/tgundhus/laya-pro/blob/main/research/scripts/bench_upstream_runtime.py),
-[main samples](https://github.com/tgundhus/laya-pro/blob/main/research/results/upstream_runtime.json),
-[schema samples](https://github.com/tgundhus/laya-pro/blob/main/research/results/upstream_runtime_schema.json),
-[full runtime notes](https://github.com/tgundhus/laya-pro/blob/main/research/results/upstream_runtime_review.md).
+[Runnable harness](https://github.com/tgundhus/Veya/blob/main/research/scripts/bench_upstream_runtime.py),
+[main samples](https://github.com/tgundhus/Veya/blob/main/research/results/upstream_runtime.json),
+[schema samples](https://github.com/tgundhus/Veya/blob/main/research/results/upstream_runtime_schema.json),
+[full runtime notes](https://github.com/tgundhus/Veya/blob/main/research/results/upstream_runtime_review.md).
 
 ## Validation and limits
 

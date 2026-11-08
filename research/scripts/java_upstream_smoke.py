@@ -1,6 +1,6 @@
 """Compare the local Java SDK with a supplied English PyTorch checkpoint.
 
-Build laya-java first. Pass --classpath containing its runtime JAR/classes and the ONNX Runtime
+Build veya-java first. Pass --classpath containing its runtime JAR/classes and the ONNX Runtime
 JAR, --jdk pointing to a JDK, --checkpoint and --graph pointing to local model directories,
 --checkpoint-revision identifying the checkpoint, and --output for the sanitized JSON result.
 This checks returned answers and usage, plus a small warmed batch timing comparison.
@@ -30,8 +30,8 @@ def main():
         parser.error("checkpoint and graph must be local directories")
 
     import torch
-    from laya import Agent
-    from laya.shortlist import predict_tournament
+    from veya import Agent
+    from veya.shortlist import predict_tournament
 
     torch.set_num_threads(2)
     states = [
@@ -78,7 +78,7 @@ def main():
     java = args.jdk / "bin" / ("java" + suffix)
     javac = args.jdk / "bin" / ("javac" + suffix)
     source = Path(__file__).with_name("JavaUpstreamSmoke.java")
-    with tempfile.TemporaryDirectory(prefix="laya-java-smoke-") as directory:
+    with tempfile.TemporaryDirectory(prefix="veya-java-smoke-") as directory:
         work = Path(directory)
         reference = work / "reference.json"
         target = work / "native.json"

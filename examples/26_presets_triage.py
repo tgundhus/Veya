@@ -1,10 +1,10 @@
 """Example 26 -- triage preset on one realistic support ticket.
 
-Runs `laya.triage_questions()` over an enterprise billing complaint and reads the five
+Runs `veya.triage_questions()` over an enterprise billing complaint and reads the five
 typed answers that make up a triage decision.
 """
 
-from _common import laya, banner, describe, device_line, heading, load
+from _common import veya, banner, describe, device_line, heading, load
 
 banner("26", "Preset: support triage", """
     `triage_questions()` is a ready-made schema for inbound support: five questions, one
@@ -27,7 +27,7 @@ agent = load("english")
 device_line(agent)
 
 heading("the five preset answers")
-answers = agent.predict(TICKET, laya.triage_questions())["answers"]
+answers = agent.predict(TICKET, veya.triage_questions())["answers"]
 describe(answers)
 
 heading("the shape of a triage record")
@@ -50,7 +50,7 @@ DEADLINE_TICKET = {
     "message": "Our renewal is due tomorrow and the card on file keeps failing. "
                "Please help us before 5pm or the account lapses."
 }
-deadline = agent.predict(DEADLINE_TICKET, laya.triage_questions())["answers"]
+deadline = agent.predict(DEADLINE_TICKET, veya.triage_questions())["answers"]
 describe(deadline)
 print("""
    Same schema, same checkpoint, and now `is_urgent` fires at %.3f because the ticket

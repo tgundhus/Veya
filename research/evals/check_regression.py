@@ -1,8 +1,8 @@
-"""Compare a fresh `laya_eval` report to a committed baseline and fail on drift.
+"""Compare a fresh `veya_eval` report to a committed baseline and fail on drift.
 
-Used by the scheduled `evals` workflow: it runs `research/eval/laya_eval.py`, then points this
+Used by the scheduled `evals` workflow: it runs `research/eval/veya_eval.py`, then points this
 at the result and a baseline in `research/results/`. The comparison uses
-`laya.evals.EvalReport.compare`, so the tolerance semantics match the CLI.
+`veya.evals.EvalReport.compare`, so the tolerance semantics match the CLI.
 
     python research/evals/check_regression.py fresh.json baseline.json thresholds.json
 """
@@ -18,7 +18,7 @@ _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__f
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from laya.evals import EvalReport  # noqa: E402
+from veya.evals import EvalReport  # noqa: E402
 
 METRICS = ("accuracy", "ece", "mean_confidence")
 
@@ -33,7 +33,7 @@ def _overall(document: Dict[str, Any], language: str, where: str) -> Dict[str, f
 
 def main(argv: List[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("fresh", help="the report produced by research/eval/laya_eval.py")
+    parser.add_argument("fresh", help="the report produced by research/eval/veya_eval.py")
     parser.add_argument("baseline", help="a committed baseline report")
     parser.add_argument("thresholds", nargs="?", help="thresholds.json (languages + tolerance)")
     parser.add_argument("--lang", action="append", help="language to check; repeatable")

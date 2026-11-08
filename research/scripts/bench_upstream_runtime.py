@@ -33,12 +33,12 @@ os.environ.setdefault("MKL_NUM_THREADS", "2")
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
-import laya.common as common  # noqa: E402
-from laya.agent import Agent  # noqa: E402
-from laya.onnx_agent import ONNXAgent, _collate_items_numpy  # noqa: E402
+import veya.common as common  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.onnx_agent import ONNXAgent, _collate_items_numpy  # noqa: E402
 
-agent_module = importlib.import_module("laya.agent")
-onnx_module = importlib.import_module("laya.onnx_agent")
+agent_module = importlib.import_module("veya.agent")
+onnx_module = importlib.import_module("veya.onnx_agent")
 BASE = "55efeaa87ea10c334eefd0f7b5ac5fc84a1772ad"
 
 
@@ -46,9 +46,9 @@ def source_module(path, name):
     source = subprocess.check_output(["git", "show", BASE + ":" + path], cwd=ROOT, text=True)
     if path != "laya/common.py":
         source = source.replace("from .common import (", "from ._adoption_common import (")
-        source = source.replace("from laya.common import (", "from laya._adoption_common import (")
-    module = types.ModuleType("laya." + name)
-    module.__package__ = "laya"
+        source = source.replace("from laya.common import (", "from veya._adoption_common import (")
+    module = types.ModuleType("veya." + name)
+    module.__package__ = "veya"
     module.__file__ = str(ROOT / path) + "@" + BASE
     sys.modules[module.__name__] = module
     exec(compile(source, module.__file__, "exec"), module.__dict__)
@@ -129,7 +129,7 @@ def main():
     bo = source_module("laya/onnx_agent.py", "_adoption_onnx")
     report = {"baseline": BASE, "seed": 29018, "candidate_source_sha256": {
                   p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest()
-                  for p in ("laya/agent.py", "laya/common.py", "laya/onnx_agent.py")},
+                  for p in ("veya/agent.py", "veya/common.py", "veya/onnx_agent.py")},
               "environment": {"python": sys.version, "platform": platform.platform(),
                               "cpu": platform.processor(), "torch": torch.__version__, "numpy": np.__version__,
                               "torch_threads": torch.get_num_threads(), "interop_threads": torch.get_num_interop_threads(),
@@ -167,7 +167,7 @@ def main():
         return
 
     if args.regressions_only:
-        hooks = importlib.import_module("laya.hooks")
+        hooks = importlib.import_module("veya.hooks")
         bh = source_module("laya/hooks.py", "_adoption_hooks")
         source = (ROOT / "tests/test_predict_long.py").read_text(encoding="utf-8")
         # Reuse only the existing weight-free fixture definitions, not its top-level suite.
@@ -216,7 +216,7 @@ def main():
         assert all(outcomes["after"].values()), outcomes
         report["correctness_regressions"] = outcomes
         # Preserve Pro's pre-existing full/partial replay contract on both backends as well.
-        from laya.consistency import DecisionCache
+        from veya.consistency import DecisionCache
         source = (ROOT / "tests/test_consistency.py").read_text(encoding="utf-8")
         nodes = [node for node in ast.parse(source).body
                  if isinstance(node, (ast.ClassDef, ast.FunctionDef))
@@ -248,7 +248,7 @@ def main():
         return
 
     if args.schema_only:
-        router_module = importlib.import_module("laya.router")
+        router_module = importlib.import_module("veya.router")
         source = subprocess.check_output(["git", "show", BASE + ":laya/router.py"], cwd=ROOT, text=True)
         cls = next(n for n in ast.parse(source).body if isinstance(n, ast.ClassDef) and n.name == "Router")
         method = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "predict_batch")
@@ -285,7 +285,7 @@ def main():
                 counts[label] = len(calls)
             row["schema_serializations"] = counts
             row["question_schema_identity"] = "unchanged typed, order-preserving _question_schema; call-local reference only"
-        report["candidate_source_sha256"]["laya/router.py"] = hashlib.sha256((ROOT / "laya/router.py").read_bytes()).hexdigest()
+        report["candidate_source_sha256"]["veya/router.py"] = hashlib.sha256((ROOT / "veya/router.py").read_bytes()).hexdigest()
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report, indent=2) + "\n")
         return

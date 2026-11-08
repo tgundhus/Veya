@@ -1,4 +1,4 @@
-"""Presentation-sensitivity regression checks for a Laya checkpoint.
+"""Presentation-sensitivity regression checks for a Veya checkpoint.
 
 Why this exists
 ---------------
@@ -32,7 +32,7 @@ Checks
     ``--lang`` (or when named in ``--checks``), so the default English report is unchanged.
 
 All metrics read raw marker logits (before temperature) through
-``laya_eval.score_cases``, the same forward pass ``research/scripts/bench_local.py``
+``veya_eval.score_cases``, the same forward pass ``research/scripts/bench_local.py``
 uses. ``parity`` checks that path against ``Agent.system_one`` before anything is
 reported.
 
@@ -65,12 +65,12 @@ import sys
 import time
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
-# Same path handling as laya_eval.py: allow running this file directly.
+# Same path handling as veya_eval.py: allow running this file directly.
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from research.eval.laya_eval import score_cases, softmax_t, temperature_for  # noqa: E402
+from research.eval.veya_eval import score_cases, softmax_t, temperature_for  # noqa: E402
 
 # Fixed English states written for this check. Urgency varies on purpose: a slot
 # prior has to show through states whose honest answer is low, middle and high.
@@ -369,7 +369,7 @@ def parse_langs(values: Optional[Sequence[str]]) -> List[str]:
 
 def routes(states: Sequence[str]) -> Dict[str, int]:
     """Which checkpoint `Router` would pick for each state, counted. Routing only, no weights."""
-    from laya.router import Router
+    from veya.router import Router
 
     router = Router()
     counts: Dict[str, int] = {}
@@ -397,7 +397,7 @@ def parity(agent, states: Optional[Sequence[str]] = None, lang: str = "en") -> f
 
     system_one rounds probabilities to 4 decimals, so agreement shows up as <= 5e-5.
     """
-    from laya.common import QTYPES
+    from veya.common import QTYPES
 
     spec = LANGUAGES[lang]
     states = spec["states"] if states is None else states
@@ -417,7 +417,7 @@ def parity(agent, states: Optional[Sequence[str]] = None, lang: str = "en") -> f
 
 def choice_parity(agent, states: Optional[Sequence[str]] = None, lang: str = "en") -> float:
     """`parity` for the choice control's questions, keyed by option name as system_one reports them."""
-    from laya.common import QTYPES
+    from veya.common import QTYPES
 
     spec = LANGUAGES[lang]
     states = spec["states"] if states is None else states
@@ -437,7 +437,7 @@ def choice_parity(agent, states: Optional[Sequence[str]] = None, lang: str = "en
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         prog="presentation-checks",
-        description="Label-free presentation-sensitivity checks for a Laya checkpoint.")
+        description="Label-free presentation-sensitivity checks for a Veya checkpoint.")
     parser.add_argument("--model", default="convaiinnovations/laya",
                         help="checkpoint repo id or local path")
     parser.add_argument("--subfolder", default=None,
@@ -467,10 +467,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(str(exc), file=sys.stderr)
         return 2
 
-    import laya
+    import veya
 
     started = time.time()
-    agent = laya.load(args.model, device=args.device, subfolder=args.subfolder)
+    agent = veya.load(args.model, device=args.device, subfolder=args.subfolder)
     agent.model.eval()
     if args.lang is None:
         worst = parity(agent)
@@ -485,7 +485,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 "identical_texts": list(IDENTICAL_TEXTS),
                 "identical_ks": list(IDENTICAL_KS),
                 "levels": list(LEVELS),
-                "laya_version": getattr(laya, "__version__", "unknown"),
+                "veya_version": getattr(veya, "__version__", "unknown"),
             },
             "parity_max_abs_diff": worst,
             **report,
@@ -521,7 +521,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         report = {"passed": all(r["passed"] for r in by_lang.values())}
         payload = {
             "config": {"model": args.model, "subfolder": args.subfolder, "device": str(agent.device),
-                       "langs": langs, "laya_version": getattr(laya, "__version__", "unknown")},
+                       "langs": langs, "veya_version": getattr(veya, "__version__", "unknown")},
             "languages": by_lang,
             "parity_max_abs_diff": worst,
             **report,

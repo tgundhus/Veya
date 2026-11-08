@@ -11,7 +11,7 @@ import tempfile
 import threading
 import time
 
-from laya_client import LayaAPIError, LayaClient, LayaConnectionError
+from veya_client import VeyaAPIError, VeyaClient, VeyaConnectionError
 
 
 def check_batch(result, expected, strict=False):
@@ -73,14 +73,14 @@ def check_batch_http(client, anonymous, fixture, strict, legacy):
     ):
         try:
             caller.predict_batch(states, small, **controls)
-        except LayaAPIError as error:
+        except VeyaAPIError as error:
             assert error.status_code == status, (error.status_code, status, error.detail)
         else:
             raise AssertionError("Batch request should have failed with HTTP %d" % status)
 
 
 def run(server_python, fixture_path, strict=False, legacy=False):
-    with tempfile.TemporaryDirectory(prefix="laya-sdk-live-") as directory:
+    with tempfile.TemporaryDirectory(prefix="veya-sdk-live-") as directory:
         root = Path(directory)
         command = [str(server_python), "-u", str(fixture_path)]
         if not legacy:
@@ -89,8 +89,8 @@ def run(server_python, fixture_path, strict=False, legacy=False):
                 command.append("--strict")
         env = dict(os.environ)
         env.pop("PYTHONPATH", None)
-        env.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", LAYA_TOURNAMENT_GROUP="0",
-                   LAYA_JEV_STRICT="0", LAYA_PRELOAD="0", LAYA_IDLE_UNLOAD_SECONDS="0")
+        env.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", VEYA_TOURNAMENT_GROUP="0",
+                   VEYA_JEV_STRICT="0", VEYA_PRELOAD="0", VEYA_IDLE_UNLOAD_SECONDS="0")
         with (root / "stderr.txt").open("w+", encoding="utf-8", errors="replace") as stderr:
             server = subprocess.Popen(command, cwd=root, env=env, stdout=subprocess.PIPE,
                                       stderr=stderr, text=True, encoding="utf-8")
@@ -98,7 +98,7 @@ def run(server_python, fixture_path, strict=False, legacy=False):
 
             def read_lines():
                 for line in server.stdout:
-                    if line.startswith("LAYA_TEST_SERVER="):
+                    if line.startswith("VEYA_TEST_SERVER="):
                         lines.put(json.loads(line.split("=", 1)[1]))
                         return
                 lines.put(None)
@@ -110,13 +110,13 @@ def run(server_python, fixture_path, strict=False, legacy=False):
                 fixture = lines.get(timeout=90)
                 if fixture is None:
                     raise RuntimeError("Server exited before producing its fixture")
-                client = LayaClient(base_url=fixture["baseURL"], api_key="integration-test", timeout=10)
+                client = VeyaClient(base_url=fixture["baseURL"], api_key="integration-test", timeout=10)
                 deadline = time.monotonic() + 15
                 while True:
                     try:
                         client.health(timeout=0.5)
                         break
-                    except LayaConnectionError:
+                    except VeyaConnectionError:
                         if time.monotonic() >= deadline or server.poll() is not None:
                             raise
                         time.sleep(0.05)
@@ -164,17 +164,17 @@ def run(server_python, fixture_path, strict=False, legacy=False):
                         assert 0 < len(finalists) <= 2
                         assert all(p == 0.0 for k, p in answer["probabilities"].items() if k not in finalists)
 
-                anonymous = LayaClient(base_url=fixture["baseURL"], api_key="wrong")
+                anonymous = VeyaClient(base_url=fixture["baseURL"], api_key="wrong")
                 assert anonymous.health() == {"status": "ok"}
                 try:
                     anonymous.predict("hello", fixture["questions"])
-                except LayaAPIError as error:
+                except VeyaAPIError as error:
                     assert error.status_code == 401
                 else:
                     raise AssertionError("Unauthenticated prediction succeeded")
                 try:
                     client.predict("x" * 50_001, fixture["questions"])
-                except LayaAPIError as error:
+                except VeyaAPIError as error:
                     assert error.status_code == 413
                 else:
                     raise AssertionError("Server request limit was bypassed")

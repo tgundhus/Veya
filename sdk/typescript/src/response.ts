@@ -1,9 +1,9 @@
-import { LayaResponseError } from './errors.js';
+import { VeyaResponseError } from './errors.js';
 import type { Questions } from './types.js';
 import { isRecord } from './validation.js';
 
 function expect(condition: unknown, field: string): asserts condition {
-  if (!condition) throw new LayaResponseError(`Invalid Laya response: ${field}`);
+  if (!condition) throw new VeyaResponseError(`Invalid Veya response: ${field}`);
 }
 const number = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 const count = (value: unknown): value is number => Number.isInteger(value);
@@ -25,7 +25,7 @@ export function validateRoute(value: unknown): void {
   // Checked when the server sends it, like the optional fields of `health` and of `usage`: one
   // field the route report added (#384) must not fail every prediction on a deployment that
   // predates it. When it is there it is `null` or the segment text, as every branch of
-  // `laya.lang.analyse()` reports it.
+  // `veya.lang.analyse()` reports it.
   if (detection.mixed_segment !== undefined) {
     expect(detection.mixed_segment === null || typeof detection.mixed_segment === 'string',
       'detection mixed segment');
@@ -34,7 +34,7 @@ export function validateRoute(value: unknown): void {
 
 export function validateHealth(value: unknown): void {
   // Liveness is the only field every caller gets. The rest is withheld from an unauthenticated
-  // probe on a server with LAYA_API_KEY set, so requiring it here would reject a healthy
+  // probe on a server with VEYA_API_KEY set, so requiring it here would reject a healthy
   // response; each field is still checked when the server does send it.
   expect(isRecord(value) && value.status === 'ok', 'health');
   if (value.device !== undefined) expect(typeof value.device === 'string', 'device');
@@ -59,6 +59,12 @@ export function validateUsage(value: unknown): void {
   if (value.truncated_questions !== undefined) {
     expect(Array.isArray(value.truncated_questions) &&
       value.truncated_questions.every((qid: unknown) => typeof qid === 'string'), 'usage.truncated_questions');
+  }
+  if (value.decision_policy !== undefined) {
+    expect(value.decision_policy === 'context-balanced-v1', 'usage.decision_policy');
+  }
+  if (value.policy_probe_tokens !== undefined) {
+    expect(count(value.policy_probe_tokens) && value.policy_probe_tokens >= 0, 'usage.policy_probe_tokens');
   }
   if (value.options === undefined) return;
   expect(isRecord(value.options), 'usage.options');
@@ -106,6 +112,12 @@ export function validatePrediction(value: unknown, questions: Questions): void {
     }
     if (answer.low_confidence !== undefined) {
       expect(answer.low_confidence === true, `answers.${id}.low_confidence`);
+    }
+    if (answer.decision_policy !== undefined) {
+      expect(answer.decision_policy === 'context-balanced-v1', `answers.${id}.decision_policy`);
+    }
+    if (answer.confidence_calibrated !== undefined) {
+      expect(answer.confidence_calibrated === false, `answers.${id}.confidence_calibrated`);
     }
     if (answer.abstention !== undefined || answer.abstention_threshold !== undefined) {
       // The gate writes both onto the same answer or onto neither, so one without the other is a

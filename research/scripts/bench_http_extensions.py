@@ -8,7 +8,7 @@ import timeit
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from laya.serve import _add_jev_confidence  # noqa: E402
+from veya.serve import _add_jev_confidence  # noqa: E402
 
 
 def result(count):

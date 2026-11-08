@@ -1,12 +1,12 @@
 """Example 28 -- moderation preset across four kinds of post.
 
-Runs `laya.moderation_questions()` over a targeted insult, a generic insult, spam and a
+Runs `veya.moderation_questions()` over a targeted insult, a generic insult, spam and a
 benign message, so each category's signal pattern is visible. The summary at the bottom is
 computed from the probabilities this run measured, because a conclusion typed into a print
 statement describes one model's output and silently goes stale on the next.
 """
 
-from _common import laya, banner, describe, heading, load
+from _common import veya, banner, describe, heading, load
 
 banner("28", "Preset: content moderation", """
     `moderation_questions()` asks the four safety questions a moderation queue cares about
@@ -77,7 +77,7 @@ def rank_by_severity(results, labels):
 
 agent = load("english")
 
-QUESTIONS = laya.moderation_questions()
+QUESTIONS = veya.moderation_questions()
 FLAGS = noul_flags(QUESTIONS)
 CEILING = score_ceiling(QUESTIONS)
 

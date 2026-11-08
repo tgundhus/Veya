@@ -33,7 +33,7 @@ if int(transformers.__version__.split(".")[0]) < 5:
 
 from transformers import ModernBertConfig, ModernBertModel  # noqa: E402
 
-from laya.common import (  # noqa: E402
+from veya.common import (  # noqa: E402
     DecisionModel,
     build_sequence,
     collate_items,

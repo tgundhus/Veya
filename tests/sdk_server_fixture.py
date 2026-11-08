@@ -19,9 +19,9 @@ from tokenizers import Tokenizer  # noqa: E402
 from tokenizers.models import WordLevel  # noqa: E402
 from tokenizers.pre_tokenizers import WhitespaceSplit  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
-from laya import Router, load  # noqa: E402
-from laya.common import DecisionModel  # noqa: E402
-from laya.serve import create_app  # noqa: E402
+from veya import Router, load  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
+from veya.serve import create_app  # noqa: E402
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
     args = parser.parse_args()
     torch.manual_seed(7)
     torch.set_num_threads(1)
-    with tempfile.TemporaryDirectory(prefix="laya-sdk-test-") as directory:
+    with tempfile.TemporaryDirectory(prefix="veya-sdk-test-") as directory:
         root = Path(directory)
         cfg = BertConfig(vocab_size=6, hidden_size=64, num_hidden_layers=1,
                          num_attention_heads=2, intermediate_size=128)
@@ -92,14 +92,14 @@ def main():
                     # Otherwise a reordered response could pass the parity checks by coincidence.
                     assert len({r["usage"]["input_tokens"] for r in results}) == len(inputs)
                 batch_cases.append({"name": name, "states": inputs, "controls": controls, "expected": results})
-        os.environ["LAYA_API_KEY"] = "integration-test"
+        os.environ["VEYA_API_KEY"] = "integration-test"
         # This fixture exercises the default HTTP contract, including its confidence extension.
-        os.environ["LAYA_JEV_STRICT"] = "1" if args.strict else "0"
-        os.environ["LAYA_TOURNAMENT_GROUP"] = "2" if args.tournament else "0"
+        os.environ["VEYA_JEV_STRICT"] = "1" if args.strict else "0"
+        os.environ["VEYA_TOURNAMENT_GROUP"] = "2" if args.tournament else "0"
         app = create_app(router)
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
-            print("LAYA_TEST_SERVER=" + json.dumps({
+            print("VEYA_TEST_SERVER=" + json.dumps({
                 "baseURL": "http://127.0.0.1:%d" % listener.getsockname()[1],
                 "pid": os.getpid(),
                 "questions": questions, "state": state, "expected": expected,

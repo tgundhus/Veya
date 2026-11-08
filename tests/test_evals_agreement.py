@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-from laya import confidence, evals
+from veya import confidence, evals
 
 
 def run_document(run_id, rows, *, teacher=True):
@@ -25,7 +25,7 @@ def run_document(run_id, rows, *, teacher=True):
             "answers": dict(zip(questions, labels)),
             "tags": ["routing"], "language": "en",
         })
-    return {"schema": "laya-agreement-run/1", "run_id": run_id,
+    return {"schema": "veya-agreement-run/1", "run_id": run_id,
             "provenance": {"model": "teacher" if teacher else "student",
                            "revision": "pinned", "settings": {"temperature": 0.5}},
             "cases": cases}
@@ -47,7 +47,7 @@ def test_paired_rates_use_every_decision_and_preserve_abstention_denominator():
                      (("a", "b", "a"), ("b", "a")),
                      (("a", "b", None), ("b", "b")))
     report = compare(runs)
-    assert report["schema"] == "laya-agreement-report/1"
+    assert report["schema"] == "veya-agreement-report/1"
     overall = report["overall"]
     assert overall["n_cases"] == 2
     assert overall["n_decisions"] == 5
@@ -209,7 +209,7 @@ def test_malformed_runs_are_rejected(change):
     runs = documents()
     case = runs[0]["cases"][0]
     if change == "schema":
-        runs[0]["schema"] = "laya-agreement-run/999"
+        runs[0]["schema"] = "veya-agreement-run/999"
     elif change == "empty":
         for run in runs:
             run["cases"] = []
@@ -292,7 +292,7 @@ def test_evaluate_treats_abstained_argmax_as_uncovered():
 
 
 def test_the_gate_writes_the_marker_and_the_report_reads_it():
-    """Abstention is `laya.confidence`'s vocabulary, so this result comes from that gate.
+    """Abstention is `veya.confidence`'s vocabulary, so this result comes from that gate.
 
     The fixture above types the state by hand, which pins nothing about the field a gated runner
     actually returns: renaming the state, renaming the key, or reading the key as "any marker
@@ -350,7 +350,7 @@ def test_evaluate_validates_every_input_before_first_runner_call(invalid):
 
 
 def cli(*args):
-    return subprocess.run([sys.executable, "-m", "laya.evals_cli", "agreement", *map(str, args)],
+    return subprocess.run([sys.executable, "-m", "veya.evals_cli", "agreement", *map(str, args)],
                           cwd=Path(__file__).resolve().parents[1], capture_output=True,
                           text=True, encoding="utf-8", timeout=30)
 
@@ -385,7 +385,7 @@ def test_cli_refuses_bad_inputs_without_a_report(tmp_path, invalid):
     if invalid == "duplicate_key":
         # Reject ambiguity even when the duplicate has the same value.
         raw = paths[0].read_text(encoding="utf-8")
-        paths[0].write_text(raw.replace('"schema":', '"schema":"laya-agreement-run/1","schema":', 1),
+        paths[0].write_text(raw.replace('"schema":', '"schema":"veya-agreement-run/1","schema":', 1),
                             encoding="utf-8")
     elif invalid == "nan":
         runs[0]["provenance"]["settings"]["temperature"] = float("nan")
@@ -402,7 +402,7 @@ def test_cli_refuses_bad_inputs_without_a_report(tmp_path, invalid):
     output = tmp_path / "report.json"
     result = cli(*paths, "--json", output)
     assert result.returncode == 2
-    assert "laya-evals:" in result.stderr
+    assert "veya-evals:" in result.stderr
     assert "Traceback" not in result.stderr
     assert not output.exists()
 

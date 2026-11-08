@@ -1,108 +1,118 @@
-# Serve Laya over HTTP from the same image, so a Jev client can point its `baseUrl` at it:
+# Serve Veya over HTTP from the same image, so a Jev client can point its `baseUrl` at it:
 #
-#   docker compose -f compose.yaml -f compose.http.yaml up --build laya-serve
+#   docker compose -f compose.yaml -f compose.http.yaml up --build veya-serve
 #   curl -s localhost:8000/health
 #   curl -s localhost:8000/v1/systemone -H 'content-type: application/json' \
 #     --data @examples/docker/request.json
 #
 # For NVIDIA, append -f compose.cuda.yaml before "up":
 #
-#   docker compose -f compose.yaml -f compose.http.yaml -f compose.cuda.yaml up --build laya-serve
+#   docker compose -f compose.yaml -f compose.http.yaml -f compose.cuda.yaml up --build veya-serve
 #
-# This file is additive. `laya` in compose.yaml still runs the one-shot SDK quickstart and
-# still publishes no ports, so `docker compose run --rm laya` behaves exactly as before.
+# This file is additive. `veya` in compose.yaml still runs the one-shot SDK quickstart and
+# still publishes no ports, so `docker compose run --rm veya` behaves exactly as before.
 # Weights share the same named cache volume as that service.
 #
-# Set LAYA_API_KEY (or LAYA_API_KEY_FILE) to require `Authorization: Bearer <key>`.
-# LAYA_PRELOAD=1 builds every checkpoint at startup so the first request does not pay for
+# Set VEYA_API_KEY (or VEYA_API_KEY_FILE) to require `Authorization: Bearer <key>`.
+# VEYA_PRELOAD=1 builds every checkpoint at startup so the first request does not pay for
 # it; the default here is 0 because it makes the container download the whole family on
 # first boot, which is a surprise in a quickstart.
 services:
-  laya-serve:
+  veya-serve:
     build:
       context: .
       args:
-        TORCH_INDEX: "${LAYA_TORCH_INDEX:-cpu}"
-        TORCH_VERSION: "${LAYA_TORCH_VERSION:-2.14.0}"
+        TORCH_INDEX: "${VEYA_TORCH_INDEX:-cpu}"
+        TORCH_VERSION: "${VEYA_TORCH_VERSION:-2.14.0}"
     # Overrides the image's one-shot quickstart CMD; the ENTRYPOINT that loads *_FILE
     # secrets still runs first.
-    command: ["laya-serve"]
+    command: ["veya-serve"]
     ports:
-      # Host address, host port, container port. The port comes from LAYA_PORT, which
-      # `laya-serve` itself reads, so the two sides cannot drift apart. The host side
-      # stays on loopback unless LAYA_BIND_ADDRESS says otherwise, because the API has
-      # no authentication until LAYA_API_KEY is set.
-      - "${LAYA_BIND_ADDRESS:-127.0.0.1}:${LAYA_PORT:-8000}:${LAYA_PORT:-8000}"
+      # Host address, host port, container port. The port comes from VEYA_PORT, which
+      # `veya-serve` itself reads, so the two sides cannot drift apart. The host side
+      # stays on loopback unless VEYA_BIND_ADDRESS says otherwise, because the API has
+      # no authentication until VEYA_API_KEY is set.
+      - "${VEYA_BIND_ADDRESS:-127.0.0.1}:${VEYA_PORT:-8000}:${VEYA_PORT:-8000}"
     environment:
-      LAYA_HOST: "${LAYA_HOST:-0.0.0.0}"
-      LAYA_PORT: "${LAYA_PORT:-8000}"
-      LAYA_DEVICE: "${LAYA_DEVICE:-cpu}"
+      VEYA_HOST: "${VEYA_HOST:-0.0.0.0}"
+      VEYA_PORT: "${VEYA_PORT:-8000}"
+      VEYA_DEVICE: "${VEYA_DEVICE:-cpu}"
       # Presets supply resource defaults; the explicit controls below take precedence.
-      LAYA_PERFORMANCE_MODE: "${LAYA_PERFORMANCE_MODE:-}"
+      VEYA_PERFORMANCE_MODE: "${VEYA_PERFORMANCE_MODE:-}"
+      # Empty keeps the checkpoint's inference policy; correction is explicitly opt-in.
+      VEYA_DECISION_POLICY: "${VEYA_DECISION_POLICY:-}"
       # FastAPI's external URL prefix behind a reverse proxy; forward stripped paths.
-      LAYA_ROOT_PATH: "${LAYA_ROOT_PATH:-}"
+      VEYA_ROOT_PATH: "${VEYA_ROOT_PATH:-}"
       # Autocast dtype the runtime reads when building the model; empty keeps the checkpoint's own
-      # `amp_dtype`. Set LAYA_CUDA_AMP=fp16 to serve fp16 on a GPU host.
-      LAYA_CUDA_AMP: "${LAYA_CUDA_AMP:-}"
-      LAYA_CPU_AMP: "${LAYA_CPU_AMP:-}"
-      LAYA_PRELOAD: "${LAYA_PRELOAD:-0}"
-      LAYA_MODELS: "${LAYA_MODELS:-}"
-      LAYA_THREADS: "${LAYA_THREADS:-${OMP_NUM_THREADS:-4}}"
-      LAYA_AUTO_TASK: "${LAYA_AUTO_TASK:-0}"
+      # `amp_dtype`. Set VEYA_CUDA_AMP=fp16 to serve fp16 on a GPU host.
+      VEYA_CUDA_AMP: "${VEYA_CUDA_AMP:-}"
+      VEYA_CPU_AMP: "${VEYA_CPU_AMP:-}"
+      VEYA_PRELOAD: "${VEYA_PRELOAD:-0}"
+      VEYA_MODELS: "${VEYA_MODELS:-}"
+      VEYA_THREADS: "${VEYA_THREADS:-${OMP_NUM_THREADS:-4}}"
+      VEYA_AUTO_TASK: "${VEYA_AUTO_TASK:-0}"
       # The checkpoint a state with no language evidence falls back to. Empty keeps Router's own
       # default (english); set `multilingual` for mostly-non-English traffic. An unresolvable
       # name stops the container at startup rather than serving a configuration nobody asked for.
-      LAYA_DEFAULT_MODEL: "${LAYA_DEFAULT_MODEL:-}"
-      # Empty keeps Router's own default (2). Set 3 when LAYA_AUTO_TASK is on: that adds a
+      VEYA_DEFAULT_MODEL: "${VEYA_DEFAULT_MODEL:-}"
+      # Empty keeps Router's own default (2). Set 3 when VEYA_AUTO_TASK is on: that adds a
       # third checkpoint routing can choose on demand, and a cap below it reloads one per switch.
-      LAYA_MAX_LOADED: "${LAYA_MAX_LOADED:-}"
-      LAYA_EXTRA_MODELS: "${LAYA_EXTRA_MODELS:-}"
-      LAYA_IDLE_UNLOAD_SECONDS: "${LAYA_IDLE_UNLOAD_SECONDS:-}"
-      # Decision caching is opt-in. A path under /home/laya/decisions persists in its own volume.
-      LAYA_CACHE: "${LAYA_CACHE:-0}"
-      LAYA_CACHE_PATH: "${LAYA_CACHE_PATH:-}"
-      LAYA_CACHE_TTL: "${LAYA_CACHE_TTL:-86400}"
-      LAYA_CACHE_MAXSIZE: "${LAYA_CACHE_MAXSIZE:-10000}"
-      LAYA_CACHE_RENEW_ON_HIT: "${LAYA_CACHE_RENEW_ON_HIT:-0}"
+      VEYA_MAX_LOADED: "${VEYA_MAX_LOADED:-}"
+      VEYA_EXTRA_MODELS: "${VEYA_EXTRA_MODELS:-}"
+      VEYA_IDLE_UNLOAD_SECONDS: "${VEYA_IDLE_UNLOAD_SECONDS:-}"
+      # Decision caching is opt-in. A path under /home/veya/decisions persists in its own volume.
+      VEYA_CACHE: "${VEYA_CACHE:-0}"
+      VEYA_CACHE_PATH: "${VEYA_CACHE_PATH:-}"
+      VEYA_CACHE_TTL: "${VEYA_CACHE_TTL:-86400}"
+      VEYA_CACHE_MAXSIZE: "${VEYA_CACHE_MAXSIZE:-10000}"
+      VEYA_CACHE_FINGERPRINT: "${VEYA_CACHE_FINGERPRINT:-}"
+      VEYA_CACHE_REQUIRED: "${VEYA_CACHE_REQUIRED:-0}"
+      VEYA_CACHE_REQUIRE_EXISTING: "${VEYA_CACHE_REQUIRE_EXISTING:-0}"
+      VEYA_CACHE_EXPECTED_STORE_ID: "${VEYA_CACHE_EXPECTED_STORE_ID:-}"
+      VEYA_REPLAY_MANIFEST: "${VEYA_REPLAY_MANIFEST:-}"
+      VEYA_HTTP_REPLAY_FAST_PATH: "${VEYA_HTTP_REPLAY_FAST_PATH:-1}"
+      VEYA_CACHE_RENEW_ON_HIT: "${VEYA_CACHE_RENEW_ON_HIT:-0}"
       # Requests admitted at once; one that arrives with every slot taken is refused with 503
       # instead of queued, which is what bounds the bodies a burst holds in memory. Empty keeps
       # the server's own default (16), so this line changes nothing until it is set.
-      LAYA_MAX_CONCURRENT: "${LAYA_MAX_CONCURRENT:-}"
-      LAYA_BODY_READ_TIMEOUT: "${LAYA_BODY_READ_TIMEOUT:-}"
+      VEYA_MAX_CONCURRENT: "${VEYA_MAX_CONCURRENT:-}"
+      VEYA_MICROBATCH_MAX_STATES: "${VEYA_MICROBATCH_MAX_STATES:-0}"
+      VEYA_MICROBATCH_WAIT_MS: "${VEYA_MICROBATCH_WAIT_MS:-1}"
+      VEYA_BODY_READ_TIMEOUT: "${VEYA_BODY_READ_TIMEOUT:-}"
       # Ceiling on the `max_len` / `head_max_len` a request may ask for; a larger value comes back
       # as 422. The SDK integrations quote 8192 because that is this service's default, so the
       # default here stays empty: an operator who sets nothing gets the number the docs print.
-      LAYA_MAX_TOKEN_BUDGET: "${LAYA_MAX_TOKEN_BUDGET:-}"
-      LAYA_MAX_BATCH_TOKENS: "${LAYA_MAX_BATCH_TOKENS:-}"
-      LAYA_JEV_STRICT: "${LAYA_JEV_STRICT:-}"
-      LAYA_TOURNAMENT_GROUP: "${LAYA_TOURNAMENT_GROUP:-}"
-      LAYA_LOG_LEVEL: "${LAYA_LOG_LEVEL:-info}"
-      # The supply-chain pair: LAYA_REVISION says which Hub commit a checkpoint may load from (a
-      # commit, branch, tag, or `reviewed` for the SHAs in laya/revisions.py) and
-      # LAYA_SHA256_DIGESTS verifies the artifact that arrives. An empty revision is "not asked
+      VEYA_MAX_TOKEN_BUDGET: "${VEYA_MAX_TOKEN_BUDGET:-}"
+      VEYA_MAX_BATCH_TOKENS: "${VEYA_MAX_BATCH_TOKENS:-}"
+      VEYA_JEV_STRICT: "${VEYA_JEV_STRICT:-}"
+      VEYA_TOURNAMENT_GROUP: "${VEYA_TOURNAMENT_GROUP:-}"
+      VEYA_LOG_LEVEL: "${VEYA_LOG_LEVEL:-info}"
+      # The supply-chain pair: VEYA_REVISION says which Hub commit a checkpoint may load from (a
+      # commit, branch, tag, or `reviewed` for the SHAs in veya/revisions.py) and
+      # VEYA_SHA256_DIGESTS verifies the artifact that arrives. An empty revision is "not asked
       # for", so unlike a name the server resolves, nothing is validated at startup here.
-      LAYA_REVISION: "${LAYA_REVISION:-}"
-      LAYA_SHA256_DIGESTS: "${LAYA_SHA256_DIGESTS:-}"
-      LAYA_API_KEY: "${LAYA_API_KEY:-}"
-      LAYA_API_KEY_FILE: "${LAYA_API_KEY_FILE:-}"
+      VEYA_REVISION: "${VEYA_REVISION:-}"
+      VEYA_SHA256_DIGESTS: "${VEYA_SHA256_DIGESTS:-}"
+      VEYA_API_KEY: "${VEYA_API_KEY:-}"
+      VEYA_API_KEY_FILE: "${VEYA_API_KEY_FILE:-}"
       HF_HUB_OFFLINE: "${HF_HUB_OFFLINE:-0}"
       HF_TOKEN: "${HF_TOKEN:-}"
       HF_TOKEN_FILE: "${HF_TOKEN_FILE:-}"
       OMP_NUM_THREADS: "${OMP_NUM_THREADS:-4}"
     volumes:
-      - model-cache:/home/laya/.cache/huggingface
-      - decision-cache:/home/laya/decisions
+      - model-cache:/home/veya/.cache/huggingface
+      - decision-cache:/home/veya/decisions
       # Optional token files, readable by UID 10001. Never put a secret value in the
       # environment; these paths are read once at startup and the *_FILE variable is
       # then removed before the server execs.
       # - ${HF_TOKEN_PATH:?Set HF_TOKEN_PATH}:/run/secrets/hf_token:ro
-      # - ${LAYA_API_KEY_PATH:?Set LAYA_API_KEY_PATH}:/run/secrets/laya_api_key:ro
+      # - ${VEYA_API_KEY_PATH:?Set VEYA_API_KEY_PATH}:/run/secrets/veya_api_key:ro
     init: true
     restart: unless-stopped
     # The server preloads before it binds, so /health answers once the preloaded
     # checkpoints are ready. `up --wait` therefore waits for a usable server.
     healthcheck:
-      test: ["CMD", "python", "-c", "import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.environ['LAYA_PORT'] + '/health', timeout=4)"]
+      test: ["CMD", "python", "-c", "import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.environ['VEYA_PORT'] + '/health', timeout=4)"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -112,4 +122,4 @@ services:
 volumes:
   decision-cache:
   model-cache:
-    name: "${LAYA_CACHE_VOLUME:-${COMPOSE_PROJECT_NAME}_model-cache}"
+    name: "${VEYA_CACHE_VOLUME:-${COMPOSE_PROJECT_NAME}_model-cache}"

@@ -1,6 +1,6 @@
 """Portability regressions: checkpoints saved by transformers 5, and non-CUDA devices.
 
-Three failures found while getting Laya to run on a machine that is not the one it was written
+Three failures found while getting Veya to run on a machine that is not the one it was written
 on, all silent or fatal depending on the platform:
 
 1. transformers 5 records ModernBERT's RoPE bases as
@@ -12,7 +12,7 @@ on, all silent or fatal depending on the platform:
 
 2. `torch.autocast(device_type=self.device.type, enabled=False)` raises on devices torch has no
    autocast backend for, even when disabled: 'User specified an unsupported autocast device_type
-   mps'. Laya only ever enables autocast on CUDA, but it still entered the context on every call,
+   mps'. Veya only ever enables autocast on CUDA, but it still entered the context on every call,
    so `predict()` died outright on the MPS device torch selects on Apple/AMD machines.
 
 3. `open(path)` and `Path.read_text()` with no `encoding=` take `locale.getpreferredencoding()`,
@@ -35,8 +35,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch  # noqa: E402
 
-from laya import agent as _agent  # noqa: E402
-from laya.common import _apply_rope_config  # noqa: E402
+from veya import agent as _agent  # noqa: E402
+from veya.common import _apply_rope_config  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -380,7 +380,7 @@ check_true("encoding/the scan sees both open() and Path.read_text()",
 # Without one such page the rule is a style preference, not a crash guard.
 _repo_text = []
 for _pattern in ("README.md", os.path.join("docs", "**", "*.md"),
-                 os.path.join("examples", "*.py"), os.path.join("laya", "*.py")):
+                 os.path.join("examples", "*.py"), os.path.join("veya", "*.py")):
     _repo_text.extend(glob.glob(os.path.join(REPO, _pattern), recursive=True))
 _undecodable = []
 for _page in _repo_text:

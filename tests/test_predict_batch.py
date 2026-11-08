@@ -16,8 +16,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from laya import load, Router  # noqa: E402
-from laya.common import DecisionModel  # noqa: E402
+from veya import load, Router  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
 
 
 def build_tiny_repo(repo: Path):

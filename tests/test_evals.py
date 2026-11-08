@@ -1,4 +1,4 @@
-"""Metric math, dataset parsing and regression comparison for laya.evals. No weights.
+"""Metric math, dataset parsing and regression comparison for veya.evals. No weights.
 
 Run: python -m pytest tests/test_evals.py -q
 """
@@ -12,9 +12,9 @@ import numpy as np
 
 import pytest
 
-import laya
-from laya import evals
-from laya.evals import (
+import veya
+from veya import evals
+from veya.evals import (
     ChoiceAccuracy,
     Dataset,
     EvalError,
@@ -91,11 +91,11 @@ def test_calibration_uses_answer_confidence():
 # ---------------------------------------------------------------- which confidence a metric reads
 # `_answer_confidence` prefers `answer_confidence`, and an answer that carries none gets the entropy
 # `confidence` -- a different quantity on a different scale (#394), which the docstring used to call
-# "the calibrated confidence Laya reports ... on every answer type" while docs/evals.md told the
+# "the calibrated confidence Veya reports ... on every answer type" while docs/evals.md told the
 # operator the same. The shape that really arrives without the field is the strict Jev wire contract:
-# `LAYA_JEV_STRICT` drops it (`laya/serve.py::_project_jev_strict`, documented in docs/http-api.md).
+# `VEYA_JEV_STRICT` drops it (`veya/serve.py::_project_jev_strict`, documented in docs/http-api.md).
 # So the stripped answers below are made by the server's own projector rather than hand-written -- a
-# hand copy could drift from what the server serves and this gate would still pass. `laya.serve`
+# hand copy could drift from what the server serves and this gate would still pass. `veya.serve`
 # imports with neither fastapi nor torch at module scope, which is why it is affordable here.
 
 _CONTRACT_PROBS = {"choice": [0.95, 0.03, 0.02], "score": [0.05, 0.90, 0.05], "noul": [0.13, 0.87]}
@@ -105,12 +105,12 @@ _CONTRACT_LABEL = {"choice": "billing", "score": "mid", "noul": True}
 
 
 def _agent_answer(kind):
-    """The answer dict `laya/agent.py` publishes, built the way the decoder builds it: entropy
+    """The answer dict `veya/agent.py` publishes, built the way the decoder builds it: entropy
     `confidence` for `choice` and `score`, `max(p_true, 1 - p_true)` for `noul`, and
-    `answer_confidence` = max(p) -- see laya/agent.py:1373, :1392, :1400."""
+    `answer_confidence` = max(p) -- see veya/agent.py:1373, :1392, :1400."""
     p = _CONTRACT_PROBS[kind]
     argmax = max(range(len(p)), key=lambda i: p[i])
-    from laya.common import confidence_from_probs
+    from veya.common import confidence_from_probs
     conf = (round(max(p[1], 1.0 - p[1]), 4) if kind == "noul"
             else round(confidence_from_probs(np.asarray(p), len(p)), 4))
     answer = {"confidence": conf, "answer_confidence": round(float(p[argmax]), 4),
@@ -128,7 +128,7 @@ def _agent_answer(kind):
 def _contract_shapes():
     """`(full, strict)` -- the payload the agents publish, and the same payload put through the
     projector that serves the strict Jev contract."""
-    from laya.serve import _project_jev_strict
+    from veya.serve import _project_jev_strict
     full = {kind: _agent_answer(kind) for kind in _CONTRACT_PROBS}
     strict = _project_jev_strict({"model": "stub", "answers": dict(full),
                                   "usage": {"prompt_tokens": 1, "completion_tokens": 1}})["answers"]
@@ -197,7 +197,7 @@ def test_the_docs_name_the_fallback_and_refuse_to_call_the_shipped_number_calibr
     assert "falls through %s more reads, in order" % taught in flat, (
         "the docstring must enumerate the fallbacks in order, and the count it teaches must be the "
         "code's: %d returning reads, one of them the preferred `answer_confidence`" % len(reads))
-    assert "LAYA_JEV_STRICT" in flat, "the shape that lacks the field has to be named"
+    assert "VEYA_JEV_STRICT" in flat, "the shape that lacks the field has to be named"
     assert "over-confident" in flat, "the shipped level must not be called calibrated"
     assert "is not *calibrated* as shipped" in flat
     assert "The calibrated confidence" not in doc, "main's opening claim, verbatim"
@@ -205,10 +205,10 @@ def test_the_docs_name_the_fallback_and_refuse_to_call_the_shipped_number_calibr
     page = (pathlib.Path(__file__).resolve().parent.parent
             / "docs" / "evals.md").read_text(encoding="utf-8")
     prose = " ".join(page.split())
-    assert "the calibrated probability Laya reports on every answer type" not in prose
-    assert "`laya.evals._answer_confidence`" in prose, "the page names the function it describes"
+    assert "the calibrated probability Veya reports on every answer type" not in prose
+    assert "`veya.evals._answer_confidence`" in prose, "the page names the function it describes"
     assert "then\n`max(p, 1 - p)`" in page or "then `max(p, 1 - p)`" in prose
-    assert "LAYA_JEV_STRICT" in prose and "over-confident" in prose
+    assert "VEYA_JEV_STRICT" in prose and "over-confident" in prose
     assert "## Which confidence a metric reads" in page, "the fallback needs a home, not a footnote"
 
     # Every metrics-table row that names the column has to carry the same hedge the prose does.
@@ -222,7 +222,7 @@ def test_the_docs_name_the_fallback_and_refuse_to_call_the_shipped_number_calibr
     # And the claim the evals page leans on has to still be the one the HTTP page makes.
     api = (pathlib.Path(__file__).resolve().parent.parent
            / "docs" / "http-api.md").read_text(encoding="utf-8")
-    row = [line for line in api.splitlines() if "`LAYA_JEV_STRICT`" in line]
+    row = [line for line in api.splitlines() if "`VEYA_JEV_STRICT`" in line]
     assert row and "no per-answer `action` / `answer_confidence`" in row[0]
 
 
@@ -425,7 +425,7 @@ def test_a_0d_confidence_still_answers():
     """A bare scalar used to answer, and indexing it with an argsort result raises.
 
     Reachable only from the library entry point, and `_aggregate` always builds lists -- but an
-    `IndexError` escaping `laya-evals` exits 1, which is the code that means "the model regressed".
+    `IndexError` escaping `veya-evals` exits 1, which is the code that means "the model regressed".
     """
     assert selective_accuracy(np.float64(0.5), np.True_, 0.5) == pytest.approx(1.0)
     assert aurc(np.float64(0.5), np.False_) == pytest.approx(1.0)
@@ -469,7 +469,7 @@ def test_a_relative_rule_refuses_a_baseline_from_the_old_coverage_definition(tmp
     invalidate a baseline. A definition change is not a patch release, so this refuses on the
     key's ABSENCE.
     """
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     policy = _eval_policy.load_policy(_write_gate_policy(
         tmp_path, {"slice": {"language": "zh"}, "metric": "selective_accuracy@50",
@@ -496,7 +496,7 @@ def test_the_refusal_is_limited_to_metrics_a_cut_can_move(tmp_path):
 
     Sweeping them into the refusal would break every committed baseline for no reason.
     """
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     candidate = EvalReport(**_coverage_gate_report(0.10, evals.COVERAGE_METRIC_DEFINITION,
                                                    metric="ece"))
@@ -514,7 +514,7 @@ def test_the_refusal_is_limited_to_metrics_a_cut_can_move(tmp_path):
 
 def test_an_absolute_rule_needs_no_baseline_and_is_unaffected(tmp_path):
     """Only the relative comparison is across definitions; a `min` reads this run alone."""
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     policy = _eval_policy.load_policy(_write_gate_policy(
         tmp_path, {"slice": {"language": "zh"}, "metric": "selective_accuracy@50",
@@ -531,9 +531,9 @@ def test_a_stale_candidate_is_refused_as_well_as_a_stale_baseline(tmp_path):
     0.500, so subtracting it from a correctly regenerated 0.500 baseline shows no drop at all and
     the gate passes -- while the honestly scored candidate fails. Checking only the baseline leaves
     this open, and it is the easier of the two to reach by accident: a CI artifact produced by a
-    pinned older `laya`, or an archived report re-checked after the baseline was regenerated.
+    pinned older `veya`, or an archived report re-checked after the baseline was regenerated.
     """
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     policy = _eval_policy.load_policy(_write_gate_policy(
         tmp_path, {"slice": {"language": "zh"}, "metric": "selective_accuracy@50",
@@ -584,7 +584,7 @@ def test_the_refusal_bounds_a_hostile_recorded_definition(tmp_path):
     attacker-controlled content on its way into a log. Five megabytes in the field produced a
     five-megabyte failure line before this was bounded.
     """
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     policy = _eval_policy.load_policy(_write_gate_policy(
         tmp_path, {"slice": {"language": "zh"}, "metric": "selective_accuracy@50",
@@ -706,7 +706,7 @@ def test_selective_metrics_reach_the_report():
 
 
 def test_percentiles_use_nearest_rank():
-    from laya.evals import _percentiles
+    from veya.evals import _percentiles
 
     # Nearest-rank 95th percentile is the ceil(0.95 * n)-th smallest value (1-indexed).
     # `int(n * 0.95)` used to return the (0.95n + 1)-th value whenever n is a multiple of 20.
@@ -780,7 +780,7 @@ def test_evaluate_overall_and_slices():
 def test_model_slice_follows_the_routed_checkpoint():
     """A Router records the checkpoint it chose under `routing`, not at the top level.
 
-    `result["model"]` is the payload's family tag -- `laya-rl-agent` -- on every Laya runner, so
+    `result["model"]` is the payload's family tag -- `veya-rl-agent` -- on every Veya runner, so
     reading only that collapses `by model` into one bucket for a mixed-language run.
     """
     class RoutedRunner(StubRunner):
@@ -788,7 +788,7 @@ def test_model_slice_follows_the_routed_checkpoint():
             # What this runner answers with. The pinned row is deliberately routed somewhere
             # else, so the case label can only come from the caller's pin.
             chosen = "english" if state == "s_en" else "multilingual"
-            return {"model": "laya-rl-agent", "routing": {"model": chosen},
+            return {"model": "veya-rl-agent", "routing": {"model": chosen},
                     "answers": self.by_state[state]}
 
         def predict(self, state, questions, model=None):
@@ -820,7 +820,7 @@ def test_model_slice_falls_back_when_a_runner_reports_no_route():
             self.routing = routing
 
         def predict(self, state, questions, model=None):
-            result = {"model": "laya-rl-agent", "answers": self.by_state[state]}
+            result = {"model": "veya-rl-agent", "answers": self.by_state[state]}
             if self.routing is not None:
                 result["routing"] = self.routing
             return result
@@ -829,7 +829,7 @@ def test_model_slice_falls_back_when_a_runner_reports_no_route():
     dataset = Dataset([Example("s", Q, {"intent": "a"})])
     for routing in UNUSABLE:
         report = evaluate(OddRunner(answers, routing), dataset, evaluators=[ChoiceAccuracy()])
-        assert sorted(report.slices["model"]) == ["laya-rl-agent"], routing
+        assert sorted(report.slices["model"]) == ["veya-rl-agent"], routing
     # An Agent runner that never routes is labelled by its own payload, as before.
     report = evaluate(StubRunner({"s1": {"intent": choice_answer("a")}}),
                       Dataset([Example("s1", Q, {"intent": "a"})]), evaluators=[ChoiceAccuracy()])
@@ -981,7 +981,7 @@ def test_evaluate_batches_a_pass_through_wrapper_positionally():
 #
 # `Agent.predict_batch` and `Router.predict_batch` group similarly sized states inside a bounded
 # `batch_size` since #294, and `research/` reports 2.15x over 10,000 tickets from it with no answer
-# changing. `laya-evals run --batch-size` could bound a pass but not group one, so the harness that
+# changing. `veya-evals run --batch-size` could bound a pass but not group one, so the harness that
 # exists to measure cost could not ask for the cheaper shape of the same pass.
 
 UNSENT = object()   # a value no caller can send, so a default distinguishes "absent" from False
@@ -1089,7 +1089,7 @@ def test_a_pass_through_wrapper_is_given_the_knob():
 # `answer["choice"] / ["noul"] / ["score"]` as the raw argmax, so every metric in `_aggregate`
 # reads the same numbers at every threshold. What the harness forwards is the *claim* the
 # report makes: `report.config["timing"]["min_confidence"]` names the threshold and
-# `["min_confidence_sent"]` asserts the call carried it. A `laya-evals run` that could not pass
+# `["min_confidence_sent"]` asserts the call carried it. A `veya-evals run` that could not pass
 # the kwarg through had no way to publish that claim on a real Router -- the exact class of
 # thing this harness exists to be.
 
@@ -1241,7 +1241,7 @@ def test_min_confidence_and_sort_by_length_are_independent_controls():
 
 def test_cli_min_confidence_forwards_through_evaluate(monkeypatch, tmp_path):
     """The flag has to actually reach `evaluate`, not sit in the parser."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     seen = {}
     real_evaluate = evals_cli.evals.evaluate
@@ -1259,7 +1259,7 @@ def test_cli_min_confidence_forwards_through_evaluate(monkeypatch, tmp_path):
 
 def test_cli_min_confidence_out_of_range_is_a_usage_error(monkeypatch, tmp_path, capsys):
     """A mistyped `--min-confidence 1.5` must exit 2 with core's message, not traceback."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     _fake_router(monkeypatch, {})
     dataset = _write_dataset(tmp_path, [{"state": "s", "questions": Q, "expected": {"intent": "a"}}])
@@ -1271,7 +1271,7 @@ def test_cli_min_confidence_out_of_range_is_a_usage_error(monkeypatch, tmp_path,
 
 def test_cli_min_confidence_zero_is_accepted(monkeypatch, tmp_path):
     """A gate at zero is a legal ask; `if args.min_confidence` would drop it before the call."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     seen = {}
     real_evaluate = evals_cli.evals.evaluate
@@ -1297,7 +1297,7 @@ def test_cli_min_confidence_zero_is_accepted(monkeypatch, tmp_path):
 
 
 class AgentShapedRunner:
-    """What `laya.load()` returns: `predict` is `system_one` -- no `model`, no `**kwargs`."""
+    """What `veya.load()` returns: `predict` is `system_one` -- no `model`, no `**kwargs`."""
 
     def __init__(self, by_state):
         self.by_state = by_state
@@ -1501,7 +1501,7 @@ def _timed_pair(monkeypatch, batch_size):
     Returns (report, runner): the runner's own `chunks` is the witness that the grouping the test
     asserts is the grouping the harness really issued.
     """
-    import laya.evals as evals_module
+    import veya.evals as evals_module
 
     dataset = Dataset([Example("s1", Q, {"intent": "a"}), Example("s2", Q, {"intent": "a"}),
                        Example("s3", Q, {"intent": "a"}), Example("s4", QWIDE, {"intent": "a"})])
@@ -1542,7 +1542,7 @@ def test_the_throughput_share_keeps_its_own_metric(monkeypatch):
 
 
 def test_a_latency_gate_cannot_pass_a_run_where_nothing_finished_in_time(monkeypatch):
-    from laya import evals_cli
+    from veya import evals_cli
 
     solo, _ = _timed_pair(monkeypatch, None)
     batched, _ = _timed_pair(monkeypatch, 8)
@@ -1583,7 +1583,7 @@ def test_timing_facts_record_what_the_harness_did(monkeypatch):
 
 def test_a_requested_batch_size_is_not_a_batched_run(monkeypatch):
     """The report records the grouping it achieved, so a runner that cannot batch cannot hide it."""
-    import laya.evals as evals_module
+    import veya.evals as evals_module
 
     class Untimed(StubRunner):
         pass
@@ -1605,7 +1605,7 @@ def test_a_batched_call_that_raises_is_still_recorded_as_batched(monkeypatch):
     one shared forward and lost it indistinguishable from a run that never shared a call at all --
     the one mode where `docs/evals.md` says the block has to be right.
     """
-    import laya.evals as evals_module
+    import veya.evals as evals_module
 
     class RaisingBatch(TimedRunner):
         def predict_batch(self, states, questions, model=None, batch_size=None):
@@ -1733,7 +1733,7 @@ def test_compare_fails_when_a_baseline_metric_is_missing():
 def test_a_nan_metric_fails_every_gate():
     """Every comparison with NaN is False, so a NaN metric used to pass --min, --max and the
     baseline comparison alike."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     nan = float("nan")
     report = EvalReport(overall={"score_mae": nan, "mean_confidence": nan})
@@ -1752,7 +1752,7 @@ def test_a_nan_metric_fails_every_gate():
 
 
 def test_cli_rejects_a_nan_limit_or_tolerance(capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     with pytest.raises(EvalError, match="not a number"):
         evals_cli._parse_pairs(["choice_accuracy=nan"])
@@ -1792,7 +1792,7 @@ def test_evaluate_records_what_it_measured():
                                   "s2": {"intent": choice_answer("a")}}), dataset)
     config = report.config
     assert config["schema"] == evals.REPORT_SCHEMA
-    assert config["laya_version"] == laya.__version__
+    assert config["veya_version"] == veya.__version__
     assert len(config["questions_sha256"]) == 64, "the question schema is part of the identity"
 
     # Determinism: the identity must carry nothing time-bearing, or a re-run of the same dataset
@@ -1813,7 +1813,7 @@ def test_questions_fingerprint_follows_the_question_not_the_row():
     because option order and label rename flip answers.
 
     The scope of the last claim is the fingerprint, not the gate. `dataset_sha256` is compared
-    too, and adding a row changes the file's bytes, so through `laya-evals run` a longer dataset
+    too, and adding a row changes the file's bytes, so through `veya-evals run` a longer dataset
     is correctly refused. The fingerprint being row-independent is what lets a programmatic
     caller see that the *questions* did not change.
     """
@@ -1835,11 +1835,11 @@ def test_questions_fingerprint_covers_the_instructions():
     """`instructions` is the prompt. Excluding it made the fingerprint say "same question" for
     two questions the model answers differently.
 
-    `laya/common.py::build_head` renders `"%s question: %s" % (q["type"], instructions)` into the
-    tokenized head, `laya/agent.py::Agent._check_question` makes the field mandatory ("add the
-    text the model should answer"), and Laya's own identity key for sharing forward passes,
-    `laya/router.py::_question_schema`, hashes the whole questions dict, instructions included --
-    as does this module's own batch grouping at `laya/evals.py::evaluate`.
+    `veya/common.py::build_head` renders `"%s question: %s" % (q["type"], instructions)` into the
+    tokenized head, `veya/agent.py::Agent._check_question` makes the field mandatory ("add the
+    text the model should answer"), and Veya's own identity key for sharing forward passes,
+    `veya/router.py::_question_schema`, hashes the whole questions dict, instructions included --
+    as does this module's own batch grouping at `veya/evals.py::evaluate`.
     `tests/test_router_batch.py:543` pins that rewording alone moves a row to its own batch group.
     Leaving it out made the one field this contract exists to protect the one field it ignored.
     """
@@ -1868,7 +1868,7 @@ def test_questions_fingerprint_covers_the_instructions():
 def test_questions_fingerprint_normalizes_instructions_the_way_the_engine_does():
     """Two questions that render the same text are the same question, whatever their JSON shape.
 
-    `laya/agent.py::Agent._to_internal` turns a non-string `instructions` into
+    `veya/agent.py::Agent._to_internal` turns a non-string `instructions` into
     `json.dumps(ins, ensure_ascii=False)` before tokenizing, and `tests/test_criteria.py:229-251`
     pins why: the default `ensure_ascii=True` escaped non-ASCII to literal `\\uXXXX` and a German
     question answered noul=0.1652 as a dict against 0.2650 as the identical plain string. The
@@ -1946,7 +1946,7 @@ def test_comparable_to_refuses_two_different_runs():
     ok, reasons = same.comparable_to(baseline.to_json())
     assert ok and reasons == [], reasons
 
-    for field, other in (("schema", "laya-evals-report/act-head-eval/1"),
+    for field, other in (("schema", "veya-evals-report/act-head-eval/1"),
                          ("dataset_sha256", "b" * 64),
                          ("questions_sha256", "z" * 64)):
         candidate = _identified(dataset_sha256="a" * 64, questions_sha256="q" * 64)
@@ -1987,7 +1987,7 @@ def test_comparable_to_ignores_what_it_cannot_see():
 def test_a_comparing_report_does_not_read_a_shape_it_does_not_know():
     # `research/evals/act_head_eval.py` publishes a report under its own schema tag. A consumer
     # that cannot read it must be told, not left to compare a different metric space.
-    foreign = {"schema": "laya-evals-report/act-head-eval/1",
+    foreign = {"schema": "veya-evals-report/act-head-eval/1",
                "overall": {"choice_accuracy": 0.8}, "cases": [], "slices": {}}
     ok, reasons = _identified(dataset_sha256="a" * 64).comparable_to(foreign)
     assert not ok and any("act-head-eval" in reason for reason in reasons), reasons
@@ -2023,11 +2023,11 @@ def _write_dataset(tmp_path, rows):
 
 
 def test_cli_validate_and_dispatch(tmp_path):
-    from laya import cli, evals_cli
+    from veya import cli, evals_cli
 
     good = _write_dataset(tmp_path, [{"state": "s", "questions": Q, "expected": {"intent": "a"}}])
     assert evals_cli.main(["validate", good]) == 0
-    assert cli.main(["eval", "validate", good]) == 0, "`laya eval` dispatches to laya-evals"
+    assert cli.main(["eval", "validate", good]) == 0, "`veya eval` dispatches to veya-evals"
 
     bad = tmp_path / "bad.jsonl"
     bad.write_text("{not json\n", encoding="utf-8")
@@ -2041,13 +2041,13 @@ def test_cli_writes_redirected_output_as_utf8(tmp_path, monkeypatch):
     """`validate` prints question ids and `run --slice` prints tags: the caller's own text.
 
     Redirected stdout is encoded with the locale's codec by default (cp1252 on Windows), so
-    `laya-evals validate data.jsonl > out.txt` died with a UnicodeEncodeError traceback on a
+    `veya-evals validate data.jsonl > out.txt` died with a UnicodeEncodeError traceback on a
     dataset whose question id is not Latin -- and with exit 1, the code docs/evals.md keeps for
     a quality failure. The latin-1 wrapper stands in for that codec, so this fails on any OS
-    without the fix. Both entry points are checked because `laya eval` returns before the line
+    without the fix. Both entry points are checked because `veya eval` returns before the line
     that sets stdout in `cli.main`.
     """
-    from laya import cli, evals_cli
+    from veya import cli, evals_cli
 
     qid = "श्रेणी"
     dataset = _write_dataset(tmp_path, [{"state": "s", "questions": {qid: Q["intent"]},
@@ -2062,7 +2062,7 @@ def test_cli_writes_redirected_output_as_utf8(tmp_path, monkeypatch):
 
 
 def test_cli_compare_exit_codes(tmp_path):
-    from laya import evals_cli
+    from veya import evals_cli
 
     (tmp_path / "report.json").write_text(json.dumps({"overall": {"choice_accuracy": 0.80}}))
     (tmp_path / "baseline.json").write_text(json.dumps({"overall": {"choice_accuracy": 0.79}}))
@@ -2081,7 +2081,7 @@ def test_cli_separates_a_usage_error_from_a_quality_failure(tmp_path, capsys):
     not tell "my dataset is malformed" from "the model regressed" -- and a missing file escaped
     as a raw traceback, a third outcome the docs never mention.
     """
-    from laya import evals_cli
+    from veya import evals_cli
 
     report = tmp_path / "report.json"
     report.write_text(json.dumps({"overall": {"choice_accuracy": 0.80}}))
@@ -2123,7 +2123,7 @@ def _write_raw(tmp_path, name, text):
 
 
 def test_cli_compare_fails_on_an_empty_report(tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     (tmp_path / "report.json").write_text(json.dumps({"overall": {}}))
     (tmp_path / "baseline.json").write_text(json.dumps({"overall": {"choice_accuracy": 0.79}}))
@@ -2134,7 +2134,7 @@ def test_cli_compare_fails_on_an_empty_report(tmp_path, capsys):
 
 
 def test_cli_rejects_a_malformed_tolerance():
-    from laya import evals_cli
+    from veya import evals_cli
 
     with pytest.raises(EvalError):
         evals_cli._parse_pairs(["choice_accuracy"])
@@ -2147,7 +2147,7 @@ def test_cli_run_records_the_run_identity(monkeypatch, tmp_path):
     read the result as a diff. That only works if the report carries the dataset's bytes and the
     question schema, not just the path, and if it records the gate the numbers came out of.
     """
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2156,7 +2156,7 @@ def test_cli_run_records_the_run_identity(monkeypatch, tmp_path):
                            "--tolerance", "choice_accuracy=0.02", "--json", str(out)]) == 0
     config = json.loads(out.read_text(encoding="utf-8"))["config"]
     assert config["schema"] == evals.REPORT_SCHEMA
-    assert config["laya_version"] == laya.__version__
+    assert config["veya_version"] == veya.__version__
     assert config["dataset"] == dataset, "the path stays a name; the hash carries the bytes"
     assert config["dataset_sha256"] == evals.file_fingerprint(dataset)
     assert config["questions_sha256"] == evals.questions_fingerprint(evals.Dataset.from_jsonl(dataset))
@@ -2173,7 +2173,7 @@ def test_cli_run_refuses_a_baseline_from_a_different_dataset(monkeypatch, tmp_pa
     promoted was never measured on the data the gate claims to have validated. A pass here is
     arithmetic, not evidence.
     """
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     original = _write_dataset(tmp_path, RUN_ROWS)
@@ -2199,7 +2199,7 @@ def test_cli_run_still_accepts_a_baseline_with_no_identity(monkeypatch, tmp_path
     comes from `research/eval/` and has no `config.schema`. A key missing on one side is unknown,
     not a conflict -- otherwise this change would break the repo's own CI on its first run.
     """
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2212,7 +2212,7 @@ def test_cli_run_still_accepts_a_baseline_with_no_identity(monkeypatch, tmp_path
 
 
 def test_cli_compare_refuses_two_different_runs(tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     report = {"config": {"schema": evals.REPORT_SCHEMA, "dataset_sha256": "a" * 64,
                          "questions_sha256": "q" * 64},
@@ -2235,8 +2235,8 @@ def test_questions_fingerprint_covers_labels():
     """`labels` decides the option text, so it belongs in the key.
 
     The same argument `test_questions_fingerprint_covers_the_instructions` makes for
-    `instructions`. `laya/agent.py::Agent._check_question` validates `labels` through
-    `laya/common.py::_resolve_noul_labels`, `laya/agent.py::Agent._to_internal` carries it into
+    `instructions`. `veya/agent.py::Agent._check_question` validates `labels` through
+    `veya/common.py::_resolve_noul_labels`, `veya/agent.py::Agent._to_internal` carries it into
     the internal question, and the resolver is what produces the option text the model actually
     reads. Two question sets differing only in
     `labels` therefore ask the model different things, and hashing them alike let the gate pass
@@ -2254,7 +2254,7 @@ def test_questions_fingerprint_covers_labels():
          "true": "approved: the customer asked for money back"}))
     assert custom != default, "a change in `labels` left the fingerprint unchanged"
     # And the change is real: these are not two spellings of one thing.
-    from laya.common import _resolve_noul_labels
+    from veya.common import _resolve_noul_labels
     assert _resolve_noul_labels() != _resolve_noul_labels(
         {"false": "denied: no money was requested",
          "true": "approved: the customer asked for money back"})
@@ -2263,7 +2263,7 @@ def test_questions_fingerprint_covers_labels():
 def test_questions_fingerprint_keeps_criteria_order():
     """A choice question's criteria order is positional, so two orders are two questions.
 
-    `examples/hooks/cache.py:22-25` states the rule and `laya/router.py::_question_schema`
+    `examples/hooks/cache.py:22-25` states the rule and `veya/router.py::_question_schema`
     applies it with `sort_keys=False`. Worth pinning here for the dict
     form: `json.dumps(sort_keys=True)` reorders *dict keys* and leaves *lists* alone, so a
     list-valued `criteria` -- the shape a dataset row has -- was already safe. The flag only
@@ -2285,11 +2285,11 @@ def test_a_top_level_schema_on_the_candidate_still_refuses(tmp_path, capsys):
     `_identity_of` reads a report's identity from `config` *or* the top level, and its own comment
     says why: `research/evals/act_head_eval.py` puts `schema` there. But `comparable_to` applied
     it to the baseline only -- the candidate's identity came from `self.config`, and
-    `laya/evals_cli.py` had already dropped a top-level `schema` when it built the `EvalReport`.
+    `veya/evals_cli.py` had already dropped a top-level `schema` when it built the `EvalReport`.
     So the *same* disagreement was refused when the candidate stated it in `config` and passed
     when it stated it at the top level.
     """
-    from laya import evals_cli
+    from veya import evals_cli
 
     def write(name, doc):
         (tmp_path / name).write_text(json.dumps(doc), encoding="utf-8")
@@ -2328,12 +2328,12 @@ RUN_ANSWERS = {
 
 
 def _patch_router(monkeypatch, answers=None):
-    """Replace the checkpoint-loading `Router`, so `laya-evals run` needs no weights.
+    """Replace the checkpoint-loading `Router`, so `veya-evals run` needs no weights.
 
     Returns the list the stand-in appends to when it is constructed, so a test can show a bad flag
     fails before anything loads.
     """
-    import laya
+    import veya
 
     built: list = []
 
@@ -2344,7 +2344,7 @@ def _patch_router(monkeypatch, answers=None):
         def predict(self, state, questions, model=None):
             return {"model": model or "stub", "answers": (answers or RUN_ANSWERS)[state]}
 
-    monkeypatch.setattr(laya, "Router", FakeRouter)
+    monkeypatch.setattr(veya, "Router", FakeRouter)
     return built
 
 
@@ -2354,7 +2354,7 @@ def _overall(stdout):
 
 
 def test_cli_score_within_publishes_the_documented_metric(monkeypatch, tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2366,7 +2366,7 @@ def test_cli_score_within_publishes_the_documented_metric(monkeypatch, tmp_path,
 
 
 def test_cli_score_within_is_repeatable_per_column(monkeypatch, tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2377,7 +2377,7 @@ def test_cli_score_within_is_repeatable_per_column(monkeypatch, tmp_path, capsys
 
 
 def test_cli_score_within_gate_decides_on_the_number(monkeypatch, tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2390,7 +2390,7 @@ def test_cli_score_within_gate_decides_on_the_number(monkeypatch, tmp_path, caps
 
 
 def test_cli_score_within_without_score_rows_says_so(monkeypatch, tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     rows = [row for row in RUN_ROWS if row["state"] in ("intent", "flag")]
@@ -2403,7 +2403,7 @@ def test_cli_score_within_without_score_rows_says_so(monkeypatch, tmp_path, caps
 
 
 def test_cli_rejects_an_unusable_tolerance_before_loading_a_checkpoint(monkeypatch, tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     built = _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2419,7 +2419,7 @@ def test_cli_rejects_an_unusable_tolerance_before_loading_a_checkpoint(monkeypat
 
 
 def test_cli_records_the_requested_tolerances(monkeypatch, tmp_path):
-    from laya import evals_cli
+    from veya import evals_cli
 
     _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2435,7 +2435,7 @@ def test_docs_and_the_cli_name_the_same_flags():
     import argparse
     from pathlib import Path
 
-    from laya import evals_cli
+    from veya import evals_cli
 
     page = (Path(__file__).resolve().parent.parent / "docs" / "evals.md").read_text(encoding="utf-8")
     registered: set = set()
@@ -2472,17 +2472,17 @@ SHA = "55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851"
 
 
 def _fake_router(monkeypatch, recorded):
-    """Replace `laya.Router` with a weight-free stand-in that records how `_cmd_run` built it.
+    """Replace `veya.Router` with a weight-free stand-in that records how `_cmd_run` built it.
 
     It validates checkpoint names the way `Router.__init__` does and resolves a forced `--model` the
     way `Router.resolve` does, both by calling the same `normalise_name`, so the fake refuses a typo
     for the real reason.
     """
-    import laya
+    import veya
 
     class FakeRouter:
         def __init__(self, device=None, preload=None, revision=None, revisions=None):
-            from laya.router import normalise_name
+            from veya.router import normalise_name
             recorded.update(device=device, preload=preload, revision=revision,
                             revisions={normalise_name(k): v for k, v in (revisions or {}).items()})
 
@@ -2490,7 +2490,7 @@ def _fake_router(monkeypatch, recorded):
             # `_cmd_run` resolves `--model` against the Router that answers, so the stand-in has to
             # resolve too. It takes no `models=`, so its registry is the built-in table, and that is
             # exactly what `normalise_name` checks.
-            from laya.router import normalise_name
+            from veya.router import normalise_name
             return normalise_name(name)
 
         def predict(self, state, questions, model=None, min_confidence=None):
@@ -2501,11 +2501,11 @@ def _fake_router(monkeypatch, recorded):
 
         loaded_revisions = {"english": SHA}
 
-    monkeypatch.setattr(laya, "Router", FakeRouter)
+    monkeypatch.setattr(veya, "Router", FakeRouter)
 
 
 def test_cli_forwards_the_pin_and_records_the_commit_that_answered(tmp_path, monkeypatch):
-    from laya import evals_cli
+    from veya import evals_cli
 
     recorded = {}
     _fake_router(monkeypatch, recorded)
@@ -2520,7 +2520,7 @@ def test_cli_forwards_the_pin_and_records_the_commit_that_answered(tmp_path, mon
 
 
 def test_cli_bare_revision_pins_every_checkpoint(tmp_path, monkeypatch):
-    from laya import evals_cli
+    from veya import evals_cli
 
     recorded = {}
     _fake_router(monkeypatch, recorded)
@@ -2532,11 +2532,11 @@ def test_cli_bare_revision_pins_every_checkpoint(tmp_path, monkeypatch):
 
 
 def test_cli_records_loaded_checkpoints_with_unknown_local_revision(tmp_path, monkeypatch):
-    import laya
-    from laya import evals_cli
+    import veya
+    from veya import evals_cli
 
     _fake_router(monkeypatch, {})
-    monkeypatch.setattr(laya.Router, "loaded_revisions", {"english": SHA, "local": None})
+    monkeypatch.setattr(veya.Router, "loaded_revisions", {"english": SHA, "local": None})
     dataset = _write_dataset(tmp_path, [{"state": "s", "questions": Q, "expected": {"intent": "a"}}])
     out = tmp_path / "report.json"
     assert evals_cli.main(["run", dataset, "--json", str(out)]) == 0
@@ -2545,7 +2545,7 @@ def test_cli_records_loaded_checkpoints_with_unknown_local_revision(tmp_path, mo
 
 def test_cli_records_an_unpinned_run_too(tmp_path, monkeypatch):
     """The default branch is what an unpinned baseline was taken on; the report must say so."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     recorded = {}
     _fake_router(monkeypatch, recorded)
@@ -2557,7 +2557,7 @@ def test_cli_records_an_unpinned_run_too(tmp_path, monkeypatch):
 
 
 def test_cli_rejects_a_typo_in_a_pinned_checkpoint_name(tmp_path, monkeypatch, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     recorded = {}
     _fake_router(monkeypatch, recorded)
@@ -2574,7 +2574,7 @@ def test_cli_rejects_a_typo_in_a_pinned_checkpoint_name(tmp_path, monkeypatch, c
 
 def test_cli_accepts_a_checkpoint_alias_in_a_pin(tmp_path, monkeypatch):
     """`Router` owns the alias table, so `en=` must reach it rather than be second-guessed here."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     recorded = {}
     _fake_router(monkeypatch, recorded)
@@ -2586,7 +2586,7 @@ def test_cli_accepts_a_checkpoint_alias_in_a_pin(tmp_path, monkeypatch):
 # ------------------------------------------------------------------ --model checkpoint name
 def test_cli_rejects_a_typo_in_the_forced_checkpoint_name(tmp_path, monkeypatch, capsys):
     """`--model` is resolved by the first row, so a typo used to escape as a traceback and exit 1."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     recorded = {}
     _fake_router(monkeypatch, recorded)
@@ -2609,7 +2609,7 @@ def test_cli_rejects_a_typo_in_the_forced_checkpoint_name(tmp_path, monkeypatch,
 
 def test_cli_accepts_a_checkpoint_alias_for_the_forced_model(tmp_path, monkeypatch):
     """Resolution is `Router.resolve`, which owns aliases and casing -- an exact-match check would fail here."""
-    from laya import evals_cli
+    from veya import evals_cli
 
     recorded = {}
     _fake_router(monkeypatch, recorded)
@@ -2664,7 +2664,7 @@ def _write_gate_policy(tmp_path, rule):
 
 
 def test_cli_slice_gate_catches_regression_hidden_by_overall_gain(tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     baseline = tmp_path / "baseline.json"
     candidate = tmp_path / "candidate.json"
@@ -2684,7 +2684,7 @@ def test_cli_slice_gate_catches_regression_hidden_by_overall_gain(tmp_path, caps
 
 
 def test_slice_gate_requires_scored_evidence_on_both_sides(tmp_path):
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     policy = _eval_policy.load_policy(_write_gate_policy(
         tmp_path, {"slice": {"language": "zh"}, "metric": "choice_accuracy",
@@ -2707,7 +2707,7 @@ def test_slice_gate_requires_scored_evidence_on_both_sides(tmp_path):
 
 
 def test_slice_gate_absolute_and_increase_direction(tmp_path):
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     candidate = _slice_gate_report(171, 12)
     report = EvalReport(**candidate)
@@ -2732,7 +2732,7 @@ def test_slice_gate_absolute_and_increase_direction(tmp_path):
 
 
 def test_slice_gate_ece_requires_boolean_correct_evidence(tmp_path):
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     candidate = _slice_gate_report(171, 12)
     candidate["slices"]["language"]["zh"]["ece"] = 0.2
@@ -2751,7 +2751,7 @@ def test_slice_gate_ece_requires_boolean_correct_evidence(tmp_path):
 
 
 def test_slice_gate_counts_each_tagged_answer_once_and_accepts_boundary(tmp_path):
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     candidate = _slice_gate_report(171, 12)
     for case in candidate["cases"]:
@@ -2788,7 +2788,7 @@ def test_slice_gate_counts_each_tagged_answer_once_and_accepts_boundary(tmp_path
      "max_drop": -0.1},
 ])
 def test_cli_rejects_malformed_slice_policy_before_loading(monkeypatch, tmp_path, rule):
-    from laya import evals_cli
+    from veya import evals_cli
 
     built = _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2798,7 +2798,7 @@ def test_cli_rejects_malformed_slice_policy_before_loading(monkeypatch, tmp_path
 
 
 def test_cli_relative_slice_rule_requires_baseline_before_loading(monkeypatch, tmp_path):
-    from laya import evals_cli
+    from veya import evals_cli
 
     built = _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2810,7 +2810,7 @@ def test_cli_relative_slice_rule_requires_baseline_before_loading(monkeypatch, t
 
 
 def test_cli_rejects_invalid_policy_json_and_version(monkeypatch, tmp_path):
-    from laya import evals_cli
+    from veya import evals_cli
 
     built = _patch_router(monkeypatch)
     dataset = _write_dataset(tmp_path, RUN_ROWS)
@@ -2824,7 +2824,7 @@ def test_cli_rejects_invalid_policy_json_and_version(monkeypatch, tmp_path):
 
 
 def test_cli_run_slice_gate_and_saved_compare_share_policy(monkeypatch, tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     # Choice answers without confidence keep this gate-wiring test weight-free.
     def answer(label):
@@ -2851,7 +2851,7 @@ def test_cli_run_slice_gate_and_saved_compare_share_policy(monkeypatch, tmp_path
 
 
 def test_cli_compare_reports_a_different_recorded_gate_policy(tmp_path, capsys):
-    from laya import evals_cli
+    from veya import evals_cli
 
     baseline = tmp_path / "baseline.json"
     candidate = tmp_path / "candidate.json"
@@ -2879,7 +2879,7 @@ def test_cli_compare_reports_a_different_recorded_gate_policy(tmp_path, capsys):
 
 
 def test_slice_gate_fails_closed_on_identity_or_skipped_cases(tmp_path):
-    from laya import _eval_policy
+    from veya import _eval_policy
 
     candidate = _slice_gate_report(171, 12)
     base = _slice_gate_report(162, 18)
@@ -2907,7 +2907,7 @@ def test_slice_gate_fails_closed_on_identity_or_skipped_cases(tmp_path):
     (["en=" + SHA, SHA], (SHA, {"en": SHA})),     # both forms at once: Router lets the pair win
 ])
 def test_parse_revisions_accepts_both_forms(pairs, expected):
-    from laya import evals_cli
+    from veya import evals_cli
 
     assert evals_cli._parse_revisions(pairs) == expected
 
@@ -2919,7 +2919,7 @@ def test_parse_revisions_accepts_both_forms(pairs, expected):
     ("abc", None),
 ])
 def test_parse_revisions_rejects_half_a_pair(pair, fragment):
-    from laya import evals_cli
+    from veya import evals_cli
 
     if fragment is None:
         assert evals_cli._parse_revisions([pair]) == (pair, {})
@@ -2930,7 +2930,7 @@ def test_parse_revisions_rejects_half_a_pair(pair, fragment):
 
 
 def test_parse_revisions_rejects_two_different_bare_commits():
-    from laya import evals_cli
+    from veya import evals_cli
 
     with pytest.raises(EvalError) as exc:
         evals_cli._parse_revisions(["abc", "def"])

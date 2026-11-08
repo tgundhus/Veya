@@ -14,7 +14,7 @@ rotates per repeat, so drift in the machine cancels out):
 For every backend it reports the median latency per request, the speedup against torch-fp32, and
 how far its answers are from torch-fp32's: the share with the same decision (argmax for choice
 and score, P(yes) >= 0.5 for noul), the max and mean absolute probability difference, and for
-every changed decision its torch-fp32 margin from `laya.decision_margins` (a change near the
+every changed decision its torch-fp32 margin from `veya.decision_margins` (a change near the
 boundary is a coin flip; one far from it is a real regression).
 
 Published checkpoints (downloads on first use; the ONNX files must match the checkpoint):
@@ -47,10 +47,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
-from laya import Router, decision_margins  # noqa: E402
-from laya.agent import Agent  # noqa: E402
-from laya.router import _split  # noqa: E402
+import veya  # noqa: E402
+from veya import Router, decision_margins  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.router import _split  # noqa: E402
 from bench_stages import EMAIL, ONE, TEN, TICKET, TRIAGE  # noqa: E402
 
 try:
@@ -187,7 +187,7 @@ def encoder_int8(agent):
 
 
 def onnx_agent(spec, path, threads):
-    from laya.onnx_agent import ONNXAgent
+    from veya.onnx_agent import ONNXAgent
 
     repo, sub = _split(spec)
     agent = ONNXAgent(repo, onnx_path=path, subfolder=sub)
@@ -261,7 +261,7 @@ def main():
     names = list(backends)
 
     meta = {
-        "laya": laya.__version__, "torch": torch.__version__,
+        "laya": veya.__version__, "torch": torch.__version__,
         "onnxruntime": getattr(ort, "__version__", None), "python": platform.python_version(),
         "platform": platform.platform(), "machine": platform.machine(), "processor": platform.processor(),
         "cpus": os.cpu_count(), "torch_threads": torch.get_num_threads(), "ort_threads": args.threads or "default",

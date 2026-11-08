@@ -4,8 +4,8 @@ import json
 import unittest
 from unittest.mock import patch
 
-from laya_client import LayaClient, LayaResponseError, LayaValidationError
-from laya_client._validation import MIN_CONFIDENCE_KEYS, prediction
+from veya_client import VeyaClient, VeyaResponseError, VeyaValidationError
+from veya_client._validation import MIN_CONFIDENCE_KEYS, prediction
 from _support import PREDICTION, QUESTIONS, Server
 
 
@@ -16,7 +16,7 @@ class ProContractTests(unittest.TestCase):
         questions["team"]["option_order"] = [1, 0]
         original = copy.deepcopy(questions)
         with Server() as server:
-            LayaClient(base_url=server.url).predict("hello", questions)
+            VeyaClient(base_url=server.url).predict("hello", questions)
         wire = json.loads(server.requests[0][3])["questions"]
         self.assertEqual(wire["team"]["criteria"], {"billing": None, "technical": None})
         self.assertEqual(wire["team"]["option_order"], [1, 0])
@@ -40,21 +40,21 @@ class ProContractTests(unittest.TestCase):
             {"type": "noul", "instructions": "?", "labels": {"true": "same", "false": "same "}},
             {"type": "noul", "instructions": "?", "labels": {"true": "yes"}},
         ])
-        client = LayaClient()
+        client = VeyaClient()
         with patch("urllib.request.OpenerDirector.open", side_effect=AssertionError("request was sent")):
             for question in cases:
                 for method, state in ((client.predict, "hello"), (client.predict_batch, ["hello"])):
-                    with self.subTest(question=question, method=method.__name__), self.assertRaises(LayaValidationError):
+                    with self.subTest(question=question, method=method.__name__), self.assertRaises(VeyaValidationError):
                         method(state, {"q": question})
 
     def test_unknown_confidence_buckets_never_send(self):
-        client = LayaClient()
+        client = VeyaClient()
         with patch("urllib.request.OpenerDirector.open", side_effect=AssertionError("request was sent")):
             for key in ("future:bucket", "choice:2-5", "choice:1", "noul:3", "", 1):
-                with self.subTest(key=key), self.assertRaises(LayaValidationError):
+                with self.subTest(key=key), self.assertRaises(VeyaValidationError):
                     client.predict("hello", QUESTIONS, min_confidence={key: 0.9})
         with Server() as server:
-            LayaClient(base_url=server.url).predict("hello", QUESTIONS,
+            VeyaClient(base_url=server.url).predict("hello", QUESTIONS,
                                                  min_confidence=dict.fromkeys(MIN_CONFIDENCE_KEYS, 0.0))
         self.assertEqual(set(json.loads(server.requests[0][3])["min_confidence"]), MIN_CONFIDENCE_KEYS)
 
@@ -68,12 +68,12 @@ class ProContractTests(unittest.TestCase):
         for meta in invalid:
             payload = copy.deepcopy(PREDICTION)
             payload["answers"]["team"]["x_tournament"] = meta
-            with self.subTest(meta=meta), self.assertRaises(LayaResponseError):
+            with self.subTest(meta=meta), self.assertRaises(VeyaResponseError):
                 prediction(payload, QUESTIONS)
         for qid in ("urgency", "refund"):
             payload = copy.deepcopy(PREDICTION)
             payload["answers"][qid]["x_tournament"] = valid
-            with self.subTest(qid=qid), self.assertRaises(LayaResponseError):
+            with self.subTest(qid=qid), self.assertRaises(VeyaResponseError):
                 prediction(payload, QUESTIONS)
 
     def test_optional_answer_metadata_is_checked(self):
@@ -82,12 +82,45 @@ class ProContractTests(unittest.TestCase):
                            ("x_jev_confidence", float("inf")), ("abstention_threshold", False)):
             payload = copy.deepcopy(PREDICTION)
             payload["answers"]["team"][key] = value
-            with self.subTest(key=key, value=value), self.assertRaises(LayaResponseError):
+            with self.subTest(key=key, value=value), self.assertRaises(VeyaResponseError):
                 prediction(payload, QUESTIONS)
         payload = copy.deepcopy(PREDICTION)
         payload["answers"]["refund"]["x_jev_confidence"] = 0.9
-        with self.assertRaises(LayaResponseError):
+        with self.assertRaises(VeyaResponseError):
             prediction(payload, QUESTIONS)
+
+    def test_bias_corrected_answer_metadata_is_preserved(self):
+        payload = copy.deepcopy(PREDICTION)
+        for answer in payload["answers"].values():
+            answer.update(decision_policy="context-balanced-v1", confidence_calibrated=False)
+        payload["usage"].update(decision_policy="context-balanced-v1", policy_probe_tokens=12)
+        prediction(payload, QUESTIONS)
+        with Server(payload) as server:
+            result = VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
+        self.assertEqual(result, payload)
+        prediction(PREDICTION, QUESTIONS)  # Old servers need no new metadata.
+
+    def test_invalid_bias_correction_metadata_is_refused(self):
+        for qid in PREDICTION["answers"]:
+            for key, value in (("decision_policy", "unknown"), ("decision_policy", None),
+                               ("decision_policy", False), ("confidence_calibrated", True),
+                               ("confidence_calibrated", 0), ("confidence_calibrated", "false"),
+                               ("confidence_calibrated", None)):
+                payload = copy.deepcopy(PREDICTION)
+                payload["answers"][qid][key] = value
+                with self.subTest(qid=qid, key=key, value=value), self.assertRaises(VeyaResponseError):
+                    prediction(payload, QUESTIONS)
+        for key, value in (("decision_policy", "unknown"), ("decision_policy", None),
+                           ("policy_probe_tokens", True), ("policy_probe_tokens", -1),
+                           ("policy_probe_tokens", 0.5), ("policy_probe_tokens", float("inf")),
+                           ("policy_probe_tokens", None)):
+            payload = copy.deepcopy(PREDICTION)
+            payload["usage"][key] = value
+            with self.subTest(key=key, value=value), self.assertRaises(VeyaResponseError):
+                prediction(payload, QUESTIONS)
+        payload = copy.deepcopy(PREDICTION)
+        payload["usage"]["policy_probe_tokens"] = 0
+        prediction(payload, QUESTIONS)
 
     def test_route_and_detection_fields_are_typed(self):
         valid = {"model": "custom", "repo": "local", "reason": "explicit",
@@ -98,7 +131,7 @@ class ProContractTests(unittest.TestCase):
         for route in ({"model": "custom"}, dict(valid, model="auto"), dict(valid, workflow=False),
                       dict(valid, reason=None), dict(valid, detection=[])):
             payload["routing"] = route
-            with self.subTest(route=route), self.assertRaises(LayaResponseError):
+            with self.subTest(route=route), self.assertRaises(VeyaResponseError):
                 prediction(payload, QUESTIONS)
         detection = {"script": "Latin", "script_profile": {"Latin": 1.0}, "language": "en",
                      "is_english": True, "language_undecided": False, "diacritic_rate": 0.0,
@@ -109,7 +142,7 @@ class ProContractTests(unittest.TestCase):
                            ("language_undecided", None), ("diacritic_rate", True),
                            ("non_latin_fraction", 1.1), ("mixed_segment", False)):
             payload["routing"] = dict(valid, detection=dict(detection, **{key: value}))
-            with self.subTest(key=key), self.assertRaises(LayaResponseError):
+            with self.subTest(key=key), self.assertRaises(VeyaResponseError):
                 prediction(payload, QUESTIONS)
 
     def test_usage_extensions_are_typed_but_legacy_minimal_usage_is_valid(self):
@@ -123,21 +156,21 @@ class ProContractTests(unittest.TestCase):
         for key, value in cases:
             payload = copy.deepcopy(PREDICTION)
             payload["usage"][key] = value
-            with self.subTest(key=key, value=value), self.assertRaises(LayaResponseError):
+            with self.subTest(key=key, value=value), self.assertRaises(VeyaResponseError):
                 prediction(payload, QUESTIONS)
 
     def test_health_metadata_is_checked_when_present(self):
         for payload in ({"status": "ok", "device": False}, {"status": "ok", "loaded": ["auto"]},
                         {"status": "ok", "loaded": [False]}):
             with self.subTest(payload=payload), Server(payload) as server:
-                with self.assertRaises(LayaResponseError):
-                    LayaClient(base_url=server.url).health()
+                with self.assertRaises(VeyaResponseError):
+                    VeyaClient(base_url=server.url).health()
 
     def test_overflowing_response_number_is_not_valid_json(self):
         raw = json.dumps(PREDICTION).replace('"model": "custom-checkpoint"',
                                               '"future": 1e999, "model": "custom-checkpoint"').encode()
-        with Server(raw=raw) as server, self.assertRaises(LayaResponseError):
-            LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+        with Server(raw=raw) as server, self.assertRaises(VeyaResponseError):
+            VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
 
 
 if __name__ == "__main__":

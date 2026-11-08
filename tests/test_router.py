@@ -7,9 +7,9 @@ from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.common import QTYPES, TEMP_MAX, TEMP_MIN, clamp_temperature, temp_bucket  # noqa: E402
-from laya.lang import analyse, detect_script, guess_latin_language, is_english, state_text  # noqa: E402
-from laya.router import (  # noqa: E402
+from veya.common import QTYPES, TEMP_MAX, TEMP_MIN, clamp_temperature, temp_bucket  # noqa: E402
+from veya.lang import analyse, detect_script, guess_latin_language, is_english, state_text  # noqa: E402
+from veya.router import (  # noqa: E402
     BUNDLE_REPO,
     DEFAULT_MODELS,
     STANDALONE_MODELS,
@@ -305,7 +305,7 @@ check("workflow/empty", match_typed_decisions_workflow({}), None)
 
 
 # --------------------------------------------------------------------- name normalisation
-for alias, want in [("en", "english"), ("laya", "english"), ("multi", "multilingual"),
+for alias, want in [("en", "english"), ("veya", "english"), ("multi", "multilingual"),
                     ("ML", "multilingual"), ("typed", "typed-decisions"),
                     ("typed_decisions", "typed-decisions"), ("English", "english"),
                     ("convaiinnovations/laya".split("/")[-1], "english")]:
@@ -322,7 +322,7 @@ except ValueError:
 # repo id, so both entry points read one registry. Anything the registry does not know -- a repo
 # id, a local path, an ONNX export -- resolves to None and is left alone.
 for name, want in [("english", ("convaiinnovations/laya", None)),
-                   ("laya", ("convaiinnovations/laya", None)),
+                   ("veya", ("convaiinnovations/laya", None)),
                    ("typed-decisions", ("convaiinnovations/laya", "typed-decisions")),
                    ("typed", ("convaiinnovations/laya", "typed-decisions")),
                    ("ml", ("convaiinnovations/laya", "multilingual")),
@@ -689,7 +689,7 @@ for text in [
     check("route/banglish control " + text[:32], _r_lat.route(text).model, "english")
 # ...and no other language may move either: the `bn` list claims no word another list holds, and
 # leaves out Romance words such as `ora`, `nei`, `vai`.
-from laya.lang import _STOP  # noqa: E402
+from veya.lang import _STOP  # noqa: E402
 check("latin_lang/bn list shares no word with another list",
       sorted(w for w in _STOP.get("bn", ()) for lg, words in _STOP.items() if lg != "bn" and w in words), [])
 check("latin_lang/romanian with ei stays romanian",
@@ -941,7 +941,7 @@ check("override/local path kept", r_local.route({"m": "मुझसे दो �
 
 # --------------------------------------------------------------------- preload
 # Exercise the real preload/load/LRU paths; only checkpoint construction is stubbed.
-with patch("laya.agent.Agent", side_effect=lambda repo, **kw: _Stub(repo)) as build:
+with patch("veya.agent.Agent", side_effect=lambda repo, **kw: _Stub(repo)) as build:
     rp = Router(preload=True)
     check("preload/all three stay resident", sorted(rp.loaded),
           ["english", "multilingual", "typed-decisions"])
@@ -1022,7 +1022,7 @@ check("attach/accepts aliases", stubbed_router(1).attach("en", _Stub("x")) is no
 
 def _concurrent_load_dedup():
     """Concurrent load() of the same checkpoint must build one Agent, shared by all callers."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     constructions = []
     cl = threading.Lock()
 
@@ -1061,7 +1061,7 @@ check("threads/LRU views stay consistent", (order_len == 1 and agents == ["engli
 
 def _concurrent_hotpath():
     """Concurrent hot-path loads of an already-cached model must keep _order/_agents consistent."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
 
     class _Agent:
         def __init__(self, *args, **kwargs):
@@ -1101,7 +1101,7 @@ def _cold_build_does_not_hold_lifecycle_lock():
     `GET /health` (which reads `loaded`) and every request for an already-resident checkpoint wait
     for it, so a liveness probe timed out during a lazy load.
     """
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     building, release = threading.Event(), threading.Event()
     constructions = []
 
@@ -1162,7 +1162,7 @@ def _on_load_reenters_router(target, hooks_concurrent):
     after releasing it. Returns whether the outer load finished, the agent the hook got back,
     the outer agent, and what ended up loaded.
     """
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
 
     class _FastAgent:
         def __init__(self, *args, **kwargs):
@@ -1204,7 +1204,7 @@ def _test_per_checkpoint_unload_granularity():
     unload("multilingual") must wait for its own in-flight build, and resident access
     (r.loaded and r.load("english")) must remain non-blocking while multilingual builds.
     """
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     multi_building = threading.Event()
     multi_release = threading.Event()
 
@@ -1292,7 +1292,7 @@ check("threads/multilingual not resident after unload", multi_resident_after, Fa
 
 def _test_concurrent_load_same_checkpoint_dedup():
     """Concurrent loads for the same checkpoint must construct exactly one Agent."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     build_started = threading.Event()
     build_release = threading.Event()
     constructions = []
@@ -1333,7 +1333,7 @@ check("threads/all concurrent callers complete", total_callers, 5)
 
 def _test_attach_during_build_wins():
     """attach() called while a build is in flight must win without being overwritten."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     build_started = threading.Event()
     build_release = threading.Event()
 
@@ -1376,7 +1376,7 @@ check("threads/attach during build remains resident", resident_won, True)
 
 def _test_failed_build_cleans_inflight_and_allows_retry():
     """Failed builds clean up in-flight state, propagate exceptions, and allow retry."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     fail_first = [True]
 
     class _FailingAgent:
@@ -1435,7 +1435,7 @@ check("threads/retried load lands in resident set", retried_res, True)
 
 def _test_waiting_callers_no_deadlock():
     """Concurrent mix of loads and unloads on same and different models must not deadlock."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
 
     class _FastAgent:
         def __init__(self, *args, **kwargs):
@@ -1468,7 +1468,7 @@ check("threads/all in-flight markers cleared after completion", loading_empty, T
 
 def _test_unload_reload_sequence_no_resurrection():
     """An older in-flight build cannot resurrect the model after an unload/reload sequence."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     first_build_started = threading.Event()
     first_build_release = threading.Event()
     agent_instances = []
@@ -1571,7 +1571,7 @@ for label, text, script in (
 
 # ------------------------------------------------- lang codes that name no language (#359)
 # `C`, `POSIX` and `C.UTF-8` are valid `$LANG` values that identify nothing, and `C.UTF-8` is
-# the default in the official Python image -- which is where `laya-serve` runs. Passing one to
+# the default in the official Python image -- which is where `veya-serve` runs. Passing one to
 # `Router(lang=...)` used to resolve to "not English" and pin every request to the multilingual
 # checkpoint, before detection ever ran. The blank-string case below already abstained; these
 # codes are the same kind of non-answer, so they abstain too. The ISO 639-2 special codes say
@@ -1611,14 +1611,14 @@ check("lang-code/posix with a modifier abstains", _english_from_code("POSIX-1"),
 # --------------------------------------------------------------------- registered checkpoints
 # A Router serves the checkpoints a caller registers beside the built-in three: named in `model=`
 # or `task=` like them, and loaded, evicted and unloaded like them.
-from laya.router import canonical_name  # noqa: E402
+from veya.router import canonical_name  # noqa: E402
 
 check("registry/canonical lowercases and aliases", canonical_name(" ML "), "multilingual")
 check("registry/canonical leaves an unknown name as typed", canonical_name("Papers"), "papers")
 
 _SECTION_Q = {"section": {"type": "choice", "instructions": "Which section?", "criteria": {"a": "A", "b": "B"}}}
 _CLAIM = "Transparency improved operator performance in 11 of 17 studies."
-r = Router(models={"papers": "/tmp/laya-papers", "tone": ("acme/laya-tone", None)})
+r = Router(models={"papers": "/tmp/veya-papers", "tone": ("acme/veya-tone", None)})
 check("registry/registered names resolve", r.resolve("papers"), "papers")
 check("registry/registered names resolve case-insensitively", r.resolve(" PAPERS "), "papers")
 check("registry/built-ins still resolve", r.resolve("ml"), "multilingual")
@@ -1633,9 +1633,9 @@ check("registry/normalise_name still knows only the built-ins", resolve_model_sp
 
 d = r.route(_CLAIM, _SECTION_Q, model="papers")
 check("route/model= names a registered checkpoint", d.model, "papers")
-check("route/repo is the registered source", d["repo"], "/tmp/laya-papers")
+check("route/repo is the registered source", d["repo"], "/tmp/veya-papers")
 check("route/model= accepts a registered (repo, subfolder) pair", r.route(_CLAIM, _SECTION_Q, model="tone")["repo"],
-      "acme/laya-tone")
+      "acme/veya-tone")
 check("route/task= names a registered checkpoint", r.route(_CLAIM, _SECTION_Q, task="tone").model, "tone")
 check("route/a registered checkpoint is never chosen automatically", r.route(_CLAIM, _SECTION_Q).model, "english")
 check("route/route_batch keeps the mix in order",
@@ -1643,8 +1643,8 @@ check("route/route_batch keeps the mix in order",
                                        {"state": _CLAIM, "questions": _SECTION_Q},
                                        {"state": _CLAIM, "questions": _SECTION_Q, "model": "tone"}])],
       ["papers", "english", "tone"])
-check("registered/reports source and description", Router(models={"papers": "/tmp/laya-papers"}).registered,
-      {"papers": {"source": "/tmp/laya-papers", "description": None}})
+check("registered/reports source and description", Router(models={"papers": "/tmp/veya-papers"}).registered,
+      {"papers": {"source": "/tmp/veya-papers", "description": None}})
 check("registered/built-ins are not listed", Router().registered, {})
 
 # The built-in typed-decisions workflows are unchanged: opt-in, and still routed to the built-in.
@@ -1654,32 +1654,32 @@ check("workflow/with auto_task_detection",
       Router(auto_task_detection=True).route(_CLAIM, _CS)["workflow"], "customer_service")
 
 # a checkpoint registered after construction is not read as an artifact map of a nested env.
-_old_env = os.environ.get("LAYA_SHA256_DIGESTS")
-os.environ["LAYA_SHA256_DIGESTS"] = '{"english": {"model.safetensors": "%s"}}' % ("c" * 64)
+_old_env = os.environ.get("VEYA_SHA256_DIGESTS")
+os.environ["VEYA_SHA256_DIGESTS"] = '{"english": {"model.safetensors": "%s"}}' % ("c" * 64)
 try:
     _r_late = Router()
-    _r_late.register("mine", "/tmp/laya-mine")
-    check("register/nested LAYA_SHA256_DIGESTS gives a later checkpoint the empty placeholder",
+    _r_late.register("mine", "/tmp/veya-mine")
+    check("register/nested VEYA_SHA256_DIGESTS gives a later checkpoint the empty placeholder",
           _r_late.sha256_digests["mine"], {})
 finally:
     if _old_env is None:
-        os.environ.pop("LAYA_SHA256_DIGESTS", None)
+        os.environ.pop("VEYA_SHA256_DIGESTS", None)
     else:
-        os.environ["LAYA_SHA256_DIGESTS"] = _old_env
+        os.environ["VEYA_SHA256_DIGESTS"] = _old_env
 
 # a source starting with ~ is a local path.
-check("register/~ in a source is expanded", Router(models={"mine": "~/laya-mine"}).models["mine"],
-      os.path.expanduser("~/laya-mine"))
+check("register/~ in a source is expanded", Router(models={"mine": "~/veya-mine"}).models["mine"],
+      os.path.expanduser("~/veya-mine"))
 
 # `auto` is the routing word everywhere, so it cannot name a checkpoint.
 try:
-    Router().register("auto", "/tmp/laya-auto")
+    Router().register("auto", "/tmp/veya-auto")
     check("register/auto is refused", True, False)
 except ValueError as _e:
     check("register/auto is refused", "auto" in str(_e), True)
 
 # an attach()ed agent with no source is not part of a whole-router preload.
-with patch("laya.agent.Agent", side_effect=lambda repo, **kw: _Stub(repo)) as _build_att:
+with patch("veya.agent.Agent", side_effect=lambda repo, **kw: _Stub(repo)) as _build_att:
     _r_att = Router()
     _r_att.attach("mine", _Stub("mine"))
     _r_att.unload("mine")
@@ -1689,8 +1689,8 @@ with patch("laya.agent.Agent", side_effect=lambda repo, **kw: _Stub(repo)) as _b
 
 # register(): the same thing after construction.
 r2 = Router()
-check("register/returns the canonical name", r2.register("Tone", "acme/laya-tone", description="tone"), "tone")
-check("register/description is reported", r2.registered["tone"], {"source": "acme/laya-tone", "description": "tone"})
+check("register/returns the canonical name", r2.register("Tone", "acme/veya-tone", description="tone"), "tone")
+check("register/description is reported", r2.registered["tone"], {"source": "acme/veya-tone", "description": "tone"})
 check("register/a second call replaces the source", (r2.register("tone", "/tmp/tone-v2"), r2.models["tone"])[1], "/tmp/tone-v2")
 check("register/replacing the source keeps the description", r2.registered["tone"]["description"], "tone")
 check("register/a built-in name re-points that checkpoint",
@@ -1709,23 +1709,23 @@ except TypeError:
     check("register/a source must be a path, repo or pair", True, True)
 
 # Every name-taking option accepts a registered name, the way it accepts a built-in one.
-r3 = Router(models={"papers": "/tmp/laya-papers"}, revisions={"papers": "abc123"}, default="papers",
+r3 = Router(models={"papers": "/tmp/veya-papers"}, revisions={"papers": "abc123"}, default="papers",
             sha256_digests={"papers": {"model.safetensors": "a" * 64}})
 check("register/default may be a registered name", r3.default, "papers")
 check("register/revisions keyed by a registered name", r3.revisions, {"papers": "abc123"})
 check("register/sha256_digests keyed by a registered name", r3.sha256_digests["papers"], {"model.safetensors": "a" * 64})
 check("register/undecided text falls back to the registered default",
       r3.route("Quero cancelar", {"q": _SECTION_Q["section"]}).model, "papers")
-_old_env = os.environ.get("LAYA_SHA256_DIGESTS")
-os.environ["LAYA_SHA256_DIGESTS"] = '{"papers": {"model.safetensors": "%s"}}' % ("b" * 64)
+_old_env = os.environ.get("VEYA_SHA256_DIGESTS")
+os.environ["VEYA_SHA256_DIGESTS"] = '{"papers": {"model.safetensors": "%s"}}' % ("b" * 64)
 try:
-    check("register/LAYA_SHA256_DIGESTS may name a registered checkpoint",
-          Router(models={"papers": "/tmp/laya-papers"}).sha256_digests["papers"], {"model.safetensors": "b" * 64})
+    check("register/VEYA_SHA256_DIGESTS may name a registered checkpoint",
+          Router(models={"papers": "/tmp/veya-papers"}).sha256_digests["papers"], {"model.safetensors": "b" * 64})
 finally:
     if _old_env is None:
-        os.environ.pop("LAYA_SHA256_DIGESTS", None)
+        os.environ.pop("VEYA_SHA256_DIGESTS", None)
     else:
-        os.environ["LAYA_SHA256_DIGESTS"] = _old_env
+        os.environ["VEYA_SHA256_DIGESTS"] = _old_env
 
 # attach() under a new name registers it with no source: resident now, not reloadable later.
 r4 = Router()
@@ -1741,7 +1741,7 @@ except ValueError as e:
     check("attach/reload without a source is refused", "no source" in str(e), True)
 
 # load() hands a registered local path or repo to Agent as a source, not as a registry name.
-import laya.agent as _agent_for_registry
+import veya.agent as _agent_for_registry
 _built = []
 
 
@@ -1753,11 +1753,11 @@ class _RecordingAgent:
 _prev_agent = _agent_for_registry.Agent
 _agent_for_registry.Agent = _RecordingAgent
 try:
-    r5 = Router(models={"papers": "/tmp/laya-papers", "tone": ("acme/laya-tone", "v2")}, max_loaded=3)
+    r5 = Router(models={"papers": "/tmp/veya-papers", "tone": ("acme/veya-tone", "v2")}, max_loaded=3)
     r5.load("papers")
     r5.load("tone")
-    check("load/a registered path reaches Agent unchanged", _built[0], ("/tmp/laya-papers", None))
-    check("load/a registered (repo, subfolder) pair reaches Agent", _built[1], ("acme/laya-tone", "v2"))
+    check("load/a registered path reaches Agent unchanged", _built[0], ("/tmp/veya-papers", None))
+    check("load/a registered (repo, subfolder) pair reaches Agent", _built[1], ("acme/veya-tone", "v2"))
     check("load/registered checkpoints are resident like built-ins", r5.loaded, ["papers", "tone"])
     r5.preload(["papers", "english"])
     check("load/preload accepts registered names", "english" in r5.loaded and "papers" in r5.loaded, True)
@@ -1861,7 +1861,7 @@ def _swallow(fn, *args):
 
 def _test_unregister_during_build_leaves_no_zombie():
     """unregister waits for a build already in flight and leaves nothing under the dropped name."""
-    import laya.agent as _agent_mod
+    import veya.agent as _agent_mod
     started, release = threading.Event(), threading.Event()
 
     class _Slow:
@@ -1945,11 +1945,11 @@ import warnings as _warnings
 
 
 def _near_notes(caught):
-    return [w for w in caught if str(w.message).startswith("laya: checkpoint name")]
+    return [w for w in caught if str(w.message).startswith("veya: checkpoint name")]
 
 
 def _near_text(name, built_in):
-    return ("laya: checkpoint name %r is one edit from the built-in %r; it is registered "
+    return ("veya: checkpoint name %r is one edit from the built-in %r; it is registered "
             "as a separate checkpoint and %r is unchanged." % (name, built_in, built_in))
 
 

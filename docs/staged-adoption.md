@@ -1,27 +1,27 @@
 # Staged adoption
 
-Laya returns a typed decision, not permission to execute it. Adopt a decision engine in stages so
+Veya returns a typed decision, not permission to execute it. Adopt a decision engine in stages so
 that the application keeps control of the real action while evidence accumulates.
 
-This guide describes the application-side rollout around Laya. Laya supplies the decision,
+This guide describes the application-side rollout around Veya. Veya supplies the decision,
 probabilities, confidence and hook events; the application owns the incumbent action, rollout
 policy, review boundary and rollback.
 
 ## 1. Shadow: observe without side effects
 
-Run Laya on representative real traffic, but keep the incumbent action authoritative. A shadow
+Run Veya on representative real traffic, but keep the incumbent action authoritative. A shadow
 record should contain enough context to reproduce a comparison later:
 
-- the request class and the Laya question schema;
-- Laya's answer, per-option probabilities, confidence, checkpoint and `run_id`;
+- the request class and the Veya question schema;
+- Veya's answer, per-option probabilities, confidence, checkpoint and `run_id`;
 - the incumbent action and the eventual reviewed or ground-truth outcome;
 - latency, errors and any fallback or review decision.
 
-Use the existing prediction hooks for Laya-side evidence. The logging functions below are
-application-owned placeholders; they are not Laya APIs:
+Use the existing prediction hooks for Veya-side evidence. The logging functions below are
+application-owned placeholders; they are not Veya APIs:
 
 ```python
-from laya import Router
+from veya import Router
 
 class ShadowLog:
     def on_predict_end(self, ctx):
@@ -39,9 +39,9 @@ router = Router(hooks=[ShadowLog()])
 
 def handle(request):
     try:
-        laya_result = router.predict(request.state, request.questions)
+        veya_result = router.predict(request.state, request.questions)
     except Exception as exc:
-        record_laya_failure(request, exc)
+        record_veya_failure(request, exc)
         return run_incumbent_action(request)
     # The shadow result is recorded by the hook; do not execute it here.
     return run_incumbent_action(request)
@@ -57,7 +57,7 @@ See [Prediction hooks](hooks/index.md), the [hook lifecycle](hooks/lifecycle.md)
 
 ## 2. Compare: disagreement is a signal, not a verdict
 
-Compare Laya with the incumbent on the same request and question meaning. A disagreement is not
+Compare Veya with the incumbent on the same request and question meaning. A disagreement is not
 automatically an error: the incumbent may be wrong, the cases may be ambiguous, or the action may
 require human judgment. Use reviewed labels or ground-truth outcomes where available, and keep an
 explicit `unknown` or review bucket instead of forcing every disagreement into a binary score.
@@ -68,7 +68,7 @@ not justify promotion for a different language, action or question shape.
 
 ## 3. Choose a policy from held-out evidence
 
-A confidence threshold is an application policy, not a property supplied by Laya. Fit or calibrate
+A confidence threshold is an application policy, not a property supplied by Veya. Fit or calibrate
 the decision scores on representative held-out data, then choose a threshold from the measured
 accuracy and error cost at the coverage your application can tolerate. There is no universal number
 that transfers across checkpoints, question types, languages or action risks.
@@ -78,7 +78,7 @@ owner with the policy. Re-evaluate it when those inputs change. Confidence order
 not establish that a decision is correct, and high confidence is never execution permission by
 itself.
 
-Four of those six come from the evaluation harness: a `laya-evals run --json` report records the
+Four of those six come from the evaluation harness: a `veya-evals run --json` report records the
 checkpoint commit that answered (`config.revisions`), the dataset's bytes and question schema
 (`config.dataset_sha256`, `config.questions_sha256`) and the gate it was scored under
 (`config.thresholds`). Calibration method and owner are the application's to record. See
@@ -100,7 +100,7 @@ eligibility boundary before enabling automation, for example:
 
 - the checkpoint, language/route and question schema are in the evaluated set;
 - the action is reversible or has an explicit human review path;
-- the request is not missing required context and has no Laya error;
+- the request is not missing required context and has no Veya error;
 - the slice has a size or traffic cap and a named rollback condition.
 
 Start with a small canary. Keep review or fallback for ineligible, ambiguous and failed cases. Continue
@@ -108,9 +108,9 @@ sampling promoted decisions, compare them with the incumbent and reviewed outcom
 disagreement, coverage, fallback rate, errors and latency. Roll back when the agreed guardrail is
 breached; promotion is a bounded step, not a permanent declaration that the model is correct.
 
-## Application/Laya boundary
+## Application/Veya boundary
 
-Laya provides the decision evidence and exposes it through the existing API and hooks. The
+Veyavides the decision evidence and exposes it through the existing API and hooks. The
 application owns the incumbent result, action execution, eligibility rules, threshold, review,
 fallback and rollback. Hooks can log or annotate evidence, but they do not make a high-impact action
 safe to execute.
@@ -120,7 +120,7 @@ A practical rollout is therefore:
 ```text
 real request
     ├─ incumbent action (authoritative)
-    └─ Laya shadow decision ──> log, compare, evaluate
+    └─ Veya shadow decision ──> log, compare, evaluate
                                   └─ bounded eligible slice
                                       └─ review / fallback / rollback
 ```

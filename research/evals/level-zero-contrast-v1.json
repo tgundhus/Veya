@@ -1,0 +1,87 @@
+{"training":[
+  {"family": "lift-dispatch-impact", "type": "score", "instructions": "Rate the present effect on lift service using verified closures and usable routes.", "criteria": ["Routine work or unconfirmed reports with no verified loss of service.", "A limited outage with an alternative in service.", "All lift service unavailable with no alternative and urgent access needs."], "rows":[
+    ["Print the help number on the button label. Checks found the lifts operating normally.", 0],
+    ["Add 'emergency lift loss' to the response cards. This is a wording change and the lift log shows every car in service.", 0],
+    ["The dispatcher wanted a copy of the prior closure notice. It does not apply today and riders can use every lift.", 0],
+    ["Car B stopped accepting calls. Riders on its floors are using car A.", 1],
+    ["Power failed at one shaft. The accessible lift by the entrance is moving riders to every floor.", 1],
+    ["Every lift stopped and the stair bypass is closed. No one can reach the elevated ward where urgent access is required.", 2]
+  ]},
+  {"family": "ration-desk-impact", "type": "score", "instructions": "Grade the effect on the distribution happening now. Assess scope, service and available substitutes.", "criteria": ["Low: ordinary requests with delivery continuing.", "Medium: a local stoppage with delivery maintained through an alternative.", "High: delivery stopped everywhere and no substitute can meet the urgent need."], "rows":[
+    ["Revise the recipient field on the delivery slip. All ration points are serving their queues.", 0],
+    ["People are sharing an old post saying nobody can get supplies. The opening register and new receipts show every point is serving today.", 0],
+    ["The survey asks what emergency step staff would take if every route closed. No route closed, and all scheduled deliveries went out.", 0],
+    ["The hill ration desk closed because its key broke. Its visitors are receiving their allotments at a mobile desk outside.", 1],
+    ["One route was flooded. Teams are making its deliveries using the parallel road.", 1],
+    ["Every route was flooded and no desks have any stock. The emergency shelters need deliveries now and no alternate route is open.", 2]
+  ]},
+  {"family": "laundry-service-impact", "type": "score", "instructions": "Assign a level for the operational effect of the current report.", "criteria": ["Routine request, advisory, or record change with no current interruption.", "Part of the service has a confirmed interruption with a practical workaround.", "No facility can supply clean linen and there is no workaround for urgent demand."], "rows":[
+    ["The address printed on the linen bags needs to change. All wards received their usual clean linen.", 0],
+    ["The planning note describes simultaneous washer failures. There has been no failure and today's loads ran normally.", 0],
+    ["The manager wants a list of equipment by age. No department reported a delivery issue.", 0],
+    ["One washer is out of service. Staff are moving its loads to the smaller machine and delivering clean linen on that route.", 1],
+    ["One building's linen intake is inaccessible. A staffed intake next door is accepting its loads.", 1],
+    ["All wash equipment and emergency stock were contaminated. No department can get clean linen from any facility for the urgent intake.", 2]
+  ]},
+  {"family": "arena-access-impact", "type": "score", "instructions": "Rate the present effect on entry to the arena. Use verified closures and substitutes.", "criteria": ["Normal access, routine updates or tests without a closure.", "Some entry routes closed while a usable substitute remains.", "All entry routes are closed and urgent entry has no substitute."], "rows":[
+    ["The ticket printer needs the new map with the closure symbols. All gates are open.", 0],
+    ["A contact asks for the article about last season's full closure. Today's entrance log has checks for every open gate.", 0],
+    ["Please add the staff sign-in link to the website. No access fault is stated.", 0],
+    ["The west ramp was closed after a rail snapped. The east ramp is taking the same visitors.", 1],
+    ["The main gate for one stand is jammed. Staff have opened its side gate and visitors are getting through.", 1],
+    ["The security relay locked every gate including the alternate ones. No one can enter for the urgent response inside.", 2]
+  ]},
+  {"family": "queue-processing-impact", "type": "score", "instructions": "Score actual processing disruption at present using the log and any working substitute.", "criteria": ["No active processing disruption or urgent deadline.", "A localized interruption with a workable processing route.", "All processing stopped without a workaround and an immediate deadline."], "rows":[
+    ["Rename the contact field in the next export. The log shows normal jobs completing in every queue.", 0],
+    ["The outage simulation raised a 'no route' banner. The real jobs have not been affected and all their receipts arrived.", 0],
+    ["We were asked when support ends for an older tool. The note doesn't describe a failure or a blocked job.", 0],
+    ["One group's queue stopped after an invalid update. It is using the live spare queue to complete the affected jobs.", 1],
+    ["The northern submitter cannot connect directly. It can still send the jobs through the working regional relay.", 1],
+    ["Job submission and both spare routes are down everywhere. The emergency processing deadline is now and no jobs can run.", 2]
+  ]},
+  {"family": "exhibit-assembly-evidence", "type": "score", "instructions": "Score current assembly evidence for the named display. Count the installed frame and verified panel as separate completed steps.", "criteria": ["Neither required step has been completed for this display.", "Exactly one required step has been completed for this display.", "Both required steps have been completed for this display."], "rows":[
+    ["The crew and panel checker have been assigned. The current display has no installed frame or verification record yet.", 0],
+    ["The two signatures belong to the trial display that was taken down. The display in the main room has no signed step.", 0],
+    ["The warehouse stored the frames next to the panels. This inventory list records no installation or panel check.", 0],
+    ["The frame is bolted into the current display. The checker has booked the panel review but has not done it.", 1],
+    ["The checker verified the panel for this display. The frame delivery is still pending.", 1],
+    ["The current display's frame is installed and its panel passed verification. Both records identify the display in the west room.", 2],
+    ["The record for the main display has the installation receipt and the checked panel signature. The old practice display failed inspection and was taken down.", 2]
+  ]},
+  {"family": "cold-room-audit-evidence", "type": "score", "instructions": "Grade the completed evidence for the current cold room. Two separate checks are required: an actual temperature reading and an actual door seal inspection.", "criteria": ["No completed check for this cold room.", "Exactly one completed check for this cold room.", "A completed temperature reading and door seal check for this cold room."], "rows":[
+    ["A thermometer and a seal gauge are in the toolkit. Neither reading nor seal inspection was performed for this room.", 0],
+    ["The audit form lists a reading and inspection as planned. Both completion cells are blank.", 0],
+    ["The records show a signed reading and seal result for room C. This audit covers room B, which has no record.", 0],
+    ["The technician logged the temperature for this room. The seal inspection is booked for next week.", 1],
+    ["The current room's seal was inspected and signed. The temperature document attached is from another room.", 1],
+    ["The technician recorded this room's temperature and completed its seal inspection. Both signed entries name the same room and date.", 2],
+    ["The completed seal check and current temperature reading are recorded for room Q. The adjacent room's missing reading is outside this audit.", 2]
+  ]},
+  {"family": "boat-race-checkin-evidence", "type": "score", "instructions": "Score verified attendance at this race briefing. One registration is required for the captain and one for the safety guide.", "criteria": ["No actual checked-in attendee in either required role.", "Exactly one of the two required roles has a verified check-in.", "Both required roles have a verified check-in at this briefing."], "rows":[
+    ["The captain and safety guide are on the invitation list. The gate log has no actual check-ins and the briefing has not opened.", 0],
+    ["Someone checked in both roles for yesterday's practice. There is no arrival or online join record for today's briefing.", 0],
+    ["The captain and guide said they were planning to attend. Neither signed the roll or appeared at the video check-in.", 0],
+    ["The captain signed the race briefing roll. The guide received the calendar invite but did not attend.", 1],
+    ["The guide signed in at the actual briefing. The captain's check-in was recorded only for a different race.", 1],
+    ["The organizer verified both the captain and safety guide at today's briefing and checked them in under their roles.", 2],
+    ["Both required roles are recorded as present in this race briefing. The catering lead did not attend and is irrelevant to the rule.", 2]
+  ]},
+  {"family": "bench-safety-evidence", "type": "score", "instructions": "Count completed safety checks for the exact repair bench: measured voltage and tested emergency stop.", "criteria": ["Neither completed check for this bench.", "Exactly one of the two checks completed for this bench.", "Both the voltage measurement and stop test completed for this bench."], "rows":[
+    ["The duty list assigns somebody to measure voltage and test the stop. No result has been entered for either check.", 0],
+    ["The meter and stop-test card were moved to the bench. The shift ended before anyone performed a check.", 0],
+    ["Bench L has two completed tests. This request is for bench G, whose status page contains no check results.", 0],
+    ["A signed voltage reading names this bench. The emergency stop test is waiting for a witness.", 1],
+    ["The stop test passed on this bench today. The only completed voltage measurement names the bench next to it.", 1],
+    ["The technician measured voltage and tested the emergency stop on the bench in this ticket. Both outcomes are documented against its serial number.", 2],
+    ["The current bench has its signed voltage reading and a successful stop test. The withdrawn test record refers to a different unit.", 2]
+  ]},
+  {"family": "theatre-revision-evidence", "type": "score", "instructions": "Score verified approval of this script revision. Count editorial signoff and technical signoff independently for this revision.", "criteria": ["No completed approval for this script revision.", "One completed approval for this script revision.", "Both completed approvals for this script revision."], "rows":[
+    ["Both review slots are booked and their names are on the agenda. The exact revision has no approvals yet.", 0],
+    ["The attached passes cover the rehearsal text. The final revision is separately stored and has no approval record.", 0],
+    ["The old approvals for the current text were withdrawn and neither reviewer has signed again.", 0],
+    ["Editorial approved revision D. Technical review is scheduled and has yet to start.", 1],
+    ["The technical reviewer approved revision E. Editorial signed an older revision and has not signed E.", 1],
+    ["Both reviewers signed for revision F and their records quote its exact checksum.", 2],
+    ["Revision G has completed technical and editorial review. The earlier revision was rejected, but the current one received both signatures.", 2]
+  ]}
+], "calibration":[]}

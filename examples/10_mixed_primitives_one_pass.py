@@ -12,7 +12,7 @@ banner("10", "Mixed primitives, one forward pass", """
     a single `predict()` call.
 
     The point is in `usage`: `input_tokens` is the batch total for all four questions,
-    and `output_tokens` is 0, because Laya is non-autoregressive. There is no decoding
+    and `output_tokens` is 0, because Veya is non-autoregressive. There is no decoding
     loop, no new tokens, and therefore nothing to parse or hallucinate.
 
     `describe()` prints a compact line per question, which is the shape most services

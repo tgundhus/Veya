@@ -1,12 +1,12 @@
 """Share DecisionCache decisions between machines through Redis.
 
-`RedisDecisionStore` implements `laya.DecisionStore`: each decision lives under
-`laya:decision:<key>` with Redis's own expiry, so every process and machine pointed at the same
+`RedisDecisionStore` implements `veya.DecisionStore`: each decision lives under
+`veya:decision:<key>` with Redis's own expiry, so every process and machine pointed at the same
 Redis replays the same decision, and the first one stored wins (`SET ... NX`). Redis drops
 expired decisions itself; bound its size with a `maxmemory` policy.
 
     import redis
-    from laya import DecisionCache, Router
+    from veya import DecisionCache, Router
 
     store = RedisDecisionStore(redis.Redis(host="cache.internal"))
     router = Router(hooks=[DecisionCache(store=store, ttl=30 * 24 * 3600, renew_on_hit=True)])
@@ -22,9 +22,9 @@ import os
 
 
 class RedisDecisionStore:
-    """A `laya.DecisionStore` kept in Redis. `client` is a `redis.Redis` returning bytes."""
+    """A `veya.DecisionStore` kept in Redis. `client` is a `redis.Redis` returning bytes."""
 
-    def __init__(self, client, prefix: bytes = b"laya:decision:"):
+    def __init__(self, client, prefix: bytes = b"veya:decision:"):
         self.client = client
         self.prefix = prefix
 
@@ -89,26 +89,26 @@ def _client():
 
 
 class _StandIn:
-    """Answers like a Laya checkpoint would, with its own P(yes): one per 'machine'."""
+    """Answers like a Veya checkpoint would, with its own P(yes): one per 'machine'."""
 
     def __init__(self, p):
         self.p, self.calls = p, 0
 
     def system_one(self, state, questions, **kw):
         self.calls += 1
-        return {"model": "laya-rl-agent", "usage": {"input_tokens": 12, "output_tokens": 0},
+        return {"model": "veya-rl-agent", "usage": {"input_tokens": 12, "output_tokens": 0},
                 "answers": {q: {"type": "noul", "noul": self.p} for q in questions}}
 
 
 if __name__ == "__main__":
-    from laya import DecisionCache, Router
+    from veya import DecisionCache, Router
 
     client = _client()
-    store = RedisDecisionStore(client, prefix=b"laya:example:")
+    store = RedisDecisionStore(client, prefix=b"veya:example:")
     store.clear()
     machines = []
     for p in (0.51, 0.49):   # two machines whose arithmetic lands either side of a close call
-        router = Router(hooks=[DecisionCache(store=RedisDecisionStore(client, prefix=b"laya:example:"),
+        router = Router(hooks=[DecisionCache(store=RedisDecisionStore(client, prefix=b"veya:example:"),
                                              ttl=3600, renew_on_hit=True)])
         model = router.attach("english", _StandIn(p))
         machines.append((router, model))
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     assert first == second == 0.51, (first, second)
     assert machines[1][1].calls == 0, "the second machine should replay, not run its model"
     assert len(store) == 1
-    name = next(iter(client.scan_iter(match=b"laya:example:*")))
+    name = next(iter(client.scan_iter(match=b"veya:example:*")))
     assert 0 < client.pttl(name) <= 3600 * 1000, "the decision should carry Redis's own expiry"
     print("both machines answered %.2f; the second never ran its model; one decision in Redis" % second)
 

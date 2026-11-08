@@ -135,21 +135,24 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Weights must load through safetensors, never pickle
         run: |
-          # torch.load / pickle execute arbitrary code during deserialization. Laya loads
+          # torch.load / pickle execute arbitrary code during deserialization. Veya loads
           # checkpoints from the Hub, so a pickle path would be remote code execution on
-          # `laya.load("someone/their-model")`.
-          if grep -rnE --include='*.py' "\bpickle\b|torch\.load\(|joblib\.load\(|yaml\.load\(" laya/ laya-ts/scripts/; then
+          # `veya.load("someone/their-model")`.
+          if grep -rnE --include='*.py' "\bpickle\b|torch\.load\(|joblib\.load\(|yaml\.load\(" veya/ veya-ts/scripts/; then
             echo "::error::unsafe deserialization in the shipped package - use safetensors"
             exit 1
           fi
-          echo "OK: no unsafe deserialization in laya/ or laya-ts/scripts/"
+          echo "OK: no unsafe deserialization in veya/ or veya-ts/scripts/"
       - name: No shell-out or dynamic exec in the shipped package
         run: |
-          if grep -rnE "os\.system\(|subprocess\.|shell=True|\beval\(|\bexec\(" laya/ \
-               | grep -v "\.eval()"; then
+          # Only the bounded QuickJS guest entry point is allowed; Python eval/exec
+          # and every other matching call remain forbidden, including in that worker.
+          if grep -rnE "os\.system\(|subprocess\.|shell=True|\beval\(|\bexec\(" veya/ \
+               | grep -v "\.eval()" \
+               | grep -vE '^veya/mcp/_code_worker\.py:[0-9]+:        pump = bounded\(lambda: context\.eval\(program\)\)$'; then
             echo "::error::shell-out or dynamic execution in the shipped package"
             exit 1
           fi
-          echo "OK: no os.system/subprocess/eval/exec in laya/"
+          echo "OK: no Python eval/exec or shell-out in veya/"
       - name: ONNX exporter requires safetensors weights
         run: python tests/test_export_onnx_safety.py

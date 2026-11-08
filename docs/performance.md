@@ -1,12 +1,16 @@
 ---
 title: Where a request's time goes
-description: Stage-by-stage timings of a Laya request, the cost of the decision cache, and which runtime options make a request faster, measured with reproducible scripts.
+description: Stage-by-stage timings of a Veya request, the cost of the decision cache, and which runtime options make a request faster, measured with reproducible scripts.
 type: reference
-specificity: "Laya 0.3.20 on a 4-core Intel Xeon at 2.8 GHz (AVX-512 VNNI, no native BF16), PyTorch 2.14 on CPU, fp32, 4 threads. Checkpoints with the published architectures (421.29M and 321.91M parameters) and random weights, with a byte-level BPE tokenizer trained locally standing in for the published ones."
+specificity: "Veya 0.3.20 on a 4-core Intel Xeon at 2.8 GHz (AVX-512 VNNI, no native BF16), PyTorch 2.14 on CPU, fp32, 4 threads. Checkpoints with the published architectures (421.29M and 321.91M parameters) and random weights, with a byte-level BPE tokenizer trained locally standing in for the published ones."
 credibility: "Measured with research/scripts/bench_stages.py and research/scripts/bench_decision_cache.py; raw results in research/results/. Time depends on tensor shapes, not weight values, so the split between stages holds for the real checkpoints; accuracy and the size of probability changes do not carry over from random weights. GPU and Apple-silicon splits differ and are not measured here."
 ---
 
 # Where a request's time goes
+
+For the latest real-checkpoint CPU measurements and before/after comparison, see the
+[7 November Veya refresh](reports/veya-migration-2026-11-07.md). The staged experiments
+below retain their original hardware, weights and measurement limits.
 
 For opt-in resource budgets on current code, see [Performance modes](performance-modes.md).
 Modes adjust threads, batching and model lifecycle without changing precision or input windows;
@@ -55,7 +59,7 @@ On a CPU the encoder is the request: 89-95% of it, and the decision head most of
 Everything around them -- routing, tokenization, collation, decoding, hooks -- adds up to about
 2.5 ms for three questions on a ticket. An accelerator shortens the encoder but not those
 milliseconds: on a T4, where one question takes 33-40 ms
-([BENCHMARKS.md](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md)), they are a
+([BENCHMARKS.md](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md)), they are a
 visible share, and they are a place to look for the per-call overhead BENCHMARKS.md reports on a
 GB10 and could not place.
 
@@ -89,7 +93,7 @@ bf16 do change the arithmetic: check them against your own labels before you rel
   recently seen states (below).
 - **Trimming the state.** Every question row carries the whole state, so time follows its
   length: three questions took 503 ms on a 97-character ticket and 2,237 ms on a
-  1,125-character email. For email, `laya.email.clean_email_body` drops quoted history,
+  1,125-character email. For email, `veya.email.clean_email_body` drops quoted history,
   signatures and disclaimers and caps the rest at 3,000 characters. A reply quoting the
   benchmark email went from 1,263 characters to 27, and a two-deep thread from 2,498 to 27. The
   quoted history is gone too, so keep it when your questions depend on it.
@@ -106,7 +110,7 @@ bf16 do change the arithmetic: check them against your own labels before you rel
   [the CPU fast path](#the-cpu-fast-path)); its int8 model is the fastest CPU option measured.
 - **Threads.** Use every physical core. BENCHMARKS.md adds that inter-op threads should be pinned
   to 1.
-- **bf16** only pays on hardware with native BF16 (`LAYA_CPU_AMP=bf16`), as BENCHMARKS.md warns.
+- **bf16** only pays on hardware with native BF16 (`VEYA_CPU_AMP=bf16`), as BENCHMARKS.md warns.
 
 Three stages got cheaper in this change, with identical output:
 
@@ -211,4 +215,4 @@ python research/scripts/bench_decision_cache.py --out cache.json
 On a GPU or Apple silicon the timers synchronise the device around the encoder and the head, so
 their split is the device's own. `--variants` picks what to compare with the baseline: `threads`,
 `bf16`, `int8`, `inference_mode`, `head_cache_off`, `mps_fp16` (fp16 autocast from one row
-instead of five on Apple silicon), `onnx` with `--onnx english=laya.onnx`, and `compile`.
+instead of five on Apple silicon), `onnx` with `--onnx english=veya.onnx`, and `compile`.

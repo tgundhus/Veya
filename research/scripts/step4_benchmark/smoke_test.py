@@ -35,7 +35,7 @@ from tokenizers.models import WordLevel  # noqa: E402
 from tokenizers.pre_tokenizers import Whitespace  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
 
-from laya.common import DecisionModel  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
 from metrics import accuracy, brier_score, expected_calibration_error, soft_accuracy  # noqa: E402
 from prepare_data import case_to_record  # noqa: E402
 from run_benchmark import NOTEBOOK_HYPERPARAMS, build_command  # noqa: E402
@@ -126,7 +126,7 @@ def command_contract() -> None:
     cmd = build_command("train.jsonl", "out/rlcd-seed0", "rlcd", 0,
                         "convaiinnovations/laya", "cuda", NOTEBOOK_HYPERPARAMS)
     joined = " ".join(cmd)
-    check("module entrypoint", "-m laya.train_cli" in joined)
+    check("module entrypoint", "-m veya.train_cli" in joined)
     for token in ("--loss rlcd", "--seed 0", "--epochs 4", "--micro-batch 8", "--grad-accum 8",
                   "--encoder-lr 2.5e-05", "--head-lr 0.0001", "--max-len 1024",
                   "--head-max-len 256"):

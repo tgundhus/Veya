@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import torch  # noqa: E402
 
-from laya._loading import _checkpoint_identity, _load_weights  # noqa: E402
+from veya._loading import _checkpoint_identity, _load_weights  # noqa: E402
 
 
 HAS_ASSIGN = "assign" in inspect.signature(torch.nn.Module.load_state_dict).parameters
@@ -347,7 +347,7 @@ class LoadingMemoryTests(unittest.TestCase):
                     self.assertEqual(calls, ["pre" if custom == "pre_hook" else "post"])
 
     def test_agent_releases_mapping_before_compile_placement_fallback_and_warmup(self):
-        from laya.agent import Agent
+        from veya.agent import Agent
         from safetensors.torch import load_file as original_load_file, save_file
 
         class Weights(dict):
@@ -391,10 +391,10 @@ class LoadingMemoryTests(unittest.TestCase):
                     released("compile")
                     return model
 
-                with (patch("laya.agent.build_model", return_value=model),
-                      patch("laya.agent._load_tokenizer", return_value=object()),
+                with (patch("veya.agent.build_model", return_value=model),
+                      patch("veya.agent._load_tokenizer", return_value=object()),
                       patch("safetensors.torch.load_file", side_effect=load_file),
-                      patch("laya.agent.compile_model", side_effect=compile_model),
+                      patch("veya.agent.compile_model", side_effect=compile_model),
                       patch.object(Agent, "warmup", side_effect=lambda: released("warmup")),
                       patch("torch.cuda.is_available", return_value=True),
                       patch("torch.cuda.get_device_capability", return_value=(8, 0)),

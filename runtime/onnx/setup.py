@@ -8,17 +8,18 @@ from setuptools.command.sdist import sdist
 
 HERE = Path(__file__).resolve().parent
 MODULES = (
-    "onnx_agent", "inference_common", "inference", "checkpoint", "calibration",
-    "hooks", "revisions", "confidence", "performance", "structured", "consistency",
-    "router", "serve", "shortlist", "lang", "presets",
-    "mcp/__init__", "mcp/device", "mcp/remote", "mcp/server", "mcp/tools",
+    "onnx_agent", "inference_common", "inference", "checkpoint", "calibration", "decision_policy",
+    "hooks", "_env", "revisions", "confidence", "performance", "structured", "consistency", "errors",
+    "router", "serve", "shortlist", "lang", "presets", "_microbatch", "replay", "_routing_unicode",
+    "mcp/__init__", "mcp/device", "mcp/remote", "mcp/server", "mcp/tools", "mcp/code_mode", "mcp/_code_worker",
+    "mcp/_code_budget",
 )
 
 
 def shared_source():
     # An sdist carries its own inputs, so rebuilding it never needs the original checkout.
     source = HERE / "_shared"
-    return source if source.is_dir() else HERE.parents[1] / "laya"
+    return source if source.is_dir() else HERE.parents[1] / "veya"
 
 
 def copy_shared(command, destination):
@@ -35,11 +36,11 @@ def copy_shared(command, destination):
 class BuildRuntime(build_py):
     def run(self):
         super().run()
-        copy_shared(self, Path(self.build_lib) / "laya_onnx" / "_runtime")
+        copy_shared(self, Path(self.build_lib) / "veya_onnx" / "_runtime")
 
     def get_outputs(self, include_bytecode=1):
         outputs = super().get_outputs(include_bytecode)
-        return outputs + [str(Path(self.build_lib) / "laya_onnx" / "_runtime" / (name + ".py"))
+        return outputs + [str(Path(self.build_lib) / "veya_onnx" / "_runtime" / (name + ".py"))
                           for name in MODULES]
 
 

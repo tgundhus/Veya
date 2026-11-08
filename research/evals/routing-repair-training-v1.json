@@ -1,0 +1,454 @@
+{
+  "training": [
+    {
+      "family": "climbing-club-equipment",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "classes": "Bookings or changes for a climbing lesson.",
+        "gear": "Damage or repair requests about rented climbing equipment.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "The damaged helmet was exchanged. Could you move my beginner lesson to Tuesday?",
+          "classes"
+        ],
+        [
+          "I'm calling to reserve an intermediate class. I haven't rented any equipment.",
+          "classes"
+        ],
+        [
+          "My class was cancelled and I have already dealt with that. Please replace the harness whose buckle failed.",
+          "gear"
+        ],
+        [
+          "The instructor booking is fine. Can someone look at the torn strap on the rental kit?",
+          "gear"
+        ],
+        [
+          "Where is the club's main contact page? I'm not trying to book a lesson or report a fault.",
+          "desk"
+        ],
+        [
+          "I've written down the class code and kit number. I'll tell you what I need when someone replies.",
+          "desk"
+        ],
+        [
+          "I used the lesson help page because I had its address, but the lesson is fine. I need a broken belay device exchanged.",
+          "gear"
+        ],
+        [
+          "Can the front desk tell me who to speak with? I have not said why I'm contacting the club yet.",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "freelance-pay-office",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "claims": "Travel reimbursements and repayment requests.",
+        "profile": "Changes to worker name, contact details or contractor records.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "My address change is complete. Please reimburse the mileage for the visit.",
+          "claims"
+        ],
+        [
+          "Could you check why my approved expense claim has yet to be paid?",
+          "claims"
+        ],
+        [
+          "The train fare refund arrived. Please change the mailing address on my contractor profile.",
+          "profile"
+        ],
+        [
+          "I haven't filed a repayment request. I need my surname corrected in the contractor record.",
+          "profile"
+        ],
+        [
+          "I can provide my worker number and expense reference. I'd like somebody to call before I describe the issue.",
+          "desk"
+        ],
+        [
+          "What's the office telephone number? I don't have a reimbursement request or profile update.",
+          "desk"
+        ],
+        [
+          "The attachment is an old claim you already paid. My current request is to update my contact email.",
+          "profile"
+        ],
+        [
+          "I'm new to the contractor portal and have a question for the desk. I haven't described it yet.",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "community-kitchen-permits",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "space": "Reservation or changes for time in the kitchen.",
+        "inspection": "Requesting a kitchen safety inspection or correcting an inspection report.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "The safety certificate is current. Please reserve the kitchen for Saturday afternoon.",
+          "space"
+        ],
+        [
+          "I don't need another inspection. I want to move our reserved cooking time.",
+          "space"
+        ],
+        [
+          "Our cooking time is booked. Please arrange the required inspection of the ventilation.",
+          "inspection"
+        ],
+        [
+          "Nobody is changing the reservation. The safety report names the wrong room and needs correction.",
+          "inspection"
+        ],
+        [
+          "I can provide both the inspection number and the booking number. I'll explain the reason for my call when someone answers.",
+          "desk"
+        ],
+        [
+          "Where should visitors check in? I have no booking or inspection request.",
+          "desk"
+        ],
+        [
+          "Last week's inspection is finished. The only open action is to move next Friday's reservation.",
+          "space"
+        ],
+        [
+          "I have a question for the kitchen office and need its general email address.",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "maker-fair-support",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "stall": "Stall reservation or payment and changes to a stall booking.",
+        "power": "Faults or repairs involving electricity at a stall.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "The electrical fault was fixed yesterday. Please change my stall reservation to an indoor space.",
+          "stall"
+        ],
+        [
+          "Can you confirm how to pay the remaining amount for booth 19?",
+          "stall"
+        ],
+        [
+          "The booth is fully paid. The socket trips whenever I plug in a single lamp, and I need it repaired.",
+          "power"
+        ],
+        [
+          "The stall assignment is correct, but the power outlet in our booth is dead. Can someone check it?",
+          "power"
+        ],
+        [
+          "What are the office's opening hours? I haven't requested a stall change or reported a power fault.",
+          "desk"
+        ],
+        [
+          "I have the booth number and power ticket ready to read out. Can I speak to the office first?",
+          "desk"
+        ],
+        [
+          "The payment discrepancy is closed. I am calling about the live cable that stopped supplying the booth.",
+          "power"
+        ],
+        [
+          "I'm a new exhibitor. Which general desk should I contact before I explain my inquiry?",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "retail-repair-returns",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "returns": "Refunds and returns for items already purchased.",
+        "repairs": "Scheduling or updating a repair to an item.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "I cancelled the repair appointment. I want to return the unused kettle for a refund.",
+          "returns"
+        ],
+        [
+          "The mixer works. I bought the wrong size and would like to return it.",
+          "returns"
+        ],
+        [
+          "The refund was for another order. Please schedule a repair for the oven that won't heat.",
+          "repairs"
+        ],
+        [
+          "I am keeping the product. Its switch stopped working, and I need a repair appointment.",
+          "repairs"
+        ],
+        [
+          "What's the service counter number? I have not said whether I need a return or repair.",
+          "desk"
+        ],
+        [
+          "I know the purchase reference and job code. I'd like to explain my situation before you assign it.",
+          "desk"
+        ],
+        [
+          "The existing repair is complete. I'd like to return a separate unopened accessory.",
+          "returns"
+        ],
+        [
+          "Can someone from the counter call me? I haven't described the action I'm asking for.",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "community-court-records",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "appointments": "Changing or booking an appointment at the registry.",
+        "documents": "Releasing or correcting a copy of a court record.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "I received the correct certificate. Please move my registry appointment to Friday.",
+          "appointments"
+        ],
+        [
+          "I do not need a copy of the record. I would like to reserve a time to see the clerk.",
+          "appointments"
+        ],
+        [
+          "The appointment is settled. The document I received has the wrong case number and needs correction.",
+          "documents"
+        ],
+        [
+          "I'm not changing my visit. Please release a certified copy of the closed order to my account.",
+          "documents"
+        ],
+        [
+          "Where is the registry desk? I haven't requested an appointment or document.",
+          "desk"
+        ],
+        [
+          "I've gathered the record number and appointment code. I'll explain the matter when the clerk calls me.",
+          "desk"
+        ],
+        [
+          "The case search was completed. Please send the signed record itself instead of a new appointment.",
+          "documents"
+        ],
+        [
+          "I want the main registry email so that I can send my question later.",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "garden-volunteer-desk",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "membership": "Renewing membership, applying or updating a member account.",
+        "tools": "Damage, returns, or replacement of shared garden tools.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "The borrowed spade was returned in good condition. I'd like to renew my membership.",
+          "membership"
+        ],
+        [
+          "I don't need a tool. Could you change the email address on my membership?",
+          "membership"
+        ],
+        [
+          "My membership is current. The communal fork has a broken handle and needs a replacement.",
+          "tools"
+        ],
+        [
+          "The renewal went through. I am calling to report that the borrowed pruner will not close.",
+          "tools"
+        ],
+        [
+          "Which entrance do volunteers use? There is no membership or tool problem.",
+          "desk"
+        ],
+        [
+          "I've written down my member number and tool receipt. I'd like to explain why I'm calling before choosing a team.",
+          "desk"
+        ],
+        [
+          "The missing tools were found. Please help me finish applying for membership.",
+          "membership"
+        ],
+        [
+          "Could somebody from the general desk tell me whom to contact? I'll describe the reason when they answer.",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "apprentice-workshop-portal",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "intake_dates": "Booking an induction and moving induction dates.",
+        "completion": "Releasing completion records or correcting a result.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "I already have the certificate. Please move my next workshop induction to Monday.",
+          "intake_dates"
+        ],
+        [
+          "I don't need a corrected result. Can I reserve a place at the spring induction?",
+          "intake_dates"
+        ],
+        [
+          "The induction is booked. Please release the missing completion letter for the last workshop.",
+          "completion"
+        ],
+        [
+          "The booking issue is closed. My workshop result was recorded under another person's name.",
+          "completion"
+        ],
+        [
+          "What is the portal help number? I am not asking about induction dates or completion records.",
+          "desk"
+        ],
+        [
+          "I have the course ID and booking code ready. I haven't said what I need yet.",
+          "desk"
+        ],
+        [
+          "I don't need another visit. Please send the approved record from the course I completed.",
+          "completion"
+        ],
+        [
+          "Could someone call me about the portal? I'll explain my request when we speak.",
+          "desk"
+        ]
+      ]
+    }
+  ],
+  "calibration": [
+    {
+      "family": "clock-museum-request-calibration",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "visits": "Visiting times, guided tours and admission bookings.",
+        "restoration": "Restoring a damaged clock or repairing a display mechanism.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "Please move our guided visit to the later session.",
+          "visits"
+        ],
+        [
+          "The mechanism is fixed. I'd like to reserve entry for my group.",
+          "visits"
+        ],
+        [
+          "I am asking about a tour booking, and I haven't reported a broken clock.",
+          "visits"
+        ],
+        [
+          "The visit is already arranged. The display clock's minute hand no longer moves and needs repair.",
+          "restoration"
+        ],
+        [
+          "Can somebody restore the pendulum that snapped in transit?",
+          "restoration"
+        ],
+        [
+          "The ticket refund has arrived. I now want to report the damaged clock mechanism.",
+          "restoration"
+        ],
+        [
+          "I have the display number and ticket number ready. I haven't described a request yet.",
+          "desk"
+        ],
+        [
+          "When is the front desk open? I have no booking or repair request.",
+          "desk"
+        ],
+        [
+          "Please have the general desk call me so I can tell them what I need.",
+          "desk"
+        ]
+      ]
+    },
+    {
+      "family": "hydroponics-supply-calibration",
+      "type": "choice",
+      "instructions": "Route the actual request to its owner. Use desk for general contact or a message with no specified action for either team.",
+      "criteria": {
+        "orders": "New orders, changing quantities or following up a shipment.",
+        "technical": "Repairs or troubleshooting of a growing system.",
+        "desk": "General information, reception, or no specific request stated."
+      },
+      "rows": [
+        [
+          "The control panel works. I need to add six feed bags to my order.",
+          "orders"
+        ],
+        [
+          "Could you check where the shipment of growing trays went?",
+          "orders"
+        ],
+        [
+          "The technical question is resolved. Can you change the number of containers on the order?",
+          "orders"
+        ],
+        [
+          "The supplies arrived correctly. The controller restarts every time I change a setting.",
+          "technical"
+        ],
+        [
+          "I'm not placing an order. I need help with the pump that will not start.",
+          "technical"
+        ],
+        [
+          "The order was corrected yesterday. Please look at the sensor fault I am reporting now.",
+          "technical"
+        ],
+        [
+          "I have the part number and order number ready. I'd like to explain my request before you route it.",
+          "desk"
+        ],
+        [
+          "Which general number should I call? I haven't asked for a shipment or reported a fault.",
+          "desk"
+        ],
+        [
+          "Can the desk contact me? I will tell them why I am asking when they call.",
+          "desk"
+        ]
+      ]
+    }
+  ]
+}

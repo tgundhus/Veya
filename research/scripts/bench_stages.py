@@ -1,4 +1,4 @@
-"""Where a Laya request spends its time, stage by stage, and what changes it.
+"""Where a Veya request spends its time, stage by stage, and what changes it.
 
 Every stage a `Router.predict` call goes through is wrapped with a timer: language detection,
 the rest of routing, checkpoint lookup, question validation and normalisation, state
@@ -23,6 +23,8 @@ runs on the same scenarios; threads, bf16 and int8 apply to CPU only, mps_fp16 t
 import argparse
 import contextlib
 import functools
+import hashlib
+from datetime import datetime, timezone
 import json
 import os
 import platform
@@ -35,12 +37,12 @@ sys.path.insert(0, ROOT)
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
-import laya.agent as agent_mod  # noqa: E402
-import laya.common as common_mod  # noqa: E402
-import laya.router as router_mod  # noqa: E402
-from laya import DecisionCache, Router  # noqa: E402
-from laya.agent import Agent  # noqa: E402
+import veya  # noqa: E402
+import veya.agent as agent_mod  # noqa: E402
+import veya.common as common_mod  # noqa: E402
+import veya.router as router_mod  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
+from veya.agent import Agent  # noqa: E402
 
 TICKET = "Hi, we were billed twice for March. Please refund the duplicate today or we will cancel our plan."
 EMAIL = (
@@ -204,8 +206,10 @@ def run(router, scenario, repeat_state=False):
 
 
 def summary(seconds):
-    ms = sorted(x * 1e3 for x in seconds)
-    return {"median": round(statistics.median(ms), 3), "min": round(ms[0], 3),
+    samples = [x * 1e3 for x in seconds]
+    ms = sorted(samples)
+    return {"samples_ms": [round(x, 6) for x in samples],
+            "median": round(statistics.median(ms), 3), "min": round(ms[0], 3),
             "p90": round(ms[min(len(ms) - 1, int(0.9 * len(ms)))], 3)}
 
 
@@ -312,7 +316,7 @@ def build(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("--device", default=None, help="cpu, cuda or mps; default: Laya's own choice")
+    parser.add_argument("--device", default=None, help="cpu, cuda or mps; default: Veya's own choice")
     parser.add_argument("--models", default="english,multilingual")
     parser.add_argument("--checkpoint", action="append", default=[], metavar="NAME=PATH",
                         help="use a local checkpoint directory for NAME instead of the Hub")
@@ -323,6 +327,7 @@ def main():
     parser.add_argument("--scenarios", default="all", help="semicolon-separated scenario names, or all")
     parser.add_argument("--variants", default="threads,bf16,int8,inference_mode,head_cache_off,mps_fp16")
     parser.add_argument("--out", help="write the results here as JSON")
+    parser.add_argument("--synthetic-weights", action="store_true", help="label a run that uses synthetic checkpoints")
     args = parser.parse_args()
     args.models = [m for m in args.models.split(",") if m]
     args.checkpoint = dict(item.split("=", 1) for item in args.checkpoint)
@@ -335,11 +340,17 @@ def main():
     first = next(iter(agents.values()))
     device = first.device
     meta = {
-        "laya": laya.__version__, "torch": torch.__version__, "python": platform.python_version(),
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "source_sha256": {name: hashlib.sha256(open(os.path.join(ROOT, name), "rb").read()).hexdigest()
+                          for name in ("veya/agent.py", "veya/router.py", "veya/common.py",
+                                       "veya/inference_common.py", "veya/consistency.py",
+                                       "research/scripts/bench_stages.py")},
+        "checkpoint_revisions": {n: a.revision for n, a in agents.items()},
+        "veya": veya.__version__, "torch": torch.__version__, "python": platform.python_version(),
         "platform": platform.platform(), "machine": platform.machine(), "cpus": os.cpu_count(),
         "device": str(device), "torch_threads": torch.get_num_threads(),
         "checkpoints": {n: args.checkpoint.get(n, "hub") for n in agents},
-        "synthetic_weights": bool(args.checkpoint),
+        "synthetic_weights": args.synthetic_weights,
         "params_millions": {n: round(sum(p.numel() for p in a.model.parameters()) / 1e6, 1)
                             for n, a in agents.items()},
         "repeats": args.repeats, "warmup": args.warmup,
@@ -439,7 +450,7 @@ def main():
                      for n, a in agents.items()}
         plan.append(("int8 dynamic quantization", swap_models(quantized), True))
     if "onnx" in variants and args.onnx:
-        from laya.onnx_agent import ONNXAgent
+        from veya.onnx_agent import ONNXAgent
 
         onnx_agents = {n: ONNXAgent(args.checkpoint.get(n, Router().models[n]), onnx_path=path)
                        for n, path in args.onnx.items() if n in agents}

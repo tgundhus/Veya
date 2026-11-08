@@ -1,0 +1,223 @@
+{
+  "meta": {
+    "veya": "0.3.29",
+    "python": "3.12.14",
+    "machine": "AMD64",
+    "created_utc": "2026-11-07T19:12:13.764835+00:00",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "cpus": 32,
+    "sqlite": "3.53.1",
+    "load_average_at_start": null,
+    "parameters": {
+      "sections": [
+        "tail",
+        "renewal"
+      ],
+      "sizes": "10000,100000",
+      "ops": 2000
+    },
+    "source_sha256": {
+      "veya/consistency.py": "d7322d80d3191bd4f4b2e670e672a748bdd3badf6814b026448ad952337e7caa",
+      "research/scripts/bench_store_scaling.py": "824abb4284e3309ef5115395e7b5e7e577f21e0584b071894688ccb315a74c01",
+      "research/scripts/bench_retention.py": "77071cd4d5cf4d8cf4cb0d195d980fd7f0e50a5084fe9a08aef7c95c84fc146c",
+      "research/benchmarks/feishu_zh/results/v1/laya/raw.jsonl": "1c8dab17062f9244888f580907b62a845cf1e7b199e7041810a9301bd55c28e0"
+    },
+    "load_average_at_end": null
+  },
+  "tail": {
+    "10000": {
+      "memory, maxsize=None": {
+        "held": 10000,
+        "fill_s": 0.0,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 0.4,
+          "p99_us": 0.6,
+          "p99.9_us": 1.9,
+          "max_us": 6.6,
+          "mean_us": 0.4
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 0.6,
+          "p99_us": 1.6,
+          "p99.9_us": 8.6,
+          "max_us": 229.4,
+          "mean_us": 0.77
+        },
+        "held_after": 12000
+      },
+      "memory, maxsize=size": {
+        "held": 10000,
+        "fill_s": 0.0,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 0.4,
+          "p99_us": 0.5,
+          "p99.9_us": 2.6,
+          "max_us": 36.1,
+          "mean_us": 0.39
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 0.8,
+          "p99_us": 1.0,
+          "p99.9_us": 4.5,
+          "max_us": 221.2,
+          "mean_us": 0.87
+        },
+        "held_after": 10000
+      },
+      "sqlite, maxsize=None": {
+        "held": 10000,
+        "fill_s": 0.1,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 7.1,
+          "p99_us": 25.9,
+          "p99.9_us": 56.5,
+          "max_us": 63.6,
+          "mean_us": 7.4
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 26.5,
+          "p99_us": 211.4,
+          "p99.9_us": 18542.7,
+          "max_us": 19467.9,
+          "mean_us": 110.56
+        },
+        "held_after": 12000,
+        "file_bytes_per_decision": 325.6
+      },
+      "sqlite, maxsize=size": {
+        "held": 10000,
+        "fill_s": 0.1,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 7.0,
+          "p99_us": 29.8,
+          "p99.9_us": 61.1,
+          "max_us": 271.8,
+          "mean_us": 7.45
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 25.4,
+          "p99_us": 2066.9,
+          "p99.9_us": 22605.7,
+          "max_us": 22725.2,
+          "mean_us": 125.49
+        },
+        "held_after": 10000,
+        "file_bytes_per_decision": 357.6
+      }
+    },
+    "100000": {
+      "memory, maxsize=None": {
+        "held": 100000,
+        "fill_s": 0.0,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 0.6,
+          "p99_us": 0.9,
+          "p99.9_us": 1.1,
+          "max_us": 5.0,
+          "mean_us": 0.58
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 0.6,
+          "p99_us": 1.0,
+          "p99.9_us": 5.6,
+          "max_us": 10.4,
+          "mean_us": 0.65
+        },
+        "held_after": 102000
+      },
+      "memory, maxsize=size": {
+        "held": 100000,
+        "fill_s": 0.0,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 0.6,
+          "p99_us": 1.0,
+          "p99.9_us": 2.4,
+          "max_us": 4.8,
+          "mean_us": 0.63
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 0.9,
+          "p99_us": 1.2,
+          "p99.9_us": 10.4,
+          "max_us": 27.7,
+          "mean_us": 0.9
+        },
+        "held_after": 100000
+      },
+      "sqlite, maxsize=None": {
+        "held": 100000,
+        "fill_s": 5.2,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 10.6,
+          "p99_us": 28.9,
+          "p99.9_us": 51.4,
+          "max_us": 60.8,
+          "mean_us": 11.24
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 36.9,
+          "p99_us": 289.0,
+          "p99.9_us": 28422.1,
+          "max_us": 28647.7,
+          "mean_us": 188.75
+        },
+        "held_after": 102000,
+        "file_bytes_per_decision": 323.5
+      },
+      "sqlite, maxsize=size": {
+        "held": 100000,
+        "fill_s": 5.6,
+        "get (hit)": {
+          "n": 2000,
+          "median_us": 10.7,
+          "p99_us": 38.3,
+          "p99.9_us": 101.9,
+          "max_us": 127.6,
+          "mean_us": 11.68
+        },
+        "add (one miss stored)": {
+          "n": 2000,
+          "median_us": 37.3,
+          "p99_us": 1991.3,
+          "p99.9_us": 36855.3,
+          "max_us": 37581.5,
+          "mean_us": 192.36
+        },
+        "held_after": 100000,
+        "file_bytes_per_decision": 327.3
+      }
+    }
+  },
+  "renewal": {
+    "renew_on_hit=False": {
+      "n": 15000,
+      "median_us": 29.4,
+      "p99_us": 42.0,
+      "p99.9_us": 112.5,
+      "max_us": 194.5,
+      "mean_us": 30.21
+    },
+    "renew_on_hit=True, every hit renews": {
+      "n": 15000,
+      "median_us": 61.4,
+      "p99_us": 2080.4,
+      "p99.9_us": 14544.0,
+      "max_us": 25436.8,
+      "mean_us": 151.25
+    }
+  }
+}

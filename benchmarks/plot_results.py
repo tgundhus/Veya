@@ -25,15 +25,15 @@ def load(name):
 
 
 def declared_version():
-    """The version the figure is labelled with: ``LAYA_VER`` overrides, pyproject.toml is the default.
+    """The version the figure is labelled with: ``VEYA_VER`` overrides, pyproject.toml is the default.
 
     The default used to be a literal -- 0.3.11 -- which every release since the figure was first
-    rendered has left behind: the bump commit touches laya/__init__.py and pyproject.toml, never
-    this script, so a regeneration that does not set LAYA_VER labels a current run with the
+    rendered has left behind: the bump commit touches veya/__init__.py and pyproject.toml, never
+    this script, so a regeneration that does not set VEYA_VER labels a current run with the
     version the script was written in. Read as text, not with tomllib: this script runs on
     whatever Python a benchmarking machine has, and pyproject's version line is a literal.
     """
-    override = os.environ.get("LAYA_VER")
+    override = os.environ.get("VEYA_VER")
     if override:
         return override
     try:
@@ -51,7 +51,7 @@ def main():
     consist = load("results-consistency-rtx4070.json")
 
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.2))
-    fig.suptitle("predict_batch on RTX 4070 — laya %s" % declared_version(),
+    fig.suptitle("predict_batch on RTX 4070 — veya %s" % declared_version(),
                  fontsize=13, fontweight="bold")
 
     # panel 1: agent-level speedup

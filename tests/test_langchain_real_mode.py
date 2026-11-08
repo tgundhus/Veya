@@ -1,4 +1,4 @@
-"""The shape `pip install "laya[langchain]"` actually produces.
+"""The shape `pip install "veya[langchain]"` actually produces.
 
 This PR installs the `langchain` extra in the `tests` job so that `tests/test_langchain.py` runs
 against real Runnables. Nothing in the job proves that install happened, and the suite cannot tell
@@ -27,11 +27,11 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.integrations.langchain import (
-    LayaEvaluator,
-    LayaGuardrail,
-    LayaRouter,
-    LayaTriage,
+from veya.integrations.langchain import (
+    VeyaEvaluator,
+    VeyaGuardrail,
+    VeyaRouter,
+    VeyaTriage,
     RunnableSerializable,
     _RUNNABLE_AVAILABLE,
 )
@@ -74,9 +74,9 @@ def outcome(fn):
 
 if not _RUNNABLE_AVAILABLE or RunnableSerializable is object:
     print("FAIL: 1")
-    print("FAILED: langchain-core is not installed, so laya.integrations.langchain fell back to "
+    print("FAILED: langchain-core is not installed, so veya.integrations.langchain fell back to "
           "`RunnableSerializable = object`. Install the extra this suite is for: "
-          "pip install -e \".[langchain]\" (docs/langchain.md: pip install \"laya[langchain]\")")
+          "pip install -e \".[langchain]\" (docs/langchain.md: pip install \"veya[langchain]\")")
     sys.exit(1)
 
 from langchain_core.runnables import Runnable  # noqa: E402
@@ -101,7 +101,7 @@ low, high = MockAgent(0.5), MockAgent(0.9)
 CRITERIA = {"billing_agent": "invoices, refunds, billing", "tech": "bugs, crashes, errors"}
 
 # --------------------------------------------------------------- 1. The base class is real
-for cls in (LayaRouter, LayaGuardrail, LayaTriage, LayaEvaluator):
+for cls in (VeyaRouter, VeyaGuardrail, VeyaTriage, VeyaEvaluator):
     check_true(f"base/{cls.__name__}", issubclass(cls, RunnableSerializable),
                f"(mro is {cls.__mro__[1].__name__}, not RunnableSerializable)")
     check_true(f"runnable/{cls.__name__}", issubclass(cls, Runnable),
@@ -111,25 +111,25 @@ for cls in (LayaRouter, LayaGuardrail, LayaTriage, LayaEvaluator):
 
 # --------------------------------------------------------------- 2. Fields validate and coerce
 ROUTER_KW = dict(criteria=CRITERIA, confidence_threshold="0.8", fallback="human")
-router = outcome(lambda: LayaRouter(agent=low, **ROUTER_KW))
+router = outcome(lambda: VeyaRouter(agent=low, **ROUTER_KW))
 check_true("construct/accepts-a-string-threshold", not isinstance(router, str),
            f"(got {router!r})")
 check("coerce/threshold-type", outcome(lambda: type(router.confidence_threshold).__name__), "float")
 check("coerce/threshold-value", outcome(lambda: router.confidence_threshold), 0.8)
 check_raises("validate/criteria-int",
-             lambda: LayaRouter(criteria={"billing_agent": 1}, agent=high), ValidationError)
+             lambda: VeyaRouter(criteria={"billing_agent": 1}, agent=high), ValidationError)
 check_raises("validate/instructions-none",
-             lambda: LayaRouter(criteria=CRITERIA, instructions=None, agent=high), ValidationError)
+             lambda: VeyaRouter(criteria=CRITERIA, instructions=None, agent=high), ValidationError)
 
 # --------------------------------------------------------------- 3. And the coerced value decides
 check("gate/below-threshold", outcome(lambda: router.invoke({"input": "I was billed twice"})),
       "human")
 check("gate/above-threshold",
-      outcome(lambda: LayaRouter(criteria=CRITERIA, confidence_threshold="0.8", fallback="human",
+      outcome(lambda: VeyaRouter(criteria=CRITERIA, confidence_threshold="0.8", fallback="human",
                                  agent=high).invoke({"input": "I was billed twice"})),
       "billing_agent")
 check("gate/numeric-threshold-still-gates",
-      outcome(lambda: LayaRouter(criteria=CRITERIA, confidence_threshold=0.8, fallback="human",
+      outcome(lambda: VeyaRouter(criteria=CRITERIA, confidence_threshold=0.8, fallback="human",
                                  agent=low).invoke({"input": "I was billed twice"})),
       "human")
 
@@ -151,10 +151,10 @@ INPUTS = ["I was billed twice", "the app crashes on launch"]
 # coerced it, which is the part only a real install can check.
 BATCH_KW = dict(criteria=CRITERIA, confidence_threshold="0.55", fallback="human")
 check("batch/runner without predict_batch answers each input",
-      outcome(lambda: LayaRouter(agent=low, **BATCH_KW).batch(INPUTS)), ["human", "human"])
+      outcome(lambda: VeyaRouter(agent=low, **BATCH_KW).batch(INPUTS)), ["human", "human"])
 shared = BatchingAgent(0.5)
 check("batch/runner with predict_batch answers each input",
-      outcome(lambda: LayaRouter(agent=shared, **BATCH_KW).batch(INPUTS)), ["human", "human"])
+      outcome(lambda: VeyaRouter(agent=shared, **BATCH_KW).batch(INPUTS)), ["human", "human"])
 check("batch/one call per batch", outcome(lambda: shared.batch_calls), [2])
 
 # --------------------------------------------------------------- Summary

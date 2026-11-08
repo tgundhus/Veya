@@ -2,13 +2,13 @@
 #   pip install -r requirements-docs.txt && zensical serve
 
 [project]
-site_name = "Laya-Pro"
+site_name = "Veya"
 site_description = "Local AI decisions with Python, TypeScript, Java and .NET SDKs, MCP tools, and configurable decision cache retention"
-site_url = "https://tgundhus.github.io/laya-pro/"
-repo_url = "https://github.com/tgundhus/laya-pro"
-repo_name = "tgundhus/laya-pro"
+site_url = "https://tgundhus.github.io/Veya/"
+repo_url = "https://github.com/tgundhus/Veya"
+repo_name = "tgundhus/Veya"
 edit_uri = "edit/main/docs/"
-copyright = "Apache 2.0. Laya by Convai Innovations; Laya-Pro by Tobias Gundhus."
+copyright = "Apache 2.0. Laya by Convai Innovations; Veya by Tobias Gundhus."
 # The navigation order lives in docs/.nav.yml, read by the awesome-nav plugin below. A page it
 # does not list still appears, so a new page needs no edit here. A folder with an index.md
 # becomes a section that opens on that page.
@@ -34,7 +34,7 @@ toggle.name = "Switch to light mode"
 
 [project.plugins.awesome-nav]
 
-# API reference pages under docs/reference/ are generated from the docstrings in laya/.
+# API reference pages under docs/reference/ are generated from the docstrings in veya/.
 [project.plugins.mkdocstrings.handlers.python]
 paths = ["."]
 

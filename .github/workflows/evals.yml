@@ -53,7 +53,7 @@ jobs:
 
       - name: Evaluate the English checkpoint on MASSIVE English
         run: |
-          python research/eval/laya_eval.py \
+          python research/eval/veya_eval.py \
             --model convaiinnovations/laya --langs en --out report.json
 
       - name: Compare to the committed baseline

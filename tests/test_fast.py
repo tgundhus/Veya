@@ -9,7 +9,7 @@ torch = pytest.importorskip("torch")
 if not torch.cuda.is_available():
     pytest.skip("needs CUDA", allow_module_level=True)
 pytest.importorskip("tilelang")
-from laya import tl_kernels as K  # noqa: E402
+from veya import tl_kernels as K  # noqa: E402
 
 dev = "cuda"
 def err(a, b): return (a.float() - b.float()).abs().max().item()
@@ -78,12 +78,12 @@ def test_kernel_rejects_other_dtypes():
         K.gemm_kernel(768, 768, dtype="float32")
 
 
-@pytest.mark.skipif(os.environ.get("LAYA_TEST_MODEL") is None, reason="set LAYA_TEST_MODEL=<repo or path> to run")
+@pytest.mark.skipif(os.environ.get("VEYA_TEST_MODEL") is None, reason="set VEYA_TEST_MODEL=<repo or path> to run")
 @DTYPES
 def test_full_forward_matches_stock(dt):
-    import laya
-    from laya.common import QTYPES, build_sequence, collate_items
-    agent = laya.load(os.environ["LAYA_TEST_MODEL"], subfolder=os.environ.get("LAYA_TEST_SUBFOLDER"))
+    import veya
+    from veya.common import QTYPES, build_sequence, collate_items
+    agent = veya.load(os.environ["VEYA_TEST_MODEL"], subfolder=os.environ.get("VEYA_TEST_SUBFOLDER"))
     agent.dtype = dt                                       # the fast path follows the agent's autocast dtype
     q = {"dept": {"type": "choice", "instructions": "Which team?", "criteria": {"billing": "refunds", "tech": "bugs", "sales": "pricing"}},
          "urg": {"type": "score", "instructions": "How urgent?", "criteria": ["low", "mid", "high"]},

@@ -1,0 +1,572 @@
+{
+  "schema": "veya-checkpoint-verification/1",
+  "corpus_sha256": "2576a8a76a366eefb7f94e1aa66d16e9cd27a87d52c0f1912196c43880383d96",
+  "script_sha256": "aa875890c0ce05898adbe48327bcf8f546d36792f17d387b3ede459f7f3b262c",
+  "source_sha256": {
+    "__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "common.py": "bab0075c2374d825bc889b982503eb70d7fa63ae76c88c0252e96cda8a54d3f2",
+    "compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "fast.py": "e2feef1705f08f8b1d6e8a8d126dd726128ec7849edde92b8f4b1d17ef7ab5dd",
+    "hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "mcp/server.py": "7b882304a4c910c1d36ba5e18e2e9abaff4c79f7285e820597d1d807d19f1e07",
+    "mcp/tools.py": "a93e7b68e19a780f9c3a0bf8a8e6afba183ca46d637725955bf1adcffa426bc1",
+    "onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "qualification.py": "a80ab9b89706eeb9b1598627012ce43dc9a56ce8654b250cd4b4d603a0888430",
+    "replay.py": "20344f39b3989c8e4f9b4cc20b1e0c17179605f616d9fa959816acd81d697a44",
+    "revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05"
+  },
+  "base_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+    "rl_agent_config.json": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "onnx/english.onnx": "99dc0bbf069779f5da3b1f71efdc3b6ea1b77b12ee5e5d414cdd716ca7459590",
+    "onnx-external/english.onnx.data": "c1c08150e12327b306ed5389a9e5768c69ee068ed591362911fa67da3b6ee387"
+  },
+  "candidate_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "f42fde11f624c2d60cdffd76ccb8dd45291545be1e5109ff5204f0259cad1778",
+    "repair_report.json": "a0af1c6c2531d43d22dc0e359cb7b3cdfd15edafd15236cb0492b47bc324385d",
+    "rl_agent_config.json": "a4245d6b9b7e7e38f89b872b71ed92390c01fb1391bed06ed7c0cadd86bf0a32",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "onnx/english-repair.onnx": "2d3627cdb98d16fd48a09c1ac0cb637f79ae57ffcc0853b1c3d8b5db0e15d87b",
+    "onnx-external/english-repair.onnx.data": "5a6e3b00e22c40b65bb30c82a68ae094ce4414c668e2aa9ef5509aab3463d9ea"
+  },
+  "weight_comparison": {
+    "identical_tensors": 175,
+    "updated_tensors": [
+      "head.layers.0.linear1.bias",
+      "head.layers.0.linear1.weight",
+      "head.layers.0.linear2.bias",
+      "head.layers.0.linear2.weight",
+      "head.layers.0.norm1.bias",
+      "head.layers.0.norm1.weight",
+      "head.layers.0.norm2.bias",
+      "head.layers.0.norm2.weight",
+      "head.layers.0.self_attn.in_proj_bias",
+      "head.layers.0.self_attn.in_proj_weight",
+      "head.layers.0.self_attn.out_proj.bias",
+      "head.layers.0.self_attn.out_proj.weight",
+      "head.layers.1.linear1.bias",
+      "head.layers.1.linear1.weight",
+      "head.layers.1.linear2.bias",
+      "head.layers.1.linear2.weight",
+      "head.layers.1.norm1.bias",
+      "head.layers.1.norm1.weight",
+      "head.layers.1.norm2.bias",
+      "head.layers.1.norm2.weight",
+      "head.layers.1.self_attn.in_proj_bias",
+      "head.layers.1.self_attn.in_proj_weight",
+      "head.layers.1.self_attn.out_proj.bias",
+      "head.layers.1.self_attn.out_proj.weight",
+      "scorer.0.bias",
+      "scorer.0.weight",
+      "scorer.1.bias",
+      "scorer.1.weight",
+      "scorer.3.bias",
+      "scorer.3.weight",
+      "type_emb.weight"
+    ]
+  },
+  "cpu_threads": 4,
+  "latency": {
+    "eager": {
+      "pairs": [
+        {
+          "id": "harbor-service-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 236.3834999850951,
+          "candidate_ms": 176.15389998536557
+        },
+        {
+          "id": "harbor-service-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 184.91549999453127,
+          "candidate_ms": 181.1574999592267
+        },
+        {
+          "id": "harbor-service-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 166.62289999658242,
+          "candidate_ms": 165.321699983906
+        },
+        {
+          "id": "archive-access-consent-1",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 122.15910002123564,
+          "candidate_ms": 123.36049997247756
+        },
+        {
+          "id": "archive-access-consent-2",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 124.88339998526499,
+          "candidate_ms": 124.47380000958219
+        },
+        {
+          "id": "archive-access-consent-3",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 122.43270000908524,
+          "candidate_ms": 122.45319999055937
+        },
+        {
+          "id": "observatory-operations-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 150.25840001180768,
+          "candidate_ms": 150.46789997722954
+        },
+        {
+          "id": "observatory-operations-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 153.8754000212066,
+          "candidate_ms": 156.33649996016175
+        },
+        {
+          "id": "observatory-operations-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 165.31660000327975,
+          "candidate_ms": 171.30719998385757
+        },
+        {
+          "id": "harbor-service-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 173.6244999920018,
+          "candidate_ms": 173.53640001965687
+        },
+        {
+          "id": "harbor-service-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 188.47860000096262,
+          "candidate_ms": 176.9314999692142
+        },
+        {
+          "id": "harbor-service-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 172.16999997617677,
+          "candidate_ms": 171.16490000626072
+        },
+        {
+          "id": "archive-access-consent-1",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 215.71509999921545,
+          "candidate_ms": 178.0064000049606
+        },
+        {
+          "id": "archive-access-consent-2",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 230.53020000224933,
+          "candidate_ms": 253.9458000101149
+        },
+        {
+          "id": "archive-access-consent-3",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 203.01579998340458,
+          "candidate_ms": 128.47499997587875
+        },
+        {
+          "id": "observatory-operations-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 153.24940002756193,
+          "candidate_ms": 156.3614999759011
+        },
+        {
+          "id": "observatory-operations-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 155.83139995578676,
+          "candidate_ms": 157.5287000159733
+        },
+        {
+          "id": "observatory-operations-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 168.5969999525696,
+          "candidate_ms": 161.78409999702126
+        },
+        {
+          "id": "harbor-service-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 161.99709998909384,
+          "candidate_ms": 162.26549999555573
+        },
+        {
+          "id": "harbor-service-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 171.87870002817363,
+          "candidate_ms": 169.49569998541847
+        },
+        {
+          "id": "harbor-service-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 167.01620002277195,
+          "candidate_ms": 163.77009998541325
+        },
+        {
+          "id": "archive-access-consent-1",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 123.53139999322593,
+          "candidate_ms": 121.98749999515712
+        },
+        {
+          "id": "archive-access-consent-2",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 135.6116999522783,
+          "candidate_ms": 128.17360000917688
+        },
+        {
+          "id": "archive-access-consent-3",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 132.76830001268536,
+          "candidate_ms": 127.12969997664914
+        },
+        {
+          "id": "observatory-operations-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 193.06709995726123,
+          "candidate_ms": 180.9596000239253
+        },
+        {
+          "id": "observatory-operations-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 287.4226000276394,
+          "candidate_ms": 177.16729996027425
+        },
+        {
+          "id": "observatory-operations-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 287.35260001849383,
+          "candidate_ms": 269.552499987185
+        }
+      ],
+      "forward_counts": [
+        27,
+        27
+      ],
+      "base_ms": {
+        "p50": 167.01620002277195,
+        "p95": 287.35260001849383,
+        "p99": 287.4226000276394
+      },
+      "candidate_ms": {
+        "p50": 163.77009998541325,
+        "p95": 253.9458000101149,
+        "p99": 269.552499987185
+      },
+      "paired_median_ratio": 0.98750196307859
+    },
+    "onnx": {
+      "pairs": [
+        {
+          "id": "harbor-service-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 173.53809997439384,
+          "candidate_ms": 200.18129999516532
+        },
+        {
+          "id": "harbor-service-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 283.18140003830194,
+          "candidate_ms": 239.06259995419532
+        },
+        {
+          "id": "harbor-service-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 213.96020002430305,
+          "candidate_ms": 226.66419995948672
+        },
+        {
+          "id": "archive-access-consent-1",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 160.70519998902455,
+          "candidate_ms": 175.623299961444
+        },
+        {
+          "id": "archive-access-consent-2",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 167.17460000654683,
+          "candidate_ms": 178.72099997475743
+        },
+        {
+          "id": "archive-access-consent-3",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 183.90970001928508,
+          "candidate_ms": 187.96010001096874
+        },
+        {
+          "id": "observatory-operations-1",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 215.45129996957257,
+          "candidate_ms": 235.47110002255067
+        },
+        {
+          "id": "observatory-operations-2",
+          "repeat": 0,
+          "first": 1,
+          "base_ms": 149.00929998839274,
+          "candidate_ms": 176.43210000824183
+        },
+        {
+          "id": "observatory-operations-3",
+          "repeat": 0,
+          "first": 0,
+          "base_ms": 200.24179999018088,
+          "candidate_ms": 230.13320000609383
+        },
+        {
+          "id": "harbor-service-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 220.20559996599331,
+          "candidate_ms": 231.03359999367967
+        },
+        {
+          "id": "harbor-service-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 198.8296999479644,
+          "candidate_ms": 162.5620000413619
+        },
+        {
+          "id": "harbor-service-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 169.8465999797918,
+          "candidate_ms": 165.892300021369
+        },
+        {
+          "id": "archive-access-consent-1",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 121.52729998342693,
+          "candidate_ms": 119.11730002611876
+        },
+        {
+          "id": "archive-access-consent-2",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 123.50009998772293,
+          "candidate_ms": 133.22730001527816
+        },
+        {
+          "id": "archive-access-consent-3",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 129.65519999852404,
+          "candidate_ms": 125.69719995371997
+        },
+        {
+          "id": "observatory-operations-1",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 139.83470003586262,
+          "candidate_ms": 154.9397999770008
+        },
+        {
+          "id": "observatory-operations-2",
+          "repeat": 1,
+          "first": 0,
+          "base_ms": 158.2876000320539,
+          "candidate_ms": 184.5104999956675
+        },
+        {
+          "id": "observatory-operations-3",
+          "repeat": 1,
+          "first": 1,
+          "base_ms": 153.32360001048073,
+          "candidate_ms": 176.01240001386032
+        },
+        {
+          "id": "harbor-service-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 151.3277000049129,
+          "candidate_ms": 150.40740004042163
+        },
+        {
+          "id": "harbor-service-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 167.99859999446198,
+          "candidate_ms": 159.35169998556376
+        },
+        {
+          "id": "harbor-service-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 166.22720001032576,
+          "candidate_ms": 194.9932999559678
+        },
+        {
+          "id": "archive-access-consent-1",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 143.04530003573745,
+          "candidate_ms": 141.57480001449585
+        },
+        {
+          "id": "archive-access-consent-2",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 151.36059996439144,
+          "candidate_ms": 150.23730002576485
+        },
+        {
+          "id": "archive-access-consent-3",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 140.5640000011772,
+          "candidate_ms": 140.36830002442002
+        },
+        {
+          "id": "observatory-operations-1",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 151.868499990087,
+          "candidate_ms": 165.3216000413522
+        },
+        {
+          "id": "observatory-operations-2",
+          "repeat": 2,
+          "first": 1,
+          "base_ms": 204.2170999920927,
+          "candidate_ms": 212.1462000068277
+        },
+        {
+          "id": "observatory-operations-3",
+          "repeat": 2,
+          "first": 0,
+          "base_ms": 207.43289997335523,
+          "candidate_ms": 223.80300000077114
+        }
+      ],
+      "forward_counts": [
+        27,
+        27
+      ],
+      "base_ms": {
+        "p50": 166.22720001032576,
+        "p95": 220.20559996599331,
+        "p99": 283.18140003830194
+      },
+      "candidate_ms": {
+        "p50": 176.01240001386032,
+        "p95": 235.47110002255067,
+        "p99": 239.06259995419532
+      },
+      "paired_median_ratio": 1.0593755284101467
+    }
+  },
+  "mcp": {
+    "classic": {
+      "catalog_size": 10,
+      "retained_predictions": 2,
+      "cold_models_loaded": [],
+      "fresh_models_loaded": [
+        "english-repair"
+      ],
+      "decision_policy": {
+        "english-repair": "canonical"
+      },
+      "fresh_misses": 1,
+      "repeat_hits": 1
+    },
+    "code": {
+      "catalog_size": 1,
+      "retained_predictions": 2,
+      "cold_models_loaded": [],
+      "fresh_models_loaded": [
+        "english-repair"
+      ],
+      "decision_policy": {
+        "english-repair": "canonical"
+      },
+      "fresh_misses": 1,
+      "repeat_hits": 1
+    }
+  }
+}

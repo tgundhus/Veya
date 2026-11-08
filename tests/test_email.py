@@ -1,6 +1,6 @@
 """Email cleaning: a disclaimer footer must not delete the sender's actual request.
 
-Regression tests for `laya.email.clean_email_body`. `_DISCLAIMER` used to be applied to whole
+Regression tests for `veya.email.clean_email_body`. `_DISCLAIMER` used to be applied to whole
 paragraphs, so any paragraph that merely *mentioned* boilerplate was deleted outright. When the
 footer ran on without a blank line, the request went with it:
 
@@ -19,8 +19,8 @@ as the start of a signature and everything after it was cut:
     # before: 'Hi,'    <- the request was cut away
 
 The last block guards a different kind of silence. `email_questions` was defined twice, here and
-in `laya/presets.py`, and `laya/__init__.py` re-exports the `presets` one. Editing the copy in
-`laya/email.py` moved `laya.email.email_questions` and left `laya.email_questions` where it was,
+in `veya/presets.py`, and `veya/__init__.py` re-exports the `presets` one. Editing the copy in
+`veya/email.py` moved `veya.email.email_questions` and left `veya.email_questions` where it was,
 with no test and no lint failing.
 
 The block at the end is the same shape again: `clean_email_body` takes a `max_chars` budget and
@@ -34,11 +34,11 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import laya  # noqa: E402
-from laya import email as email_module  # noqa: E402
-from laya import presets  # noqa: E402
-from laya.common import serialize_state  # noqa: E402
-from laya.email import clean_email_body, email_state  # noqa: E402
+import veya  # noqa: E402
+from veya import email as email_module  # noqa: E402
+from veya import presets  # noqa: E402
+from veya.common import serialize_state  # noqa: E402
+from veya.email import clean_email_body, email_state  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -609,7 +609,7 @@ for label, tail in [
           clean_email_body("%s\n\n%s" % (BODY, tail)), BODY)
 
 # ...and a mark with no base is left where it is. Stripping one that opens the tail, or that
-# follows a space, would join the tokens around it and cut a line the port keeps: `laya-ts`
+# follows a space, would join the tokens around it and cut a line the port keeps: `veya-ts`
 # requires each token's first character to be `\p{Lu}\p{Lt}\p{Lo}`, which a leading mark fails.
 # ZWJ and ZWNJ are `Cf` rather than `M`, so they are untouched here and in the port alike.
 for label, body in [
@@ -685,21 +685,21 @@ check(
 check_true(
     "email_questions/one definition behind both module paths",
     email_module.email_questions is presets.email_questions,
-    "laya.email.email_questions is not laya.presets.email_questions",
+    "veya.email.email_questions is not veya.presets.email_questions",
 )
 check_true(
     "email_questions/the package export is that same object",
-    laya.email_questions is presets.email_questions,
+    veya.email_questions is presets.email_questions,
 )
 check(
     "email_questions/both paths answer the same",
     email_module.email_questions(),
-    laya.email_questions(),
+    veya.email_questions(),
 )
 check(
     "email_questions/a caller override reaches both paths",
     email_module.email_questions({"legal": "contracts"})["category"]["criteria"],
-    laya.email_questions({"legal": "contracts"})["category"]["criteria"],
+    veya.email_questions({"legal": "contracts"})["category"]["criteria"],
 )
 
 

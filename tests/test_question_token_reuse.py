@@ -11,9 +11,9 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import inference_common as common  # noqa: E402
-from laya.agent import Agent  # noqa: E402
-from laya.common import _reuse_question_tokens, build_sequence  # noqa: E402
+from veya import inference_common as common  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.common import _reuse_question_tokens, build_sequence  # noqa: E402
 
 
 class Tokenizer:
@@ -64,7 +64,7 @@ def agent_with(tok):
 
 class QuestionTokenReuse(unittest.TestCase):
     # The tokenizer counts below are for the reuse within one call on its own. The head cache
-    # across calls in laya.common (tests/test_question_heads.py) would answer most of them before
+    # across calls in veya.common (tests/test_question_heads.py) would answer most of them before
     # they reach the tokenizer, so it is switched off here, and the two together are checked in
     # the last test.
     def setUp(self):

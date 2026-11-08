@@ -11,7 +11,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from laya.common import render_options  # noqa: E402
+from veya.common import render_options  # noqa: E402
 from research.eval.presentation_checks import (  # noqa: E402
     ALL_CHECKS, CHECKS, CHOICE_KS, FIRST_SLOT_MIN, IDENTICAL_KS, IDENTICAL_TEXTS, INSTRUCTIONS, LANGUAGES,
     LEVELS, PARITY_TOL, SLOT0_MIN, STATES, check_choice_slot0_identical, check_score_first_slot_permuted,

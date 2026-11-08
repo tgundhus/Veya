@@ -1,4 +1,4 @@
-"""The inference backend layer (`laya.backends`), checked without a GPU or a checkpoint.
+"""The inference backend layer (`veya.backends`), checked without a GPU or a checkpoint.
 
 What is pinned here is the contract every backend is held to and the parts the Agent relies on:
 the names and aliases `load(backend=...)` accepts, the `auto` policy off CUDA, the shared padding
@@ -16,10 +16,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch  # noqa: E402
 
-from laya import backends  # noqa: E402
-from laya.backends import BackendUnavailable, bucket_shape, pad_batch  # noqa: E402
-from laya.backends.base import Backend, bucket_rows  # noqa: E402
-from laya.backends.eager import EagerBackend  # noqa: E402
+from veya import backends  # noqa: E402
+from veya.backends import BackendUnavailable, bucket_shape, pad_batch  # noqa: E402
+from veya.backends.base import Backend, bucket_rows  # noqa: E402
+from veya.backends.eager import EagerBackend  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -180,7 +180,7 @@ check_true("install/eager restores the legacy replacement", torch.equal(legacy.m
 
 # ------------------------------------------------------------------ the Agent surface
 import inspect  # noqa: E402
-from laya.agent import Agent, load  # noqa: E402
+from veya.agent import Agent, load  # noqa: E402
 
 check("Agent.__init__/backend default None", inspect.signature(Agent.__init__).parameters["backend"].default, None)
 check("load/backend default None", inspect.signature(load).parameters["backend"].default, None)
@@ -190,7 +190,7 @@ check_true("Agent/set_backend, accelerate, deaccelerate exist",
 
 # ------------------------------------------------------------------ resolved fallback / compile lifecycle
 from unittest.mock import patch  # noqa: E402
-from laya.backends.compile import CompileBackend  # noqa: E402
+from veya.backends.compile import CompileBackend  # noqa: E402
 
 with patch.object(backends, "auto_policy", return_value="compile"), warnings.catch_warnings(record=True) as w:
     warnings.simplefilter("always")
@@ -201,10 +201,10 @@ check_true("auto fallback/names resolved compile, not auto",
            len(w) == 1 and "backend 'compile'" in str(w[0].message) and "backend 'auto'" not in str(w[0].message))
 
 cuda_agent = fake_agent("cuda")
-# `torch.fx.experimental._config` only exists where symbolic shapes do; `laya._compile`
+# `torch.fx.experimental._config` only exists where symbolic shapes do; `veya._compile`
 # degrades to a no-op without it, so the duck-shape assertions are made only where there
 # is a setting to observe.
-from laya._compile import _fx_config  # noqa: E402
+from veya._compile import _fx_config  # noqa: E402
 
 cfg = _fx_config()
 prior_duck = cfg.use_duck_shape if cfg is not None else None
@@ -235,28 +235,28 @@ check_true("compile/warmup failure restores stock", untouched(cuda_agent.model))
 check("compile/warmup failure warns once", len(w), 1)
 
 # ------------------------------------------------------------------ forwarding and legacy Agent substitutes
-from laya.router import Router  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 class LegacyAgent:
     def __init__(self, repo, device=None, token=None, subfolder=None, *, performance_mode=None):
         check("Router/default explicitly retains legacy performance", performance_mode, "default")
         self.repo = repo
 
-with patch("laya.agent.Agent", LegacyAgent):
+with patch("veya.agent.Agent", LegacyAgent):
     router = Router()
     legacy = router._build(next(iter(router.models)))
 check_true("Router/default supports constructor without backend", isinstance(legacy, LegacyAgent))
 router = Router(agent_kwargs={"backend": "eager"})
-with patch("laya.agent.Agent") as ctor:
+with patch("veya.agent.Agent") as ctor:
     router._build(next(iter(router.models)))
 check("Router/explicit backend forwarded via agent_kwargs", ctor.call_args.kwargs["backend"], "eager")
-with patch("laya.agent.Agent") as ctor:
+with patch("veya.agent.Agent") as ctor:
     load("unused/model")
 check_true("load/default does not inject backend", "backend" not in ctor.call_args.kwargs)
-with patch("laya.agent.Agent") as ctor:
+with patch("veya.agent.Agent") as ctor:
     load("unused/model", backend="torch")
 check("load/explicit backend forwarded", ctor.call_args.kwargs["backend"], "eager")
-with patch("laya.onnx_agent.ONNXAgent") as ctor:
+with patch("veya.onnx_agent.ONNXAgent") as ctor:
     load("unused/model", backend="onnx", onnx_path="local.onnx", token="test", revision="rev",
          expected_sha256={"config.json": "digest"}, hooks_timeout=2, calibration="cal.json",
          lang_temperatures={"en": {"temperature": [1, 1, 1]}})

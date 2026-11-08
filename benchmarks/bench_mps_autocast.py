@@ -5,7 +5,7 @@
     python benchmarks/bench_mps_autocast.py --checkpoint multilingual --out results.json
 
 `Agent` autocasts an MPS forward to fp16 at or above `mps_amp_min_rows` question rows
-(default 5, `LAYA_MPS_AMP_MIN_ROWS`). This script measures what that gate decides, for one
+(default 5, `VEYA_MPS_AMP_MIN_ROWS`). This script measures what that gate decides, for one
 checkpoint, offline after the checkpoint is cached:
 
 * latency: every request runs once in fp32 and once in fp16 on the same loaded agent, back
@@ -130,17 +130,17 @@ def main():
     import torch
     import transformers
 
-    import laya
+    import veya
 
     if not torch.backends.mps.is_available():
         raise SystemExit("this benchmark needs an MPS device")
-    agent = laya.load(BUNDLE, device="mps", subfolder=None if args.checkpoint == "english" else args.checkpoint)
+    agent = veya.load(BUNDLE, device="mps", subfolder=None if args.checkpoint == "english" else args.checkpoint)
     default_rows = agent.mps_amp_min_rows
     result = {"checkpoint": args.checkpoint, "chip": chip(), "os": "macOS " + platform.mac_ver()[0],
-              "torch": torch.__version__, "transformers": transformers.__version__, "laya": laya.__version__,
+              "torch": torch.__version__, "transformers": transformers.__version__, "veya": veya.__version__,
               "default_mps_amp_min_rows": default_rows, "load_1m": round(os.getloadavg()[0], 1), "cells": []}
-    print("%s on %s, laya %s, torch %s (1-min load %.1f)"
-          % (args.checkpoint, result["chip"], laya.__version__, torch.__version__, result["load_1m"]))
+    print("%s on %s, veya %s, torch %s (1-min load %.1f)"
+          % (args.checkpoint, result["chip"], veya.__version__, torch.__version__, result["load_1m"]))
     print("| state | rows | input tokens | fp32 ms | fp16 ms | fp16 - fp32 (paired) | max delta | p95 delta "
           "| decisions changed |")
     print("|---|---|---|---|---|---|---|---|---|")

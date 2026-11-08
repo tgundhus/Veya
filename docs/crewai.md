@@ -1,38 +1,38 @@
 # CrewAI Integration
 
-Laya-Pro provides local decision components for **CrewAI** multi-agent crews. Latency depends
+Veya provides local decision components for **CrewAI** multi-agent crews. Latency depends
 on hardware, checkpoint and questions; see the [current review](reports/production-review.md)
 and [archived benchmarks](benchmarks.md).
 
-* **`LayaCrewRouter`**: Task delegation router for hierarchical crews.
-* **`LayaTaskGuard`**: Pre-execution task guardrail screening prompts and instructions for jailbreaks, injections, and policy violations.
+* **`VeyaCrewRouter`**: Task delegation router for hierarchical crews.
+* **`VeyaTaskGuard`**: Pre-execution task guardrail screening prompts and instructions for jailbreaks, injections, and policy violations.
 
 Both take core's per-call decision controls -- the two token budgets (`max_len`, `head_max_len`), the language and abstention controls (`lang`, `min_confidence`) and the five prediction-hook arguments (`hooks`, `on_predict_start`, `on_predict_end`, `hooks_raise`, `hooks_timeout`) -- see [Per-call decision controls](#5-per-call-decision-controls).
 
-Supports both **local in-process inference** (`Agent` or `Router`) and **remote HTTP inference** against your own `laya-serve` instance without requiring PyTorch on edge clients.
+Supports both **local in-process inference** (`Agent` or `Router`) and **remote HTTP inference** against your own `veya-serve` instance without requiring PyTorch on edge clients.
 
 ---
 
 ## Installation
 
 ```bash
-pip install "laya-pro[crewai] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[crewai] @ git+https://github.com/tgundhus/Veya.git"
 ```
 
 The extra needs CrewAI 1.15.6 or newer, the first release that pins a patched `json-repair`. Those
-releases also pin `mcp~=1.28`, while Laya-Pro's MCP server needs `mcp>=2.2`, so `laya-pro[crewai]` and
-`laya-pro[mcp]` cannot share one environment; install them in separate ones.
+releases also pin `mcp~=1.28`, while Veya's MCP server needs `mcp>=2.2`, so `veya[crewai]` and
+`veya[mcp]` cannot share one environment; install them in separate ones.
 
 ---
 
 ## 1. Task delegation in hierarchical crews
 
 In hierarchical CrewAI workflows, a manager selects the worker for each incoming task.
-`LayaCrewRouter` evaluates task requirements against agent roles and goals in a forward pass:
+`VeyaCrewRouter` evaluates task requirements against agent roles and goals in a forward pass:
 
 ```python
 from crewai import Agent, Crew, Process, Task
-from laya.integrations.crewai import LayaCrewRouter
+from veya.integrations.crewai import VeyaCrewRouter
 
 # Define specialized worker agents
 analyst = Agent(
@@ -54,7 +54,7 @@ writer = Agent(
 agents = [analyst, architect, writer]
 
 # Initialize the router with confidence fallback
-router = LayaCrewRouter(
+router = VeyaCrewRouter(
     confidence_threshold=0.80,   # If confidence < 0.80, delegate to fallback agent
     fallback_agent_index=0,
 )
@@ -77,15 +77,15 @@ Both synchronous `route()` and non-blocking asynchronous `aroute()` are supporte
 
 ---
 
-## 2. Pre-Execution Task Guardrails (`LayaTaskGuard`)
+## 2. Pre-Execution Task Guardrails (`VeyaTaskGuard`)
 
 Screens incoming user instructions and task specifications for jailbreaks, prompt injections, and harm severity in **<40 ms** before agents execute tools or call downstream models:
 
 ```python
-from laya.integrations.crewai import LayaTaskGuard, LayaTaskGuardError
+from veya.integrations.crewai import VeyaTaskGuard, VeyaTaskGuardError
 
-guard = LayaTaskGuard(
-    action="raise",      # "raise" raises LayaTaskGuardError; "filter" sanitizes text; "annotate" appends flags
+guard = VeyaTaskGuard(
+    action="raise",      # "raise" raises VeyaTaskGuardError; "filter" sanitizes text; "annotate" appends flags
     threshold=0.5,
 )
 
@@ -100,8 +100,8 @@ adversarial_task = Task(
 )
 try:
     guard.screen(adversarial_task)
-except LayaTaskGuardError as e:
-    print(f"Blocked by LayaTaskGuard! Violations: {e.violations}")
+except VeyaTaskGuardError as e:
+    print(f"Blocked by VeyaTaskGuard! Violations: {e.violations}")
 ```
 
 `threshold` is a violation probability in [0, 1], and a value outside that range raises `ValueError`. For a `score` question such as `harm_severity`, it applies to the probability that the level is at or above the middle of the scale (`serious` or `severe`), not to the expected level in `score`, so a mostly `minor` answer does not block on its own.
@@ -110,10 +110,10 @@ except LayaTaskGuardError as e:
 
 ## 3. Calibrated Confidence Gating
 
-`LayaCrewRouter` gates on calibrated `answer_confidence` (`max(p)`):
+`VeyaCrewRouter` gates on calibrated `answer_confidence` (`max(p)`):
 
 - **Automatic Fallback:** Specify `fallback_agent_index` to route ambiguous tasks to a human supervisor or general lead agent.
-- **Strict Guarding:** Set `raise_on_low_confidence=True` to raise `LayaLowConfidenceError` when a task cannot be matched to an agent role with sufficient confidence.
+- **Strict Guarding:** Set `raise_on_low_confidence=True` to raise `VeyaLowConfidenceError` when a task cannot be matched to an agent role with sufficient confidence.
 
 ---
 
@@ -122,10 +122,10 @@ except LayaTaskGuardError as e:
 For serverless deployments or environments without local GPUs:
 
 ```python
-from laya.integrations.crewai import LayaCrewRouter
+from veya.integrations.crewai import VeyaCrewRouter
 
-router = LayaCrewRouter(
-    base_url="http://laya-serve.internal:8080",
+router = VeyaCrewRouter(
+    base_url="http://veya-serve.internal:8080",
     confidence_threshold=0.85,
     fallback_agent_index=0,
 )
@@ -137,19 +137,19 @@ The remote client uses Python's standard library `urllib` with zero heavy depend
 
 ## 5. Per-call decision controls
 
-`LayaCrewRouter` and `LayaTaskGuard` take the same per-call arguments the core API does: the two
+`VeyaCrewRouter` and `VeyaTaskGuard` take the same per-call arguments the core API does: the two
 token budgets (`max_len`, `head_max_len`), the language and abstention controls (`lang`,
 `min_confidence`), and the five prediction-hook arguments (`hooks`,
 `on_predict_start`, `on_predict_end`, `hooks_raise`, `hooks_timeout`). They are per instance, so a
 crew with a large roster can be given room while the rest of the pipeline keeps the checkpoint's
 defaults.
 
-A delegation choice shares the checkpoint's *option* budget -- `head_max_len`, 192 tokens on `laya`
+A delegation choice shares the checkpoint's *option* budget -- `head_max_len`, 192 tokens on `veya`
 -- and every candidate contributes its role and goal, so past roughly 20 agents the later goals
 start reaching the model as the same truncated text.
 
 ```python
-router = LayaCrewRouter(
+router = VeyaCrewRouter(
     confidence_threshold=0.80,
     max_len=1024,          # total window
     head_max_len=512,      # tokens shared by the roster
@@ -158,7 +158,7 @@ router = LayaCrewRouter(
 decision = router.route(task, agents)   # agents: 59 candidates
 ```
 
-Measured with `laya` on Apple silicon, one forward pass per task, scored on the delegated agent,
+Measured with `veya` on Apple silicon, one forward pass per task, scored on the delegated agent,
 against a 59-agent roster built from the MASSIVE en intent labels (role only, goal left empty) with
 one utterance per label, so ground truth is exact. Each cell is how many of the 59 tasks were given
 to their own agent; both repeats gave the same count.
@@ -168,7 +168,7 @@ to their own agent; both repeats gave the same count.
 | Tasks on their own agent | 2/59 | 7/59 | 16/59 |
 | Median ms per task | 146 | 190 | 265 |
 
-Before this, the same run could not be made at all: `LayaCrewRouter.__init__() got an unexpected
+Before this, the same run could not be made at all: `VeyaCrewRouter.__init__() got an unexpected
 keyword argument 'max_len'`.
 
 Absolute accuracy is not the claim here -- the checkpoint is not a MASSIVE classifier and 59 similar
@@ -184,7 +184,7 @@ integration](langchain.md#7-widening-the-token-budget-for-many-options) for that
 `ValueError` rather than reporting a success whose hook never ran -- a hook is a Python callable that
 executes inside `predict`, and no wire format carries it. Install hooks in the process that runs
 inference. The two budgets do travel to a remote node, in the request body, up to its
-`LAYA_MAX_TOKEN_BUDGET` ceiling; a larger value comes back as a 422.
+`VEYA_MAX_TOKEN_BUDGET` ceiling; a larger value comes back as a 422.
 
 ### Language and abstention
 
@@ -192,12 +192,12 @@ inference. The two budgets do travel to a remote node, in the request body, up t
 checkpoint's per-language calibration instead of relying on built-in detection -- and
 `min_confidence` is core's abstention gate: a decision under it comes back as an abstention rather
 than a forced delegation. Both are read by `Agent.predict` and `Router.predict` alike and accepted by
-`laya-serve` in the request body, so a router or guard forwards them on the local and the remote
+`veya-serve` in the request body, so a router or guard forwards them on the local and the remote
 path. An unset one is omitted, not sent as `None`, so it cannot shadow the deployment's own default;
 `min_confidence=0.0` and `lang=""` are real values and are forwarded as given.
 
 ```python
-router = LayaCrewRouter(
+router = VeyaCrewRouter(
     confidence_threshold=0.80,
     lang="fr",             # route a French-language crew in French
     min_confidence=0.3,    # abstain on a delegation the model is not sure about

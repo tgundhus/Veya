@@ -1,10 +1,20 @@
 # Benchmarks and known limits
 
-Laya's results depend on the checkpoint, task, question wording, option count and hardware. Use
-the [full benchmark tables](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md)
+Veya's results depend on the checkpoint, task, question wording, option count and hardware. Use
+the [full benchmark tables](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md)
 to find a comparable run before choosing a checkpoint or a confidence threshold. The
-[research directory](https://github.com/tgundhus/laya-pro/tree/main/research) holds the scripts
+[research directory](https://github.com/tgundhus/Veya/tree/main/research) holds the scripts
 and result files behind the main tables.
+
+## Latest refresh
+
+The [7 November CPU run](reports/veya-migration-2026-11-07.md) uses Veya imports and
+commands, real cached English weights, two threads and eager fp32. A three-question
+ticket measured 509.616 ms warm and 0.056 ms on a memory-cache repeat. All 17 answers
+and token counts matched the pre-rename code; no task-accuracy or GPU claim follows.
+
+The [latest ordinal continuation](reports/ordinal-continuation-2026-11-06.md) remains
+experimental: fresh score and choice results still fail their qualification gates.
 
 ## Find the relevant measurement
 
@@ -19,7 +29,7 @@ and result files behind the main tables.
 The published Jev figures alongside the original Laya suites come from third-party studies
 with different prompts and sample sizes. They are useful context, but are not a controlled
 head-to-head run. See the comparison notes in
-[`research/README.md`](https://github.com/tgundhus/laya-pro/blob/main/research/README.md).
+[`research/README.md`](https://github.com/tgundhus/Veya/blob/main/research/README.md).
 
 Read accuracy together with the baseline and data split. For example, the typed-decisions
 benchmark reports 0.766 accuracy for the fine-tuned checkpoint, while both base checkpoints
@@ -54,7 +64,7 @@ or option count.
   labels instead of the state. Check alternate option orders and wording, especially when a wrong
   decision is costly.
 - **Long documents:** The multilingual encoder can read up to 8,192 tokens when configured for
-  that limit, but the [long-context benchmark](https://github.com/tgundhus/laya-pro/blob/main/research/results/long_context_multilingual.json)
+  that limit, but the [long-context benchmark](https://github.com/tgundhus/Veya/blob/main/research/results/long_context_multilingual.json)
   reports less reliable answers beyond about 4,000 tokens of preceding text. Measure accuracy at
   the lengths you expect in use.
 - **Latency:** The T4 figures do not predict CPU or cold-load time. Measure warm and cold calls
@@ -66,14 +76,14 @@ behind each of the limits above.
 
 ## Reproduce or extend a result
 
-Start with the [script and result map](https://github.com/tgundhus/laya-pro/blob/main/research/README.md)
+Start with the [script and result map](https://github.com/tgundhus/Veya/blob/main/research/README.md)
 and the run index at the top of `BENCHMARKS.md`. `research/scripts/bench_local.py` runs the
 51-language CPU sweep, `bench_apps.py` covers application workflows, and
 `bench_latency.py` measures routing and inference speed. The T4 notebook is generated from
 `research/scripts/build_benchmark_nb.py`; edit the generator when changing that benchmark.
 
 For a new deployment, keep a held-out set with the same states, questions and expected answers
-for every checkpoint you compare. Record the checkpoint revision, Laya and library versions,
+for every checkpoint you compare. Record the checkpoint revision, Veya and library versions,
 device, question count, option count and token budget with each run. Include a simple baseline
 for accuracy and report latency after warm-up as well as first-use load time. This makes your
 result comparable to the published runs and lets you revisit it after an upgrade.

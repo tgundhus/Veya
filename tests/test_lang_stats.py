@@ -6,11 +6,15 @@ over the text, so these checks pin that the counts, the fractions and the tie-br
 Run: python tests/test_lang_stats.py
 """
 import os
+import random
 import sys
+from collections import UserDict
+from types import MappingProxyType
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.lang import _SCRIPT_RANGES, analyse, detect_script, script_profile  # noqa: E402
+from veya.lang import _SCRIPT_RANGES, _iter_text, analyse, detect_script, script_profile, state_text  # noqa: E402
+from research.scripts.bench_state_text import eager_state_text, eager_text_leaves  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -107,6 +111,41 @@ check("analyse/empty is unknown", analyse("")["script"], "unknown")
 for text in ("hello мир", "abc ᚠᚢᚦ"):
     total = sum(script_profile(text).values())
     check("profile sums to 1 (%r)" % text, round(total, 9), 1.0)
+
+
+# Bounded state flattening retains the eager implementation's outputs and diagnostic paths.
+STATES = [None, 123, "", "hello мир 🌍", b"hello", bytearray("κόσμος", "utf-8"), b"\xff",
+          ["", "", "last"], ("hello", {"message": "你好", "ignored_number": 3}),
+          UserDict({"body": "Bonjour"}), MappingProxyType({"body": "Hallo"}),
+          {"x" * 129: {"body": "wide path"}, 2 ** 100: "wide integer", True: "boolean key"}]
+deep = "too deep"
+for _ in range(8):
+    deep = [deep]
+STATES.append(deep)
+cycle = ["cycle text"]
+cycle.append(cycle)
+STATES.append(cycle)
+rng = random.Random(0)
+for _ in range(100):
+    STATES.append({str(i): rng.choice([None, 3, "", "hello 🌍", b"\xff", ["one", "two"]])
+                   for i in range(rng.randrange(12))})
+for index, state in enumerate(STATES):
+    for budget in (-2, -1, 0, 1, 2, 5, 4000):
+        check("state_text/%d/budget=%d" % (index, budget),
+              state_text(state, budget), eager_state_text(state, budget))
+    paths, ref_paths = [], []
+    check("state_text/%d/leaves" % index, list(_iter_text(state, _paths=paths)),
+          eager_text_leaves(state, paths=ref_paths))
+    check("state_text/%d/paths" % index, paths, ref_paths)
+
+
+class BudgetGuard(list):
+    def __iter__(self):
+        yield "full"
+        raise AssertionError("flattening walked past its filled budget")
+
+
+check("state_text/stops when budget is filled", state_text(BudgetGuard(), 4), "full")
 
 
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))

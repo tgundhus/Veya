@@ -1,0 +1,788 @@
+{
+  "selected": {
+    "epoch": 12,
+    "strength": 0.75,
+    "development": {
+      "qualification-v1": {
+        "correct": 4,
+        "total": 5,
+        "loss": 0.6179865002632141
+      },
+      "independent-repair-controls-v1": {
+        "correct": 12,
+        "total": 15,
+        "loss": 0.6076453328132629
+      },
+      "checkpoint-repair-acceptance-v1": {
+        "correct": 9,
+        "total": 12,
+        "loss": 0.4023318290710449
+      },
+      "level-zero-acceptance-v1": {
+        "correct": 12,
+        "total": 12,
+        "loss": 0.12057235836982727
+      },
+      "seen_regression": {
+        "correct": 12,
+        "total": 12,
+        "loss": 0.1437319815158844
+      }
+    },
+    "temperature": 0.732832670211792
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "strength": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.7891263365745544
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.5169421434402466
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "loss": 0.5323910117149353
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.2633221447467804
+        },
+        "seen_regression": {
+          "correct": 5,
+          "total": 12,
+          "loss": 0.8556904792785645
+        }
+      }
+    },
+    {
+      "epoch": 1,
+      "strength": 0.75,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.6644507646560669
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.4840986132621765
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.5851424932479858
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "loss": 0.3169151544570923
+        },
+        "seen_regression": {
+          "correct": 5,
+          "total": 12,
+          "loss": 0.8212217688560486
+        }
+      }
+    },
+    {
+      "epoch": 1,
+      "strength": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.5729718208312988
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "loss": 0.45284804701805115
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 7,
+          "total": 12,
+          "loss": 0.6393358707427979
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.34952694177627563
+        },
+        "seen_regression": {
+          "correct": 5,
+          "total": 12,
+          "loss": 0.8168123960494995
+        }
+      }
+    },
+    {
+      "epoch": 2,
+      "strength": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.7669114470481873
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.5069099068641663
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.5032150745391846
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.2394256442785263
+        },
+        "seen_regression": {
+          "correct": 7,
+          "total": 12,
+          "loss": 0.7835068702697754
+        }
+      }
+    },
+    {
+      "epoch": 2,
+      "strength": 0.75,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.6027754545211792
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.48211804032325745
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.4969973564147949
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.276800274848938
+        },
+        "seen_regression": {
+          "correct": 7,
+          "total": 12,
+          "loss": 0.6720972061157227
+        }
+      }
+    },
+    {
+      "epoch": 2,
+      "strength": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.49690744280815125
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.45578882098197937
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.5070595741271973
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.296843022108078
+        },
+        "seen_regression": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.5950145721435547
+        }
+      }
+    },
+    {
+      "epoch": 3,
+      "strength": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.6422469019889832
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.512315034866333
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.506549060344696
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.2070418894290924
+        },
+        "seen_regression": {
+          "correct": 7,
+          "total": 12,
+          "loss": 0.6744369268417358
+        }
+      }
+    },
+    {
+      "epoch": 3,
+      "strength": 0.75,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.43847203254699707
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.45997658371925354
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.5155826210975647
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.2136022299528122
+        },
+        "seen_regression": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.49163684248924255
+        }
+      }
+    },
+    {
+      "epoch": 3,
+      "strength": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.40042397379875183
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.41977477073669434
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.5452667474746704
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.24117210507392883
+        },
+        "seen_regression": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.4206762909889221
+        }
+      }
+    },
+    {
+      "epoch": 4,
+      "strength": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.5617230534553528
+        },
+        "independent-repair-controls-v1": {
+          "correct": 14,
+          "total": 15,
+          "loss": 0.5331538319587708
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "loss": 0.48367512226104736
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.21625259518623352
+        },
+        "seen_regression": {
+          "correct": 7,
+          "total": 12,
+          "loss": 0.6484529972076416
+        }
+      }
+    },
+    {
+      "epoch": 4,
+      "strength": 0.75,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.37574315071105957
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.47930166125297546
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.5262887477874756
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.2146395444869995
+        },
+        "seen_regression": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.46248626708984375
+        }
+      }
+    },
+    {
+      "epoch": 4,
+      "strength": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 5,
+          "total": 5,
+          "loss": 0.30886736512184143
+        },
+        "independent-repair-controls-v1": {
+          "correct": 14,
+          "total": 15,
+          "loss": 0.42268064618110657
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.6121159791946411
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.16315633058547974
+        },
+        "seen_regression": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.40788716077804565
+        }
+      }
+    },
+    {
+      "epoch": 6,
+      "strength": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.5644717216491699
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "loss": 0.5940529108047485
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "loss": 0.46494507789611816
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.18270771205425262
+        },
+        "seen_regression": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.576724112033844
+        }
+      }
+    },
+    {
+      "epoch": 6,
+      "strength": 0.75,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.4009082019329071
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.5221608877182007
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.5199377536773682
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.16469526290893555
+        },
+        "seen_regression": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.3389502763748169
+        }
+      }
+    },
+    {
+      "epoch": 6,
+      "strength": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 5,
+          "total": 5,
+          "loss": 0.32020458579063416
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.45009443163871765
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.7216991782188416
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.17235153913497925
+        },
+        "seen_regression": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.27223193645477295
+        }
+      }
+    },
+    {
+      "epoch": 8,
+      "strength": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.5391595363616943
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.6085126399993896
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "loss": 0.4566849172115326
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.1929570734500885
+        },
+        "seen_regression": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.4819003939628601
+        }
+      }
+    },
+    {
+      "epoch": 8,
+      "strength": 0.75,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.35986122488975525
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.5226066708564758
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.5024112462997437
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.22012852132320404
+        },
+        "seen_regression": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.2604190707206726
+        }
+      }
+    },
+    {
+      "epoch": 8,
+      "strength": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 5,
+          "total": 5,
+          "loss": 0.3344670236110687
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "loss": 0.46653035283088684
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.705350399017334
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.1596977710723877
+        },
+        "seen_regression": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.17398379743099213
+        }
+      }
+    },
+    {
+      "epoch": 12,
+      "strength": 0.5,
+      "development": {
+        "qualification-v1": {
+          "correct": 3,
+          "total": 5,
+          "loss": 0.7929739952087402
+        },
+        "independent-repair-controls-v1": {
+          "correct": 13,
+          "total": 15,
+          "loss": 0.6257213354110718
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "loss": 0.40314388275146484
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 11,
+          "total": 12,
+          "loss": 0.17724810540676117
+        },
+        "seen_regression": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.45087260007858276
+        }
+      }
+    },
+    {
+      "epoch": 12,
+      "strength": 0.75,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.6179865002632141
+        },
+        "independent-repair-controls-v1": {
+          "correct": 12,
+          "total": 15,
+          "loss": 0.6076453328132629
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 9,
+          "total": 12,
+          "loss": 0.4023318290710449
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.12057235836982727
+        },
+        "seen_regression": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.1437319815158844
+        }
+      }
+    },
+    {
+      "epoch": 12,
+      "strength": 1.0,
+      "development": {
+        "qualification-v1": {
+          "correct": 4,
+          "total": 5,
+          "loss": 0.5624818801879883
+        },
+        "independent-repair-controls-v1": {
+          "correct": 10,
+          "total": 15,
+          "loss": 0.5932306051254272
+        },
+        "checkpoint-repair-acceptance-v1": {
+          "correct": 8,
+          "total": 12,
+          "loss": 0.5765665769577026
+        },
+        "level-zero-acceptance-v1": {
+          "correct": 10,
+          "total": 12,
+          "loss": 0.2218455672264099
+        },
+        "seen_regression": {
+          "correct": 12,
+          "total": 12,
+          "loss": 0.03169909492135048
+        }
+      }
+    }
+  ],
+  "clinc_rows": 2800,
+  "local_rows": 330,
+  "calibration_rows": 28,
+  "regression_rows": 12,
+  "epochs": 12,
+  "torch": "2.11.0+cu128",
+  "seed": 20261106,
+  "input_sha256": {
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_routing_repair.py": "b10304832550d8f03fa3d03df8b4574ddf4164f48f976b34fbbc777e59ba8f41",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_checkpoint_repair.py": "2ce96494e9e73061b6c754d27c88b41544524d9b85454a789f35824e04a3a54d",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_evidence_repair.py": "73bdc48f41fedd815153fcd10ae15ee982b752be6bb7c34dca23fe30f38ac42b",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\.venv\\routing-clinc150\\data_full.json": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\.venv\\routing-clinc150\\domains.json": "b947b579d3b8e74b06f93b01083d8efaff2888b43a3e362533bd88a6e1211b3a",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-acceptance-v1.json": "a470c067567ed71bb504a7c7e663e76b7377743074141118271b9b92bfc7d3cd",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-training-v1.json": "6fed3ec949342a5ce220eb45615d04454a144947374909bf4672f0b7904abe53",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\evidence-repair-contrasts-v1.json": "06c18b3a6aaf3fb266dc8e2b0a5060a5aa68323788f02640100c35415e835e80",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\routing-repair-training-v1.json": "5f92efad8789a1e21119be3ffe55be9afa6bf32e99ab072e49cb60c35ffc13e5",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\qualification-v1.json": "ff6e1998a73386eb08a08108a25d9799624aee5dbc25bfe0857222734430b3ab",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\independent-repair-controls-v1.json": "936c4911bf9b5ea61f95803daadef911a7c45edce7551500f92118773977baa1",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-acceptance-v1.json": "2576a8a76a366eefb7f94e1aa66d16e9cd27a87d52c0f1912196c43880383d96",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\level-zero-acceptance-v1.json": "095910b9672fc5fd8cfbcd3497120887a50c119747aef6f11e384d00a237f085"
+  },
+  "source_sha256": {
+    "__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "common.py": "011b9939f692302c923729d06dc7bb83d9c6dc1b0bc050d5aa3253ee4bfc68ba",
+    "compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "fast.py": "a3432b32f6c2cfd8561612fdc1d2a7144f84ebecb04e90d5d9165b6fc6ea5ff4",
+    "hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "mcp/server.py": "7b882304a4c910c1d36ba5e18e2e9abaff4c79f7285e820597d1d807d19f1e07",
+    "mcp/tools.py": "a93e7b68e19a780f9c3a0bf8a8e6afba183ca46d637725955bf1adcffa426bc1",
+    "onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "qualification.py": "a80ab9b89706eeb9b1598627012ce43dc9a56ce8654b250cd4b4d603a0888430",
+    "replay.py": "20344f39b3989c8e4f9b4cc20b1e0c17179605f616d9fa959816acd81d697a44",
+    "revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05"
+  },
+  "base_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "916a95bae1140c7a4f621989c52cf50b5184c54d3b2707c2bc08cf7b4adc0b83",
+    "repair_report.json": "569f2232ea3f42977e0270341a24061bfc957282e27f568c46f64191bef4c5cc",
+    "rl_agent_config.json": "1fd7fbe99c3c54c4251a137343c13a126f549ce399d5bb5a7a16ce813bf699b1",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+  },
+  "candidate_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "b6b11a38ce78903e6ebf6c22d6e66ef325f7a6bab3789c2eb8414218c76f07ca",
+    "rl_agent_config.json": "4559968fcccaba06e02b75c948586a1dddf8fb1079e1824782dbef9e319673b0",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+  }
+}

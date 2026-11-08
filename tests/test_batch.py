@@ -21,8 +21,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
 
-from laya import agent as _agent  # noqa: E402
-from laya.agent import Agent  # noqa: E402
+from veya import agent as _agent  # noqa: E402
+from veya.agent import Agent  # noqa: E402
 
 PASS, FAIL = [], []
 

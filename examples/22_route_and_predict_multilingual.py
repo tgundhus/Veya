@@ -11,7 +11,7 @@ banner("22", "Route and predict, multilingually", """
     result carries a `routing` block recording why the checkpoint was chosen.
 
     The same duplicate-charge complaint arrives in English, Hindi and German. English is
-    read by `laya`; the other two are read by `laya-multilingual`. Watch `router.loaded`:
+    read by `veya`; the other two are read by `laya-multilingual`. Watch `router.loaded`:
     the router builds the multilingual checkpoint only when the Hindi ticket shows up.
     """)
 

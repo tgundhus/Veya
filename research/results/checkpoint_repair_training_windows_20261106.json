@@ -1,0 +1,393 @@
+{
+  "base": "C:\\Users\\TGUNDHUS-PWR\\.cache\\huggingface\\hub\\models--convaiinnovations--laya\\snapshots\\55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851",
+  "base_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+    "rl_agent_config.json": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+    "tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+  },
+  "candidate_artifacts": {
+    "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+    "model.safetensors": "f42fde11f624c2d60cdffd76ccb8dd45291545be1e5109ff5204f0259cad1778",
+    "rl_agent_config.json": "a4245d6b9b7e7e38f89b872b71ed92390c01fb1391bed06ed7c0cadd86bf0a32",
+    "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+  },
+  "input_sha256": {
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\checkpoint-repair-training-v1.json": "6fed3ec949342a5ce220eb45615d04454a144947374909bf4672f0b7904abe53",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\scripts\\train_checkpoint_repair.py": "1e0acdae0d6928a3e0339a95e86ba5ccc35aeff8eff2f18c45f09f5b58f244d0",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\qualification-v1.json": "ff6e1998a73386eb08a08108a25d9799624aee5dbc25bfe0857222734430b3ab",
+    "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\research\\evals\\independent-repair-controls-v1.json": "936c4911bf9b5ea61f95803daadef911a7c45edce7551500f92118773977baa1"
+  },
+  "training_rows": 138,
+  "calibration_rows": 30,
+  "epochs": 16,
+  "seed": 20261106,
+  "threads": 8,
+  "torch": "2.14.1+cpu",
+  "elapsed_seconds": 845.3097423000145,
+  "before": {
+    "qualification-v1.json": {
+      "correct": [
+        3,
+        4,
+        4
+      ],
+      "total": [
+        5,
+        5,
+        5
+      ],
+      "rates": [
+        0.6,
+        0.8,
+        0.8
+      ],
+      "cross_entropy": 0.27514740626017253
+    },
+    "independent-repair-controls-v1.json": {
+      "correct": [
+        9,
+        8,
+        13
+      ],
+      "total": [
+        15,
+        15,
+        15
+      ],
+      "rates": [
+        0.6,
+        0.5333333333333333,
+        0.8666666666666667
+      ],
+      "cross_entropy": 0.5474628978305393
+    }
+  },
+  "history": [
+    {
+      "epoch": 2,
+      "temperatures": [
+        0.5,
+        0.6406233906745911,
+        0.5
+      ],
+      "development": {
+        "qualification-v1.json": {
+          "correct": [
+            3,
+            4,
+            4
+          ],
+          "total": [
+            5,
+            5,
+            5
+          ],
+          "rates": [
+            0.6,
+            0.8,
+            0.8
+          ],
+          "cross_entropy": 0.21606386105219524
+        },
+        "independent-repair-controls-v1.json": {
+          "correct": [
+            9,
+            8,
+            13
+          ],
+          "total": [
+            15,
+            15,
+            15
+          ],
+          "rates": [
+            0.6,
+            0.5333333333333333,
+            0.8666666666666667
+          ],
+          "cross_entropy": 0.47930456267462834
+        }
+      }
+    },
+    {
+      "epoch": 4,
+      "temperatures": [
+        0.5,
+        0.7079162001609802,
+        0.5
+      ],
+      "development": {
+        "qualification-v1.json": {
+          "correct": [
+            3,
+            4,
+            5
+          ],
+          "total": [
+            5,
+            5,
+            5
+          ],
+          "rates": [
+            0.6,
+            0.8,
+            1.0
+          ],
+          "cross_entropy": 0.19172165791193643
+        },
+        "independent-repair-controls-v1.json": {
+          "correct": [
+            9,
+            8,
+            13
+          ],
+          "total": [
+            15,
+            15,
+            15
+          ],
+          "rates": [
+            0.6,
+            0.5333333333333333,
+            0.8666666666666667
+          ],
+          "cross_entropy": 0.46781119770473906
+        }
+      }
+    },
+    {
+      "epoch": 6,
+      "temperatures": [
+        0.5,
+        0.6907126903533936,
+        0.9296931624412537
+      ],
+      "development": {
+        "qualification-v1.json": {
+          "correct": [
+            3,
+            4,
+            5
+          ],
+          "total": [
+            5,
+            5,
+            5
+          ],
+          "rates": [
+            0.6,
+            0.8,
+            1.0
+          ],
+          "cross_entropy": 0.17019569476445515
+        },
+        "independent-repair-controls-v1.json": {
+          "correct": [
+            9,
+            8,
+            13
+          ],
+          "total": [
+            15,
+            15,
+            15
+          ],
+          "rates": [
+            0.6,
+            0.5333333333333333,
+            0.8666666666666667
+          ],
+          "cross_entropy": 0.46684193081325953
+        }
+      }
+    },
+    {
+      "epoch": 8,
+      "temperatures": [
+        0.5,
+        0.782226026058197,
+        1.6778099536895752
+      ],
+      "development": {
+        "qualification-v1.json": {
+          "correct": [
+            5,
+            4,
+            5
+          ],
+          "total": [
+            5,
+            5,
+            5
+          ],
+          "rates": [
+            1.0,
+            0.8,
+            1.0
+          ],
+          "cross_entropy": 0.17868167956670125
+        },
+        "independent-repair-controls-v1.json": {
+          "correct": [
+            10,
+            8,
+            14
+          ],
+          "total": [
+            15,
+            15,
+            15
+          ],
+          "rates": [
+            0.6666666666666666,
+            0.5333333333333333,
+            0.9333333333333333
+          ],
+          "cross_entropy": 0.5079534106784397
+        }
+      }
+    },
+    {
+      "epoch": 12,
+      "temperatures": [
+        0.5,
+        1.1007485389709473,
+        1.6266757249832153
+      ],
+      "development": {
+        "qualification-v1.json": {
+          "correct": [
+            5,
+            4,
+            5
+          ],
+          "total": [
+            5,
+            5,
+            5
+          ],
+          "rates": [
+            1.0,
+            0.8,
+            1.0
+          ],
+          "cross_entropy": 0.11749752561251323
+        },
+        "independent-repair-controls-v1.json": {
+          "correct": [
+            12,
+            7,
+            14
+          ],
+          "total": [
+            15,
+            15,
+            15
+          ],
+          "rates": [
+            0.8,
+            0.4666666666666667,
+            0.9333333333333333
+          ],
+          "cross_entropy": 0.45359457863701713
+        }
+      }
+    },
+    {
+      "epoch": 16,
+      "temperatures": [
+        0.8491682410240173,
+        0.9383260011672974,
+        1.6506056785583496
+      ],
+      "development": {
+        "qualification-v1.json": {
+          "correct": [
+            4,
+            4,
+            5
+          ],
+          "total": [
+            5,
+            5,
+            5
+          ],
+          "rates": [
+            0.8,
+            0.8,
+            1.0
+          ],
+          "cross_entropy": 0.16762891113758088
+        },
+        "independent-repair-controls-v1.json": {
+          "correct": [
+            14,
+            9,
+            14
+          ],
+          "total": [
+            15,
+            15,
+            15
+          ],
+          "rates": [
+            0.9333333333333333,
+            0.6,
+            0.9333333333333333
+          ],
+          "cross_entropy": 0.4360167185465495
+        }
+      }
+    }
+  ],
+  "selected": {
+    "epoch": 16,
+    "temperatures": [
+      0.8491682410240173,
+      0.9383260011672974,
+      1.6506056785583496
+    ],
+    "development": {
+      "qualification-v1.json": {
+        "correct": [
+          4,
+          4,
+          5
+        ],
+        "total": [
+          5,
+          5,
+          5
+        ],
+        "rates": [
+          0.8,
+          0.8,
+          1.0
+        ],
+        "cross_entropy": 0.16762891113758088
+      },
+      "independent-repair-controls-v1.json": {
+        "correct": [
+          14,
+          9,
+          14
+        ],
+        "total": [
+          15,
+          15,
+          15
+        ],
+        "rates": [
+          0.9333333333333333,
+          0.6,
+          0.9333333333333333
+        ],
+        "cross_entropy": 0.4360167185465495
+      }
+    }
+  }
+}

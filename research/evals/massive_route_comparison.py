@@ -1,7 +1,7 @@
 """Compare language routing by locale on the pinned MASSIVE test split.
 
 This model-free diagnostic reports both checkpoint routing and named-language detection before
-and after a proposed change to ``laya.lang``. It evaluates the full test split for every locale.
+and after a proposed change to ``veya.lang``. It evaluates the full test split for every locale.
 
 Run from the repository root:
 
@@ -41,11 +41,11 @@ def git_bytes(*args: str) -> bytes:
 def load_detector(ref: str, name: str):
     """Load committed bytes; never label a modified worktree file as its HEAD."""
     revision = git_bytes("rev-parse", "--verify", ref + "^{commit}").decode().strip()
-    source = git_bytes("show", revision + ":laya/lang.py")
+    source = git_bytes("show", revision + ":veya/lang.py")
     module = types.ModuleType(name)
     sys.modules[name] = module
-    exec(compile(source, revision + ":laya/lang.py", "exec"), module.__dict__)
-    return module, {"revision": revision, "path": "laya/lang.py",
+    exec(compile(source, revision + ":veya/lang.py", "exec"), module.__dict__)
+    return module, {"revision": revision, "path": "veya/lang.py",
                     "sha256": hashlib.sha256(source).hexdigest()}
 
 
@@ -87,10 +87,10 @@ def main(argv=None) -> int:
                      if name.startswith("test/") and name.endswith(".json.gz"))
     if not locales:
         raise RuntimeError("no per-locale MASSIVE test files at pinned revision")
-    before, before_source = load_detector(args.before_ref, "laya_lang_before")
-    after, after_source = load_detector(args.after_ref, "laya_lang_after")
+    before, before_source = load_detector(args.before_ref, "veya_lang_before")
+    after, after_source = load_detector(args.after_ref, "veya_lang_after")
     sys.path.insert(0, str(REPO_ROOT))
-    from laya import router as router_module
+    from veya import router as router_module
 
     router = router_module.Router(default="english")
     original_analyse = router_module.analyse
@@ -104,7 +104,7 @@ def main(argv=None) -> int:
         "routing_metric_note": "Router._route decisions are recorded; route accuracy uses expected checkpoint by MASSIVE locale, including Router's configured default for undecided text.",
         "before_source": before_source,
         "after_source": after_source,
-        "router_source": {"path": "laya/router.py",
+        "router_source": {"path": "veya/router.py",
                           "sha256": hashlib.sha256(Path(router_module.__file__).read_bytes()).hexdigest()},
         "locales": {},
         "overall": {},

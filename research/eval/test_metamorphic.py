@@ -235,7 +235,7 @@ class EvaluationTests(unittest.TestCase):
         rows = [{"text": "x", "label_text": "a"}, {"text": "y", "label_text": "b"}]
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder) / "report.json"
-            with redirect_stdout(StringIO()), patch("laya.load", return_value=agent), \
+            with redirect_stdout(StringIO()), patch("veya.load", return_value=agent), \
                  patch.object(m.harness, "load_language", side_effect=[rows, RuntimeError("offline")]), \
                  patch.object(m, "model_scorer", return_value=lambda cases: [[0.6, 0.4] for _ in cases]):
                 code = m.main(["--langs", "en,de", "--n-opts", "2", "--out", str(out)])

@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Union
 import pytest
-from laya.agent import Agent
+from veya.agent import Agent
 
 class DummyAgent(Agent):
     def __init__(self):
@@ -34,7 +34,7 @@ def test_system_one_lang_parameter_passthrough():
 #
 # `lang_temperatures` was validated with `cfg.get(...)` and `len(...)` before anything checked the
 # shape of either, so the inputs the `ValueError` exists to reject raised `AttributeError` and
-# `TypeError` instead -- after the whole checkpoint had loaded. The `laya-ts` port reads the same
+# `TypeError` instead -- after the whole checkpoint had loaded. The `veya-ts` port reads the same
 # option with `lc?.temperature ?? rawList` and `!Array.isArray` (`agent.ts:322-327`); this is the
 # Python half of that contract.
 #
@@ -42,14 +42,14 @@ def test_system_one_lang_parameter_passthrough():
 # A `__main__` block does not execute under `python -m pytest tests/test_system_one_lang.py`, which
 # is how this file is run in CI, so the earlier version of these checks asserted nothing there; and
 # loading `convaiinnovations/laya` would have made the suite depend on a download. The parsing is
-# `laya.common.resolve_lang_temperatures`, which `Agent` and `ONNXAgent` both call, so exercising
+# `veya.common.resolve_lang_temperatures`, which `Agent` and `ONNXAgent` both call, so exercising
 # it covers both backends without weights.
 
 BASE_TEMPERATURE = (1.0, 1.5, 2.0)
 
 
 def _resolve(raw, base_temperature=BASE_TEMPERATURE):
-    from laya.common import resolve_lang_temperatures
+    from veya.common import resolve_lang_temperatures
     return resolve_lang_temperatures(raw, base_temperature)
 
 
@@ -100,7 +100,7 @@ def test_lang_temperatures_still_clamps_an_override():
 
 def test_lang_temperatures_result_is_what_both_backends_store():
     """The shape `resolve_lang_temperatures` returns is assigned to `lang_temperatures` verbatim."""
-    from laya.agent import Agent as _Agent
+    from veya.agent import Agent as _Agent
     import inspect
     for cls in (_Agent,):
         src = inspect.getsource(cls.__init__)

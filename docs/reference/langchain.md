@@ -1,14 +1,14 @@
 # LangChain components
 
-Install with `pip install "laya-pro[langchain] @ git+https://github.com/tgundhus/laya-pro.git"`. The [LangChain & LangGraph guide](../langchain.md)
+Install with `pip install "veya[langchain] @ git+https://github.com/tgundhus/Veya.git"`. The [LangChain & LangGraph guide](../langchain.md)
 shows these components in chains and graphs.
 
-::: laya.integrations.langchain.LayaRouter
+::: veya.integrations.langchain.VeyaRouter
 
-::: laya.integrations.langchain.LayaGuardrail
+::: veya.integrations.langchain.VeyaGuardrail
 
-::: laya.integrations.langchain.LayaGuardrailError
+::: veya.integrations.langchain.VeyaGuardrailError
 
-::: laya.integrations.langchain.LayaTriage
+::: veya.integrations.langchain.VeyaTriage
 
-::: laya.integrations.langchain.LayaEvaluator
+::: veya.integrations.langchain.VeyaEvaluator

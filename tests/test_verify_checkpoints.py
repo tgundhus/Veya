@@ -73,11 +73,11 @@ class CheckpointsTests(unittest.TestCase):
         self.addCleanup(self._tmp.cleanup)
         self.root = Path(self._tmp.name)
         self.models = self.root / "models"
-        (self.models / "laya").mkdir(parents=True)
+        (self.models / "veya").mkdir(parents=True)
 
     def write_manifest(self, **kwargs):
         path = self.root / "checkpoints.json"
-        path.write_text(json.dumps(manifest_for("laya/model.safetensors", **kwargs)))
+        path.write_text(json.dumps(manifest_for("veya/model.safetensors", **kwargs)))
         return path
 
     def run_script(self, manifest_path, *extra):
@@ -91,7 +91,7 @@ class CheckpointsTests(unittest.TestCase):
 
     @property
     def weights(self):
-        return self.models / "laya" / "model.safetensors"
+        return self.models / "veya" / "model.safetensors"
 
     def test_an_intact_checkpoint_passes(self):
         self.weights.write_bytes(GOOD)

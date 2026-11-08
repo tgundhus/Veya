@@ -15,7 +15,7 @@ if [ ! -x "$PY" ]; then
   PY="$(command -v python3 || command -v python || true)"
 fi
 PATTERN="${1:-[0-9][0-9]_*.py}"
-LOG="$(mktemp -t laya_examples.XXXXXX)"
+LOG="$(mktemp -t veya_examples.XXXXXX)"
 
 if [ -z "$PY" ] || [ ! -x "$PY" ]; then
   echo "no python found -- set PYTHON=/path/to/python" >&2

@@ -1,4 +1,4 @@
-"""Contract guard for laya.evidence: readiness evidence states over existing artifacts.
+"""Contract guard for veya.evidence: readiness evidence states over existing artifacts.
 
 Run: python tests/test_evidence.py
 """
@@ -9,8 +9,8 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import evidence  # noqa: E402
-from laya import evals_cli  # noqa: E402
+from veya import evidence  # noqa: E402
+from veya import evals_cli  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -33,39 +33,39 @@ def calib(config):
 legacy = calib({"fine_tuned": True})
 check("legacy checkpoint (no training key) -> UNKNOWN", legacy["state"], evidence.UNKNOWN)
 
-legacy2 = calib({"training": {"laya_train": {"base": "x"}}})
+legacy2 = calib({"training": {"veya_train": {"base": "x"}}})
 check("training but no calibration block -> UNKNOWN", legacy2["state"], evidence.UNKNOWN)
 
-zero = calib({"training": {"laya_train_calibration": {"choice": {"items": 0, "temperature": 1.0, "issues": []}}}})
+zero = calib({"training": {"veya_train_calibration": {"choice": {"items": 0, "temperature": 1.0, "issues": []}}}})
 check("zero items -> MISSING", zero["types"]["choice"]["state"], evidence.MISSING)
 
-low = calib({"training": {"laya_train_calibration": {"choice": {"items": 5, "temperature": 1.0,
+low = calib({"training": {"veya_train_calibration": {"choice": {"items": 5, "temperature": 1.0,
         "issues": ["not fitted: 5 calibration items, fewer than 10, so the temperature stays 1.0"]}}}})
 check("below MIN_TYPE_N -> INSUFFICIENT", low["types"]["choice"]["state"], evidence.INSUFFICIENT)
 
-warned = calib({"training": {"laya_train_calibration": {"choice": {"items": 30, "temperature": 1.2,
+warned = calib({"training": {"veya_train_calibration": {"choice": {"items": 30, "temperature": 1.2,
         "issues": ["fitted on only 30 calibration items"]}}}})
 check("fitted below CALIB_WARN_N -> INSUFFICIENT", warned["types"]["choice"]["state"], evidence.INSUFFICIENT)
 
-clamped = calib({"training": {"laya_train_calibration": {"choice": {"items": 200, "temperature": 0.5,
+clamped = calib({"training": {"veya_train_calibration": {"choice": {"items": 200, "temperature": 0.5,
         "issues": ["the fitted temperature 0.5 is on the [0.5, 3] clamp"]}}}})
 check("clamped fit stays a visible limitation -> INSUFFICIENT", clamped["types"]["choice"]["state"], evidence.INSUFFICIENT)
 
-clean = calib({"training": {"laya_train_calibration": {"choice": {"items": 400, "temperature": 1.1, "issues": []}}}})
+clean = calib({"training": {"veya_train_calibration": {"choice": {"items": 400, "temperature": 1.1, "issues": []}}}})
 check("clean supported fit -> PRESENT", clean["types"]["choice"]["state"], evidence.PRESENT)
 check("all-clean overall -> PRESENT", clean["state"], evidence.PRESENT)
 
-mixed = calib({"training": {"laya_train_calibration": {
+mixed = calib({"training": {"veya_train_calibration": {
     "choice": {"items": 400, "temperature": 1.1, "issues": []},
     "score": {"items": 0, "temperature": 1.0, "issues": []}}}})
 check("mixed types overall -> INSUFFICIENT", mixed["state"], evidence.INSUFFICIENT)
 
-malformed = calib({"training": {"laya_train_calibration": {"choice": {"temperature": 1.0}}}})
+malformed = calib({"training": {"veya_train_calibration": {"choice": {"temperature": 1.0}}}})
 check("malformed entry -> UNKNOWN", malformed["types"]["choice"]["state"], evidence.UNKNOWN)
 
 for _items in (1, 5, 9, 10, 49, 50, 300, 5000):
     _entry = {"items": _items, "temperature": 1.1, "issues": []}
-    _config = {"training": {"laya_train_calibration": {"choice": _entry}}}
+    _config = {"training": {"veya_train_calibration": {"choice": _entry}}}
     check("items=%d without recorded issues -> PRESENT" % _items,
           calib(_config)["types"]["choice"]["state"], evidence.PRESENT)
     _entry["issues"] = ["recorded limitation"]
@@ -73,20 +73,20 @@ for _items in (1, 5, 9, 10, 49, 50, 300, 5000):
           calib(_config)["types"]["choice"]["state"], evidence.INSUFFICIENT)
 
 # ------------------------------------------------------ report identity
-full_report = {"config": {"schema": "laya-evals-report/1", "dataset_sha256": "a",
-                          "questions_sha256": "b", "laya_version": "0.3.28"}, "overall": {}}
+full_report = {"config": {"schema": "veya-evals-report/1", "dataset_sha256": "a",
+                          "questions_sha256": "b", "veya_version": "0.3.28"}, "overall": {}}
 rep = evidence.inspect_report(full_report)
 check("full identity -> PRESENT", rep["state"], evidence.PRESENT)
 
-old_report = {"config": {"schema": "laya-evals-report/1"}, "overall": {}}
+old_report = {"config": {"schema": "veya-evals-report/1"}, "overall": {}}
 rep2 = evidence.inspect_report(old_report)
 check("missing identity fields -> UNKNOWN", rep2["state"], evidence.UNKNOWN)
 
-toplevel = {"schema": "laya-evals-report/1", "dataset_sha256": "a", "questions_sha256": "b",
+toplevel = {"schema": "veya-evals-report/1", "dataset_sha256": "a", "questions_sha256": "b",
             "config": {}}
 check("identity at top level still read", evidence.inspect_report(toplevel)["state"], evidence.PRESENT)
 
-from laya import evals  # noqa: E402
+from veya import evals  # noqa: E402
 
 check("copied identity vocabulary matches evals", evidence._IDENTITY_KEYS, evals._IDENTITY_KEYS)
 check("optional provenance does not decide identity",
@@ -98,11 +98,11 @@ for _missing in evals._IDENTITY_KEYS:
                                                if key != _missing}})["state"], evidence.UNKNOWN)
 
 # ------------------------------------------------------ relationship
-config = {"training": {"laya_train": {"laya_version": "0.3.28"}}}
-match = evidence.relate(config, {"config": {"laya_version": "0.3.28"}})
-check("same laya_version alone must NOT prove PRESENT", match["state"], evidence.UNKNOWN)
-conflict = evidence.relate(config, {"config": {"laya_version": "0.3.20"}})
-check("different laya_version must NOT become INCOMPARABLE", conflict["state"], evidence.UNKNOWN)
+config = {"training": {"veya_train": {"veya_version": "0.3.28"}}}
+match = evidence.relate(config, {"config": {"veya_version": "0.3.28"}})
+check("same veya_version alone must NOT prove PRESENT", match["state"], evidence.UNKNOWN)
+conflict = evidence.relate(config, {"config": {"veya_version": "0.3.20"}})
+check("different veya_version must NOT become INCOMPARABLE", conflict["state"], evidence.UNKNOWN)
 conflict_ds = evidence.relate({"dataset_sha256": "a"}, {"config": {"dataset_sha256": "b"}})
 check("deterministic identity conflict -> INCOMPARABLE", conflict_ds["state"], evidence.INCOMPARABLE)
 unknown = evidence.relate(config, {"config": {}})
@@ -113,13 +113,13 @@ tmp = tempfile.mkdtemp()
 ckpt = os.path.join(tmp, "ckpt")
 os.makedirs(ckpt)
 with open(os.path.join(ckpt, "rl_agent_config.json"), "w", encoding="utf-8") as f:
-    json.dump({"training": {"laya_train": {"laya_version": "0.3.28"}, "laya_train_calibration": {
+    json.dump({"training": {"veya_train": {"veya_version": "0.3.28"}, "veya_train_calibration": {
         "choice": {"items": 400, "temperature": 1.1, "issues": []},
         "score": {"items": 30, "temperature": 1.0, "issues": ["fitted on only 30 calibration items"]}}}}, f)
 report_path = os.path.join(tmp, "report.json")
 with open(report_path, "w", encoding="utf-8") as f:
-    json.dump({"config": {"schema": "laya-evals-report/1", "dataset_sha256": "a",
-                          "questions_sha256": "b", "laya_version": "0.3.28"}, "overall": {}}, f)
+    json.dump({"config": {"schema": "veya-evals-report/1", "dataset_sha256": "a",
+                          "questions_sha256": "b", "veya_version": "0.3.28"}, "overall": {}}, f)
 
 rc = evals_cli.main(["evidence", "--checkpoint", ckpt, "--report", report_path])
 check("evidence CLI returns 0 on realistic pair", rc, 0)
@@ -139,8 +139,8 @@ _BLOCK = (
     "sys.meta_path.insert(0, B())\n"
     "tmp = tempfile.mkdtemp(); ckpt = os.path.join(tmp, 'c'); os.makedirs(ckpt)\n"
     "with open(os.path.join(ckpt, 'rl_agent_config.json'), 'w') as f:\n"
-    "    json.dump({'training': {'laya_train_calibration': {'choice': {'items': 5, 'temperature': 1.0, 'issues': []}}}}, f)\n"
-    "from laya import evals_cli, evidence\n"
+    "    json.dump({'training': {'veya_train_calibration': {'choice': {'items': 5, 'temperature': 1.0, 'issues': []}}}}, f)\n"
+    "from veya import evals_cli, evidence\n"
     "rc = evals_cli.main(['evidence', '--checkpoint', ckpt])\n"
     "res = evidence.inspect_checkpoint(ckpt)\n"
     "print('RC', rc, 'TORCH', 'torch' in sys.modules)\n"
@@ -153,7 +153,7 @@ check_true("evidence CLI works with torch blocked", "RC 0" in out)
 check_true("torch not imported when blocked", "TORCH False" in out)
 
 proc = subprocess.run([sys.executable, "-c",
-    "import sys; from laya import evidence; "
+    "import sys; from veya import evidence; "
     "assert 'torch' not in sys.modules and 'numpy' not in sys.modules"],
     cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))), capture_output=True, text=True, timeout=30)
 check("standalone evidence imports neither numpy nor torch", proc.returncode, 0)

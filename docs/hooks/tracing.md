@@ -50,7 +50,7 @@ class Tracer:
         if span is None:
             return
         emit_span(
-            name="laya.predict",
+            name="veya.predict",
             run_id=ctx.run_id,
             model=ctx.model,
             duration_ms=ctx.elapsed_ms,
@@ -63,7 +63,7 @@ class Tracer:
         # or close it here if you prefer.
         pass
 
-agent = laya.load("convaiinnovations/laya", hooks=[Tracer()])
+agent = veya.load("convaiinnovations/laya", hooks=[Tracer()])
 ```
 
 Because `on_predict_end` always runs, it is the natural place to close a span, and it can see
@@ -103,21 +103,21 @@ span in both or you will double-count.
 
 ## OpenTelemetry
 
-The example [`examples/hooks/otel.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/otel.py) records counters and a
+The example [`examples/hooks/otel.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/otel.py) records counters and a
 histogram. For real spans, drive the OTel API from the tracer. Hooks are synchronous, so use the
 synchronous exporter (or enqueue and export from a worker).
 
 ```python
 from opentelemetry import trace
 
-tracer = trace.get_tracer("laya")
+tracer = trace.get_tracer("veya")
 
 class OTelHooks:
     def __init__(self):
         self.spans = {}
 
     def on_predict_start(self, ctx):
-        span = tracer.start_span("laya.predict", attributes={"laya.run_id": ctx.run_id, "laya.model": ctx.model})
+        span = tracer.start_span("veya.predict", attributes={"veya.run_id": ctx.run_id, "veya.model": ctx.model})
         self.spans[ctx.run_id] = span
 
     def on_predict_end(self, ctx):
@@ -125,13 +125,13 @@ class OTelHooks:
         if span is None:
             return
         if ctx.usage:
-            span.set_attribute("laya.input_tokens", ctx.usage["input_tokens"])
+            span.set_attribute("veya.input_tokens", ctx.usage["input_tokens"])
         if ctx.error is not None:
             span.record_exception(ctx.error)
             span.set_status(trace.Status(trace.StatusCode.ERROR))
         span.end()
 
-laya.load("convaiinnovations/laya", hooks=[OTelHooks()], hooks_raise=False)
+veya.load("convaiinnovations/laya", hooks=[OTelHooks()], hooks_raise=False)
 ```
 
 Set `hooks_raise=False` so a tracer outage never fails a request.
@@ -146,7 +146,7 @@ def audit(ctx):
     requests.post(
         "https://audit.example/decisions",
         json=record(ctx),
-        headers={"X-Laya-Run-Id": ctx.run_id},
+        headers={"X-Veya-Run-Id": ctx.run_id},
         timeout=2,
     )
 ```

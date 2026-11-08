@@ -1,7 +1,7 @@
 {
-  "name": "laya-pro-client",
+  "name": "veya-client",
   "version": "0.1.0",
-  "description": "Typed JavaScript client for self-hosted Laya-Pro decisions",
+  "description": "Typed JavaScript client for self-hosted Veya decisions",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -22,7 +22,7 @@
   "engines": { "node": ">=22" },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tgundhus/laya-pro.git",
+    "url": "git+https://github.com/tgundhus/Veya.git",
     "directory": "sdk/typescript"
   },
   "scripts": {

@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np  # noqa: E402
 
-import laya.agent as agent_mod
+import veya.agent as agent_mod
 from _long_attribution import check_long_attribution
-from laya.agent import Agent, _check_scan_budget, _start_evidence
+from veya.agent import Agent, _check_scan_budget, _start_evidence
 
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -47,7 +47,7 @@ def check_true(name, cond, detail=""):
 
 
 class _Tok:
-    # The special-token ids and `truncation` are what `laya.common.build_head` reads: predict_long
+    # The special-token ids and `truncation` are what `veya.common.build_head` reads: predict_long
     # assembles each question's head to measure the room it leaves for the state before it sizes a
     # window, so a fake that cannot build a head cannot reach the scan at all.
     mask_token = "[M]"
@@ -73,7 +73,7 @@ def make_agent(batch_result_fn):
     def _system_one(state, questions, lang=None, **controls):
         a._calls["system_one"] += 1
         a._calls["system_one_kwargs"] = controls
-        return {"model": "laya-rl-agent", "answers": {"_via": "system_one"}, "usage": {"input_tokens": 1}}
+        return {"model": "veya-rl-agent", "answers": {"_via": "system_one"}, "usage": {"input_tokens": 1}}
 
     def _predict_batch(states, questions, batch_size=None, lang=None, **controls):
         a._calls["batch_states"] = list(states)
@@ -146,7 +146,7 @@ check("short/system_one's own usage is kept", short["usage"].get("input_tokens",
 
 # 1b. the count is added to a copy, because a start hook that skips hands back the caller's own
 # payload dict and that object may be cached and reused
-payload = {"model": "laya-rl-agent", "answers": {"_via": "system_one"}, "usage": {"input_tokens": 1}}
+payload = {"model": "veya-rl-agent", "answers": {"_via": "system_one"}, "usage": {"input_tokens": 1}}
 a = make_agent(lambda s, q: [])
 a.system_one = lambda state, questions, lang=None, **controls: payload
 via_hook = a.predict_long({"body": "x" * 50}, Q)
@@ -242,7 +242,7 @@ check_raises("aggregate/rejects unknown mode", ValueError,
 # The Router is the entry point the README leads with, and it had no windowed scan: a state past
 # max_len was answered from its first window however it was routed. Weight-free, like the rest of
 # this file -- the routed agent is a stub, attached so no checkpoint is ever built.
-from laya.router import Router  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 
 class _LongStub:
@@ -383,7 +383,7 @@ with_hooks = make_agent(canned).predict_long(LONG, Q, hooks=[sentinel], hooks_ti
 check("hooks/forwarding is decision-neutral", with_hooks, plain)
 
 # 8. a start hook that answers the document, on the engine's own evidence
-DOC = {"model": "laya-rl-agent",
+DOC = {"model": "veya-rl-agent",
        "answers": {"dept": {"type": "choice", "choice": "b", "answer_confidence": 0.9},
                    "flag": {"type": "noul", "noul": 0.2, "answer_confidence": 0.8}},
        "usage": {"input_tokens": 3, "output_tokens": 0}}
@@ -708,8 +708,8 @@ check("docs/predict_long's docstring says the key is total",
 # the window was cut short on the way to the model while `answer["window"]["token_end"]` still
 # reported the whole span, and once the room fell under the stride, spans of the document were
 # read by no window at all.
-from laya import common as common_mod  # noqa: E402
-from laya.common import build_sequence, serialize_state  # noqa: E402
+from veya import common as common_mod  # noqa: E402
+from veya.common import build_sequence, serialize_state  # noqa: E402
 
 TOK = _Tok()
 MAX_LEN, HEAD_MAX_LEN, CONFIG_BUDGET = 100, 20, 72      # make_agent's cfg, and its budget
@@ -723,7 +723,7 @@ def head_len(qdef):
 def room_for(qdef):
     """The state tokens `qdef` leaves inside `max_len`, re-derived from `build_sequence`.
 
-    Deliberately not `laya.common.state_room`: the window has to fit what the sequence builder
+    Deliberately not `veya.common.state_room`: the window has to fit what the sequence builder
     really keeps, so this measures that the long way round instead of trusting the same helper the
     code under test uses.
     """
@@ -865,7 +865,7 @@ check("stride/a stride inside the window is accepted",
 
 # 12f-bis. the ONNX path honours the same cap, because README and Router promise it for both
 try:                                                                            # noqa: E402
-    from laya.common import window_batch_cap, window_budget
+    from veya.common import window_batch_cap, window_budget
 except ImportError:      # source reverted: let the checks below go red rather than abort the suite
     def window_budget(*_a, **_k):        # type: ignore[misc]
         return (0, 0, 0)
@@ -977,7 +977,7 @@ check_true("batch cap/the ONNX scan passes the cap to predict_batch",
 check_true("questions/the ONNX scan validates before _to_internal",
            _onnx_src.index("_check_question(qid")
            < _onnx_src.index("internal = {qid: self._to_internal"), "")
-from laya.inference import _check_question as _shared_check_question  # noqa: E402
+from veya.inference import _check_question as _shared_check_question  # noqa: E402
 
 check_true("questions/the ONNX scan uses the shared Agent validator",
            _shared_check_question is Agent._check_question, "")
@@ -1225,7 +1225,7 @@ check_true("clamp warning/the no-room refusal names predict_shortlist too",
 
 
 # ---------------------------------------------------------------------------------------------
-# The scan is laya's own forward pass, not a caller's hook
+# The scan is veya's own forward pass, not a caller's hook
 #
 # `Router.predict_long` used to append `_ScanLong` to the start-hook chain, so the scan executed
 # inside `dispatch()` and inherited the caller's hook machinery. Four consequences, all pinned here,
@@ -1235,7 +1235,7 @@ check_true("clamp warning/the no-room refusal names predict_shortlist too",
 # under `hooks_raise=False`.
 import time as _time  # noqa: E402
 
-from laya.hooks import PredictContext, compose_hooks, dispatch, set_default_hooks  # noqa: E402
+from veya.hooks import PredictContext, compose_hooks, dispatch, set_default_hooks  # noqa: E402
 
 
 class _SlowScan:
@@ -1257,7 +1257,7 @@ class _SlowScan:
                 "usage": {"input_tokens": 7, "windows": 3}}
 
 
-# 1. a hook timeout must not abort the scan -- it bounds the caller's hooks, not laya's inference
+# 1. a hook timeout must not abort the scan -- it bounds the caller's hooks, not veya's inference
 _slow = _SlowScan(0.30)
 _timed = Router(hooks_timeout=0.05)
 _timed.attach("english", _slow)
@@ -1319,7 +1319,7 @@ class _ComposingScan:
     """Composes its own hook list and dispatches, the way `Agent.predict_long` does.
 
     A plain stub cannot pin this. `_SKIP_DEFAULTS` is read in exactly one place --
-    `laya.hooks.compose_hooks` -- so an agent that never composes fires the process-wide defaults
+    `veya.hooks.compose_hooks` -- so an agent that never composes fires the process-wide defaults
     once however the flag is set, and the check below would pass just as happily with the fix
     reverted. Verified: with a non-composing stub, setting `_SKIP_DEFAULTS` to False instead of True
     left this check green, which is the whole reason it is written this way.
@@ -1513,7 +1513,7 @@ check("scan/an agent's own routing key is preserved", _own["routing"], {"model":
 #     and a retry cannot tell this case from the one below.
 # Resolved defensively so reverting the fix fails these checks rather than aborting the suite on
 # an ImportError, which would report nothing at all.
-import laya.router as _router_mod  # noqa: E402
+import veya.router as _router_mod  # noqa: E402
 
 _takes_lang = getattr(_router_mod, "_takes_lang", None)
 
@@ -1523,7 +1523,7 @@ def _lang_check(fn):
     narrowed `except` in `_takes_lang` must turn these checks red, not abort the module and take
     the sixteen checks after them with it."""
     if _takes_lang is None:
-        return "laya.router has no _takes_lang"
+        return "veya.router has no _takes_lang"
     out, exc = _attempt(lambda: _takes_lang(fn))
     return out if exc is None else "raised %s" % _kind(exc)
 
@@ -1633,7 +1633,7 @@ class _HostileSignature:
 
     @property
     def __signature__(self):
-        raise KeyError("/srv/laya/secrets/key.pem")
+        raise KeyError("/srv/veya/secrets/key.pem")
 
     def __call__(self, state, questions, **controls):
         return {"model": "stub", "answers": {"via": "predict_long"}, "usage": {}}
@@ -1730,7 +1730,7 @@ check("scan/the warning carries exactly the first 32 characters",
 
 # The cap slices the VALUE, not the rendered text, and names a non-`str` by its type instead of
 # rendering it: a `str` subclass can report `len() == 2` and a megabyte of `__repr__`, and a
-# non-`str` object's `__repr__` is caller code laya has no business running at all.
+# non-`str` object's `__repr__` is caller code veya has no business running at all.
 class _SneakyStr(str):
     def __repr__(self):
         return "'" + "A" * 100000 + "'"
@@ -1876,7 +1876,7 @@ with warnings.catch_warnings(record=True) as _caught:
 check("scan/the warning points at the predict_long call's own line",
       (os.path.basename(_caught[0].filename), _caught[0].lineno) if _caught else None,
       (os.path.basename(__file__), _want_line))
-check("scan/the warning is attributed to the caller, not to laya",
+check("scan/the warning is attributed to the caller, not to veya",
       os.path.basename(_caught[0].filename) if _caught else "no warning",
       os.path.basename(__file__))
 with warnings.catch_warnings(record=True) as _caught:
@@ -2034,10 +2034,10 @@ check_true("floor/the stride still halves the window the floor produced",
            _FLOOR is not None and _FLOOR_STEP == _FLOOR // 2, (_FLOOR_STEP, _FLOOR))
 
 _WINDOW_DOCSTRINGS = [
-    ("laya/common.py window_budget", window_budget.__doc__, None),
-    ("laya/agent.py Agent.predict_long", Agent.predict_long.__doc__, "stride:"),
-    ("laya/router.py Router.predict_long", Router.predict_long.__doc__, "stride:"),
-    ("laya/onnx_agent.py ONNXAgent.predict_long", ONNXAgent.predict_long.__doc__, "stride:"),
+    ("veya/common.py window_budget", window_budget.__doc__, None),
+    ("veya/agent.py Agent.predict_long", Agent.predict_long.__doc__, "stride:"),
+    ("veya/router.py Router.predict_long", Router.predict_long.__doc__, "stride:"),
+    ("veya/onnx_agent.py ONNXAgent.predict_long", ONNXAgent.predict_long.__doc__, "stride:"),
 ]
 for _doc_name, _doc, _stop in _WINDOW_DOCSTRINGS:
     _para = (_doc or "")

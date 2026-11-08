@@ -19,8 +19,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.agent import Agent, load  # noqa: E402
-from laya.calibrate import (  # noqa: E402
+from veya.agent import Agent, load  # noqa: E402
+from veya.calibrate import (  # noqa: E402
     CALIBRATION_VERSION,
     ECE_HOLDOUT_FRAC,
     MIN_BUCKET_N,
@@ -39,9 +39,9 @@ from laya.calibrate import (  # noqa: E402
     fit_temperatures,
     records_from_labeled,
 )
-from laya.common import QTYPES, TEMP_MAX, TEMP_MIN, ece_score, temp_bucket  # noqa: E402
-import laya.calibrate as _calibrate  # noqa: E402
-import laya.agent as _agent_module  # noqa: E402
+from veya.common import QTYPES, TEMP_MAX, TEMP_MIN, ece_score, temp_bucket  # noqa: E402
+import veya.calibrate as _calibrate  # noqa: E402
+import veya.agent as _agent_module  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -333,7 +333,7 @@ _CFG = {
     "encoder": "answerdotai/ModernBERT-large",
     "head_layers": 2,
     "max_len": 512,
-    "model_name": "laya",
+    "model_name": "veya",
     "temperature": [9.0, 9.0, 9.0],
     "temperature_by_options": {"choice:2": 9.0},
 }
@@ -366,7 +366,7 @@ check("save/version", payload["version"], CALIBRATION_VERSION)
 check("save/model_id", payload["model_id_or_path"], "convaiinnovations/laya")
 check("save/subfolder", payload["subfolder"], None)
 check("save/config encoder", payload["config"]["encoder"], "answerdotai/ModernBERT-large")
-check("save/config model_name", payload["config"]["model_name"], "laya")
+check("save/config model_name", payload["config"]["model_name"], "veya")
 check_true("save/config omits temperature", "temperature" not in payload["config"])
 check_true(
     "save/config omits temperature_by_options",
@@ -563,7 +563,7 @@ check(
     boundary_bins["noul:2"]["values"][18],
 )
 
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 onnx_boundary = ONNXAgent.__new__(ONNXAgent)
 onnx_boundary.temperature = [1.0, 1.0, 1.0]
@@ -713,6 +713,9 @@ _refuses("shape/binning Infinity", {"temperature": [1.0, 1.0, 1.0], "binning_map
 _refuses("shape/binning bool value", {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": [True]}}}, "number")
 _refuses("shape/binning string value", {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": ["0.5"]}}}, "number")
 _refuses("shape/binning null value", {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": [None]}}}, "number")
+for _value in (10 ** 400, -(10 ** 400), 2 ** 1024):
+    _refuses("shape/binning wide integer %r" % _value,
+             {"temperature": [1.0, 1.0, 1.0], "binning_map": {"a": {"bins": 1, "values": [_value]}}}, "number")
 _refuses("shape/scalar temperature", {"temperature": 5}, "[3 floats]")
 _refuses("shape/string temperature", {"temperature": "abc"}, "[3 floats]")
 _refuses("shape/dict temperature", {"temperature": {"a": 1, "b": 2, "c": 3}}, "[3 floats]")
@@ -876,9 +879,10 @@ check_true("decode/uses _option_logits", "_option_logits" in inspect.getsource(A
 sys_one = inspect.getsource(Agent.system_one)
 check_true("system_one/uses predict_batch", "predict_batch" in sys_one)
 check_true("system_one/does not fit", "fit_temperature" not in sys_one)
-batch_src = inspect.getsource(Agent.predict_batch)
-check_true("predict_batch/_encode_state", "_encode_state" in batch_src)
-check_true("predict_batch/_decode_answers", "_decode_answers" in batch_src)
+batch_src = inspect.getsource(Agent._infer_batch)
+check_true("predict_batch/uses the batch core", "self._infer_batch(" in inspect.getsource(Agent.predict_batch))
+check_true("batch core/_encode_state", "_encode_state" in batch_src)
+check_true("batch core/_decode_answers", "_decode_answers" in batch_src)
 
 
 # --------------------------------------------------------------- labeled records use raw logits
@@ -939,13 +943,13 @@ check("records/noul logits unscaled", labeled[1][1].tolist(), [2.0, 4.0])
 
 
 # public exports stay lazy: importing the package must not import torch for these names
-import laya as _laya  # noqa: E402
+import veya as _veya  # noqa: E402
 for name in ("fit_temperatures", "fit_one_temperature", "fit_temperature_map"):
-    check_true("export/%s in __all__" % name, name in _laya.__all__)
-    check_true("export/%s attr" % name, hasattr(_laya, name))
+    check_true("export/%s in __all__" % name, name in _veya.__all__)
+    check_true("export/%s attr" % name, hasattr(_veya, name))
     check(
         "export/%s lazy table" % name,
-        _laya._LAZY_ATTRS.get(name),
+        _veya._LAZY_ATTRS.get(name),
         (".calibrate", name),
     )
 

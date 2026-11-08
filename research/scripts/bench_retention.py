@@ -2,7 +2,7 @@
 
 No model is needed. Requests go through the cache's own hooks, as a Router drives them, over an
 agent that answers instantly with a numbered payload, so a replay can be told from a recompute.
-The cache's clock (`laya.consistency._now`) is simulated, so a month runs in seconds.
+The cache's clock (`veya.consistency._now`) is simulated, so a month runs in seconds.
 
 Sections:
 
@@ -37,10 +37,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, ROOT)
 
-import laya  # noqa: E402
-from laya import DecisionCache, decision_margins  # noqa: E402
-from laya import consistency  # noqa: E402
-from laya.hooks import PredictContext  # noqa: E402
+import veya  # noqa: E402
+from veya import DecisionCache, decision_margins  # noqa: E402
+from veya import consistency  # noqa: E402
+from veya.hooks import PredictContext  # noqa: E402
 
 HOUR, DAY = 3600.0, 86400.0
 ARCHIVE = os.path.join(ROOT, "research", "benchmarks", "feishu_zh", "results", "v1", "laya", "raw.jsonl")
@@ -364,7 +364,7 @@ import json, os, sys, time
 sys.path.insert(0, %(root)r)
 sys.path.insert(0, %(here)r)
 from bench_retention import Driver, QUESTION_SETS, base_payload
-from laya import DecisionCache, consistency
+from veya import DecisionCache, consistency
 job = json.loads(sys.argv[1])
 if job.get("advance"):
     consistency._now = lambda: time.time() + job["advance"]
@@ -426,7 +426,7 @@ def main():
     args = parser.parse_args()
     sections = [s for s in args.sections.split(",") if s]
     payload = base_payload()
-    results = {"meta": {"laya": laya.__version__, "python": platform.python_version(), "machine": platform.machine(),
+    results = {"meta": {"laya": veya.__version__, "python": platform.python_version(), "machine": platform.machine(),
                         "platform": platform.platform(), "sqlite": sqlite3.sqlite_version,
                         "renew_fraction": consistency._RENEW_FRACTION}}
     with tempfile.TemporaryDirectory() as tmp:

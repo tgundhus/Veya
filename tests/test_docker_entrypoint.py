@@ -2,17 +2,17 @@
 
 `docker/entrypoint.py` loops over `SECRET_NAMES`, and the HTTP service's documented way to hand
 over its bearer key is the second name in that loop -- `docs/docker.md`, "Bearer token from a
-file": "`LAYA_API_KEY_FILE` is read once at startup, moved into `LAYA_API_KEY`, and the `_FILE`
+file": "`VEYA_API_KEY_FILE` is read once at startup, moved into `VEYA_API_KEY`, and the `_FILE`
 variable is removed before the server execs." Every test in this file used to name `HF_TOKEN`
 in its harness, its expected value and its error assertion, so the loop was exercised through
 one of its two arms:
 
-    $ sed 's/SECRET_NAMES = ("HF_TOKEN", "LAYA_API_KEY")/SECRET_NAMES = ("HF_TOKEN",)/' docker/entrypoint.py > ...
+    $ sed 's/SECRET_NAMES = ("HF_TOKEN", "VEYA_API_KEY")/SECRET_NAMES = ("HF_TOKEN",)/' docker/entrypoint.py > ...
     $ python tests/test_docker_entrypoint.py
     Ran 5 tests in 0.165s
     OK
 
-Run that mutated script against a live `laya-serve` (mounted over the image's own entrypoint) and
+Run that mutated script against a live `veya-serve` (mounted over the image's own entrypoint) and
 the service is left unauthenticated: `POST /v1/systemone` with no `Authorization` header answers
 400 instead of 401. Nothing in the suite said so. The names are therefore read out of the script
 itself and each one is driven through the whole contract, including the `_FILE` removal, which no
@@ -35,7 +35,7 @@ COMPOSE_FILES = tuple(sorted(ROOT.glob("compose*.y*ml")))
 
 def _secret_names():
     """The names the container entrypoint claims to load, read from the entrypoint itself."""
-    spec = importlib.util.spec_from_file_location("laya_entrypoint_under_test", ENTRYPOINT)
+    spec = importlib.util.spec_from_file_location("veya_entrypoint_under_test", ENTRYPOINT)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)  # the script only defines main() under a __main__ guard
     return tuple(module.SECRET_NAMES)
@@ -49,7 +49,7 @@ def file_backed_secrets(text):
 
     The pairing is what makes one: `<NAME>` is where the loaded value has to land, so a `_FILE`
     whose base name is not forwarded at all is a path handed to the program itself rather than a
-    secret to read. That excludes `LAYA_REQUEST_FILE`, which the quickstart opens directly and
+    secret to read. That excludes `VEYA_REQUEST_FILE`, which the quickstart opens directly and
     which must *not* appear in `SECRET_NAMES`.
     """
     forwarded = set(re.findall(r"^\s+([A-Z][A-Z0-9_]*):", text, re.MULTILINE))
@@ -121,7 +121,7 @@ class EntrypointTests(unittest.TestCase):
         entrypoint's audience includes the Windows path it runs a child on. Read as plain
         utf-8 the mark becomes U+FEFF, which `.strip()` does not remove (it is not
         whitespace), so the loaded variable carried one leading character no consumer --
-        the Hub for `HF_TOKEN`, `laya-serve`'s bearer check for `LAYA_API_KEY` -- accepts.
+        the Hub for `HF_TOKEN`, `veya-serve`'s bearer check for `VEYA_API_KEY` -- accepts.
         """
         for name in SECRET_NAMES:
             with self.subTest(secret=name):

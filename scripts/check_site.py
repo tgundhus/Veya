@@ -26,7 +26,7 @@ class Metadata(HTMLParser):
 
 
 def check_site(directory):
-    origin = "https://tgundhus.github.io/laya-pro/"
+    origin = "https://tgundhus.github.io/Veya/"
     expected = ("", "integration/", "production/", "consistency/", "reports/production-review/")
     prefix = urlsplit(origin).path
     for page in directory.rglob("*.html"):

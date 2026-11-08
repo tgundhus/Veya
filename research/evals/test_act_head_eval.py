@@ -1,7 +1,7 @@
 """Offline tests for the act-head diagnostic in `research/evals/act_head_eval.py`.
 
 No checkpoint and no network: every function under test is pure arithmetic over a
-report that `laya-evals --json` already wrote, so this runs offline.
+report that `veya-evals --json` already wrote, so this runs offline.
 
 The fixtures here are tiny and synthetic. They exist to pin the metric mechanics
 only -- they are **not** a measurement of the released checkpoints and say nothing
@@ -49,7 +49,7 @@ def check_close(name, got, want, tol=1e-9):
 
 
 def case(act, correct, confidence=None, qid="q", answer_type="choice", drop_action=False):
-    """One `laya-evals` report case, shaped like `EvalReport.to_json()["cases"][i]`."""
+    """One `veya-evals` report case, shaped like `EvalReport.to_json()["cases"][i]`."""
     answer = {"type": answer_type}
     if correct is not None and answer_type == "choice":
         answer["choice"] = "a"
@@ -252,7 +252,7 @@ loaded = report_from_document(_load(REPORT))
 check("report/cases_read", loaded["analysis"]["total_cases"], 3)
 check("report/config_kept", loaded["config"], {"model": "english"})
 check("report/analyse_paired", loaded["analysis"]["paired"], 2)
-check("report/schema", loaded["schema"], "laya-evals-report/act-head-eval/1")
+check("report/schema", loaded["schema"], "veya-evals-report/act-head-eval/1")
 
 # The same document twice gives byte-identical JSON, so a committed result is a real diff.
 first = json.dumps(report_from_document(_load(REPORT)), sort_keys=True)

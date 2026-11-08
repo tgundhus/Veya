@@ -1,0 +1,460 @@
+{
+  "created_utc": "2026-11-07T20:08:20.198089+00:00",
+  "python": "3.12.14",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "parameters": {
+    "out": "research\\results\\cache_eviction_production_20261107.json",
+    "capacities": "256,1024",
+    "requests": 60000,
+    "repeats": 7,
+    "seed": 20261107,
+    "production_lru": true
+  },
+  "method": "Same seeded traces, empty stores, no expiry or renewal. Policy order rotates across repeats. Only get/add store operations are timed. LFU is a research implementation without aging. Workstation load uncontrolled; no inference-speed claim.",
+  "source_sha256": {
+    "veya/consistency.py": "0fe6b94ae330a6b8da23dc74e89d7513d4f6b8611c24a425f64697ed5c2f605f",
+    "research/scripts/bench_cache_eviction.py": "9b8c52d4322e687768830d80264cc9a70e7e5958f4dc10cf607aa09a8cbb0b6d"
+  },
+  "cases": [
+    {
+      "capacity": 256,
+      "trace": "zipf",
+      "trace_sha256": "a45fb6ff4af49b2e953f35e53d37d521de6dfdf93e6870950707f4c7145cca46",
+      "policies": {
+        "fifo": {
+          "hits": 37570,
+          "misses": 22430,
+          "hit_rate": 0.6261666666666666,
+          "ns_per_request": 553.53,
+          "samples_ns_per_request": [
+            553.53,
+            552.855,
+            559.9916666666667,
+            538.2616666666667,
+            562.3266666666667,
+            541.3766666666667,
+            543.9766666666667
+          ],
+          "median_ns_per_request": 552.855
+        },
+        "lru": {
+          "hits": 40476,
+          "misses": 19524,
+          "hit_rate": 0.6746,
+          "ns_per_request": 545.7333333333333,
+          "samples_ns_per_request": [
+            545.7333333333333,
+            572.0233333333333,
+            584.8533333333334,
+            591.61,
+            551.0166666666667,
+            560.6916666666667,
+            558.4766666666667
+          ],
+          "median_ns_per_request": 560.6916666666667
+        },
+        "lfu": {
+          "hits": 44215,
+          "misses": 15785,
+          "hit_rate": 0.7369166666666667,
+          "ns_per_request": 660.89,
+          "samples_ns_per_request": [
+            660.89,
+            687.83,
+            646.8483333333334,
+            677.6266666666667,
+            691.4566666666667,
+            674.555,
+            642.5533333333333
+          ],
+          "median_ns_per_request": 674.555
+        }
+      }
+    },
+    {
+      "capacity": 256,
+      "trace": "hot_plus_scan",
+      "trace_sha256": "848c23dc04d66aee4557559cb2fa7778baa9a0d9c1ef6ca5b03414c069d6ceeb",
+      "policies": {
+        "fifo": {
+          "hits": 52531,
+          "misses": 7469,
+          "hit_rate": 0.8755166666666667,
+          "ns_per_request": 418.40166666666664,
+          "samples_ns_per_request": [
+            418.40166666666664,
+            430.5416666666667,
+            433.6066666666667,
+            408.37333333333333,
+            420.72,
+            412.37333333333333,
+            415.62333333333333
+          ],
+          "median_ns_per_request": 418.40166666666664
+        },
+        "lru": {
+          "hits": 53930,
+          "misses": 6070,
+          "hit_rate": 0.8988333333333334,
+          "ns_per_request": 438.9116666666667,
+          "samples_ns_per_request": [
+            438.9116666666667,
+            438.9,
+            475.135,
+            471.3833333333333,
+            465.63166666666666,
+            423.315,
+            432.0883333333333
+          ],
+          "median_ns_per_request": 438.9116666666667
+        },
+        "lfu": {
+          "hits": 53930,
+          "misses": 6070,
+          "hit_rate": 0.8988333333333334,
+          "ns_per_request": 434.06,
+          "samples_ns_per_request": [
+            434.06,
+            474.12,
+            436.28833333333336,
+            443.215,
+            444.0933333333333,
+            441.2633333333333,
+            428.59
+          ],
+          "median_ns_per_request": 441.2633333333333
+        }
+      }
+    },
+    {
+      "capacity": 256,
+      "trace": "phase_shift",
+      "trace_sha256": "b34d362adb9adc9004a8d3f71dc4645e9fa69962cb22f6b895708ff087e35c1d",
+      "policies": {
+        "fifo": {
+          "hits": 33181,
+          "misses": 26819,
+          "hit_rate": 0.5530166666666667,
+          "ns_per_request": 587.9566666666667,
+          "samples_ns_per_request": [
+            587.9566666666667,
+            603.125,
+            583.5966666666667,
+            658.5716666666667,
+            599.2366666666667,
+            615.5666666666667,
+            591.31
+          ],
+          "median_ns_per_request": 599.2366666666667
+        },
+        "lru": {
+          "hits": 39341,
+          "misses": 20659,
+          "hit_rate": 0.6556833333333333,
+          "ns_per_request": 549.1766666666666,
+          "samples_ns_per_request": [
+            549.1766666666666,
+            560.0366666666666,
+            550.5,
+            599.8416666666667,
+            593.9516666666667,
+            571.8416666666667,
+            569.3866666666667
+          ],
+          "median_ns_per_request": 569.3866666666667
+        },
+        "lfu": {
+          "hits": 29937,
+          "misses": 30063,
+          "hit_rate": 0.49895,
+          "ns_per_request": 646.1483333333333,
+          "samples_ns_per_request": [
+            646.1483333333333,
+            656.27,
+            679.6483333333333,
+            707.35,
+            711.515,
+            795.9666666666667,
+            692.0783333333334
+          ],
+          "median_ns_per_request": 692.0783333333334
+        }
+      }
+    },
+    {
+      "capacity": 256,
+      "trace": "all_unique",
+      "trace_sha256": "6d74a955c12bd5a1eb4acf6448dc3a4b4d6e0548fb401dfb7465c376b1cf7547",
+      "policies": {
+        "fifo": {
+          "hits": 0,
+          "misses": 60000,
+          "hit_rate": 0.0,
+          "ns_per_request": 853.72,
+          "samples_ns_per_request": [
+            853.72,
+            827.72,
+            821.8416666666667,
+            855.7966666666666,
+            822.8033333333333,
+            830.195,
+            830.8333333333334
+          ],
+          "median_ns_per_request": 830.195
+        },
+        "lru": {
+          "hits": 0,
+          "misses": 60000,
+          "hit_rate": 0.0,
+          "ns_per_request": 849.195,
+          "samples_ns_per_request": [
+            849.195,
+            824.755,
+            828.2216666666667,
+            823.405,
+            820.915,
+            833.1866666666666,
+            824.935
+          ],
+          "median_ns_per_request": 824.935
+        },
+        "lfu": {
+          "hits": 0,
+          "misses": 60000,
+          "hit_rate": 0.0,
+          "ns_per_request": 551.7233333333334,
+          "samples_ns_per_request": [
+            551.7233333333334,
+            566.8116666666666,
+            543.1933333333334,
+            590.5716666666667,
+            561.8616666666667,
+            561.4833333333333,
+            547.755
+          ],
+          "median_ns_per_request": 561.4833333333333
+        }
+      }
+    },
+    {
+      "capacity": 1024,
+      "trace": "zipf",
+      "trace_sha256": "d1ce5cc795fa0a0533d856981ebe626a6247ad8983506202f46b990ac7cad815",
+      "policies": {
+        "fifo": {
+          "hits": 41986,
+          "misses": 18014,
+          "hit_rate": 0.6997666666666666,
+          "ns_per_request": 523.545,
+          "samples_ns_per_request": [
+            523.545,
+            532.875,
+            561.3716666666667,
+            513.7983333333333,
+            567.1233333333333,
+            520.065,
+            511.3566666666667
+          ],
+          "median_ns_per_request": 523.545
+        },
+        "lru": {
+          "hits": 44265,
+          "misses": 15735,
+          "hit_rate": 0.73775,
+          "ns_per_request": 527.05,
+          "samples_ns_per_request": [
+            527.05,
+            531.205,
+            535.2783333333333,
+            535.3716666666667,
+            520.6433333333333,
+            533.1216666666667,
+            569.7233333333334
+          ],
+          "median_ns_per_request": 533.1216666666667
+        },
+        "lfu": {
+          "hits": 46400,
+          "misses": 13600,
+          "hit_rate": 0.7733333333333333,
+          "ns_per_request": 636.085,
+          "samples_ns_per_request": [
+            636.085,
+            594.9266666666666,
+            633.2366666666667,
+            629.3233333333334,
+            636.4533333333334,
+            635.3916666666667,
+            608.59
+          ],
+          "median_ns_per_request": 633.2366666666667
+        }
+      }
+    },
+    {
+      "capacity": 1024,
+      "trace": "hot_plus_scan",
+      "trace_sha256": "c22376894d8d2cbcd02c00ab4fdaad50c0e40ecc4c2ac509b02cc4dd2f7fd570",
+      "policies": {
+        "fifo": {
+          "hits": 52491,
+          "misses": 7509,
+          "hit_rate": 0.87485,
+          "ns_per_request": 462.10833333333335,
+          "samples_ns_per_request": [
+            462.10833333333335,
+            424.04333333333335,
+            434.735,
+            463.365,
+            430.5566666666667,
+            425.1483333333333,
+            435.80833333333334
+          ],
+          "median_ns_per_request": 434.735
+        },
+        "lru": {
+          "hits": 53777,
+          "misses": 6223,
+          "hit_rate": 0.8962833333333333,
+          "ns_per_request": 463.50166666666667,
+          "samples_ns_per_request": [
+            463.50166666666667,
+            451.645,
+            466.99833333333333,
+            449.93666666666667,
+            455.295,
+            490.0933333333333,
+            450.99666666666667
+          ],
+          "median_ns_per_request": 455.295
+        },
+        "lfu": {
+          "hits": 53777,
+          "misses": 6223,
+          "hit_rate": 0.8962833333333333,
+          "ns_per_request": 408.785,
+          "samples_ns_per_request": [
+            408.785,
+            414.485,
+            427.56166666666667,
+            421.44166666666666,
+            454.76166666666666,
+            431.645,
+            422.7733333333333
+          ],
+          "median_ns_per_request": 422.7733333333333
+        }
+      }
+    },
+    {
+      "capacity": 1024,
+      "trace": "phase_shift",
+      "trace_sha256": "f8d4537fd011f7b2c1cd3d4afb404a5d09b9e5404c0f574f8f3d4d466491e658",
+      "policies": {
+        "fifo": {
+          "hits": 32828,
+          "misses": 27172,
+          "hit_rate": 0.5471333333333334,
+          "ns_per_request": 613.0566666666666,
+          "samples_ns_per_request": [
+            613.0566666666666,
+            641.905,
+            611.2616666666667,
+            609.7366666666667,
+            616.5733333333334,
+            674.3333333333334,
+            603.0633333333334
+          ],
+          "median_ns_per_request": 613.0566666666666
+        },
+        "lru": {
+          "hits": 38561,
+          "misses": 21439,
+          "hit_rate": 0.6426833333333334,
+          "ns_per_request": 602.4933333333333,
+          "samples_ns_per_request": [
+            602.4933333333333,
+            580.43,
+            609.175,
+            584.4916666666667,
+            610.3533333333334,
+            585.6433333333333,
+            601.3433333333334
+          ],
+          "median_ns_per_request": 601.3433333333334
+        },
+        "lfu": {
+          "hits": 28954,
+          "misses": 31046,
+          "hit_rate": 0.48256666666666664,
+          "ns_per_request": 639.075,
+          "samples_ns_per_request": [
+            639.075,
+            631.115,
+            643.08,
+            634.2216666666667,
+            647.12,
+            607.2916666666666,
+            649.5383333333333
+          ],
+          "median_ns_per_request": 639.075
+        }
+      }
+    },
+    {
+      "capacity": 1024,
+      "trace": "all_unique",
+      "trace_sha256": "6d74a955c12bd5a1eb4acf6448dc3a4b4d6e0548fb401dfb7465c376b1cf7547",
+      "policies": {
+        "fifo": {
+          "hits": 0,
+          "misses": 60000,
+          "hit_rate": 0.0,
+          "ns_per_request": 882.94,
+          "samples_ns_per_request": [
+            882.94,
+            844.1416666666667,
+            837.1166666666667,
+            865.8316666666667,
+            887.585,
+            857.255,
+            867.9616666666667
+          ],
+          "median_ns_per_request": 865.8316666666667
+        },
+        "lru": {
+          "hits": 0,
+          "misses": 60000,
+          "hit_rate": 0.0,
+          "ns_per_request": 839.5233333333333,
+          "samples_ns_per_request": [
+            839.5233333333333,
+            839.9533333333334,
+            884.5733333333334,
+            854.0333333333333,
+            837.05,
+            891.2183333333334,
+            858.555
+          ],
+          "median_ns_per_request": 854.0333333333333
+        },
+        "lfu": {
+          "hits": 0,
+          "misses": 60000,
+          "hit_rate": 0.0,
+          "ns_per_request": 578.8266666666667,
+          "samples_ns_per_request": [
+            578.8266666666667,
+            606.3016666666666,
+            596.7816666666666,
+            585.7616666666667,
+            588.765,
+            611.3666666666667,
+            574.7866666666666
+          ],
+          "median_ns_per_request": 588.765
+        }
+      }
+    }
+  ]
+}

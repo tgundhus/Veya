@@ -1,4 +1,4 @@
-# Documentation build only; not a runtime dependency of the laya package.
+# Documentation build only; not a runtime dependency of the veya package.
 zensical==0.0.67
 # API reference pages (docs/reference/). Ruff formats the rendered signatures.
 mkdocstrings-python==2.0.9

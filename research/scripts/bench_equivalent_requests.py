@@ -32,10 +32,10 @@ sys.path.insert(0, HERE)
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
-from laya import Router, decision_margins  # noqa: E402
-from laya.agent import Agent  # noqa: E402
-from laya.router import _split  # noqa: E402
+import veya  # noqa: E402
+from veya import Router, decision_margins  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.router import _split  # noqa: E402
 from bench_cpu_fast_path import decision, probabilities  # noqa: E402
 from request_sets import load  # noqa: E402
 
@@ -92,7 +92,7 @@ def main():
     by_model = {}
     for r in requests:
         by_model.setdefault(router.route(r["state"], r["questions"]).model, []).append(r)
-    report = {"meta": {"laya": laya.__version__, "torch": torch.__version__, "device": device,
+    report = {"meta": {"laya": veya.__version__, "torch": torch.__version__, "device": device,
                        "platform": platform.platform(), "requests": os.path.basename(args.requests),
                        "routed": {m: len(v) for m, v in by_model.items()}}, "models": {}}
     for model, reqs in by_model.items():

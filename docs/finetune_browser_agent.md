@@ -1,11 +1,11 @@
-# Fine-tuning Laya as a browser-agent decision head
+# Fine-tuning Veya as a browser-agent decision head
 
-A worked, fully reproducible example of specialising Laya for a decision family it cannot do
+A worked, fully reproducible example of specialising Veya for a decision family it cannot do
 zero-shot: picking the next browser action (operation + target element) for
 [browser-use/jev-ultrafast](https://github.com/browser-use/jev-ultrafast), whose `/v1/systemone`
 request format is the same as `Agent.predict(state, questions)`. Everything below ran on one
 RTX 4070 Ti SUPER (16 GB) with no paid API; weights, code and per-run results are at
-[huggingface.co/cklxx/laya-browser](https://huggingface.co/cklxx/laya-browser).
+[huggingface.co/cklxx/veya-browser](https://huggingface.co/cklxx/veya-browser).
 
 ## Result
 
@@ -21,10 +21,10 @@ The live suite is bimodal: 10 tasks pass 3/3 (category / tab / page navigation, 
 pagination that needs a scroll first, Google Flights). Run-to-run variance on live sites is larger
 than the gap between the two backbones, so treat them as equivalent and pick by latency.
 
-Checkpoints are ordinary Laya checkpoint directories:
+Checkpoints are ordinary Veya checkpoint directories:
 
 ```python
-agent = laya.load("laya-browser/v10s")                       # after huggingface-cli download cklxx/laya-browser
+agent = veya.load("veya-browser/v10s")                       # after huggingface-cli download cklxx/veya-browser
 agent.cfg["head_max_len"] = agent.cfg["head_max_len_train"]  # 768; the config records the input format too
 ```
 
@@ -45,7 +45,7 @@ Every step is a script in `code/finetune/` of the Hub repo; `run_v10.sh` / `run_
    as the field's current value.
 6. **On-policy corrections** (DAgger, 177): run real tasks with the current model, ask a local LLM at
    each step, keep its verdict with the model's own state.
-7. **Build → train → calibrate → eval**: Laya's RLCD recipe (gold-distribution soft targets + noisy-logit policy gradient + soft CE),
+7. **Build → train → calibrate → eval**: Veya's RLCD recipe (gold-distribution soft targets + noisy-logit policy gradient + soft CE),
    single GPU, no gradient checkpointing, 4 epochs (~2 h for 421M, ~1 h for 322M), post-hoc
    temperature, held-out pages / websites for eval.
 
@@ -78,8 +78,8 @@ than any data change: Mind2Web click top-1 0.44 → 0.51 and the live suite 6/16
 ## Reproduce
 
 ```bash
-huggingface-cli download cklxx/laya-browser --local-dir laya-browser
-cd laya-browser/code && uv sync --extra fast
+huggingface-cli download cklxx/veya-browser --local-dir veya-browser
+cd veya-browser/code && uv sync --extra fast
 uv run python verify.py v10s            # downloads the checkpoint, answers one recorded browser step
 ```
 

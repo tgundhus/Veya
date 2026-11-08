@@ -1,7 +1,7 @@
 """Decide whether pip-audit's reports pass: the dependency audit's policy, in one place.
 
 pip-audit fails on every advisory it finds. A few have no fixed release anywhere and cannot be
-reached through Laya-Pro -- a hole in a server this package never starts, in a package only an
+reached through Veya -- a hole in a server this package never starts, in a package only an
 optional integration pulls in -- and a check that is red for those is red for everything, so it
 stops being read. This script reads pip-audit's JSON reports and fails on:
 

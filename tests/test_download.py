@@ -1,6 +1,6 @@
 """Checkpoint download regression tests; tiny local weights, no network required.
 
-Also pins the `LAYA_REVISION` lever of `laya/revisions.py`: which revision reaches `snapshot_download`,
+Also pins the `VEYA_REVISION` lever of `veya/revisions.py`: which revision reaches `snapshot_download`,
 what the Agent and the Router report back, and the two loads that must not see it (a local
 directory, and `common.build_model`'s training-time base encoder).
 
@@ -29,10 +29,10 @@ from tokenizers.models import WordLevel  # noqa: E402
 from torch._dynamo.eval_frame import OptimizedModule  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
 
-from laya import Agent, load  # noqa: E402
-from laya.common import DecisionModel  # noqa: E402
-from laya.revisions import PINNED_REVISIONS  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya import Agent, load  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
+from veya.revisions import PINNED_REVISIONS  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 
 class _NoRuntime:
@@ -124,11 +124,11 @@ class DownloadTests(unittest.TestCase):
 
     def test_a_checkpoint_name_or_alias_reaches_the_same_download_as_a_repo_id(self):
         # #780: `Router` resolved `english` / `typed-decisions` / `ml`, but `load()` forwarded the
-        # same word to the Hub as a repo id, so `laya.load("typed-decisions")` 404'd. One registry
+        # same word to the Hub as a repo id, so `veya.load("typed-decisions")` 404'd. One registry
         # now serves both, and this asserts the transport the name produces is the one the spelled
         # -out `repo_id` + `subfolder` pair already produces.
         for name, repo_id, subfolder in [("english", "convaiinnovations/laya", None),
-                                         ("laya", "convaiinnovations/laya", None),
+                                         ("veya", "convaiinnovations/laya", None),
                                          ("typed-decisions", "convaiinnovations/laya", "typed-decisions"),
                                          ("typed", "convaiinnovations/laya", "typed-decisions"),
                                          ("ml", "convaiinnovations/laya", "multilingual"),
@@ -174,10 +174,10 @@ class DownloadTests(unittest.TestCase):
                     torch.testing.assert_close(value, weights[name], rtol=0, atol=0)
                 self.assertEqual(agent.predict("hello", self.questions), self.expected)
 
-    # ------------------------------------------------------------------ LAYA_REVISION
+    # ------------------------------------------------------------------ VEYA_REVISION
     #
     # `PINNED_REVISIONS` published the reviewed commit of each published checkpoint and nothing in
-    # `laya/` read it, while `LAYA_SHA256_DIGESTS` -- the other half of the same opt-in pair, in
+    # `veya/` read it, while `VEYA_SHA256_DIGESTS` -- the other half of the same opt-in pair, in
     # the same module -- was already reachable from the environment. These replace only the Hub
     # transport, so the revision that reaches `snapshot_download`, the one the Agent reports back,
     # and the one a Router publishes in `loaded_revisions` (what `/health` serves) are all the real
@@ -190,9 +190,9 @@ class DownloadTests(unittest.TestCase):
         with patch.dict(os.environ), patch("huggingface_hub.snapshot_download",
                                            return_value=str(self.repo)) as download:
             if env is None:
-                os.environ.pop("LAYA_REVISION", None)
+                os.environ.pop("VEYA_REVISION", None)
             else:
-                os.environ["LAYA_REVISION"] = env
+                os.environ["VEYA_REVISION"] = env
             try:
                 agent = load(repo, device="cpu", **load_kwargs)
             except Exception as error:                # the cases below assert on it
@@ -229,7 +229,7 @@ class DownloadTests(unittest.TestCase):
         download, agent, error = self.hub_load("acme/custom-checkpoint", env="reviewed")
         self.assertIsInstance(error, ValueError)
         self.assertIn("acme/custom-checkpoint", str(error))
-        self.assertIn("LAYA_REVISION", str(error))
+        self.assertIn("VEYA_REVISION", str(error))
         self.assertIsNone(agent)
         download.assert_not_called()
 
@@ -257,31 +257,31 @@ class DownloadTests(unittest.TestCase):
 
     def test_router_publishes_the_pinned_commit(self):
         """`/health`'s `revisions` block is `Router.loaded_revisions`, so the pin shows up there."""
-        from laya import Router
+        from veya import Router
 
         bundle = "convaiinnovations/laya"
         with patch.dict(os.environ), patch("huggingface_hub.snapshot_download",
                                            return_value=str(self.repo)):
-            os.environ.pop("LAYA_REVISION", None)
+            os.environ.pop("VEYA_REVISION", None)
             unpinned = Router()
             unpinned.load("english")
             self.assertEqual(unpinned.loaded_revisions, {"english": None})
 
-            os.environ["LAYA_REVISION"] = "reviewed"
+            os.environ["VEYA_REVISION"] = "reviewed"
             pinned = Router()
             pinned.load("english")
             self.assertEqual(pinned.loaded_revisions, {"english": PINNED_REVISIONS[bundle]})
 
     def test_the_onnx_loader_resolves_through_the_same_function(self):
         """`ONNXAgent` must not grow its own copy of the rule, or the env pin covers one loader."""
-        from laya import onnx_agent, revisions
+        from veya import onnx_agent, revisions
 
         self.assertIs(onnx_agent.resolve_revision, revisions.resolve_revision)
 
     def test_the_base_encoder_load_ignores_the_environment(self):
         """`common.build_model`'s training-time load is a different repository, with no reviewed
-        SHA to resolve to, so `LAYA_REVISION` deliberately does not reach it."""
-        import laya.common as common
+        SHA to resolve to, so `VEYA_REVISION` deliberately does not reach it."""
+        import veya.common as common
 
         seen = {}
 
@@ -291,7 +291,7 @@ class DownloadTests(unittest.TestCase):
             raise RuntimeError("stop after the call")
 
         cfg = {"encoder": "unused/base-encoder", "head_layers": 1, "act_costs": {"a": 0}}
-        with patch.dict(os.environ, {"LAYA_REVISION": "reviewed"}), \
+        with patch.dict(os.environ, {"VEYA_REVISION": "reviewed"}), \
                 patch("transformers.AutoModel.from_pretrained", side_effect=from_pretrained):
             with self.assertRaises(RuntimeError):
                 common.build_model(cfg, pretrained=True)
@@ -305,7 +305,7 @@ class DownloadTests(unittest.TestCase):
         unreachable = (set(inspect.signature(Agent.__init__).parameters) - {"self"}
                        - set(inspect.signature(load).parameters))
         self.assertEqual(unreachable, set(),
-                         "laya.load cannot set: %s" % ", ".join(sorted(unreachable)))
+                         "veya.load cannot set: %s" % ", ".join(sorted(unreachable)))
 
     def test_compile_true_wraps_the_model_loaded_by_load(self):
         # The observable `Agent.__init__` produces for compile=True, reached through load().

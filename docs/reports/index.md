@@ -8,6 +8,35 @@ credibility: "Every number links to a script and a raw result in research/, or t
 
 # Consistency and speed work, September 2026
 
+The [production capabilities report](production-capabilities-2026-11-05.md) records
+verified replay, cache-aware HTTP scheduling, cross-SDK routing, release qualification
+and the fully local MCP code interface.
+
+The [checkpoint qualification investigation](checkpoint-qualification-repair-2026-11-05.md)
+reproduces the English checkpoint's errors and evaluates an optional correction
+against the original gates and separate controls.
+
+The [single-pass checkpoint repair](checkpoint-repair-2026-11-06.md) covers
+local decision-head training, fresh acceptance cases and paired deployment checks.
+
+The [level-zero score follow-up](level-zero-repair-2026-11-06.md) checks whether
+the same inference path can distinguish routine work from active disruption.
+
+The [evidence-grounding follow-up](evidence-repair-2026-11-06.md) evaluates
+current-versus-historical contrasts and an independent acceptance set.
+
+The [choice-only routing repair](routing-repair-2026-11-06.md) checks routing
+changes and score preservation through the same single-pass runtime.
+
+The [score and boundary repair](score-boundary-repair-2026-11-06.md) checks
+ordinal scores and uncertainty while protecting choice and binary decisions.
+
+The [ordinal continuation](ordinal-continuation-2026-11-06.md) tests the
+wider checkpoint on fresh score cases and audits which levels form near ties.
+
+The [5 November runtime adoption report](runtime-adoption-2026-11-05.md) records
+required decision storage, experimental HTTP microbatching and selected upstream fixes.
+
 This work set out to answer three questions about Laya's decisions:
 
 1. Are they more repeatable than Jev's?

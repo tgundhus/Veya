@@ -6,9 +6,9 @@ import unittest
 import urllib.error
 from unittest.mock import patch
 
-from laya_client import (
-    LayaAPIError, LayaClient, LayaConnectionError, LayaResponseError,
-    LayaTimeoutError, LayaValidationError,
+from veya_client import (
+    VeyaAPIError, VeyaClient, VeyaConnectionError, VeyaResponseError,
+    VeyaTimeoutError, VeyaValidationError,
 )
 from _support import PREDICTION, QUESTIONS, Server
 
@@ -20,9 +20,9 @@ class ClientTests(unittest.TestCase):
         questions["team"]["option_order"] = [1, 0]
         original = copy.deepcopy((state, questions))
         with Server() as server:
-            result = LayaClient(base_url=server.url + "/proxy/laya/", api_key="secret").predict(state, questions)
+            result = VeyaClient(base_url=server.url + "/proxy/veya/", api_key="secret").predict(state, questions)
         method, path, headers, raw = server.requests[0]
-        self.assertEqual((method, path), ("POST", "/proxy/laya/v1/systemone"))
+        self.assertEqual((method, path), ("POST", "/proxy/veya/v1/systemone"))
         self.assertEqual(headers["Authorization"], "Bearer secret")
         self.assertEqual(headers["Content-Type"], "application/json")
         self.assertEqual(headers["Accept"], "application/json")
@@ -34,7 +34,7 @@ class ClientTests(unittest.TestCase):
         controls = dict(model="registered-checkpoint", task="helpdesk", lang="de",
                         lang_guess="de-AT", max_len=128, head_max_len=64, min_confidence=0.0)
         with Server() as server:
-            LayaClient(base_url=server.url).predict("hello", QUESTIONS, timeout=2, **controls)
+            VeyaClient(base_url=server.url).predict("hello", QUESTIONS, timeout=2, **controls)
         body = json.loads(server.requests[0][3])
         self.assertEqual(body, {"state": "hello", "questions": QUESTIONS, **controls})
         self.assertNotIn("Authorization", server.requests[0][2])
@@ -42,18 +42,18 @@ class ClientTests(unittest.TestCase):
     def test_threshold_names_follow_core_buckets(self):
         thresholds = {"default": 0.9, "choice:3-5": 0.0}
         with Server() as server:
-            LayaClient(base_url=server.url).predict("hello", QUESTIONS, min_confidence=thresholds)
+            VeyaClient(base_url=server.url).predict("hello", QUESTIONS, min_confidence=thresholds)
         self.assertEqual(json.loads(server.requests[0][3])["min_confidence"], thresholds)
 
     def test_shared_references_are_not_cycles(self):
         shared = {"flag": False}
         with Server() as server:
-            LayaClient(base_url=server.url).predict([shared, shared], QUESTIONS)
+            VeyaClient(base_url=server.url).predict([shared, shared], QUESTIONS)
         self.assertEqual(json.loads(server.requests[0][3])["state"], [shared, shared])
 
     def test_constructor_does_not_connect(self):
         with patch("urllib.request.build_opener", side_effect=AssertionError("unexpected connection")):
-            client = LayaClient(api_key="private-token")
+            client = VeyaClient(api_key="private-token")
         self.assertNotIn("private-token", repr(client))
 
     def test_invalid_urls(self):
@@ -62,23 +62,23 @@ class ClientTests(unittest.TestCase):
                     "http://localhost#x", " http://localhost", "http://localhost/a b",
                     "http://localhost:99999", "http://localhost:abc", "http://[broken", "http://本地",
                     "http://localhost/?", "http://localhost/#", "http://local\x00host"):
-            with self.subTest(url=url), self.assertRaises(LayaValidationError):
-                LayaClient(base_url=url)
+            with self.subTest(url=url), self.assertRaises(VeyaValidationError):
+                VeyaClient(base_url=url)
 
     def test_invalid_tokens_do_not_leak(self):
         for token in ("", 123, " secret", "secret\nheader", "secret\x7f", "密钥"):
-            with self.subTest(token=token), self.assertRaises(LayaValidationError) as failure:
-                LayaClient(api_key=token)
+            with self.subTest(token=token), self.assertRaises(VeyaValidationError) as failure:
+                VeyaClient(api_key=token)
             self.assertNotIn("secret", str(failure.exception))
 
     def test_invalid_timeout_before_network(self):
         for timeout in (0, -1, True, "2", float("nan"), float("inf"), 10 ** 400):
-            with self.subTest(timeout=repr(timeout)[:30]), self.assertRaises(LayaValidationError):
-                LayaClient(timeout=timeout)
+            with self.subTest(timeout=repr(timeout)[:30]), self.assertRaises(VeyaValidationError):
+                VeyaClient(timeout=timeout)
         with Server() as server:
-            client = LayaClient(base_url=server.url)
+            client = VeyaClient(base_url=server.url)
             for timeout in (0, -1, True, "2", float("nan"), float("inf")):
-                with self.subTest(timeout=timeout), self.assertRaises(LayaValidationError):
+                with self.subTest(timeout=timeout), self.assertRaises(VeyaValidationError):
                     client.predict("hello", QUESTIONS, timeout=timeout)
             self.assertEqual(server.requests, [])
 
@@ -91,9 +91,9 @@ class ClientTests(unittest.TestCase):
         states = [None, True, 2, 1.5, (), {"x": object()}, {"x": (1, 2)}, {1: "rewritten"},
                   {"x": float("nan")}, {"x": float("inf")}, cyclic, deep, "\ud800"]
         with Server() as server:
-            client = LayaClient(base_url=server.url)
+            client = VeyaClient(base_url=server.url)
             for i, state in enumerate(states):
-                with self.subTest(case=i), self.assertRaises(LayaValidationError):
+                with self.subTest(case=i), self.assertRaises(VeyaValidationError):
                     client.predict(state, QUESTIONS)
             self.assertEqual(server.requests, [])
 
@@ -101,9 +101,9 @@ class ClientTests(unittest.TestCase):
         cases = [None, [], {}, {"x": None}, {"x": {"type": "unknown", "instructions": ""}},
                  {"x": {"type": "choice"}}, {42: QUESTIONS["refund"]}]
         with Server() as server:
-            client = LayaClient(base_url=server.url)
+            client = VeyaClient(base_url=server.url)
             for questions in cases:
-                with self.subTest(questions=questions), self.assertRaises(LayaValidationError):
+                with self.subTest(questions=questions), self.assertRaises(VeyaValidationError):
                     client.predict("hello", questions)
             self.assertEqual(server.requests, [])
 
@@ -114,9 +114,9 @@ class ClientTests(unittest.TestCase):
                  {"min_confidence": {}}, {"min_confidence": {"default": False}},
                  {"min_confidence": {"default": float("nan")}}, {"min_confidence": {1: 0.5}}]
         with Server() as server:
-            client = LayaClient(base_url=server.url)
+            client = VeyaClient(base_url=server.url)
             for controls in cases:
-                with self.subTest(controls=controls), self.assertRaises(LayaValidationError):
+                with self.subTest(controls=controls), self.assertRaises(VeyaValidationError):
                     client.predict("hello", QUESTIONS, **controls)
             with self.assertRaises(TypeError):
                 client.predict("hello", QUESTIONS, hooks=object())
@@ -126,19 +126,19 @@ class ClientTests(unittest.TestCase):
         for payload in ({"status": "ok"}, {"status": "ok", "loaded": ["new-model"], "device": "cpu",
                                          "new_metadata": {"capability": True}}):
             with self.subTest(payload=payload), Server(payload) as server:
-                self.assertEqual(LayaClient(base_url=server.url).health(), payload)
+                self.assertEqual(VeyaClient(base_url=server.url).health(), payload)
             self.assertEqual(server.requests[0][0], "GET")
             self.assertEqual(server.requests[0][3], b"")
 
     def test_health_does_not_invent_authentication(self):
         with Server({"status": "ok"}) as server:
-            result = LayaClient(base_url=server.url, api_key="wrong").health()
+            result = VeyaClient(base_url=server.url, api_key="wrong").health()
         self.assertEqual(result, {"status": "ok"})
         self.assertNotIn("authenticated", result)
 
     def test_strict_response_does_not_invent_abstention(self):
         with Server() as server:
-            result = LayaClient(base_url=server.url).predict("hello", QUESTIONS, min_confidence=0.99)
+            result = VeyaClient(base_url=server.url).predict("hello", QUESTIONS, min_confidence=0.99)
         self.assertNotIn("routing", result)
         for answer in result["answers"].values():
             self.assertNotIn("answer_confidence", answer)
@@ -157,7 +157,7 @@ class ClientTests(unittest.TestCase):
                     answer_confidence=1.0, x_tournament={"finalists": ["billing"], "rounds": 2},
                     abstention="passed", abstention_threshold=0.8, new_answer_field=[False])
         with Server(payload) as server:
-            result = LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+            result = VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
         self.assertEqual(result, payload)
 
     def test_invalid_responses(self):
@@ -185,92 +185,92 @@ class ClientTests(unittest.TestCase):
         del p["answers"]["refund"]
         cases.append(p)
         for i, payload in enumerate(cases):
-            with self.subTest(case=i), Server(payload) as server, self.assertRaises(LayaResponseError):
-                LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+            with self.subTest(case=i), Server(payload) as server, self.assertRaises(VeyaResponseError):
+                VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
 
     def test_invalid_json_successes(self):
         for raw in (b"<html>wrong upstream</html>", b"null", b"[]", b"{}",
                     b'{"x": NaN}', b"\xff", b'{"x": Infinity}'):
-            with self.subTest(raw=raw), Server(raw=raw) as server, self.assertRaises(LayaResponseError):
-                LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+            with self.subTest(raw=raw), Server(raw=raw) as server, self.assertRaises(VeyaResponseError):
+                VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
 
     def test_invalid_health(self):
         for raw in (b"[]", b"null", b'{"status":"starting"}', b'{"loaded":[]}'):
-            with self.subTest(raw=raw), Server(raw=raw) as server, self.assertRaises(LayaResponseError):
-                LayaClient(base_url=server.url).health()
+            with self.subTest(raw=raw), Server(raw=raw) as server, self.assertRaises(VeyaResponseError):
+                VeyaClient(base_url=server.url).health()
 
     def test_http_status_and_structured_details(self):
         for status in (400, 401, 413, 422, 500, 503):
             detail = [{"loc": ["body", "model"], "msg": "invalid"}]
             with self.subTest(status=status), Server({"detail": detail}, status=status) as server:
-                with self.assertRaises(LayaAPIError) as failure:
-                    LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+                with self.assertRaises(VeyaAPIError) as failure:
+                    VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
             self.assertEqual(failure.exception.status_code, status)
             self.assertEqual(failure.exception.detail, detail)
             self.assertEqual(len(server.requests), 1)
 
     def test_non_json_error_keeps_http_status(self):
         with Server(raw=b"<html>proxy unavailable</html>", status=503) as server:
-            with self.assertRaises(LayaAPIError) as failure:
-                LayaClient(base_url=server.url).health()
+            with self.assertRaises(VeyaAPIError) as failure:
+                VeyaClient(base_url=server.url).health()
         self.assertEqual(failure.exception.status_code, 503)
         self.assertIn("proxy unavailable", failure.exception.detail)
 
     def test_error_detail_shapes(self):
         for detail in ("bad request", {"reason": "limit"}, None):
             with self.subTest(detail=detail), Server({"detail": detail}, status=422) as server:
-                with self.assertRaises(LayaAPIError) as failure:
-                    LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+                with self.assertRaises(VeyaAPIError) as failure:
+                    VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
             self.assertEqual(failure.exception.detail, detail)
 
     def test_deep_error_json_keeps_http_status(self):
         raw = b"[" * 2000 + b"0" + b"]" * 2000
         with Server(raw=raw, status=500) as server:
-            with self.assertRaises(LayaAPIError) as failure:
-                LayaClient(base_url=server.url).health()
+            with self.assertRaises(VeyaAPIError) as failure:
+                VeyaClient(base_url=server.url).health()
         self.assertEqual(failure.exception.status_code, 500)
 
     def test_redirect_never_forwards_token_or_replays(self):
         with Server() as other:
             for status in (301, 302, 303, 307, 308):
                 with self.subTest(status=status), Server(status=status, headers={"Location": other.url}) as server:
-                    with self.assertRaises(LayaAPIError) as failure:
-                        LayaClient(base_url=server.url, api_key="secret").predict("hello", QUESTIONS)
+                    with self.assertRaises(VeyaAPIError) as failure:
+                        VeyaClient(base_url=server.url, api_key="secret").predict("hello", QUESTIONS)
                 self.assertEqual(failure.exception.status_code, status)
                 self.assertEqual(len(server.requests), 1)
             self.assertEqual(other.requests, [])
 
     def test_timeout_does_not_retry(self):
         with Server(slow=True) as server:
-            with self.assertRaises(LayaTimeoutError):
-                LayaClient(base_url=server.url, timeout=2).predict("hello", QUESTIONS, timeout=0.1)
+            with self.assertRaises(VeyaTimeoutError):
+                VeyaClient(base_url=server.url, timeout=2).predict("hello", QUESTIONS, timeout=0.1)
             self.assertEqual(len(server.requests), 1)
 
     def test_connection_refused(self):
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             url = "http://127.0.0.1:%d" % listener.getsockname()[1]
-            with self.assertRaises(LayaConnectionError):
-                LayaClient(base_url=url, timeout=0.5).health()
+            with self.assertRaises(VeyaConnectionError):
+                VeyaClient(base_url=url, timeout=0.5).health()
 
     def test_interrupted_response(self):
         with Server(truncated=True) as server:
-            with self.assertRaises(LayaConnectionError):
-                LayaClient(base_url=server.url).predict("hello", QUESTIONS)
+            with self.assertRaises(VeyaConnectionError):
+                VeyaClient(base_url=server.url).predict("hello", QUESTIONS)
 
     def test_response_is_closed_on_decode_error(self):
         stream = io.BytesIO(b"invalid")
         with patch("urllib.request.OpenerDirector.open", return_value=stream):
-            with self.assertRaises(LayaResponseError):
-                LayaClient().health()
+            with self.assertRaises(VeyaResponseError):
+                VeyaClient().health()
         self.assertTrue(stream.closed)
 
     def test_http_error_stream_is_closed(self):
         stream = io.BytesIO(b'{"detail":"no"}')
         error = urllib.error.HTTPError("http://localhost", 401, "Unauthorized", {}, stream)
         with patch("urllib.request.OpenerDirector.open", side_effect=error):
-            with self.assertRaises(LayaAPIError):
-                LayaClient().health()
+            with self.assertRaises(VeyaAPIError):
+                VeyaClient().health()
         self.assertTrue(stream.closed)
 
 

@@ -17,12 +17,12 @@ sys.path.insert(0, str(ROOT))
 os.environ.setdefault("USE_TF", "0")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 import torch  # noqa: E402
-import laya  # noqa: E402
+import veya  # noqa: E402
 from bench_long_context import FILLER, QUESTIONS  # noqa: E402
-import laya.common as common  # noqa: E402
+import veya.common as common  # noqa: E402
 
-agent_module = importlib.import_module("laya.agent")
-after_batch = laya.Agent.predict_batch
+agent_module = importlib.import_module("veya.agent")
+after_batch = veya.Agent.predict_batch
 
 
 def original_function(base, file, name, namespace, cls=None):
@@ -40,7 +40,7 @@ def original_function(base, file, name, namespace, cls=None):
 
 @contextlib.contextmanager
 def mode(name, before_batch):
-    with patch.object(laya.Agent, "predict_batch", before_batch if name == "before" else after_batch):
+    with patch.object(veya.Agent, "predict_batch", before_batch if name == "before" else after_batch):
         yield
 
 
@@ -84,7 +84,7 @@ def main():
     before_build = original_function(args.baseline_ref, "laya/common.py", "build_sequence", dict(common.__dict__))
     before_batch = original_function(args.baseline_ref, "laya/agent.py", "predict_batch",
                                     dict(agent_module.__dict__, build_sequence=before_build), cls="Agent")
-    agent = laya.Agent(args.model, revision=args.revision, device=args.device, fast=False, compile=False)
+    agent = veya.Agent(args.model, revision=args.revision, device=args.device, fast=False, compile=False)
     # First seed-13 MASSIVE English regression case, combined with the long-context filler.
     # This is a latency workload; no dataset accuracy is claimed for the padded input.
     case = {"state": {"utterance": "wake me up at five am this week"},

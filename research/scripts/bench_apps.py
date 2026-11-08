@@ -36,10 +36,10 @@ import numpy as np  # noqa: E402
 import torch  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, REPO)   # `import laya` works without an installed package
+sys.path.insert(0, REPO)   # `import veya` works without an installed package
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import laya  # noqa: E402
+import veya  # noqa: E402
 from bench_local import load, metrics, score_cases, softmax_t, temp_for  # noqa: E402
 
 OUT = os.path.join(REPO, "research", "app_benchmark_results.json")
@@ -161,7 +161,7 @@ def build():
         d = load_dataset("SetFit/enron_spam", split="test")
         cases, gold = [], []
         for r in list(d)[:N]:
-            st = laya.email_state(r.get("subject") or "", (r.get("message") or "")[:3000])
+            st = veya.email_state(r.get("subject") or "", (r.get("message") or "")[:3000])
             cases.append((st, {"is_spam": {"type": "noul",
                                            "instructions": "Is this email unsolicited spam or bulk marketing?"}}))
             gold.append(int(r["label"]))
@@ -274,7 +274,7 @@ def main():
     print("=== building suites (N=%d per task) ===\n" % N, flush=True)
     build()
     results = {"meta": {"timestamp": time.strftime("%Y-%m-%d %H:%M:%S"), "device": "cpu",
-                        "n_per_task": N, "seed": SEED, "laya": laya.__version__},
+                        "n_per_task": N, "seed": SEED, "laya": veya.__version__},
                "jev_published": JEV_PUBLISHED, "suites": {}}
     for mname in ("english", "multilingual", "typed-decisions"):
         print("\n=== %s ===" % mname, flush=True)

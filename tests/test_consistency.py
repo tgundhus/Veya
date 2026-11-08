@@ -21,11 +21,12 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-import laya  # noqa: E402
-import laya.consistency as consistency  # noqa: E402
-from laya import DecisionCache, Router, decision_margins  # noqa: E402
-from laya.agent import Agent, _checkpoint_signature  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+import veya  # noqa: E402
+import veya.consistency as consistency  # noqa: E402
+from veya import DecisionCache, Router, decision_margins  # noqa: E402
+from veya.agent import Agent, _checkpoint_signature  # noqa: E402
+from veya.errors import DecisionCacheError  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -57,7 +58,7 @@ def check_raises(name, exc, fn):
 
 
 class Clock:
-    """Stands in for `laya.consistency._now` so expiry is tested without sleeping."""
+    """Stands in for `veya.consistency._now` so expiry is tested without sleeping."""
 
     def __init__(self, t=1_000_000.0):
         self.t = t
@@ -116,7 +117,7 @@ class CountingAgent:
 
     def predict_batch(self, states, questions, batch_size=None, **overrides):
         self.calls.append((list(states), overrides))
-        return [{"model": "laya-rl-agent",
+        return [{"model": "veya-rl-agent",
                  "answers": {q: {"type": "noul", "noul": self.answer} for q in questions},
                  "usage": {"input_tokens": len(str(s)), "output_tokens": 0}} for s in states]
 
@@ -268,6 +269,36 @@ r.predict("one", Q)
 check("maxsize/the oldest decision left first", len(en.calls), 4)
 r.predict("three", Q)
 check("maxsize/newer decisions stay", len(en.calls), 4)
+
+for required in (False, True):
+    cache = DecisionCache(maxsize=2, eviction="lru", required=required)
+    r, en, _ = router_with(cache)
+    r.predict("hot", Q)
+    r.predict("cold", Q)
+    en.answer = 0.2
+    replayed = r.predict("hot", Q)
+    r.predict("new", Q)
+    r.predict("hot", Q)
+    check("lru/%s/a live hit survives capacity eviction" % required, len(en.calls), 3)
+    check("lru/%s/promotion keeps the stored first answer" % required,
+          replayed["answers"]["billing"]["noul"], 0.7)
+    r.predict("cold", Q)
+    check("lru/%s/the unread entry was evicted" % required, len(en.calls), 4)
+    cache.close()
+
+memory = consistency._MemoryStore(2, eviction="lru")
+memory.add([(b"live", b"winner", 100), (b"expired", b"old", 1)], 0)
+memory.get(b"live", .5)
+memory.add([(b"fresh", b"new", 100)], 2)
+check("lru/expiry reclamation preserves promoted live entries", memory.get(b"live", 2), (b"winner", 100))
+check("lru/a hit does not extend expiry", memory.get(b"live", 100), None)
+memory.renew(b"live", 200, 101)
+check("lru/renewal cannot resurrect an expired entry", memory.get(b"live", 101), None)
+check_raises("lru/unknown policy is refused", ValueError, lambda: DecisionCache(eviction="lfu"))
+check_raises("lru/SQLite cannot silently ignore the policy", ValueError,
+             lambda: DecisionCache("unused.sqlite", eviction="lru"))
+check_raises("lru/a custom store owns its policy", ValueError,
+             lambda: DecisionCache(store=object(), eviction="lru"))
 
 cache = DecisionCache(maxsize=2, ttl=lambda questions, result: 1 if result["answers"]["billing"]["noul"] < 0.5 else 100)
 r, en, _ = router_with(cache)
@@ -553,7 +584,7 @@ class OnnxLike(CountingAgent):
 
 
 cache = DecisionCache()
-keys = [cache._keys(laya.PredictContext(states=[STATE], questions=Q, model="english", agent=agent_cls()),
+keys = [cache._keys(veya.PredictContext(states=[STATE], questions=Q, model="english", agent=agent_cls()),
                     [STATE], False)[0] for agent_cls in (CountingAgent, Int8, OnnxLike)]
 check("backends/fp32, int8 and ONNX of one checkpoint share a key", len(set(keys)), 1)
 r_fp32, fp32, _ = router_with(cache, english=CountingAgent(0.7))
@@ -609,7 +640,7 @@ def make_fake():
 
     def _encode_state(state, ids, internal, **overrides):
         fake.encoded.append(state)
-        # The per-row truncation report `predict_batch` reads (laya 0.3.29); nothing is cut here.
+        # The per-row truncation report `predict_batch` reads (veya 0.3.29); nothing is cut here.
         stats = {"state_tokens": 3, "state_tokens_used": 3, "state_tokens_dropped": 0, "truncated": False}
         return [{"ids": [1, 2, 3], "markers": [0, 1], "qtype": 2, "state": state, "state_stats": stats}
                 for _ in ids]
@@ -841,6 +872,64 @@ for backend, factory in (("torch", make_scanner), ("onnx", make_onnx_scanner)):
               {"index": 5, "token_start": 160, "token_end": 224, "count": 7})
         check("%s/cache attribution: %s duplicate inference count" % (backend, phase),
               result["usage"]["windows"], 2 if phase == "coalesced" else 0)
+
+# Required storage runs after user transformations, but its internal scan probe observes the
+# actual cache-reduced inference input. Canonical decoded answers retain only proven origins.
+for backend, factory in (("torch", make_scanner), ("onnx", make_onnx_scanner)):
+    cache = DecisionCache(required=True)
+    scanner = factory([cache])
+    first = scanner.predict_long(DOC, TEAM, window=80, stride=50)
+    rows = sum(scanner.rows)
+    second = scanner.predict_long(DOC, TEAM, window=80, stride=50)
+    check("%s/required scan: fresh canonical answer retains its span" % backend,
+          first["answers"]["team"]["window"]["index"], 0)
+    check("%s/required scan: replay retains its span" % backend, second["answers"], first["answers"])
+    check("%s/required scan: no replay window reached inference" % backend,
+          (sum(scanner.rows), second["usage"]["windows"]), (rows, 0))
+    third = scanner.predict_long(DOC + " and a tail the first document did not have", TEAM, window=80, stride=50)
+    check("%s/required scan: a partial hit has a verified span" % backend, "window" in third["answers"]["team"], True)
+    check_true("%s/required scan: only missed windows are counted" % backend,
+               0 < third["usage"]["windows"] < third["answers"]["team"]["window"]["count"])
+
+    scanner = factory([DecisionCache(required=True)])
+    duplicate = scanner.predict_long("a" * 250, TEAM, window=64, stride=32)
+    repeated = scanner.predict_long("a" * 250, TEAM, window=64, stride=32)
+    check("%s/required scan: duplicate windows retain the deciding origin" % backend,
+          duplicate["answers"]["team"]["window"]["index"], 0)
+    check("%s/required scan: duplicate replay has no inference windows" % backend,
+          (repeated["answers"], repeated["usage"]["windows"]), (duplicate["answers"], 0))
+
+    def reverse_required(ctx):
+        ctx.results.reverse()
+
+    def clone_required(ctx):
+        ctx.results = copy.deepcopy(ctx.results)
+
+    def edit_required(ctx):
+        ctx.results[0]["answers"]["team"]["probabilities"]["billing"] = 0.94
+
+    for transform in (reverse_required, clone_required, edit_required):
+        cache = DecisionCache(required=True)
+        scanner = factory([cache])
+        try:
+            scanner.predict_long(DOC, TEAM, window=80, stride=50, on_predict_end=transform)
+        except DecisionCacheError:
+            refused = True
+        else:
+            refused = False
+        check("%s/required scan: %s refuses unverified bindings" % (backend, transform.__name__), refused, True)
+        check("%s/required scan: %s commits no misbound result" % (backend, transform.__name__),
+              (cache.cache_info()["size"], bool(cache._inflight)), (0, False))
+
+    def annotate_required(ctx):
+        for result in ctx.results:
+            result["answers"]["team"]["review_requested"] = True
+
+    scanner = factory([DecisionCache(required=True)])
+    annotated = scanner.predict_long(DOC, TEAM, window=80, stride=50, on_predict_end=annotate_required)
+    check("%s/required scan: annotations retain a verified origin" % backend,
+          (annotated["answers"]["team"]["review_requested"], "window" in annotated["answers"]["team"]), (True, True))
+
 
 # Router.predict_long scans every window; Router.predict reads one. They must not share an entry.
 cache = DecisionCache()
@@ -1124,12 +1213,12 @@ check("memory/the rest stay", len(store), 5)
 
 # --------------------------------------------------------------- exports
 for name in ("DecisionCache", "DecisionStore", "decision_margins"):
-    check_true("export/%s is in __all__" % name, name in laya.__all__)
+    check_true("export/%s is in __all__" % name, name in veya.__all__)
 
 # --------------------------------------------------------------- the archived Feishu runs
-# research/benchmarks/feishu_zh keeps three repeats of 64 cases for Jev and Laya. An answer that
+# research/benchmarks/feishu_zh keeps three repeats of 64 cases for Jev and Veya. An answer that
 # changed side between Jev's runs must sit inside a 0.1 margin in every run, while that band
-# flags only a few percent of all answers; Laya's repeats must be identical.
+# flags only a few percent of all answers; Veya's repeats must be identical.
 ARCHIVE = os.path.join(ROOT, "research", "benchmarks", "feishu_zh", "results", "v1")
 THRESHOLDS = {"related": 0.5, "action": 0.5, "urgent": 0.75, "value": 0.5}
 for backend in ("jev", "laya"):
@@ -1164,8 +1253,8 @@ for backend in ("jev", "laya"):
         # `confidence`, which Jev computes below the precision it prints probabilities at.
         check("archive/jev responses identical across three runs", identical, 29)
     else:
-        check("archive/laya never changed an answer", unstable, 0)
-        check("archive/laya responses identical across three runs", identical, len(groups))
+        check("archive/veya never changed an answer", unstable, 0)
+        check("archive/veya responses identical across three runs", identical, len(groups))
 
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:

@@ -81,7 +81,7 @@ if len(od) > 1:
 
 check_true("pyproject/core parses", len(core) == 5, core)
 check("pyproject/extra tables found", sorted(extras),
-       ["agno", "crewai", "fast", "langchain", "langgraph", "llamaindex", "mcp", "onnx", "serve",
+       ["agno", "codemode", "crewai", "fast", "langchain", "langgraph", "llamaindex", "mcp", "onnx", "replay", "serve",
         "structured"])
 declared = list(core) + [s for names in extras.values() for s in names]
 expected = sorted(set(declared))
@@ -89,7 +89,7 @@ check("pyproject/extras add names the core does not have",
        sorted({re.split(r"[<>=!;\[ ]", s)[0] for s in declared}
               - {re.split(r"[<>=!;\[ ]", s)[0] for s in core}),
        ["agno", "crewai", "fastapi", "langchain-core", "langgraph", "llama-index-core", "mcp", "onnx",
-        "onnxruntime", "onnxscript", "pydantic", "python-multipart", "tilelang", "uvicorn"])
+        "onnxruntime", "onnxscript", "psutil", "pydantic", "python-multipart", "quickjs-ng", "tilelang", "uvicorn"])
 
 # ---------------------------------------------------------------- the job's own extractor
 deps_job = "\n".join(section(read(os.path.join(".github", "workflows", "security.yml")),

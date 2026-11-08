@@ -19,14 +19,14 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from laya import router, shortlist  # noqa: E402
+from veya import router, shortlist  # noqa: E402
 
 
 def baseline_module(name, revision):
     source = subprocess.check_output(
         ["git", "show", "%s:laya/%s.py" % (revision, name)], cwd=ROOT
     ).decode("utf-8")
-    module = types.ModuleType("laya._bench_baseline_" + name)
+    module = types.ModuleType("veya._bench_baseline_" + name)
     module.__package__ = "laya"
     sys.modules[module.__name__] = module
     exec(compile(source, "<%s:laya/%s.py>" % (revision, name), "exec"), module.__dict__)

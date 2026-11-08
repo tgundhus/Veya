@@ -16,11 +16,11 @@ import torch.nn as nn
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.agent import (  # noqa: E402
+from veya.agent import (  # noqa: E402
     MPS_AMP_MIN_ROWS_DEFAULT, Agent, _BATCH_AUTOCAST_CACHE, _amp_context, _cpu_amp_dtype,
     _cuda_amp_dtype, _mps_amp_min_rows,
 )
-from laya.common import DecisionModel, build_sequence, serialize_state  # noqa: E402
+from veya.common import DecisionModel, build_sequence, serialize_state  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -248,51 +248,64 @@ check("dtype_for/amp disabled is fp32", _mps_agent(amp=False).dtype_for(100), to
 check("dtype_for/cpu bf16 not gated by rows", cpu.dtype_for(1), torch.bfloat16)
 check("dtype_for/plain cpu is fp32", _bare_agent(FakeModel()).dtype_for(1), torch.float32)
 
-os.environ["LAYA_MPS_AMP_MIN_ROWS"] = "2"
+os.environ["VEYA_MPS_AMP_MIN_ROWS"] = "2"
 check("mps-gate/env override", _mps_amp_min_rows(), 2)
-os.environ["LAYA_MPS_AMP_MIN_ROWS"] = "nonsense"
+os.environ["VEYA_MPS_AMP_MIN_ROWS"] = "nonsense"
 check("mps-gate/env invalid falls back", _mps_amp_min_rows(), MPS_AMP_MIN_ROWS_DEFAULT)
-del os.environ["LAYA_MPS_AMP_MIN_ROWS"]
+del os.environ["VEYA_MPS_AMP_MIN_ROWS"]
 check("mps-gate/env default", _mps_amp_min_rows(), MPS_AMP_MIN_ROWS_DEFAULT)
 
-os.environ.pop("LAYA_CUDA_AMP", None)
+os.environ.pop("VEYA_CUDA_AMP", None)
 check("cuda-amp/checkpoint default wins when unset", _cuda_amp_dtype("bf16"), torch.bfloat16)
 check("cuda-amp/no checkpoint value means fp16", _cuda_amp_dtype(None), torch.float16)
-os.environ["LAYA_CUDA_AMP"] = "fp16"
+os.environ["VEYA_CUDA_AMP"] = "fp16"
 check("cuda-amp/env fp16 overrides a bf16 checkpoint", _cuda_amp_dtype("bf16"), torch.float16)
-os.environ["LAYA_CUDA_AMP"] = "BF16"
+os.environ["VEYA_CUDA_AMP"] = "BF16"
 check("cuda-amp/env bf16 overrides an fp16 checkpoint", _cuda_amp_dtype("fp16"), torch.bfloat16)
-os.environ["LAYA_CUDA_AMP"] = "int8"
-check("cuda-amp/env invalid falls back to the checkpoint", _cuda_amp_dtype("bf16"), torch.bfloat16)
+os.environ["VEYA_CUDA_AMP"] = "int8"
+try:
+    _cuda_amp_dtype("bf16")
+    invalid_precision = None
+except ValueError as exc:
+    invalid_precision = str(exc)
+check("cuda-amp/env invalid raises and names the value",
+      invalid_precision is not None and "'int8'" in invalid_precision, True)
+for spelling in ("fp32", "Float32", " fp32\n"):
+    os.environ["VEYA_CUDA_AMP"] = spelling
+    check("cuda-amp/%r disables reduced precision" % spelling, _cuda_amp_dtype("bf16"), torch.float32)
+os.environ["VEYA_CUDA_AMP"] = " bf16\n"
+check("cuda-amp/half precision is trimmed", _cuda_amp_dtype("fp16"), torch.bfloat16)
+os.environ["VEYA_CUDA_AMP"] = " \t"
+check("cuda-amp/whitespace means unset", _cuda_amp_dtype("bf16"), torch.bfloat16)
 # `agent.dtype` reports float16 and bfloat16, so those are the spellings a caller can read off one
-# response and ask for on the next. laya/agent.py has accepted both from the start; both prose
+# response and ask for on the next. veya/agent.py has accepted both from the start; both prose
 # sites that listed the vocabulary described them as inert, and tests/test_env_docs.py now holds
 # every page that names a dtype to the tuples above.
-os.environ["LAYA_CUDA_AMP"] = "float16"
+os.environ["VEYA_CUDA_AMP"] = "float16"
 check("cuda-amp/env float16 is the same ask as fp16", _cuda_amp_dtype("bf16"), torch.float16)
-os.environ["LAYA_CUDA_AMP"] = "BFloat16"
+os.environ["VEYA_CUDA_AMP"] = "BFloat16"
 check("cuda-amp/env bfloat16 is the same ask as bf16", _cuda_amp_dtype("fp16"), torch.bfloat16)
-del os.environ["LAYA_CUDA_AMP"]
+del os.environ["VEYA_CUDA_AMP"]
 
 # CPU has its own vocabulary and it is the narrower one: bf16 only. No arm reached this comparison
 # before -- the agents in this file hand-set `dtype` and `amp_enabled` through `_bare_agent`, so
 # the value the documentation promises was never the value anything checked.
-os.environ.pop("LAYA_CPU_AMP", None)
+os.environ.pop("VEYA_CPU_AMP", None)
 check("cpu-amp/unset leaves the forward fp32", _cpu_amp_dtype(), None)
-os.environ["LAYA_CPU_AMP"] = "bf16"
+os.environ["VEYA_CPU_AMP"] = "bf16"
 check("cpu-amp/env bf16 opts in", _cpu_amp_dtype(), torch.bfloat16)
-os.environ["LAYA_CPU_AMP"] = "BFloat16"
+os.environ["VEYA_CPU_AMP"] = "BFloat16"
 check("cpu-amp/env bfloat16 opts in", _cpu_amp_dtype(), torch.bfloat16)
-os.environ["LAYA_CPU_AMP"] = "fp16"
+os.environ["VEYA_CPU_AMP"] = "fp16"
 check("cpu-amp/env fp16 is not offered on this device", _cpu_amp_dtype(), None)
-os.environ["LAYA_CPU_AMP"] = "int8"
+os.environ["VEYA_CPU_AMP"] = "int8"
 check("cpu-amp/env invalid leaves the forward fp32", _cpu_amp_dtype(), None)
-del os.environ["LAYA_CPU_AMP"]
+del os.environ["VEYA_CPU_AMP"]
 
 
 # ------------------------------------------------------------------ amp context shape
-# A disabled gate must never construct torch.autocast: on torch builds without an MPS
-# autocast backend, entering it raises even with enabled=False, which broke MPS predict().
+# A disabled gate must not construct torch.autocast for unsupported backends: on torch
+# builds without MPS autocast, entering it raises even with enabled=False.
 mps = torch.device("mps")
 check("amp-context/disabled mps is a no-op", isinstance(_amp_context(mps, torch.float16, False), nullcontext), True)
 with _amp_context(mps, torch.float16, False):  # must not raise
@@ -303,6 +316,18 @@ check("amp-context/disabled cpu is a no-op",
       isinstance(_amp_context(torch.device("cpu"), torch.float32, False), nullcontext), True)
 check("amp-context/enabled cpu is autocast",
       not isinstance(_amp_context(torch.device("cpu"), torch.bfloat16, True), nullcontext), True)
+
+# Only CUDA fp32 overrides caller autocast. Patching availability permits entering the
+# real CUDA autocast scopes on CPU-only builds; these checks do not run any CUDA kernels.
+with patch.object(torch.cuda, "is_available", return_value=True):
+    with torch.autocast(device_type="cuda", dtype=torch.float16, cache_enabled=False):
+        check("amp-context/caller cuda scope active", torch.is_autocast_enabled(), True)
+        with _amp_context(torch.device("cuda"), torch.float32, False):
+            check("amp-context/cuda fp32 masks caller autocast", torch.is_autocast_enabled(), False)
+            check("amp-context/cuda fp32 preserves caller cache policy", torch.is_autocast_cache_enabled(), False)
+        check("amp-context/cuda caller autocast restored", torch.is_autocast_enabled(), True)
+        with _amp_context(torch.device("cuda"), torch.float16, False):
+            check("amp-context/cuda half disabled preserves caller autocast", torch.is_autocast_enabled(), True)
 
 # the disabled path through _infer completes on a plain CPU agent
 cpu_disabled = _bare_agent(FakeModel())  # amp=False
@@ -384,7 +409,7 @@ check("oom-fallback/plain CPU reason stays None", cpu_disabled.last_fallback_rea
 
 # ------------------------------------------------------------------ example 35 must teach this policy
 # examples/35 is the page a reader opens to ask "does my machine get mixed precision?", and on main
-# it answered no twice: "CPU and MPS run **fp32**; `torch.autocast` has no MPS backend here, so Laya
+# it answered no twice: "CPU and MPS run **fp32**; `torch.autocast` has no MPS backend here, so Veya
 # only wraps the forward pass on CUDA" in the banner, then, printed under the timings, "both legs
 # used fp32 (device.type in ('cpu','mps') -> torch.float32); mixed precision would only be enabled
 # on CUDA." The MPS branch of `Agent.__init__` sets `amp_enabled = True` at `torch.float16`, and
@@ -401,7 +426,7 @@ import inspect  # noqa: E402
 import re  # noqa: E402
 import textwrap  # noqa: E402
 
-import laya.agent as laya_agent  # noqa: E402
+import veya.agent as veya_agent  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EX35 = "examples/35_device_selection_and_latency.py"
@@ -448,9 +473,9 @@ check("amp-policy/xpu autocasts at bfloat16", "self.dtype = torch.bfloat16" in B
 GATE_SRC = ast.unparse(ast.parse(textwrap.dedent(inspect.getsource(Agent._amp_enabled_for))))
 check("amp-policy/mps is gated per call by row count",
       "rows < self.mps_amp_min_rows" in GATE_SRC, True)
-READS = set(re.findall(r'"(LAYA_[A-Z0-9_]+)"', inspect.getsource(laya_agent)))
+READS = set(re.findall(r'"(VEYA_[A-Z0-9_]+)"', inspect.getsource(veya_agent)))
 check("amp-policy/the runtime reads an env var per AMP knob",
-      {"LAYA_MPS_AMP_MIN_ROWS", "LAYA_CUDA_AMP", "LAYA_CPU_AMP"} <= READS, True)
+      {"VEYA_MPS_AMP_MIN_ROWS", "VEYA_CUDA_AMP", "VEYA_CPU_AMP"} <= READS, True)
 
 strings = _strings(EX35)
 document = " ".join(strings)
@@ -483,14 +508,14 @@ check("35/carries no sentence that misstates the autocast policy", flagged, [])
 # that matches nothing would let the page go back to being wrong without anyone noticing.
 for historical in (
         "Precision follows the device -- mixed precision (bf16/fp16) is a CUDA win, while CPU and MPS"
-        " run **fp32**; `torch.autocast` has no MPS backend here, so Laya only wraps the forward pass"
+        " run **fp32**; `torch.autocast` has no MPS backend here, so Veya only wraps the forward pass"
         " on CUDA.",
         "both legs used fp32 (device.type in ('cpu','mps') -> torch.float32); mixed precision would"
         " only be enabled on CUDA."):
     check("35/the rule still catches %r" % historical[:44], _lie(historical) is not None, True)
 
 # The mechanism has to be taught by name, and the number by source rather than by hand.
-for name in ("amp_enabled", "dtype_for", "`mps_amp_min_rows`", "LAYA_MPS_AMP_MIN_ROWS"):
+for name in ("amp_enabled", "dtype_for", "`mps_amp_min_rows`", "VEYA_MPS_AMP_MIN_ROWS"):
     check("35/names %s so a reader can grep for it" % name, name in document, True)
 MPS_TARGET = re.search(r"self\.dtype = (?:torch\.(\w+)|(\w+\(\)))", BODIES["mps"])
 MPS_TARGET = MPS_TARGET.group(1) or MPS_TARGET.group(2) if MPS_TARGET else ""
@@ -521,9 +546,9 @@ check("35/asks the agent `dtype_for(rows)`", "dtype_for" in calls, True)
 check("35/observes the precision inside a real forward",
       sorted({"register_forward_hook", "is_autocast_enabled"} - calls), [])
 
-# Every LAYA_* the page presents as a knob has to be one the runtime reads. `LAYA_DEVICE` is the
-# exception the page itself flags, so it is allowed only in a sentence saying Laya does not read it.
-invented = sorted(name for name in set(re.findall(r"\bLAYA_[A-Z0-9_]+\b", document))
+# Every VEYA_* the page presents as a knob has to be one the runtime reads. `VEYA_DEVICE` is the
+# exception the page itself flags, so it is allowed only in a sentence saying Veya does not read it.
+invented = sorted(name for name in set(re.findall(r"\bVEYA_[A-Z0-9_]+\b", document))
                   if name not in READS and not any(name in s and re.search(r"does not read|not read", s)
                                                    for s in sentences))
 check("35/names no env var the runtime does not read, or says so", invented, [])

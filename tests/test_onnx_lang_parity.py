@@ -17,9 +17,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np  # noqa: E402
 
-from laya.agent import Agent  # noqa: E402
-from laya.common import clamp_temperature  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.common import clamp_temperature  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -145,7 +145,7 @@ try:
     src = inspect.getsource(ONNXAgent.__init__)
     check_true("lang/__init__ parses overrides through the shared validator",
                "resolve_lang_temperatures" in src)
-    from laya.common import resolve_lang_temperatures as _resolve
+    from veya.common import resolve_lang_temperatures as _resolve
     try:
         _resolve({"de": {"temperature": 2}}, [1.0, 1.0, 1.0])
         check_true("lang/a scalar override is rejected", False, "no error raised")

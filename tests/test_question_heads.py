@@ -21,8 +21,8 @@ from tokenizers.models import WordLevel  # noqa: E402
 from tokenizers.pre_tokenizers import Whitespace  # noqa: E402
 from transformers import PreTrainedTokenizerFast  # noqa: E402
 
-from laya import common  # noqa: E402
-from laya.common import build_sequence, encode_text, render_options, serialize_state  # noqa: E402
+from veya import common  # noqa: E402
+from veya.common import build_sequence, encode_text, render_options, serialize_state  # noqa: E402
 
 PASS, FAIL = [], []
 

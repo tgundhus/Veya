@@ -5,7 +5,7 @@ import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 import { test } from 'node:test';
-import { Laya, LayaAPIError, triageQuestions, emailQuestions, guardQuestions, moderationQuestions, routerQuestions } from 'laya-pro-client';
+import { Veya, VeyaAPIError, triageQuestions, emailQuestions, guardQuestions, moderationQuestions, routerQuestions } from 'veya-client';
 
 test('JavaScript → HTTP → Python Router → real offline Agent inference', { timeout: 90_000 }, async t => {
   const script = fileURLToPath(new URL('../../../tests/sdk_server_fixture.py', import.meta.url));
@@ -27,14 +27,14 @@ test('JavaScript → HTTP → Python Router → real offline Agent inference', {
     server.once('exit', failed);
     server.once('error', error => { clearTimeout(timer); reject(error); });
     lines.on('line', line => {
-      if (line.startsWith('LAYA_TEST_SERVER=')) {
+      if (line.startsWith('VEYA_TEST_SERVER=')) {
         clearTimeout(timer);
         server.off('exit', failed);
-        resolve(JSON.parse(line.slice('LAYA_TEST_SERVER='.length)));
+        resolve(JSON.parse(line.slice('VEYA_TEST_SERVER='.length)));
       }
     });
   });
-  const client = new Laya({ baseURL: fixture.baseURL, apiKey: 'integration-test', timeoutMs: 10_000 });
+  const client = new Veya({ baseURL: fixture.baseURL, apiKey: 'integration-test', timeoutMs: 10_000 });
   let ready = false;
   for (let i = 0; i < 100; i++) {
     try { await client.health(); ready = true; break; } catch { await delay(50); }
@@ -75,12 +75,12 @@ test('JavaScript → HTTP → Python Router → real offline Agent inference', {
     const response = await client.predict({ message: 'hello', body: 'hello', prompt: 'hello', post: 'hello', request: 'hello' }, questions);
     assert.deepEqual(Object.keys(response.answers), Object.keys(questions));
   }
-  const unauthenticated = new Laya({ baseURL: fixture.baseURL });
+  const unauthenticated = new Veya({ baseURL: fixture.baseURL });
   assert.equal((await unauthenticated.health()).status, 'ok');
   await assert.rejects(unauthenticated.predict('hello', fixture.questions), error =>
-    error instanceof LayaAPIError && error.status === 401 && error.message === 'invalid or missing bearer token');
+    error instanceof VeyaAPIError && error.status === 401 && error.message === 'invalid or missing bearer token');
   await assert.rejects(client.predict('x'.repeat(50_001), fixture.questions), error =>
-    error instanceof LayaAPIError && error.status === 413 && error.message.includes('state too large'));
+    error instanceof VeyaAPIError && error.status === 413 && error.message.includes('state too large'));
   assert.equal((await fetch(`${fixture.baseURL}/v1/predict`, { method: 'POST' })).status, 404);
   assert.equal((await fetch(`${fixture.baseURL}/v1/route`, { method: 'POST' })).status, 404);
 });

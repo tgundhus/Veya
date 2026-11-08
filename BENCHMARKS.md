@@ -1,6 +1,176 @@
-# Laya and Laya-Pro benchmarks
+# Veya benchmarks
 
-The [October 2026 Laya-Pro review](docs/reports/production-review.md) records current CPU
+## Current CPU refresh — 7 November 2026
+
+Veya 0.3.29, Windows 11, Intel Core i9-13900KF (32 logical CPUs), Python 3.12.14,
+PyTorch 2.14.1+cpu, eager fp32 and two Torch threads. The cached upstream English
+checkpoint revision is `7b928d828b7b0e022f929d9bd2e44165aa270148` (421.3M parameters).
+Fifteen warm calls follow three warm-ups per workload; cache rows use 50 memory-cache
+hits after priming. These are local Python calls, excluding HTTP and first load.
+
+| Workload | Before rename, median ms | Veya, median ms | Change |
+|---|---:|---:|---:|
+| english ticket, 1 question | 179.146 | 171.993 | -3.99% |
+| english ticket, 3 questions | 511.658 | 509.616 | -0.40% |
+| english ticket, 10 questions | 1615.797 | 1609.739 | -0.37% |
+| english email, 3 questions | 2435.051 | 2480.429 | +1.86% |
+| english ticket, 3 questions, DecisionCache hit | 0.058 | 0.056 | -3.45% |
+| english email, 3 questions, DecisionCache hit | 0.059 | 0.059 | +0.00% |
+
+These sequential workstation runs have uncontrolled load; their variation is not a
+rename speedup claim. A separate comparison against pre-rename commit `a5477bdc`
+reproduced all **17 typed answers and token counts exactly**, using the same checkpoint
+revision. This small parity check does not measure task accuracy.
+[Method and reproduction](docs/reports/veya-migration-2026-11-07.md),
+[measurement summary](research/results/veya_refresh_cpu_20261107.json),
+[refreshed samples](research/results/veya_rename_after_cpu_20261107.json).
+
+The latest experimental ordinal continuation is **not production qualified**:
+its fresh holdout scored 20/36 within ±0.25 for ordinal answers, 10/15 choice and
+9/10 binary. Score and choice miss the 80% gates; the default checkpoint is unchanged.
+[6 November qualification and limits](docs/reports/ordinal-continuation-2026-11-06.md).
+
+## Matched Jev, Laya and Veya quality — 7 November 2026
+
+All three systems answer the frozen Feishu-style diagnostic: 64 AI-assisted synthetic
+Chinese cases, two question modes, three shuffled repetitions, identical request hashes.
+Quality uses the preselected first repeat and retains failed requests in the denominator;
+all three runs have zero failures. The four-binary mode maps four answers to one class
+using the same frozen thresholds. It is not four independent label-accuracy scores.
+
+Jev 1.13.0 and Laya were measured on 21 September; Veya 0.3.29 was run locally on
+7 November with two CPU threads, without a decision cache. Laya and Veya use the
+same pinned multilingual weights at `1c5edc17a7acd8701df6fc341c0d179f1c62c982`;
+the weight SHA256 matches the recorded environment check. Model versions, dates and
+hardware differ, so this is a matched-prompt quality comparison, not a latency ranking.
+
+| System | Choice labels | Four-binary labels | Choice macro F1 | Choice ECE, 10 bins | Exact answer groups across 3 runs |
+|---|---:|---:|---:|---:|---:|
+| Jev 1.13.0 | 64/64 | 63/64 | 1.0000 | 0.0320 | 29/128 |
+| Laya multilingual | 20/64 | 18/64 | 0.2569 | 0.2614 | 128/128 |
+| Veya multilingual | 20/64 | 18/64 | 0.2569 | 0.2614 | 128/128 |
+
+Veya changes **zero first-repeat labels** relative to Laya in either mode. The new
+caching policy improves reuse, not checkpoint quality. Exact answer groups compare
+whole answer payloads, including probabilities and confidence; they are distinct
+from repeated labels. The results are specific to these 64 synthetic cases and
+are not a general multilingual or production qualification.
+
+[Audited comparison, per-family metrics and sources](research/results/matched_quality_comparison_20261107.json) ·
+[Veya raw responses and metadata](research/results/matched_feishu_veya_cpu_20261107/metadata.json).
+Reproduce using a local copy of the pinned multilingual checkpoint:
+
+```bash
+python research/benchmarks/feishu_zh/run.py --backend veya --checkpoint /local/multilingual --checkpoint-revision 1c5edc17a7acd8701df6fc341c0d179f1c62c982 --device cpu --output /tmp/veya-matched
+python research/benchmarks/feishu_zh/audit.py --run-dir /tmp/veya-matched
+python research/scripts/summarize_matched_quality.py --veya-run /tmp/veya-matched --out /tmp/matched-comparison.json
+```
+
+The summarizer keeps the recorded Jev/Laya reference paths and accepts the new Veya
+run explicitly. Retain raw responses before publishing a replacement comparison.
+
+## Bounded memory eviction — 7 November 2026
+
+The production memory store now supports opt-in `eviction="lru"`. A live read promotes
+the entry for eviction without extending expiry. The default remains `"fifo"`, which
+preserves insertion/renewal ordering. SQLite/custom stores reject the LRU option.
+No persistence, first-writer-wins, required-cache or renewal behavior is weakened.
+
+The comparison uses 60,000 seeded requests per trace, an empty cache, no expiry or
+renewal, and seven rotated timing repetitions. The table shows capacity 1,024; the raw
+results also cover 256 entries. LFU is a nonaging research implementation, not a
+production store; its hit rates inform selection, not a like-for-like timing claim.
+
+| Trace | FIFO hit rate | LRU hit rate | LFU candidate hit rate | LRU fewer misses | FIFO µs/request | LRU µs/request |
+|---|---:|---:|---:|---:|---:|---:|
+| Zipf popularity | 69.98% | 73.78% | 77.33% | 12.65% | 0.524 | 0.533 |
+| Hot set + one-off traffic | 87.48% | 89.63% | 89.63% | 17.13% | 0.435 | 0.455 |
+| Popularity shift | 54.71% | 64.27% | 48.26% | 21.10% | 0.613 | 0.601 |
+| All unique | 0.00% | 0.00% | 0.00% | 0.00% | 0.866 | 0.854 |
+
+LRU reduces misses on all three reuse traces; all-unique traffic gains no hits. LFU
+performs best on stable skew but falls below FIFO after the popularity shift. LRU was
+selected for its behavior across both stable and changing traffic. The timing columns
+measure complete get/add trace operations, not model inference or HTTP. Workstation
+load is uncontrolled; small timing differences are not universal lookup-speed claims.
+
+[Candidate experiment](research/results/cache_eviction_candidates_20261107.json) ·
+[Production-store comparison and samples](research/results/cache_eviction_production_20261107.json).
+
+```python
+from veya import DecisionCache, Router
+
+cache = DecisionCache(maxsize=1024, eviction="lru")
+router = Router(hooks=[cache])
+```
+
+```bash
+python research/scripts/bench_cache_eviction.py --production-lru --out eviction.json
+```
+
+### Real-model cache workload
+
+The implementation was also measured through `Router.predict` on the pinned real
+multilingual checkpoint. A fixed Zipf trace draws 128 choice requests from the same
+64-case bank (38 distinct requests) with a 16-entry cache. Each trial starts empty;
+one warmed agent is shared across three alternating FIFO/LRU trial pairs, using
+two CPU threads. All 768 returned answer payloads match the uncached reference.
+
+| Memory policy | Forward passes per 128 requests | Cache hits | Median total wall time |
+|---|---:|---:|---:|
+| FIFO | 63 | 65 | 24.585 s |
+| LRU | 58 | 70 | 22.722 s |
+
+LRU performs **7.94% fewer model forwards** and lowers median workload time by
+**7.58%** in this run. This is a workload-level result from reuse, not faster
+uncached model inference. All three paired wall-time trials favor LRU. No quality,
+probability or retention improvement is claimed. Other workloads may differ.
+
+[Raw trials, request indices, reference hashes and source digests](research/results/cache_workflow_real_20261107.json).
+An [earlier exploratory run](research/results/cache_workflow_real_validation_overlap_20261107.json)
+that overlapped regression validation is retained; the table and README use the
+subsequent standalone run after validation finished.
+
+```bash
+python research/scripts/bench_cache_workflow.py --checkpoint /local/multilingual --out workflow.json
+```
+
+## Cache store scaling — 7 November 2026
+
+This additional Windows CPU run measures the stores directly, without a model, HTTP,
+request hashing or answer decoding. Each bounded store is filled to its configured
+capacity, then receives 2,000 hit/insert pairs. SQLite uses the default optional-store
+settings, not required-mode `synchronous=FULL`. These are exploratory measurements
+from one workstation pass; file caches and other machine activity are uncontrolled.
+
+| Configured capacity | Store | Hit p50, µs | Hit p99, µs | Insert p50, µs | Insert p99, µs |
+|---|---|---:|---:|---:|---:|
+| 10,000 | Memory | 0.4 | 0.5 | 0.8 | 1.0 |
+| 10,000 | SQLite | 7.0 | 29.8 | 25.4 | 2066.9 |
+| 100,000 | Memory | 0.6 | 1.0 | 0.9 | 1.2 |
+| 100,000 | SQLite | 10.7 | 38.3 | 37.3 | 1991.3 |
+
+A separate hook-level renewal stress test measures 15,000 hits per configuration.
+Its simulated clock advances by one eighth of the TTL between passes, deliberately
+making every renewal-enabled hit write to SQLite. p50/p99 change from **29.4/42.0 µs**
+without renewal to **61.4/2080.4 µs** with a renewal on every hit. This is a stress case;
+ordinary hot hits already throttle renewal writes to at most 16 per lifetime. These
+hook timings are separate from the raw store operations above.
+
+[Raw results, parameters and source digests](research/results/cache_scaling_windows_20261107.json).
+Reproduce with:
+
+```bash
+python research/scripts/bench_store_scaling.py --sections tail,renewal --sizes 10000,100000 --ops 2000 --out cache_scaling.json
+```
+
+## Checkpoint and hardware measurements
+
+The tables below retain the actual upstream project names, checkpoint IDs and measured
+versions. GPU, multilingual and third-party results were not rerun on this CPU-only host.
+
+
+The [October 2026 Veya review](docs/reports/production-review.md) records October CPU
 smoke measurements, cache before/after results and SDK verification. Historical upstream and
 fork runs below retain their original versions and hardware.
 
@@ -43,7 +213,7 @@ The direction is consistent rather than noise: of the 16 languages that move by 
 
 ---
 
-## Headline
+## Historical checkpoint headline
 
 | | Laya | Jev (published) |
 |---|---|---|
@@ -332,7 +502,7 @@ An independent study measured `laya` as a dynamically batched service on a froze
 SAM.gov notices. Each request asked the same three typed questions, so the table reports decisions per second
 (three decisions per request) at the highest tested load that met both the latency SLO and the achieved-rate gate.
 The study pinned Laya to
-[`6a58191`](https://github.com/tgundhus/laya-pro/commit/6a5819129eb220570792e417e49723d697efd76f)
+[`6a58191`](https://github.com/tgundhus/Veya/commit/6a5819129eb220570792e417e49723d697efd76f)
 and recorded the checkpoint hashes, software versions and GPU environments. Sweep rows, parity counts, the replay
 summary and the environments: `research/results/nvidia_capacity_20260925.json`. Sweep and replay script:
 `research/scripts/bench_nvidia_capacity.py`.
@@ -630,7 +800,7 @@ with ONNX, maximum absolute logit difference was `5.60e-6`, probability differen
 `7.45e-7`, and the typed answers also matched. The host was otherwise uncontrolled;
 small warm timing differences do not show a speed improvement.
 
-Installed dependency files occupied **879.7 MiB** for the existing full `laya-pro[onnx]`
+Installed dependency files occupied **879.7 MiB** for the existing full `veya[onnx]`
 closure and **134.4 MiB** for a fresh lightweight installation. These sums exclude project
 code and unrelated bootstrap tools; required dependencies such as Torch's setuptools
 remain included. The environments resolved different dependency versions, so these are

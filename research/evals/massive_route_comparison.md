@@ -1,6 +1,6 @@
 # Swedish routing: MASSIVE full-test comparison
 
-This report compares the `laya.lang` detector on all 51 locale files in the pinned
+This report compares the `veya.lang` detector on all 51 locale files in the pinned
 `mteb/amazon_massive_intent` test split (dataset revision
 `940fd47a81eaa7f2cc7b129674d945d618ac38c2`). Each locale contributes 2,974 examples,
 for 151,674 examples total. The comparison is model-free: it evaluates the same text

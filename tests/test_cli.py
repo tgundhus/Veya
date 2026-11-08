@@ -6,7 +6,7 @@ from contextlib import redirect_stderr, redirect_stdout
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import cli  # noqa: E402
+from veya import cli  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -80,7 +80,7 @@ class BrokenRouter:
 
 code, out, err, stub = run_cli(["some text"], router=BrokenRouter())
 check("error: exit code 2", code == 2, "got %r" % code)
-check("error: names the failure", "could not run Laya" in err, err)
+check("error: names the failure", "could not run Veya" in err, err)
 check("error: points at the fix", "Hugging Face hub" in err, err)
 
 # --------------------------------------------------------------------- explicit flags
@@ -89,9 +89,9 @@ check("flags: --model forwarded", stub.route_calls[0][1]["model"] == "english")
 
 # ------------------------------------------------- --model is core's registry, not a copy of it
 # `choices=` compared strings exactly, so the flag knew three spellings while the router it feeds
-# has always resolved a dozen more. The names and aliases are imported from `laya.router` rather
+# has always resolved a dozen more. The names and aliases are imported from `veya.router` rather
 # than written out, so this sweep follows the registry instead of drifting from it.
-from laya.router import DEFAULT_MODELS, _ALIASES  # noqa: E402
+from veya.router import DEFAULT_MODELS, _ALIASES  # noqa: E402
 
 
 def parse_model(argv):
@@ -114,14 +114,14 @@ for alias, canonical in sorted(_ALIASES.items()):
     got = parse_model(["t", "--model", alias])
     check("model: alias %s is %s" % (alias, canonical), got == canonical, repr(got))
 for spelling, want in (("EN", "english"), (" Multilingual ", "multilingual"),
-                       ("Typed-Decisions", "typed-decisions"), ("laya-MULTILINGUAL", "multilingual")):
+                       ("Typed-Decisions", "typed-decisions"), ("veya-MULTILINGUAL", "multilingual")):
     got = parse_model(["t", "--model", spelling])
     check("model: casing and spacing %r" % spelling, got == want, repr(got))
 for auto in ("auto", "AUTO", " Auto "):
     got = parse_model(["t", "--model", auto])
     check("model: %r pins nothing" % auto, got is None, repr(got))
 check("model: omitting it pins nothing either", parse_model(["t"]) is None)
-for bad in ("gpt4", "english-ish", "laya-typed", ""):
+for bad in ("gpt4", "english-ish", "veya-typed", ""):
     got = parse_model(["t", "--model", bad])
     check("model: %r rejected" % bad, got == "REJECTED", repr(got))
 
@@ -233,7 +233,7 @@ class BatchRouter:
 
     def predict_batch(self, requests, batch_size=None, **extra):
         self.predict_batch_calls.append((requests, batch_size, extra))
-        return [{"model": "laya-rl", "answers": {"difficulty": {"score": float(i)}}, "usage": {}}
+        return [{"model": "veya-rl", "answers": {"difficulty": {"score": float(i)}}, "usage": {}}
                 for i in range(len(requests))]
 
     def route_batch(self, requests):
@@ -360,12 +360,12 @@ check("batch: redirected stdout is written as utf-8", code == 0
 #
 # `Agent.predict_batch` and `Router.predict_batch` have grouped similarly sized states into one
 # forward pass since #294, README teaches it as the library call, and `research/` reports 2.15x on
-# 10,000 tickets from it. `laya --batch` could set `--batch-size` but not the grouping that makes a
+# 10,000 tickets from it. `veya --batch` could set `--batch-size` but not the grouping that makes a
 # bounded pass cheap, so the one knob with a measurable effect on the other knob was reachable only
 # by writing Python. These run the real parser and the real `run_batch` over a recording router.
 import inspect as _inspect  # noqa: E402
 
-from laya.router import Router as _CoreRouter  # noqa: E402
+from veya.router import Router as _CoreRouter  # noqa: E402
 
 many = os.path.join(tmp, "four.txt")
 with open(many, "w", encoding="utf-8") as handle:
@@ -437,7 +437,7 @@ class GroupingRouter:
             start += size
         if diagnostics is not None:
             diagnostics["sort_by_length"] = report
-        return [{"model": "laya-rl", "answers": {"difficulty": {"score": float(i)}}, "usage": {}}
+        return [{"model": "veya-rl", "answers": {"difficulty": {"score": float(i)}}, "usage": {}}
                 for i in range(len(requests))]
 
 
@@ -470,11 +470,11 @@ code, out, err, stub = run_batch_cli(["--batch", six, "--predict", "--batch-size
 check("sort: one group keeps the file-wide wording, sized by the group core saw",
       code == 0 and "1 < N < 6" in err, "err %r" % err)
 
-# A flag nobody can find is a flag nobody uses. README is where `laya --batch` and `/predict/batch`
+# A flag nobody can find is a flag nobody uses. README is where `veya --batch` and `/predict/batch`
 # are taught, so the same pages that teach `--batch-size` have to teach the grouping that makes a
 # bounded pass cheap -- including the condition it needs, since a run without it changes nothing.
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Laya-Pro teaches the CLI and the playground in docs/guide.md, not README.md.
+# Veya teaches the CLI and the playground in docs/guide.md, not README.md.
 with open(os.path.join(_ROOT, "docs", "guide.md"), encoding="utf-8") as handle:
     readme = handle.read()
 
@@ -484,7 +484,7 @@ def section(heading):
 
 
 cli_page = section("## Command line")
-check("sort: the page that teaches `laya --batch` teaches the grouping and its condition",
+check("sort: the page that teaches `veya --batch` teaches the grouping and its condition",
       "--batch-size" in cli_page and "--sort-by-length" in cli_page and "1 < N <" in cli_page,
       repr(cli_page[:120]))
 server_page = section("## Web playground")
@@ -499,7 +499,7 @@ check("sort: the server page teaches both body fields",
 import json as _json  # noqa: E402
 import tempfile as _tempfile  # noqa: E402
 
-_TMP = _tempfile.mkdtemp(prefix="laya-cli-questions-")
+_TMP = _tempfile.mkdtemp(prefix="veya-cli-questions-")
 
 
 def write_json(name, payload):
@@ -608,7 +608,7 @@ check("questions: --model still forwarded", stub.kwargs.get("model") == "english
 # --------------------------------------------------------------------- the token budget
 # `--questions` is what makes a many-label question reachable from the shell, and a many-label
 # question is exactly what overflows the shared option budget. Both halves have to be here: on
-# `laya` (head budget 192) the 58-label Massive-Intent question scores 24/58 by default and
+# `veya` (head budget 192) the 58-label Massive-Intent question scores 24/58 by default and
 # 34/58 at --head-max-len 384, so the CLI that can ask the question must also be able to fit it.
 # Nothing set has to mean nothing sent: the checkpoint's own budget stays in charge, and a
 # `max_len=None` in the call would be a different promise from the one `predict` documents.
@@ -659,15 +659,15 @@ for value in ("abc", ""):
 
 # --------------------------------------------------------------- --min-confidence (#361's gate)
 # The gate itself is core's: `Router.predict` and `Router.predict_batch` both run the argument
-# through `laya.confidence.check_min_confidence` and then `flag_low_confidence`, which marks an
+# through `veya.confidence.check_min_confidence` and then `flag_low_confidence`, which marks an
 # answer and keeps it. What this section covers is the CLI's half -- the flag reaches the call, an
 # unset flag is not sent as `None`, a value outside core's range is refused in core's words,
 # routing refuses the flag instead of exiting 0 having ignored it, and the mark a gated run
 # produces is printed to a terminal rather than only reachable through --json.
 import inspect  # noqa: E402
 
-from laya import Router as _Router  # noqa: E402
-from laya.confidence import check_min_confidence as _core_check  # noqa: E402
+from veya import Router as _Router  # noqa: E402
+from veya.confidence import check_min_confidence as _core_check  # noqa: E402
 
 
 class GatedRouter(QuestionRecorder):
@@ -800,7 +800,7 @@ check("threshold: --json still carries the raw key",
 
 # --------------------------------------------------------------------- train subcommand
 code, out, err, stub = run_cli(["train", "--help"])
-check("train subcommand: dispatches to train_cli and shows help", code == 0 and "laya-train" in out, out)
+check("train subcommand: dispatches to train_cli and shows help", code == 0 and "veya-train" in out, out)
 
 # Drift pin, the other direction: every control `predict` takes that the parser can name must
 # arrive in the call, and the ones it cannot name must be the accepted three. A control added to

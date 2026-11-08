@@ -1,6 +1,11 @@
-# Laya on this machine — local setup
+# Veya local setup — archived Mac Pro host
 
-Laya (the checkout in `laya/`) now runs here on real weights: all three checkpoints, real forward
+The hardware and measurements below describe the archived Mac Pro run. For the
+7 November Windows CPU refresh, see [current benchmarks](BENCHMARKS.md). Commands
+and package paths below use the current Veya names. New setup downloads the English
+checkpoint into `models/veya`; existing checkpoint directories can be passed explicitly.
+
+Veya (the checkout in `veya/`) now runs here on real weights: all three checkpoints, real forward
 passes, on CPU and on the AMD GPU through Metal (MPS). This file records what was installed, the
 two code changes that were needed, how to re-run everything, and the numbers that were measured.
 
@@ -18,10 +23,10 @@ two code changes that were needed, how to re-run everything, and the numbers tha
 | path | contents |
 |---|---|
 | `.venv/` | Python 3.11.5 virtualenv — torch 2.2.2, transformers 4.57.6, numpy 1.26.4, safetensors 0.8.0, huggingface_hub 0.36.2 |
-| `models/` | the three checkpoints (~2.3 GB): `laya/` (English), plus `laya-multilingual` and `laya-typed-decisions` symlinked into the bundle |
+| `models/` | the three checkpoints (~2.3 GB): `veya/` (English), plus `laya-multilingual` and `laya-typed-decisions` symlinked into the bundle |
 | `.pip-cache/`, `.hf-cache/` | download caches, kept local so nothing is written outside the project |
-| `setup_laya.sh` | idempotent setup: venv → pinned deps → editable install → checkpoints → verify |
-| `verify/laya_smoke_test.py` | end-to-end check on real weights: routing, all three checkpoints, all three primitives, presets, latency |
+| `setup_veya.sh` | idempotent setup: venv → pinned deps → editable install → checkpoints → verify |
+| `verify/veya_smoke_test.py` | end-to-end check on real weights: routing, all three checkpoints, all three primitives, presets, latency |
 | `verify/numerics_check.py` | RoPE base actually used vs. trained, run-to-run determinism, SDPA vs. eager |
 | `verify/bench_devices.py` | CPU vs. MPS latency, plus CPU thread scaling |
 | `verify/edge_sweep.py` | inference paths the other suites miss: 12 questions in one pass, 20/77/120-option choice, odd input shapes, truncation, router lifecycle, CPU-vs-MPS agreement |
@@ -29,7 +34,7 @@ two code changes that were needed, how to re-run everything, and the numbers tha
 | `verify/soak_check.py` | 200 repeated calls for drift and RSS growth, reload/eviction cycles, concurrent calls from several threads. Uses `psutil` if installed and falls back to peak RSS otherwise |
 | `examples/` | 41 worked examples as an eight-stage learning path, plus `run_all.sh` and the path doc |
 
-`laya` is installed editable, so `import laya` from anywhere uses this checkout and picks up edits.
+`veya` is installed editable, so `import veya` from anywhere uses this checkout and picks up edits.
 
 ## Code changes that were required
 
@@ -37,13 +42,13 @@ The first two are real portability bugs, not local hacks; both are covered by
 `tests/test_portability.py` (18 checks, including the CUDA-OOM fallback), which is wired into
 CI along with `tests/test_training.py`.
 
-### 1. `laya/common.py` — transformers 5 checkpoints on transformers 4
+### 1. `veya/common.py` — transformers 5 checkpoints on transformers 4
 
 The checkpoints were saved by transformers 5, which records ModernBERT's RoPE bases as
 `rope_parameters = {"full_attention": {...}, "sliding_attention": {...}}`. transformers 4.x does
 not read that key, so it silently keeps its own defaults — global `160000`, local `10000`:
 
-* `laya` and `laya-typed-decisions` want `160000 / 10000` → they happened to match.
+* `veya` and `laya-typed-decisions` want `160000 / 10000` → they happened to match.
 * `laya-multilingual` (mmBERT) wants `160000 / 160000` → it ran with the **wrong RoPE base** on
   every sliding-attention layer, with no error. This is the "quietly wrong numbers" class of bug.
 
@@ -57,7 +62,7 @@ transformers 5 the function is a no-op. Effect on the multilingual checkpoint, s
 | Hindi → `refund_requested` | 0.9897 | 0.9909 |
 | English / typed-decisions outputs | — | **bit-identical** (their configs already matched) |
 
-### 2. `laya/agent.py` — MPS crashed every call
+### 2. `veya/agent.py` — MPS crashed every call
 
 `system_one` entered `torch.autocast(device_type=self.device.type, enabled=use_amp)` on every
 call. Autocast is only ever *enabled* on CUDA, but torch validates the device type regardless, and
@@ -67,7 +72,7 @@ torch has no MPS autocast backend:
 RuntimeError: User specified an unsupported autocast device_type 'mps'
 ```
 
-Laya selects MPS automatically when it is available, so on this machine every `predict()` raised.
+Veya selects MPS automatically when it is available, so on this machine every `predict()` raised.
 The forward pass now goes through `_amp_context(device, dtype)`, which returns
 `torch.autocast(..., "cuda")` on CUDA and a `nullcontext()` otherwise.
 
@@ -85,12 +90,12 @@ The forward pass now goes through `_amp_context(device, dtype)`, which returns
 ## Verify it
 
 ```bash
-cd /Users/threaded/projects/Laya/laya      # repository root
-./setup_laya.sh                            # venv + deps + checkpoints + smoke test (idempotent)
+cd /Users/threaded/projects/Veya/veya      # repository root
+./setup_veya.sh                            # venv + deps + checkpoints + smoke test (idempotent)
 
 # or individually
-.venv/bin/python verify/laya_smoke_test.py --models ./models            # device auto → MPS
-.venv/bin/python verify/laya_smoke_test.py --models ./models --device cpu
+.venv/bin/python verify/veya_smoke_test.py --models ./models            # device auto → MPS
+.venv/bin/python verify/veya_smoke_test.py --models ./models --device cpu
 .venv/bin/python verify/numerics_check.py
 .venv/bin/python verify/bench_devices.py
 .venv/bin/python verify/edge_sweep.py
@@ -108,7 +113,7 @@ Results on this machine:
 | `tests/test_router.py` | 106 passed, 0 failed |
 | `tests/test_criteria.py` | 34 passed, 0 failed |
 | `tests/test_portability.py` | 18 passed, 0 failed (includes the CUDA-OOM fallback) |
-| `verify/laya_smoke_test.py` | all checks passed on **both** CPU and MPS |
+| `verify/veya_smoke_test.py` | all checks passed on **both** CPU and MPS |
 | `verify/numerics_check.py` | RoPE bases match training; answers bit-identical run-to-run and SDPA vs. eager (`0.00e+00` on every reported value) |
 | `verify/edge_sweep.py` | all edge-case checks pass (25 here; the MPS checks skip where MPS is unavailable) |
 | `verify/checkpoints.py` | 3/3 checkpoints match the recorded sha256; a deliberately corrupted copy is caught |
@@ -126,7 +131,7 @@ One `predict()` call answering 4 questions on a short email, median of 10 after 
 
 | checkpoint | CPU (28 threads) | MPS (Radeon Pro Vega II) |
 |---|---|---|
-| `laya` (421M) | 453 ms — 113 ms/question | **146 ms — 37 ms/question** |
+| `veya` (421M) | 453 ms — 113 ms/question | **146 ms — 37 ms/question** |
 | `laya-multilingual` (322M) | 192 ms — 48 ms/question | **121 ms — 30 ms/question** |
 | `laya-typed-decisions` (421M) | 441 ms — 110 ms/question | **145 ms — 36 ms/question** |
 
@@ -137,7 +142,7 @@ The GPU is 1.6-3× faster than this 56-core CPU (3× on the two ModernBERT-large
 on the smaller multilingual one). The README's T4 reference is 32.8 ms/question for
 `laya-multilingual`; MPS lands at 29 ms/question, i.e. T4-class latency on this hardware.
 
-CPU thread scaling on `laya` (medians): 4 → 501 ms, 8 → 385 ms, **16 → 366 ms**, 28 → 415 ms,
+CPU thread scaling on `veya` (medians): 4 → 501 ms, 8 → 385 ms, **16 → 366 ms**, 28 → 415 ms,
 56 → 1266 ms. Around 16 threads is the sweet spot; the default 28 already over-subscribes and 56
 threads is markedly worse, so `OMP_NUM_THREADS=16` (or `torch.set_num_threads(16)`) is worth
 setting for CPU-only work.
@@ -149,7 +154,7 @@ questions drops from 489 ms to **331 ms (1.48×)** in fp32, bit-identical to eag
 cannot convert tensors against NumPy 2.
 
 Notes: the first MPS call pays ~13 s of Metal kernel compilation, so warm up before timing;
-everything runs fp32 (bf16 autocast is CUDA-only in Laya).
+everything runs fp32 (bf16 autocast is CUDA-only in Veya).
 
 ## Independent accuracy check against public data
 
@@ -187,7 +192,7 @@ whole reason `Router` exists.
 Banking77 lands on **0.425**, the number the README quotes for the 77-option case, and the
 AG News / emotion figures agree with the published routed results within sampling noise (80 cases
 per suite here). The README's honest limits reproduce too: `score` is the weakest primitive and
-50+ options in one question is where Laya trails Jev.
+50+ options in one question is where Veya trails Jev.
 
 Both tables were re-run end to end a second time (same seed, same cached datasets) and
 reproduced **identically — every accuracy, F1 and ECE digit, and both macro aggregates**. The
@@ -195,9 +200,9 @@ runs are deterministic; only the ms/case figures move with machine load.
 
 ### Two fixes the harnesses needed to run here
 
-* they hardcoded the model root to `~/laya_models` — now `LAYA_MODELS` (default unchanged), so
-  `LAYA_MODELS=$PWD/models` points them at the checkpoints this repo already has;
-* their `sys.path` insert pointed at a non-existent `research/laya`; it now points at the
+* they hardcoded the model root to `~/veya_models` — now `VEYA_MODELS` (default unchanged), so
+  `VEYA_MODELS=$PWD/models` points them at the checkpoints this repo already has;
+* their `sys.path` insert pointed at a non-existent `research/veya`; it now points at the
   repository root.
 
 ### What the soak check found
@@ -219,20 +224,20 @@ The checkpoints are already on disk, so point the router at the local roots and 
 the network:
 
 ```python
-import laya
-from laya import Router
+import veya
+from veya import Router
 
-root = "/Users/threaded/projects/Laya/laya/models"
-router = Router(models={"english":          root + "/laya",
+root = "/Users/threaded/projects/Veya/veya/models"
+router = Router(models={"english":          root + "/veya",
                         "multilingual":     root + "/laya-multilingual",
                         "typed-decisions":  root + "/laya-typed-decisions"},
                 preload=True)          # device=None → MPS here; pass device="cpu" to force CPU
 
-res = router.predict({"body": "发票4411被重复扣款，请今天退款。"}, laya.triage_questions())
+res = router.predict({"body": "发票4411被重复扣款，请今天退款。"}, veya.triage_questions())
 print(res["routing"]["model"], res["answers"]["intent"]["choice"])
 ```
 
-`laya.load("<path>", device="mps")` works the same way for a single checkpoint. Leaving `device`
+`veya.load("<path>", device="mps")` works the same way for a single checkpoint. Leaving `device`
 unset picks MPS, then CPU.
 
 ## Why these versions
@@ -257,6 +262,6 @@ alternative, not what is installed and verified here.
 * MPS is a torch 2.2-era backend on Intel AMD hardware — it works and matches CPU numerics here,
   but it is not an NVIDIA-class path. `--device cpu` is the conservative choice.
 * `models/` is ~2.3 GB and `.venv/` ~1 GB; both live in the repository and are gitignored, so
-  they can be deleted and rebuilt with `./setup_laya.sh` without touching the working tree.
+  they can be deleted and rebuilt with `./setup_veya.sh` without touching the working tree.
 * No TensorFlow is installed on purpose (`USE_TF=0`): a TF install alongside torch can deadlock
   model construction, which the repo's tests already guard against.

@@ -10,8 +10,8 @@ from types import SimpleNamespace
 import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from laya.agent import Agent
-from laya._compile import compile_model
+from veya.agent import Agent
+from veya._compile import compile_model
 
 
 def test_reduce_overhead_retains_outputs_across_replay_and_threads():

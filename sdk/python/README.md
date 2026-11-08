@@ -1,8 +1,11 @@
-# Laya-Pro Python HTTP client
+# Veya Python HTTP client
 
-A synchronous, standard-library client for a self-hosted Laya-Pro server. The
-application environment needs no core `laya`, Torch, Transformers, or NumPy.
-Python 3.10–3.13 is supported. Distribution: `laya-pro-client`; import: `laya_client`.
+A synchronous, standard-library client for a self-hosted Veya server. The
+application environment needs no core `veya`, Torch, Transformers, or NumPy.
+Python 3.10–3.13 is supported. Distribution: `veya-client`; import: `veya_client`.
+Before upgrading an existing environment, run `python -m pip uninstall laya-pro-client`,
+then install `veya-client`. The old and new distributions share legacy `laya_client` files;
+uninstalling the old distribution after installing the new one can remove them.
 
 Install from this checkout (the package has not been published):
 
@@ -11,13 +14,13 @@ python -m pip install ./sdk/python
 ```
 
 Run the server in a separate environment using the
-[Laya-Pro HTTP guide](https://github.com/tgundhus/laya-pro/blob/main/docs/http-api.md).
+[Veya HTTP guide](https://github.com/tgundhus/Veya/blob/main/docs/http-api.md).
 
 ```python
-from laya_client import LayaClient, LayaAPIError
-from laya_client.types import Questions
+from veya_client import VeyaClient, VeyaAPIError
+from veya_client.types import Questions
 
-client = LayaClient(base_url="http://127.0.0.1:8000", api_key="your-server-token")
+client = VeyaClient(base_url="http://127.0.0.1:8000", api_key="your-server-token")
 questions: Questions = {
     "team": {"type": "choice", "instructions": "Which team should handle this message?",
              "criteria": {"billing": "Payments and refunds", "technical": "Product support"}},
@@ -28,7 +31,7 @@ try:
     batch = client.predict_batch(["Please refund my order", "The app will not start"], questions,
                                  model="english", batch_size=2, sort_by_length=True)
     print(batch["results"], batch["total_usage"])
-except LayaAPIError as error:
+except VeyaAPIError as error:
     print(error.status_code, error.detail)
 ```
 
@@ -47,7 +50,7 @@ Malformed questions, non-finite numbers, booleans in numeric controls, cycles, a
 non-JSON inputs are refused locally. Server model/workflow registries and configured
 request limits remain authoritative.
 
-Results are ordinary dictionaries with typed definitions in `laya_client.types`.
+Results are ordinary dictionaries with typed definitions in `veya_client.types`.
 Unknown response fields are retained. Required fields, probabilities, usage counts,
 optional routing/abstention metadata, and tournament finalists are validated.
 Batch results must match the input count and remain in server order; an invalid item
@@ -61,13 +64,13 @@ liveness, including on a server whose prediction endpoint requires authenticatio
 
 | Exception | Meaning |
 | --- | --- |
-| `LayaValidationError` | Invalid client settings or request, rejected before sending |
-| `LayaAPIError` | Non-2xx response; `status_code` and `detail` preserve diagnostics |
-| `LayaConnectionError` | Connection, TLS, DNS, or interrupted-response failure |
-| `LayaTimeoutError` | Blocking I/O timed out; also a `LayaConnectionError` |
-| `LayaResponseError` | A successful response did not satisfy the wire contract |
+| `VeyaValidationError` | Invalid client settings or request, rejected before sending |
+| `VeyaAPIError` | Non-2xx response; `status_code` and `detail` preserve diagnostics |
+| `VeyaConnectionError` | Connection, TLS, DNS, or interrupted-response failure |
+| `VeyaTimeoutError` | Blocking I/O timed out; also a `VeyaConnectionError` |
+| `VeyaResponseError` | A successful response did not satisfy the wire contract |
 
-All errors inherit `LayaError`. Error details may be strings, objects, arrays, or
+All errors inherit `VeyaError`. Error details may be strings, objects, arrays, or
 null; error bodies are read up to 64 KiB. URLs may include a reverse-proxy prefix,
 but must be ASCII HTTP(S) URLs without credentials, whitespace, query, or fragment.
 API keys are explicit printable ASCII tokens without whitespace. Redirects and

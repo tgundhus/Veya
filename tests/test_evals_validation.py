@@ -7,8 +7,8 @@ from types import SimpleNamespace
 
 import pytest
 
-import laya
-from laya import evals, evals_cli, evidence
+import veya
+from veya import evals, evals_cli, evidence
 
 
 QUESTIONS = {"q": {"type": "choice", "instructions": "Choose.", "criteria": ["a", "b"]}}
@@ -151,7 +151,7 @@ def test_saved_report_accepts_a_utf8_bom(tmp_path):
 def test_agreement_saved_runs_accept_a_utf8_bom(tmp_path, capsys):
     paths = []
     for name in ("reference", "repeat", "student"):
-        run = {"schema": "laya-agreement-run/1", "run_id": name,
+        run = {"schema": "veya-agreement-run/1", "run_id": name,
                "provenance": {"model": "local", "revision": None, "settings": {}},
                "cases": [{"id": "one", "state": "s", "questions": QUESTIONS, "answers": {"q": "a"}}]}
         path = tmp_path / (name + ".json")
@@ -180,7 +180,7 @@ def test_threshold_names_its_own_metric_and_accuracy_shorthand_resolves(tmp_path
         def predict_batch(self, requests, **kwargs):
             return [self.predict(None, None) for _ in requests]
 
-    monkeypatch.setattr(laya, "Router", Router)
+    monkeypatch.setattr(veya, "Router", Router)
     path = tmp_path / "dataset.jsonl"
     path.write_text(json.dumps({"state": "s", "questions": {"q": {"type": "noul", "instructions": "?"}},
                                 "expected": {"q": True}}), encoding="utf-8")
@@ -191,7 +191,7 @@ def test_threshold_names_its_own_metric_and_accuracy_shorthand_resolves(tmp_path
 
 @pytest.mark.parametrize("name", ["--json", "--markdown"])
 def test_unwritable_report_is_a_usage_error(tmp_path, monkeypatch, name, capsys):
-    monkeypatch.setattr(laya, "Router", lambda **kwargs: object())
+    monkeypatch.setattr(veya, "Router", lambda **kwargs: object())
     monkeypatch.setattr(evals, "evaluate", lambda *args, **kwargs: evals.EvalReport())
     path = tmp_path / "dataset.jsonl"
     path.write_text(json.dumps({"state": "s", "questions": QUESTIONS, "expected": {"q": "a"}}),
@@ -231,13 +231,13 @@ def test_revision_aliases_cannot_hide_conflicting_checkpoint_pins(pins):
 
 @pytest.mark.parametrize("items", [True, False, "1", 1.0, None])
 def test_calibration_item_counts_must_be_integers(items):
-    result = evidence.inspect_calibration({"training": {"laya_train_calibration": {
+    result = evidence.inspect_calibration({"training": {"veya_train_calibration": {
         "choice": {"items": items, "issues": []}}}})
     assert result["types"]["choice"]["state"] == evidence.UNKNOWN
 
 
 def test_evidence_reads_identity_from_either_report_location():
-    report = {"schema": "laya-evals-report/1", "dataset_sha256": "a", "questions_sha256": "b"}
+    report = {"schema": "veya-evals-report/1", "dataset_sha256": "a", "questions_sha256": "b"}
     assert evidence.inspect_report(report)["state"] == evidence.PRESENT
     assert evidence.relate({"dataset_sha256": "other"}, report)["state"] == evidence.INCOMPARABLE
     report["config"] = {"dataset_sha256": "other"}
@@ -295,13 +295,13 @@ def test_evidence_parser_recursion_error_names_the_artifact(tmp_path, monkeypatc
 
 
 def test_not_fitted_calibration_is_not_described_as_fitted():
-    result = evidence.inspect_calibration({"training": {"laya_train_calibration": {
+    result = evidence.inspect_calibration({"training": {"veya_train_calibration": {
         "choice": {"items": 5, "issues": ["not fitted: too few items"]}}}})
     assert result["types"]["choice"]["reason"].startswith("limitations recorded:")
 
 
 def test_strict_json_accepts_ordered_containers_without_widening_scalars():
-    from laya import _agreement
+    from veya import _agreement
 
     class Rows(list):
         pass

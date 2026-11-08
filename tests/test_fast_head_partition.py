@@ -1,9 +1,9 @@
 """The fast path must partition the decision head's attention by the head's own head count.
 
-The TileLang fast path only runs on CUDA (importing `laya.fast` pulls in `tilelang`), so this is a
+The TileLang fast path only runs on CUDA (importing `veya.fast` pulls in `tilelang`), so this is a
 source-level pin -- it reads the files as text, imports nothing, and runs in the ordinary CI lane.
 It guards the fix for the head/encoder head-count mismatch: the decision head is built with
-`nhead = max(1, d // 64)` (laya/common.py), which differs from the encoder's
+`nhead = max(1, d // 64)` (veya/common.py), which differs from the encoder's
 `cfg.num_attention_heads` whenever the encoder head_dim != 64, and reusing the encoder partition
 for the head's attention silently mixes the wrong channels on any such checkpoint.
 
@@ -14,8 +14,8 @@ import re
 import sys
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FAST = open(os.path.join(_ROOT, "laya", "fast.py"), encoding="utf-8").read()
-COMMON = open(os.path.join(_ROOT, "laya", "common.py"), encoding="utf-8").read()
+FAST = open(os.path.join(_ROOT, "veya", "fast.py"), encoding="utf-8").read()
+COMMON = open(os.path.join(_ROOT, "veya", "common.py"), encoding="utf-8").read()
 
 PASS, FAIL = [], []
 

@@ -402,7 +402,7 @@ Two things would remove most of it:
 
 ## Merging Laya 0.3.21
 
-Laya-Pro then merged the original's release
+Veya then merged the original's release
 0.3.21 (114 pull requests). Where
 upstream had changed what the fork changed, the merged code was measured against Laya 0.3.21 as
 released, on the same machine (`research/results/upstream0321_*_m4max_20260929.json`):
@@ -416,7 +416,7 @@ released, on the same machine (`research/results/upstream0321_*_m4max_20260929.j
 | MPS consistency after #559 changed the decision head's attention | unchanged: 0 decisions changed in fp32, the same 4 of 1,076 in fp16, 841 of 841 replayed |
 | Upstream's per-channel int8 export (#498) | 10 of 349 decisions changed, as the per-channel test above found, against 35 per tensor; accuracy 64.5%; 600 MB |
 | A `DecisionCache` hit after upstream's hook changes | 31 µs in memory, 36 µs on SQLite: no slower |
-| Answers against Laya-Pro before the merge (MPS) | 694 of 841 byte-identical. The other 147 differ only by 0.3.21's new `usage["options"]` report, which says that a 20-option MASSIVE question kept 18 distinct option spans under the head budget. No probability changed. |
+| Answers against Veya before the merge (MPS) | 694 of 841 byte-identical. The other 147 differ only by 0.3.21's new `usage["options"]` report, which says that a 20-option MASSIVE question kept 18 distinct option spans under the head budget. No probability changed. |
 
 The merge needed four fixes, each with tests:
 

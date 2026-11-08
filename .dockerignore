@@ -9,6 +9,8 @@
 !docker/
 !docker/entrypoint.py
 !docker/check_torch.py
+!veya/
+!veya/**
 !laya/
 !laya/**
 !examples/

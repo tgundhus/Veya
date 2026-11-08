@@ -3,9 +3,9 @@ requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "laya-pro-onnx"
+name = "veya-onnx"
 version = "0.3.29"
-description = "Local Laya-Pro ONNX inference without PyTorch or Transformers"
+description = "Local Veya ONNX inference without PyTorch or Transformers"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -17,19 +17,26 @@ dependencies = ["numpy>=1.24.2", "onnxruntime>=1.20.0", "tokenizers>=0.20.0", "h
 structured = ["pydantic>=2.0.0"]
 serve = ["fastapi>=0.110.0", "uvicorn>=0.27.0"]
 mcp = ["mcp>=2.2.0"]
+codemode = ["mcp>=2.2.0", "quickjs-ng>=0.18.0.1,<0.19", "psutil>=5.9.8"]
+replay = ["onnx>=1.20.0"]
 
 [project.scripts]
-laya-onnx-serve = "laya_onnx.serve:main"
-laya-onnx-mcp = "laya_onnx.mcp.server:main"
+veya-onnx-serve = "veya_onnx.serve:main"
+veya-onnx-mcp = "veya_onnx.mcp.server:main"
+veya-onnx-replay = "veya_onnx.replay:main"
+
+laya-onnx-serve = "veya_onnx.serve:main"
+laya-onnx-mcp = "veya_onnx.mcp.server:main"
+laya-onnx-replay = "veya_onnx.replay:main"
 
 [project.urls]
-Homepage = "https://tgundhus.github.io/laya-pro/"
-Documentation = "https://tgundhus.github.io/laya-pro/onnx-runtime/"
-Repository = "https://github.com/tgundhus/laya-pro"
-Issues = "https://github.com/tgundhus/laya-pro/issues"
+Homepage = "https://tgundhus.github.io/Veya/"
+Documentation = "https://tgundhus.github.io/Veya/onnx-runtime/"
+Repository = "https://github.com/tgundhus/Veya"
+Issues = "https://github.com/tgundhus/Veya/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-laya_onnx = ["py.typed"]
+veya_onnx = ["py.typed"]

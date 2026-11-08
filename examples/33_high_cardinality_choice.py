@@ -1,6 +1,6 @@
 """Example 33 -- high-cardinality choice questions and the option token budget.
 
-Laya sizes the option head against `head_max_len` and gives the state whatever `max_len` has left
+Veya sizes the option head against `head_max_len` and gives the state whatever `max_len` has left
 after the head it actually built -- which is not `max_len - head_max_len`, because a head built for a
 many-option question runs past the cap. A choice question with many options shares one budget, so at
 some point each option gets only a few tokens. This example measures that squeeze on a 20-option and
@@ -8,12 +8,12 @@ a 77-option (Banking77) question, then raises the budgets to show the answer and
 recover.
 """
 
-from _common import laya, banner, device_line, load
+from _common import veya, banner, device_line, load
 
-from laya.common import build_head, build_sequence
+from veya.common import build_head, build_sequence
 
 banner("33", "High-cardinality choice", """
-    Laya formats a call as:
+    Veya formats a call as:
 
       [CLS] <typed question + option descriptions> [SEP] [MASK] opt0 [MASK] opt1 ... [SEP] state
 
@@ -92,7 +92,7 @@ def internal(question):
 def option_lengths(tok, question):
     """Tokens per option before the squeeze, capped at 48 exactly as `build_sequence` does."""
     lengths = []
-    for opt in laya.render_options(internal(question)):
+    for opt in veya.render_options(internal(question)):
         body = tok(" " + opt.replace(tok.mask_token, " "), add_special_tokens=False)["input_ids"]
         lengths.append(1 + len(body[:48]))          # +1 for the option's own [MASK]
     return lengths

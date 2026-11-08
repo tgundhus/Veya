@@ -77,7 +77,7 @@ PROBE = ("label typo", {
 def entropy_confidence(probs):
     """1 - H/log(k) over a reported distribution: `confidence`'s definition, recomputed by hand.
 
-    Same formula as `laya.common.confidence_from_probs`, and the published probabilities are
+    Same formula as `veya.common.confidence_from_probs`, and the published probabilities are
     rounded to 4 dp while the agent computed the field from unrounded ones, so the recomputation
     is compared against the reported field rather than substituted for it. A wide-but-ordered
     distribution therefore reads as a LOW confidence here, which is the point the score guidance
@@ -163,7 +163,7 @@ print("   All %d questions were answered in one `predict()` call: %d input token
 print("   tokens. The state is repeated once per question row and the questions are rows of a")
 print("   single batch -- splitting this into four calls would return the same answers with")
 print("   four sets of kernel launches (example 36 measures that difference). `output_tokens`")
-print("   is zero because Laya generates no text: the answers are heads on that one pass.")
+print("   is zero because Veya generates no text: the answers are heads on that one pass.")
 print("""
    The schema is the interface: the checkpoint, the device and the number of passes are
    unchanged by how many questions you stack into it. What changes is how many decisions

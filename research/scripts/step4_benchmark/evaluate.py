@@ -4,7 +4,7 @@ Mirrors cell 14 of the published notebook, restricted to the three metrics the S
 names: **accuracy**, **ECE** and **Brier**. The 20-option order-flip surface is deliberately not
 here: it belongs to `massive_intent.en`, not typed-decisions (see README).
 
-Calibration is not byte-comparable across contracts. `laya.train` fits temperatures with
+Calibration is not byte-comparable across contracts. `veya.train` fits temperatures with
 `fit_temperature_map` (per type, and per option-count bucket above a floor) under the runtime
 clamp `[0.5, 5.0]`; the old notebook fitted one LBFGS temperature per type under `[0.1, 10]`.
 So ECE and Brier support either path, one per invocation:
@@ -51,9 +51,9 @@ def _normalise(values: List[float]) -> List[float]:
 
 def evaluate_checkpoint(checkpoint_dir: str, test_meta: List[Dict[str, Any]],
                         device: str = "auto", temperatures: str = "shipped") -> Dict[str, Any]:
-    import laya
+    import veya
 
-    agent = laya.load(checkpoint_dir, device=device)
+    agent = veya.load(checkpoint_dir, device=device)
     if temperatures == "raw":
         agent.temperature = [1.0, 1.0, 1.0]
         agent.temperature_by_options = {}

@@ -26,7 +26,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import torch
 import transformers
-import laya
+import veya
 
 QUESTIONS = {"department": {"type": "choice", "instructions": "Which department should handle this request?",
                             "criteria": {"billing": "invoices, payments, refunds",
@@ -94,9 +94,9 @@ def main():
 
     model = a.model + (("/" + a.subfolder) if a.subfolder else "")
     if Path(a.model).is_dir():            # a local directory already contains the checkpoint
-        agent = laya.load(a.model, device=a.device)
+        agent = veya.load(a.model, device=a.device)
     else:
-        agent = laya.load(a.model, subfolder=a.subfolder or None, device=a.device)
+        agent = veya.load(a.model, subfolder=a.subfolder or None, device=a.device)
     tok = agent.tok
 
     labels = [g for _, g in REQUESTS]
@@ -142,7 +142,7 @@ def main():
 
     out = {"checkpoint": model, "device": a.device, "platform": platform.platform(),
            "torch": torch.__version__, "transformers": transformers.__version__,
-           "laya": laya.__version__, "limit": a.limit, "filler_tokens_per_rep": per_rep,
+           "laya": veya.__version__, "limit": a.limit, "filler_tokens_per_rep": per_rep,
            "questions": QUESTIONS, "filler": FILLER,
            "label_counts": counts, "majority_class": round(majority, 4),
            "note": ("Position is the fraction of the filler the request is inserted at, so 1.0 is the "

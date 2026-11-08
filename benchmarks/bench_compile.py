@@ -35,8 +35,8 @@ def main():
     ap.add_argument("--warmup", action="store_true", help="call agent.warmup() before the first request")
     args = ap.parse_args()
     import torch
-    import laya.agent as A
-    from laya import _compile
+    import veya.agent as A
+    from veya import _compile
     from torch._dynamo.utils import counters
     kw = {"backend": args.dynamo_backend} if args.dynamo_backend else {}
     if args.stock:

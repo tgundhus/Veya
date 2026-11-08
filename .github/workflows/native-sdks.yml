@@ -17,10 +17,10 @@ concurrency:
 # tokenizer checkpoints or ONNX weights skip explicitly; CI never downloads them.
 env:
   HF_HUB_OFFLINE: "1"
-  LAYA_CHECKPOINTS: ""
-  LAYA_ONNX_GRAPH: ""
-  LAYA_TYPED_ONNX_GRAPH: ""
-  LAYA_PREDICT_GOLDEN: ""
+  VEYA_CHECKPOINTS: ""
+  VEYA_ONNX_GRAPH: ""
+  VEYA_TYPED_ONNX_GRAPH: ""
+  VEYA_PREDICT_GOLDEN: ""
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
   DOTNET_NOLOGO: "true"
 
@@ -47,7 +47,7 @@ jobs:
           distribution: temurin
           java-version: ${{ matrix.java }}
       - name: Build and test on the selected JDK
-        working-directory: laya-java
+        working-directory: veya-java
         run: >-
           ./gradlew build --no-daemon --console=plain
           -PtestJavaVersion=${{ matrix.java }}
@@ -63,13 +63,13 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     defaults:
       run:
-        working-directory: laya-dotnet
+        working-directory: veya-dotnet
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
-          global-json-file: laya-dotnet/global.json
+          global-json-file: veya-dotnet/global.json
       - name: Build library, samples and tests
-        run: dotnet build Laya.slnx --configuration Release
+        run: dotnet build Veya.slnx --configuration Release
       - name: Run SDK tests
-        run: dotnet test Laya.slnx --configuration Release --no-build
+        run: dotnet test Veya.slnx --configuration Release --no-build

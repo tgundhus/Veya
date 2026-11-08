@@ -22,8 +22,8 @@ from tokenizers import Tokenizer  # noqa: E402
 from tokenizers.models import WordLevel  # noqa: E402
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast  # noqa: E402
 
-from laya import load  # noqa: E402
-from laya.common import TEMP_MAX, TEMP_MIN, DecisionModel, temperature_rejected  # noqa: E402
+from veya import load  # noqa: E402
+from veya.common import TEMP_MAX, TEMP_MIN, DecisionModel, temperature_rejected  # noqa: E402
 
 
 class TemperatureLoadingTests(unittest.TestCase):
@@ -62,7 +62,7 @@ class TemperatureLoadingTests(unittest.TestCase):
         self.assertEqual(json.dumps(agent.cfg), json.dumps(cfg))
         self.assertEqual(json.dumps(agent.temperature_raw), json.dumps(cfg.get("temperature", [1.0] * 3)))
         self.assertEqual(json.dumps(agent.temperature_by_options_raw), json.dumps(cfg.get("temperature_by_options", {})))
-        messages = [w for w in caught if str(w.message).startswith("laya:")]
+        messages = [w for w in caught if str(w.message).startswith("veya:")]
         self.assertTrue(all(issubclass(w.category, RuntimeWarning) for w in messages))
         return agent, [str(w.message) for w in messages]
 
@@ -148,6 +148,20 @@ class TemperatureLoadingTests(unittest.TestCase):
             self.assertIn(entry, messages[0])
         self.assert_predictions(agent, choice=5.0, score=0.5, noul=0.5)
 
+    def test_wide_json_integers_keep_neutral_fallback_and_warn(self):
+        for value in (10 ** 400, -(10 ** 400), 2 ** 1024):
+            with self.subTest(value=value):
+                agent, messages = self.load_config(temperature=[value, 2.0, 3.0],
+                                                  temperature_by_options={"choice:2": value})
+                self.assertEqual(agent.temperature, [1.0, 2.0, 3.0])
+                self.assertEqual(agent.temperature_by_options, {"choice:2": 1.0})
+                self.assertEqual(len(messages), 1)
+                self.assertIn("temperature[0]", messages[0])
+                self.assertIn("choice:2", messages[0])
+                self.assertIn(str(value), messages[0])
+                self.assertIn("uncalibrated", messages[0])
+                self.assert_predictions(agent, choice=1.0, score=2.0, noul=3.0)
+
     def test_valid_numbers_and_numeric_strings_do_not_warn(self):
         agent, messages = self.load_config(temperature=[0.5, "2", 5],
                                           temperature_by_options={"choice:2": "1.5", "score:3-5": 2.5, "noul:2": "5.0"})
@@ -194,6 +208,10 @@ class TemperatureRejectionPredicateTests(unittest.TestCase):
             ({}, 1.0, True),
             (float("nan"), 1.0, True),
             (float("inf"), 1.0, True),
+            (10 ** 400, 1.0, True),
+            (-(10 ** 400), 1.0, True),
+            (2 ** 1024, 1.0, True),
+            (2 ** 1023, TEMP_MAX, True),
         ]
         for raw, applied, want in cases:
             with self.subTest(raw=raw, applied=applied):
@@ -204,7 +222,7 @@ class TemperatureRejectionPredicateTests(unittest.TestCase):
         # `clamp_temperature` is how a `true` temperature loaded unreported. Walk the package
         # rather than naming files, so a re-derived fourth copy is caught the same way.
         root = Path(__file__).resolve().parents[1]
-        offenders = [p.relative_to(root).as_posix() for p in sorted((root / "laya").rglob("*.py"))
+        offenders = [p.relative_to(root).as_posix() for p in sorted((root / "veya").rglob("*.py"))
                      if "if float(raw) == applied:" in p.read_text(encoding="utf-8")]
         self.assertEqual(offenders, [])
 

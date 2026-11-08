@@ -28,14 +28,14 @@ export interface NoulQuestion {
 export type Question = ChoiceQuestion | ScoreQuestion | NoulQuestion;
 export type Questions = Readonly<Record<string, Question>>;
 export type ModelName = 'english' | 'multilingual' | 'typed-decisions';
-export type ModelAlias = ModelName | 'en' | 'laya' | 'default' | 'multi' | 'ml' | 'laya-multilingual'
+export type ModelAlias = ModelName | 'en' | 'veya' | 'default' | 'multi' | 'ml' | 'laya-multilingual'
   | 'typed' | 'typed_decisions' | 'laya-typed-decisions' | 'decisions';
 
 /** Per-option-count abstention thresholds: `bucket -> threshold`, keyed by core's `temp_bucket`
  *  spelling (`"choice:2"`, `"choice:3-5"`, `"score:6-10"`, `"noul:2"`, ...) plus an optional
  *  `"default"` for buckets the map does not name. One threshold does not transfer across option
  *  counts, so each bucket is gated at the level its own calibration earns; fit one with
- *  `laya.calibrate.fit_abstention_thresholds`. Every value is a threshold in `[0, 1]`. Only keys
+ *  `veya.calibrate.fit_abstention_thresholds`. Every value is a threshold in `[0, 1]`. Only keys
  *  core can produce type-check, so a map like `{ "choice:2-5": 0.9 }` is refused here as well as
  *  by the client's runtime validation (#1002). */
 export type MinConfidenceMap = { [K in MinConfidenceKey]?: number };
@@ -49,7 +49,7 @@ export interface RequestOptions {
   timeoutMs?: number;
 }
 export interface PredictOptions extends RequestOptions {
-  /** Local Laya checkpoint or alias. Overrides the client's configured model. */
+  /** Local Veya checkpoint or alias. Overrides the client's configured model. */
   model?: string;
   /** Force a checkpoint by workflow name instead of letting routing decide; the server
    *  answers 422 naming an unknown one. */
@@ -60,7 +60,7 @@ export interface PredictOptions extends RequestOptions {
    *  before detection. */
   langGuess?: string;
   /** Total token window for this request, capped by the deployment's
-   *  `LAYA_MAX_TOKEN_BUDGET` (422 above it). */
+   *  `VEYA_MAX_TOKEN_BUDGET` (422 above it). */
   maxLen?: number;
   /** Token window the option prompt shares, same cap. */
   headMaxLen?: number;
@@ -84,7 +84,11 @@ export interface BatchPrediction<Q extends Questions = Questions> {
 }
 
 interface AnswerBase {
-  /** Optional action metadata returned by Laya. */
+  /** Optional local bias-correction policy; canonical answers omit this field. */
+  decision_policy?: 'context-balanced-v1';
+  /** Bias-corrected probabilities have not been calibrated on deployment data. */
+  confidence_calibrated?: false;
+  /** Optional action metadata returned by Veya. */
   action?: { act_probability: number };
   /** The probability mass on the answer actually reported (`max(p)`). Unlike `confidence`, which
    *  means normalized entropy on `choice` and `score` and `max(p_yes, p_no)` on `noul`, this is
@@ -123,7 +127,7 @@ export interface ScoreAnswer extends AnswerBase {
 }
 export interface NoulAnswer extends AnswerBase {
   type: 'noul';
-  /** Optional confidence metadata returned by Laya. */
+  /** Optional confidence metadata returned by Veya. */
   confidence?: number;
   /** P(true), between 0 and 1. */
   noul: number;
@@ -186,18 +190,22 @@ export interface Usage {
   truncated_questions: string[];
   /** Present only when some question's options were collapsed, keyed by question id. */
   options?: Record<string, OptionCollapse>;
+  /** Present when the server uses the opt-in local bias-correction policy. */
+  decision_policy?: 'context-balanced-v1';
+  /** Shared content-free probe work, included once in the first batch result's input tokens. */
+  policy_probe_tokens?: number;
 }
 export interface Prediction<Q extends Questions = Questions> {
   model: string;
   answers: Answers<Q>;
   usage: Usage;
-  /** Optional routing metadata returned by Laya. */
+  /** Optional routing metadata returned by Veya. */
   routing?: RouteDecision;
 }
-/** Laya's self-hosted health probe.
+/** Veya's self-hosted health probe.
  *
  * `status` is always present. The rest is only answered to a caller the server can authenticate:
- * on a deployment that set `LAYA_API_KEY`, an anonymous probe gets `{status: 'ok'}` and nothing
+ * on a deployment that set `VEYA_API_KEY`, an anonymous probe gets `{status: 'ok'}` and nothing
  * else, because the other fields name resident checkpoints, their revision SHAs and the host's
  * device state. A deployment with no key set answers every field to everyone.
  */
@@ -205,6 +213,7 @@ export interface Health {
   status: 'ok';
   loaded?: string[];
   device?: string;
+  model_free_replay?: { enabled: boolean; http_fast_path: boolean };
 }
 
 /** Preserve question IDs, primitive types, and literal choice labels when declaring a schema. */

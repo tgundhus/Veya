@@ -1,7 +1,7 @@
 """Residency cap: what `Router` holds, and what the residency page tells readers about it.
 
 `examples/24_preload_and_memory.py` is the page a reader copies a `max_loaded` setting from. Its
-banner used to open with "At the default `max_loaded=1`", a number `laya/router.py` retired in #180
+banner used to open with "At the default `max_loaded=1`", a number `veya/router.py` retired in #180
 and README.md documents as 2. So the page taught the retired cap while demonstrating eviction, and
 a reader who believed it thought they had to raise the cap to stop the churn the page was showing.
 The checks below read the page's own text and syntax tree -- no checkpoint, no device. `Router()`
@@ -16,10 +16,10 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 # The page under test lives in this checkout, so the library it is compared against has to come
-# from here too: an installed `laya` would let the page and a stale default agree.
+# from here too: an installed `veya` would let the page and a stale default agree.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from laya.router import Router
+from veya.router import Router
 
 
 class MockAgent:
@@ -45,7 +45,7 @@ MAGNITUDE = re.compile(r"\b(?:thousands?|millions?|billions?|orders of magnitude
 
 
 def callee(call):
-    """`laya.Router` / `r.route` / `timed` -- a dotted name, so a rename cannot hide a call."""
+    """`veya.Router` / `r.route` / `timed` -- a dotted name, so a rename cannot hide a call."""
     parts, node = [], call.func
     while isinstance(node, ast.Attribute):
         parts.append(node.attr)
@@ -175,7 +175,7 @@ class RouterMemoryTests(unittest.TestCase):
 
 
 class ExampleResidencyPageTests(unittest.TestCase):
-    """What the residency page may claim about `max_loaded`, held to `laya/router.py`."""
+    """What the residency page may claim about `max_loaded`, held to `veya/router.py`."""
 
     def test_default_is_more_than_one_checkpoint(self):
         # The witness that the page-claims below are about a library that keeps two resident: with
@@ -191,7 +191,7 @@ class ExampleResidencyPageTests(unittest.TestCase):
         for sentence in paired:
             for stated in CAP.findall(sentence):
                 self.assertEqual(int(stated), CODE_DEFAULT,
-                                 "page says %r; laya/router.py says max_loaded=%d"
+                                 "page says %r; veya/router.py says max_loaded=%d"
                                  % (sentence[:90], CODE_DEFAULT))
 
     def test_page_reads_its_default_from_the_library(self):

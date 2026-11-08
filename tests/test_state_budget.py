@@ -34,7 +34,7 @@ import textwrap
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.common import _build_question_head, build_head, build_sequence, render_options  # noqa: E402
+from veya.common import _build_question_head, build_head, build_sequence, render_options  # noqa: E402
 
 PASS, FAIL, SKIPPED = [], [], []
 
@@ -105,7 +105,7 @@ def _many_options(k, desc="a short description of this option"):
 
 
 def _models_dir():
-    return os.environ.get("LAYA_LAB_MODELS", os.path.expanduser("~/laya_models"))
+    return os.environ.get("VEYA_LAB_MODELS", os.path.expanduser("~/veya_models"))
 
 
 def _real_tok(name):
@@ -187,7 +187,7 @@ def test_cap_based_figure_overstates_a_high_cardinality_question():
 def _readme_quotes():
     """The figures README.md states, parsed out of the token-budget bullet."""
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # Laya-Pro keeps the token-budget bullet in docs/limits.md, not README.md.
+    # Veya keeps the token-budget bullet in docs/limits.md, not README.md.
     with open(os.path.join(root, "docs", "limits.md"), encoding="utf-8") as fh:
         text = fh.read()
     heads = {int(m) for m in re.findall(r"\*\*(\d+)-token\*\* head", text)}
@@ -292,7 +292,7 @@ def _budget_literals():
     Read out of the function rather than typed in here, so a page holding a stale number fails
     instead of agreeing with itself.
     """
-    # Laya-Pro's `build_head` returns a cached head; the arithmetic lives in the builder it caches.
+    # Veya's `build_head` returns a cached head; the arithmetic lives in the builder it caches.
     tree = ast.parse(textwrap.dedent(inspect.getsource(_build_question_head)))
     found = {}
     for node in ast.walk(tree):

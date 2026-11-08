@@ -1,6 +1,6 @@
 """`docs/structured.md`'s tables must be the compiler's behavior, in both directions.
 
-The page promises a "documented subset" (`laya/structured.py:146` says the mapping is one), and the
+The page promises a "documented subset" (`veya/structured.py:146` says the mapping is one), and the
 subset table is what a reader trusts. It had drifted both ways at once: it promised `title` as an
 "option label", which no code path reads at all (weight-free proof: the compiled plan is
 byte-identical with and without the key), while `Optional[X]` -- the `anyOf`/`oneOf` unwrap and the
@@ -10,7 +10,7 @@ that said only "the limit is named in the message".
 
 So the tables are rewritten as data the test can run, and this suite runs them: every schema cell is
 compiled, every rejection cell is raised, and the key set and message set are compared against what
-`laya/structured.py` actually reads and actually raises -- derived with `ast`, never transcribed. A
+`veya/structured.py` actually reads and actually raises -- derived with `ast`, never transcribed. A
 row that no longer matches the code fails; a key or a message added to the code without a row fails;
 and a row added to the docs that the code does not honour fails.
 
@@ -65,9 +65,9 @@ def read(path: str) -> str:
 
 
 DOCS = os.path.join("docs", "structured.md")
-MODULE = os.path.join("laya", "structured.py")
+MODULE = os.path.join("veya", "structured.py")
 
-SUBSET_HEADER = "| JSON schema | Laya question | Returned value |"
+SUBSET_HEADER = "| JSON schema | Veya question | Returned value |"
 PROP_HEADER = "| property schema | message |"
 CALL_HEADER = "| call | message |"
 API_HEADER = "| function | purpose |"
@@ -120,10 +120,10 @@ def run_cell(text: str, extra: Optional[Dict[str, Any]] = None) -> Any:
 # against the code that builds them, per path, and the true two-key sentence in `README.md` (empty
 # questions) is kept as the control that proves this is not one blanket rule.
 
-AGENT_PY = os.path.join("laya", "agent.py")
-ONNX_PY = os.path.join("laya", "onnx_agent.py")
+AGENT_PY = os.path.join("veya", "agent.py")
+ONNX_PY = os.path.join("veya", "onnx_agent.py")
 EXAMPLE03 = os.path.join("examples", "03_reading_the_result.py")
-README = os.path.join("docs", "guide.md")  # Laya-Pro: the reference text moved from README.md
+README = os.path.join("docs", "guide.md")  # Veya: the reference text moved from README.md
 
 
 def _own_nodes(func: ast.AST) -> List[ast.AST]:
@@ -203,7 +203,7 @@ def mentions_only_conditionally(text: str, key: str) -> bool:
 # ------------------------------------------------------------------- what the compiler really does
 
 def property_keys(tree: ast.AST) -> List[str]:
-    """Every key `laya/structured.py` looks up on a *property* schema dict, by ast.
+    """Every key `veya/structured.py` looks up on a *property* schema dict, by ast.
 
     Three spellings matter: `prop.get("k")`, `prop["k"]`, and `if "k" in prop`. Reading only one of
     them is how a copy of a registry goes stale elsewhere in this repo; here the risk is reading only
@@ -269,15 +269,15 @@ def matches(literal: str, message: str) -> bool:
 
 def main() -> int:
     check_true("docs/structured.md exists", os.path.exists(DOCS), "missing")
-    check_true("laya/structured.py exists", os.path.exists(MODULE), "missing")
+    check_true("veya/structured.py exists", os.path.exists(MODULE), "missing")
     if FAIL:
         return report()
 
     text = read(DOCS)
     tree = ast.parse(read(MODULE))
     sys.path.insert(0, os.getcwd())
-    import laya
-    import laya.structured as S
+    import veya
+    import veya.structured as S
 
     code_keys = property_keys(tree)
     literals = error_messages(tree)
@@ -357,7 +357,7 @@ def main() -> int:
             rejected_keys.update(prop.keys())
     check_true("compiler keys/all documented",
                set(code_keys) <= (documented_keys | rejected_keys),
-               "read by laya/structured.py and absent from the tables: %s"
+               "read by veya/structured.py and absent from the tables: %s"
                % sorted(set(code_keys) - documented_keys - rejected_keys))
     check_true("docs name `title` as not read",
                re.search(r"`title` is \*\*not\*\* read", text) is not None,
@@ -434,7 +434,7 @@ def main() -> int:
         schema = {"type": "object", "properties": {"field": {"type": "integer",
                                                              "minimum": 3, "maximum": 7}}}
         # `score` is the 0-based level index (5 levels: 0..4 for minimum=3, maximum=7), never
-        # the absolute field value -- see `DecisionModel._decode_answers` in laya/agent.py.
+        # the absolute field value -- see `DecisionModel._decode_answers` in veya/agent.py.
         for score, want in ((0, 3), (2, 5), (4, 7)):
             got = S.answers_to_json({"field": {"type": "score", "score": score}}, schema)
             check("projection/minimum + argmax for score %d" % score, got, {"field": want})
@@ -464,13 +464,13 @@ def main() -> int:
 
     # ---------------------------------------------------------------------- the API table
     def resolve(name: str) -> Any:
-        """What a documented name refers to: `laya.x`, `agent.x`/`router.x`, or the module's own."""
+        """What a documented name refers to: `veya.x`, `agent.x`/`router.x`, or the module's own."""
         parts = name.split(".")
-        if parts[0] == "laya":
-            obj: Any = laya
+        if parts[0] == "veya":
+            obj: Any = veya
             rest = parts[1:]
         elif parts[0] in ("agent", "router"):
-            obj = laya.Agent if parts[0] == "agent" else laya.Router
+            obj = veya.Agent if parts[0] == "agent" else veya.Router
             rest = parts[1:]
         else:
             obj, rest = S, parts

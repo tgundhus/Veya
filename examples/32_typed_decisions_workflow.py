@@ -9,7 +9,7 @@ import json
 from _common import STATE_EN, banner, describe, device_line, load, router
 
 banner("32", "Typed-decisions workflow", """
-    Three checkpoints ship with Laya. The English and multilingual ones are general; the third,
+    Three checkpoints ship with Veya. The English and multilingual ones are general; the third,
     `laya-typed-decisions`, is fine-tuned on four synthetic workflows whose question ids are
     fixed at training time:
 

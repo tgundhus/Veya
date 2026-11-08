@@ -27,11 +27,11 @@ import tracemalloc
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 
-import laya  # noqa: E402
-from laya import DecisionCache, Router  # noqa: E402
-from laya import consistency  # noqa: E402
-from laya import router as router_mod  # noqa: E402
-from laya.hooks import PredictContext  # noqa: E402
+import veya  # noqa: E402
+from veya import DecisionCache, Router  # noqa: E402
+from veya import consistency  # noqa: E402
+from veya import router as router_mod  # noqa: E402
+from veya.hooks import PredictContext  # noqa: E402
 
 INF = float("inf")
 ARCHIVE = os.path.join(ROOT, "research", "benchmarks", "feishu_zh", "results", "v1", "laya", "raw.jsonl")
@@ -304,7 +304,7 @@ def main():
         results = {
             "meta": {"python": platform.python_version(), "machine": platform.machine(),
                      "processor": platform.processor() or platform.platform(), "cpus": os.cpu_count(),
-                     "sqlite": sqlite3.sqlite_version, "laya": laya.__version__},
+                     "sqlite": sqlite3.sqlite_version, "laya": veya.__version__},
             "key": bench_key(agent),
             "codec": bench_codec(samples),
             "store": bench_stores(blob, tmp, n=args.entries),

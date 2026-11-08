@@ -1,14 +1,16 @@
 ---
 title: Lightweight ONNX runtime
-description: Run exported Laya graphs locally without installing PyTorch or Transformers.
+description: Run exported Veya graphs locally without installing PyTorch or Transformers.
 ---
 
 # Lightweight ONNX runtime
 
-`laya-pro-onnx` is a separate inference distribution with the `laya_onnx` import.
+`veya-onnx` is a separate inference distribution with the `veya_onnx` import.
 It loads an exported ONNX graph, its checkpoint configuration and a local tokenizer.
-PyTorch and Transformers are not runtime dependencies. The full `laya-pro` package
+PyTorch and Transformers are not runtime dependencies. The full `veya` package
 continues to provide PyTorch inference, export tools, routing, training and integrations.
+Uninstall a former `laya-pro-onnx` installation before upgrading to `veya-onnx`:
+their `veya_onnx` files overlap even though pip treats them as separate distributions.
 
 The lightweight distribution is available from this checkout; it has not been published
 to a package registry:
@@ -47,7 +49,7 @@ change decisions.
 ## Predict locally
 
 ```python
-from laya_onnx import ONNXAgent
+from veya_onnx import ONNXAgent
 
 agent = ONNXAgent("/models/english", onnx_path="/models/english.onnx")
 questions = {
@@ -66,7 +68,7 @@ long-input windows, calibration and prediction hooks. `DecisionCache` can retain
 repeats through the same hook interface:
 
 ```python
-from laya_onnx import DecisionCache, ONNXAgent
+from veya_onnx import DecisionCache, ONNXAgent
 
 with DecisionCache("decisions.sqlite", ttl=86400, maxsize=10_000) as cache:
     agent = ONNXAgent("/models/english", "/models/english.onnx", hooks=[cache])
@@ -74,7 +76,7 @@ with DecisionCache("decisions.sqlite", ttl=86400, maxsize=10_000) as cache:
     repeated = agent.predict("Please refund a duplicate charge.", questions)
 ```
 
-For thread budgets, use `performance_mode=1` through `5`; `LAYA_THREADS` overrides the
+For thread budgets, use `performance_mode=1` through `5`; `VEYA_THREADS` overrides the
 profile's ONNX session thread count. These budgets keep the same graph and precision.
 See [Performance modes](performance-modes.md).
 
@@ -88,7 +90,7 @@ not download an encoder tokenizer as a fallback. Tokenization is part of model b
 keep its configuration and special tokens with the graph, and verify outputs when moving
 between runtimes.
 
-The existing `from laya.onnx_agent import ONNXAgent` interface remains available in
+The existing `from veya.onnx_agent import ONNXAgent` interface remains available in
 the full distribution. Its default tokenizer continues to use Transformers.
 The standalone package does not provide the PyTorch `Agent`, training, model export
 or every full-package integration.
@@ -101,11 +103,11 @@ Install only the service extras you need:
 python -m pip install "./runtime/onnx[serve,mcp]"
 ```
 
-The lightweight entry points are `laya-onnx-serve` and `laya-onnx-mcp` (stdio).
-Their module equivalents are `python -m laya_onnx.serve` and
-`python -m laya_onnx.mcp.server`. Both use ONNX by default. The full package's
-`laya-serve` and `laya-mcp-server` retain their current Torch default; select
-`--backend onnx` or set `LAYA_BACKEND=onnx` to use the same native ONNX path there.
+The lightweight entry points are `veya-onnx-serve` and `veya-onnx-mcp` (stdio).
+Their module equivalents are `python -m veya_onnx.serve` and
+`python -m veya_onnx.mcp.server`. Both use ONNX by default. The full package's
+`veya-serve` and `veya-mcp-server` retain their current Torch default; select
+`--backend onnx` or set `VEYA_BACKEND=onnx` to use the same native ONNX path there.
 An explicit command-line backend takes precedence over the environment.
 In the full checkout, install its `onnx` extra alongside `serve` or `mcp` before
 selecting this backend, for example `python -m pip install ".[serve,mcp,onnx]"`.
@@ -114,11 +116,11 @@ Register the local checkpoint configuration and tokenizer directory under a mode
 name, then map that same name to its exported graph. For example, in a POSIX shell:
 
 ```bash
-export LAYA_EXTRA_MODELS='{"english":"/models/english"}'
-export LAYA_ONNX_PATHS='{"english":"/models/english.onnx"}'
-export LAYA_MODELS=english
-export LAYA_THREADS=4
-laya-onnx-serve
+export VEYA_EXTRA_MODELS='{"english":"/models/english"}'
+export VEYA_ONNX_PATHS='{"english":"/models/english.onnx"}'
+export VEYA_MODELS=english
+export VEYA_THREADS=4
+veya-onnx-serve
 ```
 
 For an MCP client, put the same configuration in its server environment:
@@ -126,13 +128,13 @@ For an MCP client, put the same configuration in its server environment:
 ```json
 {
   "mcpServers": {
-    "laya-pro": {
-      "command": "laya-onnx-mcp",
+    "veya": {
+      "command": "veya-onnx-mcp",
       "env": {
-        "LAYA_EXTRA_MODELS": "{\"english\":\"C:/models/english\"}",
-        "LAYA_ONNX_PATHS": "{\"english\":\"C:/models/english.onnx\"}",
-        "LAYA_MODELS": "english",
-        "LAYA_THREADS": "4"
+        "VEYA_EXTRA_MODELS": "{\"english\":\"C:/models/english\"}",
+        "VEYA_ONNX_PATHS": "{\"english\":\"C:/models/english.onnx\"}",
+        "VEYA_MODELS": "english",
+        "VEYA_THREADS": "4"
       }
     }
   }
@@ -142,10 +144,10 @@ For an MCP client, put the same configuration in its server environment:
 Model aliases such as `en` resolve to their canonical name. Each configured graph
 needs its own local checkpoint directory; Hub IDs are refused on this service path.
 Paths are resolved when the router is built. The service uses CPU execution;
-`LAYA_DEVICE` must be unset or `cpu`. `LAYA_THREADS` and performance modes set each
+`VEYA_DEVICE` must be unset or `cpu`. `VEYA_THREADS` and performance modes set each
 ONNX session's thread budget without changing Torch's global thread settings.
 
-When `LAYA_MODELS` is omitted, ONNX preloading uses the configured graph names.
+When `VEYA_MODELS` is omitted, ONNX preloading uses the configured graph names.
 Automatic routing can still select another registered checkpoint: provide its
 configuration and graph too, or pin a request's `model` to the installed checkpoint.
 A missing graph produces a configuration error. Clients cannot supply graph paths
@@ -158,7 +160,7 @@ is unavailable on ONNX; use tournament narrowing instead. Status reports the bac
 and CPU device without importing Torch or Transformers. The existing decision
 cache retention variables apply to both services; see [Consistency](consistency.md).
 
-With `LAYA_BASE_URL` set, MCP delegates inference to the HTTP server. Local backend
+With `VEYA_BASE_URL` set, MCP delegates inference to the HTTP server. Local backend
 and graph settings do not configure that remote server.
 
 ### Service measurements
@@ -180,7 +182,7 @@ readiness and first inference; memory peaks include batch, parity and cache chec
 The full package's ONNX backend gave similar results. Independently installed
 wheel and rebuilt source-package checks confirmed that the lightweight services
 run without Torch, Transformers or the full engine.
-[Batch timings, cache hits and full methodology](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#lightweight-http-and-mcp-1-november-2026).
+[Batch timings, cache hits and full methodology](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#lightweight-http-and-mcp-1-november-2026).
 
 ## Loading and memory measurements
 
@@ -191,16 +193,16 @@ used the same graph and numerical dependency versions as the full ONNX baseline.
 | runtime | startup to first answer s | peak working set MiB | warm predict ms |
 |---|---:|---:|---:|
 | full ONNX baseline | 5.374 | 1827.5 | 232.97 |
-| standalone `laya_onnx` | 1.782 | 1566.5 | 233.43 |
+| standalone `veya_onnx` | 1.782 | 1566.5 | 233.43 |
 
 All 12 typed answers and unrounded logits/probabilities matched exactly in every run.
 Warm inference was unchanged; the benefit was startup and memory used by imported
 libraries. Separately, the PyTorch loading path reduced peak working set from 2735.1
 to 1970.8 MiB while keeping private commit, steady memory and startup time unchanged.
 The independently resolved lightweight installation had 134.4 MiB of dependency files,
-against 879.7 MiB in the existing full `laya-pro[onnx]` environment. These are installed
+against 879.7 MiB in the existing full `veya[onnx]` environment. These are installed
 file bytes, excluding project code, rather than download sizes or model RAM.
-[Full measurements and limits](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#loading-memory-and-standalone-onnx-31-october-2026).
+[Full measurements and limits](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#loading-memory-and-standalone-onnx-31-october-2026).
 
 `research/scripts/bench_loading_memory.py` compares an unchanged baseline checkout with
 the current runtime in fresh processes, using the same pinned local checkpoint and graph.

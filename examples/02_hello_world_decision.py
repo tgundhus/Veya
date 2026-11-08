@@ -1,6 +1,6 @@
-"""Example 02 -- the smallest useful Laya call.
+"""Example 02 -- the smallest useful Veya call.
 
-One checkpoint, one question, one forward pass. Laya returns a typed answer, not text, so
+One checkpoint, one question, one forward pass. Veya returns a typed answer, not text, so
 there is nothing to parse and nothing to hallucinate.
 """
 from _common import STATE_EN, banner, describe, device_line, load

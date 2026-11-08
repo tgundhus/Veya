@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import torch  # noqa: E402
 from transformers import BertConfig, BertModel  # noqa: E402
 
-from laya.common import DecisionModel  # noqa: E402
+from veya.common import DecisionModel  # noqa: E402
 
 
 def tiny_model(head_layers=2):
@@ -132,7 +132,7 @@ class HeadCheckpointingTests(unittest.TestCase):
                     torch.manual_seed(123)
                     expected = model(*batch)
                     model.head_checkpointing = True
-                    with patch("laya.common.checkpoint", side_effect=AssertionError("unexpected checkpoint")):
+                    with patch("veya.common.checkpoint", side_effect=AssertionError("unexpected checkpoint")):
                         torch.manual_seed(123)
                         actual = model(*batch)
                 torch.testing.assert_close(expected, actual, rtol=0, atol=0)
@@ -143,7 +143,7 @@ class HeadCheckpointingTests(unittest.TestCase):
     def test_default_is_disabled(self):
         model = tiny_model().train()
         self.assertFalse(model.head_checkpointing)
-        with patch("laya.common.checkpoint", side_effect=AssertionError("unexpected checkpoint")):
+        with patch("veya.common.checkpoint", side_effect=AssertionError("unexpected checkpoint")):
             training_step(model)
 
 

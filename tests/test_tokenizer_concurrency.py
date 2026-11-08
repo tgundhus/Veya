@@ -15,8 +15,8 @@ from tokenizers import Tokenizer  # noqa: E402
 from tokenizers.models import WordLevel  # noqa: E402
 from transformers import PreTrainedTokenizerFast  # noqa: E402
 
-from laya.agent import Agent  # noqa: E402
-from laya.common import _TOKENIZE_LOCK, build_sequence  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.common import _TOKENIZE_LOCK, build_sequence  # noqa: E402
 
 PASS, FAIL = [], []
 

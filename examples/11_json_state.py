@@ -12,7 +12,7 @@ banner("11", "A JSON record as the state", """
     serialised with `json.dumps(state, ensure_ascii=False)` and the resulting JSON text
     becomes the state the model reads.
 
-    That is the whole trick -- there is no schema engine and no field lookup. Laya reads
+    That is the whole trick -- there is no schema engine and no field lookup. Veya reads
     the serialised record as text, so the keys, values and wording all shape the answer,
     and deeply nested or ambiguous fields are harder for it than a flat status string.
     This record keeps the customer nested and the order statuses explicit, and the

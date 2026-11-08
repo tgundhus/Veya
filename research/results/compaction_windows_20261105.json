@@ -1,0 +1,775 @@
+{
+  "started_utc": "2026-11-05T15:55:58.329078+00:00",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.14",
+  "torch": "2.14.1+cpu",
+  "threads": 4,
+  "repeats": 3,
+  "offline": true,
+  "device": "cpu",
+  "precision": "fp32",
+  "source_sha256": {
+    "laya\\compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "research\\scripts\\bench_compaction.py": "d2f4119f7fa1698ba1deb16d5e33198250ebfc19ce9d341f83d2161d503bf69e"
+  },
+  "fixture_sha256": "151dcd4ec64633a5dba1c62467f33e385bf3e4af59e3a1b69065bbeb0457d1e9",
+  "limits": "12 synthetic annotated cases; evidence checks are not downstream agent task success. Token counts use each checkpoint tokenizer over canonical JSON, not a provider chat template. Uncontrolled workstation load; warm filesystem; no decision cache or threshold tuning.",
+  "runs": [
+    {
+      "checkpoint": "C:\\Users\\TGUNDHUS-PWR\\.cache\\huggingface\\hub\\models--convaiinnovations--laya\\snapshots\\55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851",
+      "artifacts": {
+        "model.safetensors": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+        "rl_agent_config.json": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd"
+      },
+      "rows": [
+        {
+          "id": "obsolete_read",
+          "required_result": false,
+          "required_call": false,
+          "tokens_before": 887,
+          "compactor_tokens_after": 887,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 1.2517825000104494,
+          "seconds": [
+            1.2239871000056155,
+            1.2517825000104494,
+            1.2527100999723189
+          ],
+          "recency_seconds": 2.8099981136620045e-05,
+          "decisions": [
+            {
+              "tool_use_id": "obsolete_read",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.6824,
+              "keep_result": 0.552
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "obsolete_search",
+          "required_result": false,
+          "required_call": false,
+          "tokens_before": 1026,
+          "compactor_tokens_after": 1026,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 1.1722013999824412,
+          "seconds": [
+            1.2092754000332206,
+            1.1722013999824412,
+            1.1569832999957725
+          ],
+          "recency_seconds": 2.6900030206888914e-05,
+          "decisions": [
+            {
+              "tool_use_id": "obsolete_search",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.759,
+              "keep_result": 0.7207
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "redundant_listing",
+          "required_result": false,
+          "required_call": false,
+          "tokens_before": 1307,
+          "compactor_tokens_after": 1307,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 1.7072388000087813,
+          "seconds": [
+            1.7072388000087813,
+            1.6697112999972887,
+            1.7382342000491917
+          ],
+          "recency_seconds": 2.95999925583601e-05,
+          "decisions": [
+            {
+              "tool_use_id": "redundant_listing",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "unverified_context",
+              "keep_call": 0.7969,
+              "keep_result": 0.8963
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "active_source",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 899,
+          "compactor_tokens_after": 899,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.1628170000039972,
+          "seconds": [
+            1.1467465999885462,
+            1.2392695000162348,
+            1.1628170000039972
+          ],
+          "recency_seconds": 2.700003096833825e-05,
+          "decisions": [
+            {
+              "tool_use_id": "active_source",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.7057,
+              "keep_result": 0.7734
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "exact_error",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 1184,
+          "compactor_tokens_after": 1184,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 0.002349600021261722,
+          "seconds": [
+            0.0024868000182323158,
+            0.002349600021261722,
+            0.002313899982254952
+          ],
+          "recency_seconds": 2.4999957531690598e-05,
+          "decisions": [
+            {
+              "tool_use_id": "exact_error",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "error",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "nonrepeatable_receipt",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 903,
+          "compactor_tokens_after": 903,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 0.0017735000001266599,
+          "seconds": [
+            0.0018221000209450722,
+            0.0017735000001266599,
+            0.0017240000306628644
+          ],
+          "recency_seconds": 2.1400046534836292e-05,
+          "decisions": [
+            {
+              "tool_use_id": "nonrepeatable_receipt",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "not_replayable",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "pinned_result",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 766,
+          "compactor_tokens_after": 766,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 0.002055999997537583,
+          "seconds": [
+            0.002140500000678003,
+            0.0020041000097990036,
+            0.002055999997537583
+          ],
+          "recency_seconds": 2.340000355616212e-05,
+          "decisions": [
+            {
+              "tool_use_id": "pinned_result",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "pinned",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "recent_result",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 681,
+          "compactor_tokens_after": 681,
+          "recency_tokens_after": 681,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 0.0015233000158332288,
+          "seconds": [
+            0.001732699980493635,
+            0.0015233000158332288,
+            0.0015222000074572861
+          ],
+          "recency_seconds": 1.569994492456317e-05,
+          "decisions": [
+            {
+              "tool_use_id": "recent_result",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "pinned",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "middle_evidence",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 618,
+          "compactor_tokens_after": 618,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.0497732000076212,
+          "seconds": [
+            1.058962100010831,
+            1.0497732000076212,
+            1.0233025000197813
+          ],
+          "recency_seconds": 2.440001117065549e-05,
+          "decisions": [
+            {
+              "tool_use_id": "middle_evidence",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.6468,
+              "keep_result": 0.5638
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "call_receipt_needed",
+          "required_result": false,
+          "required_call": true,
+          "tokens_before": 1311,
+          "compactor_tokens_after": 1311,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.217478399979882,
+          "seconds": [
+            1.2468993000220507,
+            1.1935402999515645,
+            1.217478399979882
+          ],
+          "recency_seconds": 2.500001573935151e-05,
+          "decisions": [
+            {
+              "tool_use_id": "call_receipt_needed",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.683,
+              "keep_result": 0.7074
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "oversized_goal",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 759,
+          "compactor_tokens_after": 759,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.672603600018192,
+          "seconds": [
+            1.6776815000339411,
+            1.6607582999859005,
+            1.672603600018192
+          ],
+          "recency_seconds": 2.6800029445439577e-05,
+          "decisions": [
+            {
+              "tool_use_id": "oversized_goal",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "unverified_context",
+              "keep_call": 0.1031,
+              "keep_result": 0.523
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "untrusted_output",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 1051,
+          "compactor_tokens_after": 1051,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.0872557999682613,
+          "seconds": [
+            1.100979900045786,
+            1.0872557999682613,
+            1.0812552000279538
+          ],
+          "recency_seconds": 2.47000134550035e-05,
+          "decisions": [
+            {
+              "tool_use_id": "untrusted_output",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.394,
+              "keep_result": 0.3235
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        }
+      ],
+      "summary": {
+        "tokens_before": 11392,
+        "compactor_tokens_after": 11392,
+        "recency_tokens_after": 1869,
+        "compactor_evidence_failures": 0,
+        "recency_evidence_failures": 8,
+        "median_case_seconds": 1.1250363999861293
+      },
+      "same_artifacts_as": null
+    },
+    {
+      "checkpoint": "C:\\Users\\TGUNDHUS-PWR\\.cache\\huggingface\\hub\\models--convaiinnovations--laya\\snapshots\\7b928d828b7b0e022f929d9bd2e44165aa270148",
+      "artifacts": {
+        "model.safetensors": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+        "rl_agent_config.json": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd"
+      },
+      "rows": [
+        {
+          "id": "obsolete_read",
+          "required_result": false,
+          "required_call": false,
+          "tokens_before": 887,
+          "compactor_tokens_after": 887,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 1.2489391000126489,
+          "seconds": [
+            1.2775770000298508,
+            1.214649899979122,
+            1.2489391000126489
+          ],
+          "recency_seconds": 3.3100019209086895e-05,
+          "decisions": [
+            {
+              "tool_use_id": "obsolete_read",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.6824,
+              "keep_result": 0.552
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "obsolete_search",
+          "required_result": false,
+          "required_call": false,
+          "tokens_before": 1026,
+          "compactor_tokens_after": 1026,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 1.1825866000144742,
+          "seconds": [
+            1.2190566000062972,
+            1.1780407999758609,
+            1.1825866000144742
+          ],
+          "recency_seconds": 2.6100024115294218e-05,
+          "decisions": [
+            {
+              "tool_use_id": "obsolete_search",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.759,
+              "keep_result": 0.7207
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "redundant_listing",
+          "required_result": false,
+          "required_call": false,
+          "tokens_before": 1307,
+          "compactor_tokens_after": 1307,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 1.69633220002288,
+          "seconds": [
+            1.6924044000334106,
+            1.720376799989026,
+            1.69633220002288
+          ],
+          "recency_seconds": 2.500001573935151e-05,
+          "decisions": [
+            {
+              "tool_use_id": "redundant_listing",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "unverified_context",
+              "keep_call": 0.7969,
+              "keep_result": 0.8963
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "active_source",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 899,
+          "compactor_tokens_after": 899,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.1464516000123695,
+          "seconds": [
+            1.1716594999888912,
+            1.1464516000123695,
+            1.0822389000095427
+          ],
+          "recency_seconds": 2.4900014977902174e-05,
+          "decisions": [
+            {
+              "tool_use_id": "active_source",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.7057,
+              "keep_result": 0.7734
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "exact_error",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 1184,
+          "compactor_tokens_after": 1184,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 0.0022586999693885446,
+          "seconds": [
+            0.0022586999693885446,
+            0.002172499953303486,
+            0.002278900006785989
+          ],
+          "recency_seconds": 2.1299987565726042e-05,
+          "decisions": [
+            {
+              "tool_use_id": "exact_error",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "error",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "nonrepeatable_receipt",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 903,
+          "compactor_tokens_after": 903,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 0.0017158000264316797,
+          "seconds": [
+            0.0017430000007152557,
+            0.001692499965429306,
+            0.0017158000264316797
+          ],
+          "recency_seconds": 2.169999061152339e-05,
+          "decisions": [
+            {
+              "tool_use_id": "nonrepeatable_receipt",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "not_replayable",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "pinned_result",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 766,
+          "compactor_tokens_after": 766,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 0.0018854000372812152,
+          "seconds": [
+            0.0019797999993897974,
+            0.0018273000023327768,
+            0.0018854000372812152
+          ],
+          "recency_seconds": 2.5200017262250185e-05,
+          "decisions": [
+            {
+              "tool_use_id": "pinned_result",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "pinned",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "recent_result",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 681,
+          "compactor_tokens_after": 681,
+          "recency_tokens_after": 681,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": true,
+          "median_seconds": 0.0017820000066421926,
+          "seconds": [
+            0.0017820000066421926,
+            0.001832399982959032,
+            0.0016058000037446618
+          ],
+          "recency_seconds": 1.610000617802143e-05,
+          "decisions": [
+            {
+              "tool_use_id": "recent_result",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "pinned",
+              "keep_call": null,
+              "keep_result": null
+            }
+          ],
+          "fallback": null,
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "middle_evidence",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 618,
+          "compactor_tokens_after": 618,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.0304136999766342,
+          "seconds": [
+            1.0304136999766342,
+            1.0713588999933563,
+            1.0273939999751747
+          ],
+          "recency_seconds": 2.559996210038662e-05,
+          "decisions": [
+            {
+              "tool_use_id": "middle_evidence",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.6468,
+              "keep_result": 0.5638
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "call_receipt_needed",
+          "required_result": false,
+          "required_call": true,
+          "tokens_before": 1311,
+          "compactor_tokens_after": 1311,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.1852606000029482,
+          "seconds": [
+            1.1557302000001073,
+            1.2211860000388697,
+            1.1852606000029482
+          ],
+          "recency_seconds": 3.239995567128062e-05,
+          "decisions": [
+            {
+              "tool_use_id": "call_receipt_needed",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.683,
+              "keep_result": 0.7074
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "oversized_goal",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 759,
+          "compactor_tokens_after": 759,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.7605494000017643,
+          "seconds": [
+            1.906404300010763,
+            1.7344817999983206,
+            1.7605494000017643
+          ],
+          "recency_seconds": 2.4699955247342587e-05,
+          "decisions": [
+            {
+              "tool_use_id": "oversized_goal",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "unverified_context",
+              "keep_call": 0.1031,
+              "keep_result": 0.523
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        },
+        {
+          "id": "untrusted_output",
+          "required_result": true,
+          "required_call": false,
+          "tokens_before": 1051,
+          "compactor_tokens_after": 1051,
+          "recency_tokens_after": 108,
+          "compactor_evidence_retained": true,
+          "recency_evidence_retained": false,
+          "median_seconds": 1.0882452999940142,
+          "seconds": [
+            1.0846623000106774,
+            1.0990044999634847,
+            1.0882452999940142
+          ],
+          "recency_seconds": 2.729997504502535e-05,
+          "decisions": [
+            {
+              "tool_use_id": "untrusted_output",
+              "call_index": 1,
+              "result_index": 2,
+              "action": "keep",
+              "reason": "retained",
+              "keep_call": 0.394,
+              "keep_result": 0.3235
+            }
+          ],
+          "fallback": "insufficient_reduction",
+          "repeat_decisions_agree": true
+        }
+      ],
+      "summary": {
+        "tokens_before": 11392,
+        "compactor_tokens_after": 11392,
+        "recency_tokens_after": 1869,
+        "compactor_evidence_failures": 0,
+        "recency_evidence_failures": 8,
+        "median_case_seconds": 1.1173484500031918
+      },
+      "same_artifacts_as": "C:\\Users\\TGUNDHUS-PWR\\.cache\\huggingface\\hub\\models--convaiinnovations--laya\\snapshots\\55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851"
+    }
+  ]
+}

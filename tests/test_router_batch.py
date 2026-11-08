@@ -6,7 +6,7 @@ from time import sleep
 
 import pytest
 
-from laya.router import Router
+from veya.router import Router
 
 
 Q = {"intent": {"type": "noul", "instructions": "Relevant?"}}
@@ -18,7 +18,7 @@ def request(state, **overrides):
 
 @pytest.fixture
 def fake_agent(monkeypatch):
-    import laya.agent
+    import veya.agent
 
     built = []
     calls = []
@@ -34,14 +34,14 @@ def fake_agent(monkeypatch):
             if "raise" in states:
                 raise RuntimeError("inference failed")
             return [
-                {"model": "laya-rl-agent", "answers": {"seen": state}, "usage": {}}
+                {"model": "veya-rl-agent", "answers": {"seen": state}, "usage": {}}
                 for state in states
             ]
 
         def system_one(self, state, questions):
             return self.predict_batch([state], questions)[0]
 
-    monkeypatch.setattr(laya.agent, "Agent", Agent)
+    monkeypatch.setattr(veya.agent, "Agent", Agent)
     return built, calls
 
 
@@ -120,7 +120,7 @@ def test_evicted_checkpoint_is_unreferenced_when_it_is_evicted(monkeypatch):
     import gc
     import weakref
 
-    import laya.agent
+    import veya.agent
 
     refs = {}
     evicted_alive = []
@@ -138,7 +138,7 @@ def test_evicted_checkpoint_is_unreferenced_when_it_is_evicted(monkeypatch):
             gc.collect()
             evicted_alive.append((ctx.model, refs[ctx.model]() is not None))
 
-    monkeypatch.setattr(laya.agent, "Agent", Agent)
+    monkeypatch.setattr(veya.agent, "Agent", Agent)
     router = Router(max_loaded=1, hooks=[CheckFreed()])
     router.predict_batch([request("english text"), request("مرحبا")])
     assert evicted_alive == [("english", False)]
@@ -227,7 +227,7 @@ def test_route_batch_forwards_lang_guess(fake_agent):
     assert built == []
 
 def test_concurrent_batch_load_deduplicates(monkeypatch):
-    import laya.agent
+    import veya.agent
 
     built = []
     guard = Lock()
@@ -247,7 +247,7 @@ def test_concurrent_batch_load_deduplicates(monkeypatch):
         def system_one(self, state, questions):
             return self.predict_batch([state], questions)[0]
 
-    monkeypatch.setattr(laya.agent, "Agent", SlowAgent)
+    monkeypatch.setattr(veya.agent, "Agent", SlowAgent)
     router = Router(max_loaded=2)
     start = Barrier(8)
 
@@ -318,7 +318,7 @@ def test_typed_question_and_choice_keys_keep_their_own_batch_answers(
 
 
 def test_renderable_criteria_with_numeric_keys_share_their_rendered_schema(fake_agent):
-    from laya.router import _question_schema
+    from veya.router import _question_schema
 
     class Description:
         def __str__(self):
@@ -339,7 +339,7 @@ def test_renderable_criteria_with_numeric_keys_share_their_rendered_schema(fake_
 
 def _lang_recording_router(monkeypatch, lang_temperatures):
     """A Router over a fake agent that records the `lang` each batch call received."""
-    import laya.agent
+    import veya.agent
 
     calls = []
 
@@ -357,7 +357,7 @@ def _lang_recording_router(monkeypatch, lang_temperatures):
             calls.append({"n": 1, "lang": overrides.get("lang")})
             return {"model": "fake", "answers": {}}
 
-    monkeypatch.setattr(laya.agent, "Agent", Agent)
+    monkeypatch.setattr(veya.agent, "Agent", Agent)
     return Router(max_loaded=1, default="english"), calls
 
 
@@ -397,7 +397,7 @@ def test_predict_and_predict_batch_pass_the_same_lang(monkeypatch):
 
 def _budget_recording_router(monkeypatch, hooks=(), agent=None):
     """A Router over a fake agent that records the token budget each forward pass received."""
-    import laya.agent
+    import veya.agent
 
     calls = []
 
@@ -415,7 +415,7 @@ def _budget_recording_router(monkeypatch, hooks=(), agent=None):
                           "head_max_len": overrides.get("head_max_len")})
             return {"model": "fake", "answers": {}, "usage": {}}
 
-    monkeypatch.setattr(laya.agent, "Agent", agent or Recording)
+    monkeypatch.setattr(veya.agent, "Agent", agent or Recording)
     return Router(max_loaded=1, default="english", hooks=list(hooks)), calls
 
 
@@ -481,7 +481,7 @@ def test_request_budget_does_not_change_routing(monkeypatch):
 
 def test_router_predict_and_predict_batch_min_confidence(monkeypatch):
     """`min_confidence` gates answers below threshold on both predict and predict_batch (#361)."""
-    import laya.agent
+    import veya.agent
 
     class Agent:
         def __init__(self, repo, *, device, token, subfolder, performance_mode=None):
@@ -499,7 +499,7 @@ def test_router_predict_and_predict_batch_min_confidence(monkeypatch):
         def predict_batch(self, states, questions, batch_size=None, **overrides):
             return [self.system_one(s, questions, **overrides) for s in states]
 
-    monkeypatch.setattr(laya.agent, "Agent", Agent)
+    monkeypatch.setattr(veya.agent, "Agent", Agent)
     router = Router(max_loaded=1, default="english")
 
     # Default min_confidence=None: no low_confidence flags
@@ -528,7 +528,7 @@ def test_router_predict_and_predict_batch_min_confidence(monkeypatch):
 
 def test_end_hooks_see_the_low_confidence_flag(monkeypatch):
     """`on_predict_end` sees `low_confidence` on both Router paths (#361 review)."""
-    import laya.agent
+    import veya.agent
 
     class Agent:
         def __init__(self, repo, *, device, token, subfolder, performance_mode=None):
@@ -546,7 +546,7 @@ def test_end_hooks_see_the_low_confidence_flag(monkeypatch):
         def predict_batch(self, states, questions, batch_size=None, **overrides):
             return [self.system_one(s, questions, **overrides) for s in states]
 
-    monkeypatch.setattr(laya.agent, "Agent", Agent)
+    monkeypatch.setattr(veya.agent, "Agent", Agent)
     seen = []
 
     class Record:
@@ -564,7 +564,7 @@ def test_end_hooks_see_the_low_confidence_flag(monkeypatch):
 
 def _sort_recording_router(monkeypatch, accepts_sort):
     """A Router whose attached agent records the sort_by_length it was called with."""
-    import laya.agent
+    import veya.agent
 
     calls = []
 
@@ -587,7 +587,7 @@ def _sort_recording_router(monkeypatch, accepts_sort):
         def system_one(self, state, questions):
             return self.predict_batch([state], questions)[0]
 
-    monkeypatch.setattr(laya.agent, "Agent", Agent)
+    monkeypatch.setattr(veya.agent, "Agent", Agent)
     return Router(max_loaded=1, default="english"), calls
 
 
@@ -618,7 +618,7 @@ def test_sort_by_length_is_dropped_for_agents_that_predate_it(monkeypatch):
 def test_an_agent_that_predates_both_lang_and_sort_by_length_still_serves(monkeypatch):
     """Python names one unexpected keyword per TypeError, so the single retry dropped only the
     one the first error named and then raised on the other, out of a batch it meant to serve."""
-    import laya.agent
+    import veya.agent
 
     calls = []
 
@@ -632,7 +632,7 @@ def test_an_agent_that_predates_both_lang_and_sort_by_length_still_serves(monkey
             calls.append(len(states))
             return [{"model": "fake", "answers": {}, "usage": {}} for _ in states]
 
-    monkeypatch.setattr(laya.agent, "Agent", Agent)
+    monkeypatch.setattr(veya.agent, "Agent", Agent)
     router = Router(max_loaded=1, default="english")
     results = router.predict_batch([request("a", model="english", lang="de"),
                                     request("b", model="english", lang="de")], sort_by_length=True)
@@ -718,16 +718,16 @@ def test_sort_diagnostics_invalid_shape_fails_before_routing(fake_agent, diagnos
 
 
 def test_predict_batch_memoizes_only_consecutive_schema_references(monkeypatch):
-    import laya.router
+    import veya.router
     calls = []
-    real_schema = laya.router._question_schema
+    real_schema = veya.router._question_schema
 
     def recording_schema(questions):
         signature = real_schema(questions)
         calls.append(signature)
         return signature
 
-    monkeypatch.setattr(laya.router, "_question_schema", recording_schema)
+    monkeypatch.setattr(veya.router, "_question_schema", recording_schema)
     router, _ = _sort_recording_router(monkeypatch, accepts_sort=True)
     shared = {"intent": {"type": "noul", "instructions": "Urgent?"}}
     other = {"intent": {"type": "noul", "instructions": "Different?"}}

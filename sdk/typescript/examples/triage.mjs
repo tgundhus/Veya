@@ -1,13 +1,13 @@
-import { Laya, triageQuestions } from 'laya-pro-client';
+import { Veya, triageQuestions } from 'veya-client';
 
-const laya = new Laya({
-  baseURL: process.env.LAYA_BASE_URL ?? 'http://127.0.0.1:8000',
-  apiKey: process.env.LAYA_API_KEY,
+const veya = new Veya({
+  baseURL: process.env.VEYA_BASE_URL ?? 'http://127.0.0.1:8000',
+  apiKey: process.env.VEYA_API_KEY,
   timeoutMs: 600_000,
 });
 
 try {
-  const result = await laya.predict(
+  const result = await veya.predict(
     { message: 'I was billed twice for March. Please refund the duplicate today.' },
     triageQuestions(),
   );

@@ -1,0 +1,1342 @@
+{
+  "training": [
+    {
+      "family": "ordinal-continue-check-cask",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact barrel named C13.",
+      "criteria": [
+        "Neither closure check nor pressure certificate has a valid completion for C13.",
+        "Exactly one of closure check and pressure certificate has a valid completion for C13.",
+        "Both closure check and pressure certificate have valid completions for C13."
+      ],
+      "rows": [
+        [
+          "The checklist for C13 is open and neither required result is present. The signed completions in the folder belong to C8.",
+          0
+        ],
+        [
+          "The current barrel is C13. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for C13 closes closure check. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The pressure certificate certificate is valid for C13. Only C8 has a signed closure check certificate.",
+          1
+        ],
+        [
+          "The valid C13 file contains two independent signed completions: closure check and pressure certificate. Neither result has been superseded.",
+          2
+        ],
+        [
+          "C8 failed closure check. The successor C13 has a signed acceptance for closure check and another signed acceptance for pressure certificate.",
+          2
+        ],
+        [
+          "C13 has no closure check result. A verified-looking pressure certificate completion omits the reference and could apply to either C8 or C13.",
+          0.5
+        ],
+        [
+          "The completion of closure check is confirmed for C13. Two reports for C13 disagree on whether pressure certificate was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed pressure certificate for C13. The only closure check pass sheet could identify C13 or C8 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-panels",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact solar combiner named Q8.",
+      "criteria": [
+        "Neither polarity verification nor enclosure seal has a valid completion for Q8.",
+        "Exactly one of polarity verification and enclosure seal has a valid completion for Q8.",
+        "Both polarity verification and enclosure seal have valid completions for Q8."
+      ],
+      "rows": [
+        [
+          "The checklist for Q8 is open and neither required result is present. The signed completions in the folder belong to Q21.",
+          0
+        ],
+        [
+          "The current solar combiner is Q8. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for Q8 closes polarity verification. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The enclosure seal certificate is valid for Q8. Only Q21 has a signed polarity verification certificate.",
+          1
+        ],
+        [
+          "The valid Q8 file contains two independent signed completions: polarity verification and enclosure seal. Neither result has been superseded.",
+          2
+        ],
+        [
+          "Q21 failed polarity verification. The successor Q8 has a signed acceptance for polarity verification and another signed acceptance for enclosure seal.",
+          2
+        ],
+        [
+          "Q8 has no polarity verification result. A verified-looking enclosure seal completion omits the reference and could apply to either Q21 or Q8.",
+          0.5
+        ],
+        [
+          "The completion of polarity verification is confirmed for Q8. Two reports for Q8 disagree on whether enclosure seal was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed enclosure seal for Q8. The only polarity verification pass sheet could identify Q8 or Q21 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-loan-invoice",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact invoice packet named invoice 145.",
+      "criteria": [
+        "Neither accountant signoff nor receiver approval has a valid completion for invoice 145.",
+        "Exactly one of accountant signoff and receiver approval has a valid completion for invoice 145.",
+        "Both accountant signoff and receiver approval have valid completions for invoice 145."
+      ],
+      "rows": [
+        [
+          "The checklist for invoice 145 is open and neither required result is present. The signed completions in the folder belong to invoice 241.",
+          0
+        ],
+        [
+          "The current invoice packet is invoice 145. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for invoice 145 closes accountant signoff. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The receiver approval certificate is valid for invoice 145. Only invoice 241 has a signed accountant signoff certificate.",
+          1
+        ],
+        [
+          "The valid invoice 145 file contains two independent signed completions: accountant signoff and receiver approval. Neither result has been superseded.",
+          2
+        ],
+        [
+          "invoice 241 failed accountant signoff. The successor invoice 145 has a signed acceptance for accountant signoff and another signed acceptance for receiver approval.",
+          2
+        ],
+        [
+          "invoice 145 has no accountant signoff result. A verified-looking receiver approval completion omits the reference and could apply to either invoice 241 or invoice 145.",
+          0.5
+        ],
+        [
+          "The completion of accountant signoff is confirmed for invoice 145. Two reports for invoice 145 disagree on whether receiver approval was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed receiver approval for invoice 145. The only accountant signoff pass sheet could identify invoice 145 or invoice 241 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-harp-freight",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact harp shipment named freight R3.",
+      "criteria": [
+        "Neither strap inspection nor temperature logger test has a valid completion for freight R3.",
+        "Exactly one of strap inspection and temperature logger test has a valid completion for freight R3.",
+        "Both strap inspection and temperature logger test have valid completions for freight R3."
+      ],
+      "rows": [
+        [
+          "The checklist for freight R3 is open and neither required result is present. The signed completions in the folder belong to freight R1.",
+          0
+        ],
+        [
+          "The current harp shipment is freight R3. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for freight R3 closes strap inspection. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The temperature logger test certificate is valid for freight R3. Only freight R1 has a signed strap inspection certificate.",
+          1
+        ],
+        [
+          "The valid freight R3 file contains two independent signed completions: strap inspection and temperature logger test. Neither result has been superseded.",
+          2
+        ],
+        [
+          "freight R1 failed strap inspection. The successor freight R3 has a signed acceptance for strap inspection and another signed acceptance for temperature logger test.",
+          2
+        ],
+        [
+          "freight R3 has no strap inspection result. A verified-looking temperature logger test completion omits the reference and could apply to either freight R1 or freight R3.",
+          0.5
+        ],
+        [
+          "The completion of strap inspection is confirmed for freight R3. Two reports for freight R3 disagree on whether temperature logger test was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed temperature logger test for freight R3. The only strap inspection pass sheet could identify freight R3 or freight R1 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-costume-order",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact costume production order named order 3B.",
+      "criteria": [
+        "Neither fabric match nor lead fitting approval has a valid completion for order 3B.",
+        "Exactly one of fabric match and lead fitting approval has a valid completion for order 3B.",
+        "Both fabric match and lead fitting approval have valid completions for order 3B."
+      ],
+      "rows": [
+        [
+          "The checklist for order 3B is open and neither required result is present. The signed completions in the folder belong to order 5A.",
+          0
+        ],
+        [
+          "The current costume production order is order 3B. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for order 3B closes fabric match. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The lead fitting approval certificate is valid for order 3B. Only order 5A has a signed fabric match certificate.",
+          1
+        ],
+        [
+          "The valid order 3B file contains two independent signed completions: fabric match and lead fitting approval. Neither result has been superseded.",
+          2
+        ],
+        [
+          "order 5A failed fabric match. The successor order 3B has a signed acceptance for fabric match and another signed acceptance for lead fitting approval.",
+          2
+        ],
+        [
+          "order 3B has no fabric match result. A verified-looking lead fitting approval completion omits the reference and could apply to either order 5A or order 3B.",
+          0.5
+        ],
+        [
+          "The completion of fabric match is confirmed for order 3B. Two reports for order 3B disagree on whether lead fitting approval was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed lead fitting approval for order 3B. The only fabric match pass sheet could identify order 3B or order 5A because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-frost-sensor",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact temperature sensor named B-18.",
+      "criteria": [
+        "Neither probe calibration nor alarm test has a valid completion for B-18.",
+        "Exactly one of probe calibration and alarm test has a valid completion for B-18.",
+        "Both probe calibration and alarm test have valid completions for B-18."
+      ],
+      "rows": [
+        [
+          "The checklist for B-18 is open and neither required result is present. The signed completions in the folder belong to Q-30.",
+          0
+        ],
+        [
+          "The current temperature sensor is B-18. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for B-18 closes probe calibration. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The alarm test certificate is valid for B-18. Only Q-30 has a signed probe calibration certificate.",
+          1
+        ],
+        [
+          "The valid B-18 file contains two independent signed completions: probe calibration and alarm test. Neither result has been superseded.",
+          2
+        ],
+        [
+          "Q-30 failed probe calibration. The successor B-18 has a signed acceptance for probe calibration and another signed acceptance for alarm test.",
+          2
+        ],
+        [
+          "B-18 has no probe calibration result. A verified-looking alarm test completion omits the reference and could apply to either Q-30 or B-18.",
+          0.5
+        ],
+        [
+          "The completion of probe calibration is confirmed for B-18. Two reports for B-18 disagree on whether alarm test was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed alarm test for B-18. The only probe calibration pass sheet could identify B-18 or Q-30 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-parade-permit",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact street-use request named form 7.",
+      "criteria": [
+        "Neither steward consent nor traffic map signoff has a valid completion for form 7.",
+        "Exactly one of steward consent and traffic map signoff has a valid completion for form 7.",
+        "Both steward consent and traffic map signoff have valid completions for form 7."
+      ],
+      "rows": [
+        [
+          "The checklist for form 7 is open and neither required result is present. The signed completions in the folder belong to form 3.",
+          0
+        ],
+        [
+          "The current street-use request is form 7. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for form 7 closes steward consent. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The traffic map signoff certificate is valid for form 7. Only form 3 has a signed steward consent certificate.",
+          1
+        ],
+        [
+          "The valid form 7 file contains two independent signed completions: steward consent and traffic map signoff. Neither result has been superseded.",
+          2
+        ],
+        [
+          "form 3 failed steward consent. The successor form 7 has a signed acceptance for steward consent and another signed acceptance for traffic map signoff.",
+          2
+        ],
+        [
+          "form 7 has no steward consent result. A verified-looking traffic map signoff completion omits the reference and could apply to either form 3 or form 7.",
+          0.5
+        ],
+        [
+          "The completion of steward consent is confirmed for form 7. Two reports for form 7 disagree on whether traffic map signoff was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed traffic map signoff for form 7. The only steward consent pass sheet could identify form 7 or form 3 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-cooler-bag",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact sample carrier named carrier Y5.",
+      "criteria": [
+        "Neither insulation check nor seal integrity test has a valid completion for carrier Y5.",
+        "Exactly one of insulation check and seal integrity test has a valid completion for carrier Y5.",
+        "Both insulation check and seal integrity test have valid completions for carrier Y5."
+      ],
+      "rows": [
+        [
+          "The checklist for carrier Y5 is open and neither required result is present. The signed completions in the folder belong to carrier X7.",
+          0
+        ],
+        [
+          "The current sample carrier is carrier Y5. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for carrier Y5 closes insulation check. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The seal integrity test certificate is valid for carrier Y5. Only carrier X7 has a signed insulation check certificate.",
+          1
+        ],
+        [
+          "The valid carrier Y5 file contains two independent signed completions: insulation check and seal integrity test. Neither result has been superseded.",
+          2
+        ],
+        [
+          "carrier X7 failed insulation check. The successor carrier Y5 has a signed acceptance for insulation check and another signed acceptance for seal integrity test.",
+          2
+        ],
+        [
+          "carrier Y5 has no insulation check result. A verified-looking seal integrity test completion omits the reference and could apply to either carrier X7 or carrier Y5.",
+          0.5
+        ],
+        [
+          "The completion of insulation check is confirmed for carrier Y5. Two reports for carrier Y5 disagree on whether seal integrity test was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed seal integrity test for carrier Y5. The only insulation check pass sheet could identify carrier Y5 or carrier X7 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-island-dock",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for island cargo unloading, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal island cargo unloading everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: every dock is blocked and no crane or forklift is usable. That was only a drill and actual island cargo unloading continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of island cargo unloading. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is a local forklift fault. It affects only one area, and another forklift is serving that dock.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: a local forklift fault. Staff confirm that another forklift is serving that dock.",
+          1
+        ],
+        [
+          "The verified status for the current incident is every dock is blocked and no crane or forklift is usable. Perishable freight must be unloaded now. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today every dock is blocked and no crane or forklift is usable. Perishable freight must be unloaded now.",
+          2
+        ],
+        [
+          "The operator saw a local forklift fault and reports that another forklift is serving that dock on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is a local forklift fault and another forklift is serving that dock. A separate equally recent note says every dock is blocked and no crane or forklift is usable. Perishable freight must be unloaded now. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to a local forklift fault, in which another forklift is serving that dock. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-print-keycards",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for guest keycard provisioning, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal guest keycard provisioning everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: all card writers and staffed alternatives have stopped. That was only a drill and actual guest keycard provisioning continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of guest keycard provisioning. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is a failed lobby writer. It affects only one area, and a staffed side desk can make cards for those guests.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: a failed lobby writer. Staff confirm that a staffed side desk can make cards for those guests.",
+          1
+        ],
+        [
+          "The verified status for the current incident is all card writers and staffed alternatives have stopped. Every arriving guest needs room access now. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today all card writers and staffed alternatives have stopped. Every arriving guest needs room access now.",
+          2
+        ],
+        [
+          "The operator saw a failed lobby writer and reports that a staffed side desk can make cards for those guests on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is a failed lobby writer and a staffed side desk can make cards for those guests. A separate equally recent note says all card writers and staffed alternatives have stopped. Every arriving guest needs room access now. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to a failed lobby writer, in which a staffed side desk can make cards for those guests. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-tank-gauges",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for storage tank level monitoring, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal storage tank level monitoring everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: all primary and standby readings are lost and staff cannot enter the tank area. That was only a drill and actual storage tank level monitoring continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of storage tank level monitoring. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is a single gauge lost its signal. It affects only one area, and staff are reporting manual readings for that tank.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: a single gauge lost its signal. Staff confirm that staff are reporting manual readings for that tank.",
+          1
+        ],
+        [
+          "The verified status for the current incident is all primary and standby readings are lost and staff cannot enter the tank area. The duty crew needs levels immediately. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today all primary and standby readings are lost and staff cannot enter the tank area. The duty crew needs levels immediately.",
+          2
+        ],
+        [
+          "The operator saw a single gauge lost its signal and reports that staff are reporting manual readings for that tank on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is a single gauge lost its signal and staff are reporting manual readings for that tank. A separate equally recent note says all primary and standby readings are lost and staff cannot enter the tank area. The duty crew needs levels immediately. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to a single gauge lost its signal, in which staff are reporting manual readings for that tank. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-dispatch-fleet",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for field crew dispatch, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal field crew dispatch everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: every crew terminal and the radio channel are out of service. That was only a drill and actual field crew dispatch continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of field crew dispatch. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is one terminal stopped updating. It affects only one area, and its crew is receiving jobs on the spare terminal.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: one terminal stopped updating. Staff confirm that its crew is receiving jobs on the spare terminal.",
+          1
+        ],
+        [
+          "The verified status for the current incident is every crew terminal and the radio channel are out of service. An urgent dispatch is due now. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today every crew terminal and the radio channel are out of service. An urgent dispatch is due now.",
+          2
+        ],
+        [
+          "The operator saw one terminal stopped updating and reports that its crew is receiving jobs on the spare terminal on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is one terminal stopped updating and its crew is receiving jobs on the spare terminal. A separate equally recent note says every crew terminal and the radio channel are out of service. An urgent dispatch is due now. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to one terminal stopped updating, in which its crew is receiving jobs on the spare terminal. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-pharmacy-labels",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for dispensary label printing, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal dispensary label printing everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: labels cannot be issued at any dispensary station and the reserve has failed. That was only a drill and actual dispensary label printing continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of dispensary label printing. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is one workbench printer stopped. It affects only one area, and the adjacent printer covers all its labels.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: one workbench printer stopped. Staff confirm that the adjacent printer covers all its labels.",
+          1
+        ],
+        [
+          "The verified status for the current incident is labels cannot be issued at any dispensary station and the reserve has failed. All urgent medicines are waiting for labels. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today labels cannot be issued at any dispensary station and the reserve has failed. All urgent medicines are waiting for labels.",
+          2
+        ],
+        [
+          "The operator saw one workbench printer stopped and reports that the adjacent printer covers all its labels on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is one workbench printer stopped and the adjacent printer covers all its labels. A separate equally recent note says labels cannot be issued at any dispensary station and the reserve has failed. All urgent medicines are waiting for labels. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to one workbench printer stopped, in which the adjacent printer covers all its labels. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-storm-culverts",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for road drainage control, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal road drainage control everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: all culvert readings are missing and crews cannot safely check them manually. That was only a drill and actual road drainage control continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of road drainage control. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is one culvert sensor stopped reporting. It affects only one area, and that site has live manual checks.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: one culvert sensor stopped reporting. Staff confirm that that site has live manual checks.",
+          1
+        ],
+        [
+          "The verified status for the current incident is all culvert readings are missing and crews cannot safely check them manually. Heavy rain is arriving now. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today all culvert readings are missing and crews cannot safely check them manually. Heavy rain is arriving now.",
+          2
+        ],
+        [
+          "The operator saw one culvert sensor stopped reporting and reports that that site has live manual checks on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is one culvert sensor stopped reporting and that site has live manual checks. A separate equally recent note says all culvert readings are missing and crews cannot safely check them manually. Heavy rain is arriving now. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to one culvert sensor stopped reporting, in which that site has live manual checks. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-bottle-output",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade bottles sealed.",
+      "criteria": [
+        "Below 12 bottles sealed.",
+        "12 or more but below 35 bottles sealed.",
+        "35 bottles sealed or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 4. A check of the final record confirmed 5 bottles sealed for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 11 bottles sealed. The older record shows 79.",
+          0
+        ],
+        [
+          "The forecast was 11. A check of the final record confirmed 12 bottles sealed for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 23 bottles sealed. The older record shows 79.",
+          1
+        ],
+        [
+          "The forecast was 19. A check of the final record confirmed 35 bottles sealed for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 51 bottles sealed. The older record shows 79.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 11 and 13 bottles sealed for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 34 and 36 bottles sealed, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-stencil-work",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade approved stencils.",
+      "criteria": [
+        "Below 8 approved stencils.",
+        "8 or more but below 19 approved stencils.",
+        "19 approved stencils or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 1. A check of the final record confirmed 2 approved stencils for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 7 approved stencils. The older record shows 33.",
+          0
+        ],
+        [
+          "The forecast was 7. A check of the final record confirmed 8 approved stencils for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 14 approved stencils. The older record shows 33.",
+          1
+        ],
+        [
+          "The forecast was 18. A check of the final record confirmed 19 approved stencils for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 31 approved stencils. The older record shows 33.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 7 and 9 approved stencils for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 18 and 20 approved stencils, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-greenhouse-fittings",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade nozzles seated.",
+      "criteria": [
+        "Below 17 nozzles seated.",
+        "17 or more but below 43 nozzles seated.",
+        "43 nozzles seated or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 5. A check of the final record confirmed 6 nozzles seated for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 16 nozzles seated. The older record shows 90.",
+          0
+        ],
+        [
+          "The forecast was 12. A check of the final record confirmed 17 nozzles seated for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 28 nozzles seated. The older record shows 90.",
+          1
+        ],
+        [
+          "The forecast was 12. A check of the final record confirmed 43 nozzles seated for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 58 nozzles seated. The older record shows 90.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 16 and 18 nozzles seated for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 42 and 44 nozzles seated, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-card-production",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade badge holders tested.",
+      "criteria": [
+        "Below 27 badge holders tested.",
+        "27 or more but below 90 badge holders tested.",
+        "90 badge holders tested or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 4. A check of the final record confirmed 5 badge holders tested for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 26 badge holders tested. The older record shows 190.",
+          0
+        ],
+        [
+          "The forecast was 26. A check of the final record confirmed 27 badge holders tested for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 58 badge holders tested. The older record shows 190.",
+          1
+        ],
+        [
+          "The forecast was 33. A check of the final record confirmed 90 badge holders tested for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 143 badge holders tested. The older record shows 190.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 26 and 28 badge holders tested for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 89 and 91 badge holders tested, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-metrology",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade verified tool offsets.",
+      "criteria": [
+        "Below 9 verified tool offsets.",
+        "9 or more but below 32 verified tool offsets.",
+        "32 verified tool offsets or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 2. A check of the final record confirmed 3 verified tool offsets for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 8 verified tool offsets. The older record shows 88.",
+          0
+        ],
+        [
+          "The forecast was 8. A check of the final record confirmed 9 verified tool offsets for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 15 verified tool offsets. The older record shows 88.",
+          1
+        ],
+        [
+          "The forecast was 19. A check of the final record confirmed 32 verified tool offsets for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 67 verified tool offsets. The older record shows 88.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 8 and 10 verified tool offsets for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 31 and 33 verified tool offsets, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-loaded-bundles",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade bundles secured.",
+      "criteria": [
+        "Below 14 bundles secured.",
+        "14 or more but below 64 bundles secured.",
+        "64 bundles secured or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 3. A check of the final record confirmed 4 bundles secured for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 13 bundles secured. The older record shows 88.",
+          0
+        ],
+        [
+          "The forecast was 13. A check of the final record confirmed 14 bundles secured for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 37 bundles secured. The older record shows 88.",
+          1
+        ],
+        [
+          "The forecast was 27. A check of the final record confirmed 64 bundles secured for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 73 bundles secured. The older record shows 88.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 13 and 15 bundles secured for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 63 and 65 bundles secured, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-sealed-drums",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade drums released.",
+      "criteria": [
+        "Below 45 drums released.",
+        "45 or more but below 100 drums released.",
+        "100 drums released or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 9. A check of the final record confirmed 10 drums released for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 44 drums released. The older record shows 178.",
+          0
+        ],
+        [
+          "The forecast was 44. A check of the final record confirmed 45 drums released for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 76 drums released. The older record shows 178.",
+          1
+        ],
+        [
+          "The forecast was 63. A check of the final record confirmed 100 drums released for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 134 drums released. The older record shows 178.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 44 and 46 drums released for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 99 and 101 drums released, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-mint-plates",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade plates validated.",
+      "criteria": [
+        "Below 4 plates validated.",
+        "4 or more but below 16 plates validated.",
+        "16 plates validated or more."
+      ],
+      "rows": [
+        [
+          "The forecast was 0. A check of the final record confirmed 1 plates validated for this run.",
+          0
+        ],
+        [
+          "The verified outcome for the current run is 3 plates validated. The older record shows 40.",
+          0
+        ],
+        [
+          "The forecast was 3. A check of the final record confirmed 4 plates validated for this run.",
+          1
+        ],
+        [
+          "The verified outcome for the current run is 9 plates validated. The older record shows 40.",
+          1
+        ],
+        [
+          "The forecast was 15. A check of the final record confirmed 16 plates validated for this run.",
+          2
+        ],
+        [
+          "The verified outcome for the current run is 29 plates validated. The older record shows 40.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 3 and 5 plates validated for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 15 and 17 plates validated, pending reconciliation.",
+          1.5
+        ]
+      ]
+    }
+  ],
+  "calibration": [
+    {
+      "family": "ordinal-continue-check-visor",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact protective visor named visor 10.",
+      "criteria": [
+        "Neither clarity test nor headband load test has a valid completion for visor 10.",
+        "Exactly one of clarity test and headband load test has a valid completion for visor 10.",
+        "Both clarity test and headband load test have valid completions for visor 10."
+      ],
+      "rows": [
+        [
+          "The checklist for visor 10 is open and neither required result is present. The signed completions in the folder belong to visor 16.",
+          0
+        ],
+        [
+          "The current protective visor is visor 10. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for visor 10 closes clarity test. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The headband load test certificate is valid for visor 10. Only visor 16 has a signed clarity test certificate.",
+          1
+        ],
+        [
+          "The valid visor 10 file contains two independent signed completions: clarity test and headband load test. Neither result has been superseded.",
+          2
+        ],
+        [
+          "visor 16 failed clarity test. The successor visor 10 has a signed acceptance for clarity test and another signed acceptance for headband load test.",
+          2
+        ],
+        [
+          "visor 10 has no clarity test result. A verified-looking headband load test completion omits the reference and could apply to either visor 16 or visor 10.",
+          0.5
+        ],
+        [
+          "The completion of clarity test is confirmed for visor 10. Two reports for visor 10 disagree on whether headband load test was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed headband load test for visor 10. The only clarity test pass sheet could identify visor 10 or visor 16 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-check-bead-package",
+      "type": "score",
+      "instructions": "Count the valid required completions for the exact bead work kit named lot 24.",
+      "criteria": [
+        "Neither count verification nor finish inspection has a valid completion for lot 24.",
+        "Exactly one of count verification and finish inspection has a valid completion for lot 24.",
+        "Both count verification and finish inspection have valid completions for lot 24."
+      ],
+      "rows": [
+        [
+          "The checklist for lot 24 is open and neither required result is present. The signed completions in the folder belong to lot 11.",
+          0
+        ],
+        [
+          "The current bead work kit is lot 24. Staff accepted both work requests but did not complete either task.",
+          0
+        ],
+        [
+          "The verified entry for lot 24 closes count verification. The other check is still awaiting its first result.",
+          1
+        ],
+        [
+          "The finish inspection certificate is valid for lot 24. Only lot 11 has a signed count verification certificate.",
+          1
+        ],
+        [
+          "The valid lot 24 file contains two independent signed completions: count verification and finish inspection. Neither result has been superseded.",
+          2
+        ],
+        [
+          "lot 11 failed count verification. The successor lot 24 has a signed acceptance for count verification and another signed acceptance for finish inspection.",
+          2
+        ],
+        [
+          "lot 24 has no count verification result. A verified-looking finish inspection completion omits the reference and could apply to either lot 11 or lot 24.",
+          0.5
+        ],
+        [
+          "The completion of count verification is confirmed for lot 24. Two reports for lot 24 disagree on whether finish inspection was completed or cancelled, and neither report has precedence.",
+          1.5
+        ],
+        [
+          "The team signed finish inspection for lot 24. The only count verification pass sheet could identify lot 24 or lot 11 because its reference is damaged. The other records do not resolve it.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-embroidery",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for embroidery order fulfilment, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal embroidery order fulfilment everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: every machine is stopped and the portable machine is unavailable. That was only a drill and actual embroidery order fulfilment continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of embroidery order fulfilment. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is one bench motor failed. It affects only one area, and the adjacent bench covers that queue.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: one bench motor failed. Staff confirm that the adjacent bench covers that queue.",
+          1
+        ],
+        [
+          "The verified status for the current incident is every machine is stopped and the portable machine is unavailable. All rush orders are due now. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today every machine is stopped and the portable machine is unavailable. All rush orders are due now.",
+          2
+        ],
+        [
+          "The operator saw one bench motor failed and reports that the adjacent bench covers that queue on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is one bench motor failed and the adjacent bench covers that queue. A separate equally recent note says every machine is stopped and the portable machine is unavailable. All rush orders are due now. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to one bench motor failed, in which the adjacent bench covers that queue. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-impact-fishing-notices",
+      "type": "score",
+      "instructions": "Grade the impact actually occurring now for delivery of harbor closure notices, using scope and workable alternatives.",
+      "criteria": [
+        "0: No current interruption, including drills, closed incidents or routine requests.",
+        "1: A limited live interruption with a working fallback serving those affected.",
+        "2: Widespread current stoppage with no functioning fallback and urgent demand."
+      ],
+      "rows": [
+        [
+          "The team updated the standard instructions. A fresh control check confirms normal delivery of harbor closure notices everywhere.",
+          0
+        ],
+        [
+          "An exercise simulated this situation: every posting terminal is offline and paper notices cannot be distributed. That was only a drill and actual delivery of harbor closure notices continued normally.",
+          0
+        ],
+        [
+          "The old archive records a total stoppage of delivery of harbor closure notices. It was closed after repairs and all current checks show service running.",
+          0
+        ],
+        [
+          "The verified live issue is one terminal cannot post notices. It affects only one area, and the dock office is publishing its notices.",
+          1
+        ],
+        [
+          "The earlier event stopped every area. Today only a local problem remains: one terminal cannot post notices. Staff confirm that the dock office is publishing its notices.",
+          1
+        ],
+        [
+          "The verified status for the current incident is every posting terminal is offline and paper notices cannot be distributed. A closure needs to be posted now. There is no other working way to deliver the service.",
+          2
+        ],
+        [
+          "The local workaround described in the closed ticket no longer applies. Today every posting terminal is offline and paper notices cannot be distributed. A closure needs to be posted now.",
+          2
+        ],
+        [
+          "The operator saw one terminal cannot post notices and reports that the dock office is publishing its notices on some attempts. The live scope and ability of the fallback to meet demand are still unverified. Staff are investigating now.",
+          1.5
+        ],
+        [
+          "One signed live note says the only issue is one terminal cannot post notices and the dock office is publishing its notices. A separate equally recent note says every posting terminal is offline and paper notices cannot be distributed. A closure needs to be posted now. Neither note takes precedence.",
+          1.5
+        ],
+        [
+          "It is unclear whether the message is a simulation with normal service or a live incident limited to one terminal cannot post notices, in which the dock office is publishing its notices. Both events happened during this shift.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-ring-marks",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade rings correctly stamped.",
+      "criteria": [
+        "Below 11 rings correctly stamped.",
+        "11 or more but below 37 rings correctly stamped.",
+        "37 rings correctly stamped or more."
+      ],
+      "rows": [
+        [
+          "Run complete. Target 55; audited delivery 2 rings correctly stamped; other run 1.",
+          0
+        ],
+        [
+          "Audited for the run under review: 10 rings correctly stamped. Use this figure. The 1 figure was the planning estimate.",
+          0
+        ],
+        [
+          "Run complete. Target 55; audited delivery 11 rings correctly stamped; other run 10.",
+          1
+        ],
+        [
+          "Audited for the run under review: 19 rings correctly stamped. Use this figure. The 10 figure was the planning estimate.",
+          1
+        ],
+        [
+          "Run complete. Target 60; audited delivery 37 rings correctly stamped; other run 36.",
+          2
+        ],
+        [
+          "Audited for the run under review: 59 rings correctly stamped. Use this figure. The 36 figure was the planning estimate.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 10 and 12 rings correctly stamped for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 36 and 38 rings correctly stamped, pending reconciliation.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "ordinal-continue-count-bay-sweeps",
+      "type": "score",
+      "instructions": "Use the verified total for this run to grade verified bay sweeps.",
+      "criteria": [
+        "Below 3 verified bay sweeps.",
+        "3 or more but below 12 verified bay sweeps.",
+        "12 verified bay sweeps or more."
+      ],
+      "rows": [
+        [
+          "Run complete. Target 30; audited delivery 1 verified bay sweeps; other run 0.",
+          0
+        ],
+        [
+          "Audited for the run under review: 2 verified bay sweeps. Use this figure. The 0 figure was the planning estimate.",
+          0
+        ],
+        [
+          "Run complete. Target 30; audited delivery 3 verified bay sweeps; other run 2.",
+          1
+        ],
+        [
+          "Audited for the run under review: 6 verified bay sweeps. Use this figure. The 2 figure was the planning estimate.",
+          1
+        ],
+        [
+          "Run complete. Target 30; audited delivery 12 verified bay sweeps; other run 11.",
+          2
+        ],
+        [
+          "Audited for the run under review: 21 verified bay sweeps. Use this figure. The 11 figure was the planning estimate.",
+          2
+        ],
+        [
+          "Two contemporaneous signed totals give 2 and 4 verified bay sweeps for this run. Neither is known to be the correct total.",
+          0.5
+        ],
+        [
+          "The current counter has two credible readings, 11 and 13 verified bay sweeps, pending reconciliation.",
+          1.5
+        ]
+      ]
+    }
+  ]
+}

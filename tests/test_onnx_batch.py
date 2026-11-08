@@ -21,10 +21,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np  # noqa: E402
 
-from laya.agent import Agent  # noqa: E402
-from laya.common import clamp_temperature  # noqa: E402
-from laya.onnx_agent import ONNXAgent  # noqa: E402
-from laya.router import Router  # noqa: E402
+from veya.agent import Agent  # noqa: E402
+from veya.common import clamp_temperature  # noqa: E402
+from veya.onnx_agent import ONNXAgent  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 PASS, FAIL = [], []
 
@@ -166,7 +166,7 @@ check("empty/no states -> no session run", empty.session.calls, [])
 no_q = _bare_onnx()
 check("empty/no questions -> one zero-usage result per state",
       no_q.predict_batch(STATES, {}),
-      [{"model": "laya-rl-agent-onnx", "answers": {},
+      [{"model": "veya-rl-agent-onnx", "answers": {},
         "usage": {"input_tokens": 0, "output_tokens": 0}}] * len(STATES))
 check("empty/no questions -> no session run", no_q.session.calls, [])
 check_raises("empty/bare string rejected", TypeError,

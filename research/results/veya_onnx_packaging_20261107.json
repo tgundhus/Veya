@@ -1,0 +1,344 @@
+{
+  "distributions": {
+    "annotated-doc": {
+      "version": "0.0.5",
+      "bytes": 11933
+    },
+    "annotated-types": {
+      "version": "0.8.0",
+      "bytes": 67480
+    },
+    "anyio": {
+      "version": "4.16.0",
+      "bytes": 1313501
+    },
+    "attrs": {
+      "version": "26.1.0",
+      "bytes": 443140
+    },
+    "cffi": {
+      "version": "2.1.1",
+      "bytes": 1099464
+    },
+    "click": {
+      "version": "8.5.1",
+      "bytes": 959760
+    },
+    "colorama": {
+      "version": "0.4.6",
+      "bytes": 169532
+    },
+    "cryptography": {
+      "version": "50.0.2",
+      "bytes": 11040129
+    },
+    "fastapi": {
+      "version": "0.162.1",
+      "bytes": 1667097
+    },
+    "filelock": {
+      "version": "4.2.9",
+      "bytes": 1228497
+    },
+    "flatbuffers": {
+      "version": "25.12.19",
+      "bytes": 220788
+    },
+    "fsspec": {
+      "version": "2026.9.0",
+      "bytes": 1825401
+    },
+    "h11": {
+      "version": "0.16.0",
+      "bytes": 185985
+    },
+    "hf-xet": {
+      "version": "1.8.0",
+      "bytes": 9823103
+    },
+    "httpcore2": {
+      "version": "2.16.0",
+      "bytes": 664208
+    },
+    "httpx2": {
+      "version": "2.16.0",
+      "bytes": 1004683
+    },
+    "huggingface_hub": {
+      "version": "2.4.0",
+      "bytes": 7049088
+    },
+    "idna": {
+      "version": "3.20",
+      "bytes": 626604
+    },
+    "jsonschema": {
+      "version": "4.26.0",
+      "bytes": 1059447
+    },
+    "jsonschema-specifications": {
+      "version": "2025.9.1",
+      "bytes": 51981
+    },
+    "mcp": {
+      "version": "2.3.0",
+      "bytes": 2667162
+    },
+    "mcp-types": {
+      "version": "2.3.0",
+      "bytes": 630148
+    },
+    "numpy": {
+      "version": "2.5.4",
+      "bytes": 54174752
+    },
+    "onnxruntime": {
+      "version": "1.31.1",
+      "bytes": 47924750
+    },
+    "opentelemetry-api": {
+      "version": "1.45.2",
+      "bytes": 417228
+    },
+    "packaging": {
+      "version": "26.3",
+      "bytes": 996056
+    },
+    "pip": {
+      "version": "25.0.1",
+      "bytes": 11450272
+    },
+    "protobuf": {
+      "version": "7.36.2",
+      "bytes": 2749344
+    },
+    "psutil": {
+      "version": "7.2.2",
+      "bytes": 834836
+    },
+    "pycparser": {
+      "version": "3.12",
+      "bytes": 550814
+    },
+    "pydantic": {
+      "version": "2.14.3",
+      "bytes": 3935755
+    },
+    "pydantic_core": {
+      "version": "2.50.4",
+      "bytes": 6319640
+    },
+    "PyJWT": {
+      "version": "2.15.1",
+      "bytes": 250762
+    },
+    "python-multipart": {
+      "version": "0.0.33",
+      "bytes": 196050
+    },
+    "pywin32": {
+      "version": "312",
+      "bytes": 20354530
+    },
+    "PyYAML": {
+      "version": "6.0.3",
+      "bytes": 730684
+    },
+    "quickjs-ng": {
+      "version": "0.18.0.1",
+      "bytes": 736495
+    },
+    "referencing": {
+      "version": "0.37.0",
+      "bytes": 266096
+    },
+    "rpds-py": {
+      "version": "2026.9.1",
+      "bytes": 589073
+    },
+    "sse-starlette": {
+      "version": "3.7.0",
+      "bytes": 82100
+    },
+    "starlette": {
+      "version": "1.10.0",
+      "bytes": 654156
+    },
+    "tokenizers": {
+      "version": "0.23.3",
+      "bytes": 8318771
+    },
+    "tqdm": {
+      "version": "4.70.1",
+      "bytes": 557769
+    },
+    "truststore": {
+      "version": "0.10.5",
+      "bytes": 122550
+    },
+    "typing_extensions": {
+      "version": "4.16.0",
+      "bytes": 349491
+    },
+    "typing-inspection": {
+      "version": "0.4.5",
+      "bytes": 91738
+    },
+    "uvicorn": {
+      "version": "0.54.0",
+      "bytes": 788360
+    },
+    "veya-onnx": {
+      "version": "0.3.29",
+      "bytes": 2605854
+    }
+  },
+  "base_distributions": {
+    "anyio": {
+      "version": "4.16.0",
+      "bytes": 1313501
+    },
+    "click": {
+      "version": "8.5.1",
+      "bytes": 959760
+    },
+    "colorama": {
+      "version": "0.4.6",
+      "bytes": 169532
+    },
+    "filelock": {
+      "version": "4.2.9",
+      "bytes": 1228497
+    },
+    "flatbuffers": {
+      "version": "25.12.19",
+      "bytes": 220788
+    },
+    "fsspec": {
+      "version": "2026.9.0",
+      "bytes": 1825401
+    },
+    "h11": {
+      "version": "0.16.0",
+      "bytes": 185985
+    },
+    "hf-xet": {
+      "version": "1.8.0",
+      "bytes": 9823103
+    },
+    "httpcore2": {
+      "version": "2.16.0",
+      "bytes": 664208
+    },
+    "httpx2": {
+      "version": "2.16.0",
+      "bytes": 1004683
+    },
+    "huggingface_hub": {
+      "version": "2.4.0",
+      "bytes": 7049088
+    },
+    "idna": {
+      "version": "3.20",
+      "bytes": 626604
+    },
+    "numpy": {
+      "version": "2.5.4",
+      "bytes": 54174752
+    },
+    "onnxruntime": {
+      "version": "1.31.1",
+      "bytes": 47924750
+    },
+    "packaging": {
+      "version": "26.3",
+      "bytes": 996056
+    },
+    "pip": {
+      "version": "25.0.1",
+      "bytes": 11450272
+    },
+    "protobuf": {
+      "version": "7.36.2",
+      "bytes": 2749344
+    },
+    "PyYAML": {
+      "version": "6.0.3",
+      "bytes": 730684
+    },
+    "tokenizers": {
+      "version": "0.23.3",
+      "bytes": 8318771
+    },
+    "tqdm": {
+      "version": "4.70.1",
+      "bytes": 557769
+    },
+    "truststore": {
+      "version": "0.10.5",
+      "bytes": 122550
+    },
+    "typing_extensions": {
+      "version": "4.16.0",
+      "bytes": 349491
+    },
+    "veya-onnx": {
+      "version": "0.3.29",
+      "bytes": 2605853
+    }
+  },
+  "wheel_bytes": 288577,
+  "sdist_bytes": 274273,
+  "model_free_replay_verified": true,
+  "http_replay_fast_path_verified": true,
+  "code_mode_verified": true,
+  "public_agent_code_verified": true,
+  "context_balanced_policy_verified": true,
+  "runtime_sha256": {
+    "veya_onnx/__init__.py": "b68655f26f78e32d9289164c77538bc5adde98fc449138641b3232e9596b5483",
+    "veya_onnx/_compat.py": "30f8b819eb56b8bd6b4c5c83a084abe65f97dd0ce957f2cf532a70d389bb6157",
+    "veya_onnx/_runtime/__init__.py": "cae0afae8d184c251f5d5da25b55ec1ce8767e62aee70cb29fe381eb19a29bf6",
+    "veya_onnx/_runtime/_env.py": "7efd193fd11b88b3aba004fe49c59820b7b4c2c99b8ac5d3e69c2d69a1ed8401",
+    "veya_onnx/_runtime/_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "veya_onnx/_runtime/_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "veya_onnx/_runtime/calibration.py": "930ff25967d8bd82dc3ef8808b338c5a4e77fd8ad66a7a8ec3f26c549d5a391c",
+    "veya_onnx/_runtime/checkpoint.py": "c945dcc70116a92a2bb325b1a3de6c3692e4d9de76d229d865a4327d15ff1b75",
+    "veya_onnx/_runtime/confidence.py": "b786ee6ba45a2704523a48e57de7247d727107fb1a2274ac13ddb801908e9a91",
+    "veya_onnx/_runtime/consistency.py": "d7322d80d3191bd4f4b2e670e672a748bdd3badf6814b026448ad952337e7caa",
+    "veya_onnx/_runtime/decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "veya_onnx/_runtime/errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "veya_onnx/_runtime/hooks.py": "2cd940636168913871f63f0f423f6e3fb71284c7c1530ce9b01a1c2f4a52e8b7",
+    "veya_onnx/_runtime/inference.py": "3f00aedf774f94fee361bec1e83e1f4d6791bb1cec28e91d86ddf49101842698",
+    "veya_onnx/_runtime/inference_common.py": "15f23ed74faaa7cd0f37a28b1777d11fb4ebdf8a168da3a111bc11cff2b1810d",
+    "veya_onnx/_runtime/lang.py": "680613b46515c15602ed818472ad660dc4255bbb4321f36f79c1c736fcb759d6",
+    "veya_onnx/_runtime/mcp/__init__.py": "7d20c81a908f9ea71f715e9e4fa7d14e37ea248613d33570af46d4256062baed",
+    "veya_onnx/_runtime/mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "veya_onnx/_runtime/mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "veya_onnx/_runtime/mcp/code_mode.py": "da8211746cf77fba45f48b2ea30e20dbb181cf85034a9ea020e35058c7ce77b7",
+    "veya_onnx/_runtime/mcp/device.py": "7c75e605dfafc7cbedac90f0e56f8e37749ba070a54fd9e746f23bec1741ede1",
+    "veya_onnx/_runtime/mcp/remote.py": "91feac33c26c7e971bfa4a71a172c5270ea17069e9549d4958732fc850dcf676",
+    "veya_onnx/_runtime/mcp/server.py": "de8a3c957bcfe2b17f2d960f67387ea1c4105010e1d2889ede9ff9720ba00728",
+    "veya_onnx/_runtime/mcp/tools.py": "94134c7627dcb598e2864652fb016337931c4e0a1410ac01663cf74f02260dad",
+    "veya_onnx/_runtime/onnx_agent.py": "db4ab7b15a4d7046a032c3b7ffe79ee39055a075a2d7318b75c206ad9343ebbf",
+    "veya_onnx/_runtime/performance.py": "93735cd2ba13f566ac71db2216eb3b56ad0776441cfbca45c0dc7b63ae8240d2",
+    "veya_onnx/_runtime/presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "veya_onnx/_runtime/replay.py": "a2df27f7e311e8066d1df5e4f3d61c718710a6c5157e47ef3ef3c53a08f5b4cb",
+    "veya_onnx/_runtime/revisions.py": "8f9d0528be48549cd9059d0332e7e8599bb29aded49a18aabad4b7928d5ed695",
+    "veya_onnx/_runtime/router.py": "c68c918298fb17a8ebe4664da559c405ded807c954464a303c6b2ebfdb3fc88a",
+    "veya_onnx/_runtime/serve.py": "bdc2a30da9c3e630be3fcde641171cf5e31e67b5e0f904d533994d082085fe08",
+    "veya_onnx/_runtime/shortlist.py": "b3c1f0869e574a344c5833d37d4dad593f77de908843e4ebc707b41d33429d16",
+    "veya_onnx/_runtime/structured.py": "d47e7bf96abf60041ccf88b9047880565a254996808b7c4fb29712c42dba6a78",
+    "veya_onnx/mcp/__init__.py": "c7e7550bed707240f2e435a42eb8e2067297b8d0e52c022eedae135e88f5af0b",
+    "veya_onnx/mcp/code_mode.py": "5df67cf311ab6a593f8b5ea3f60dcd41daf96f30e038b173d560aa0813ea8d65",
+    "veya_onnx/mcp/server.py": "aea0efddc28c5cfde4971c785db2c141cdd1af0dc00dff8876569a144353e436",
+    "veya_onnx/replay.py": "eb02437f8c06c1c1167ac2b829c2f5c83f56dc49c0430318b558722fd96267c9",
+    "veya_onnx/serve.py": "eba6ce0d1e3d7db4c0340ec276d949518d0f13475abaa423c96a6e5769a785e9"
+  },
+  "verification_sha256": {
+    "verify_package.py": "b2ba34b262ee4e832c0f6552c07fd9d1f33783f76ebfcc46bd97e56614649c94",
+    "consumer.py": "5232453712ee513aa9f1ad83048c69d20058b791247d1cdd14540282123284e0",
+    "services_consumer.py": "1ff000ef18e072fe57a3e470ef4e7f5b0337900f4198d129f5702704dd13b2f4",
+    "production_consumer.py": "f95d268ea6e4654ef8c9fd6f005c62bbe579cbd701821150544367e823f380a4",
+    "fixture.py": "6a7d9eddb5a16c661a153be2e77c4dd874b8ecfe31e213e184adbf60087806d9"
+  }
+}

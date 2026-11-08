@@ -24,8 +24,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import torch
 import transformers
 
-from laya import Agent
-from laya import agent as agent_module
+from veya import Agent
+from veya import agent as agent_module
 
 QUESTIONS = {
     "team": {"type": "choice", "instructions": "Which team should handle this support ticket?",

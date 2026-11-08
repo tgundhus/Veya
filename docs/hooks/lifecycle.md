@@ -206,7 +206,7 @@ on_predict_start
         └─ on_predict_end can store the result
 ```
 
-See [`examples/hooks/cache.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/cache.py) for a working cache.
+See [`examples/hooks/cache.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/cache.py) for a working cache.
 
 ## Empty inputs
 

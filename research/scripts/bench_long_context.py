@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import torch
 import transformers
-import laya
+import veya
 
 QUESTIONS = {"department": {"type": "choice", "instructions": "Which department should handle this request?",
                             "criteria": {"billing": "invoices, payments, refunds",
@@ -57,7 +57,7 @@ def main():
     ap.add_argument("--out", default="research/results/long_context_multilingual.json")
     a = ap.parse_args()
 
-    agent = laya.load("convaiinnovations/laya", subfolder="multilingual", device=a.device)
+    agent = veya.load("convaiinnovations/laya", subfolder="multilingual", device=a.device)
     per_rep = len(agent.tok(FILLER, add_special_tokens=False)["input_ids"])
     default_limit = int(agent.cfg.get("max_len", 1024))
     rows, cases = [], []
@@ -87,7 +87,7 @@ def main():
                   % (pad, limit, correct, len(REQUESTS), row["median_latency_s"], row["median_input_tokens"]), flush=True)
     out = {"checkpoint": "convaiinnovations/laya (multilingual/)", "default_limit": default_limit,
            "device": a.device, "platform": platform.platform(), "torch": torch.__version__,
-           "transformers": transformers.__version__, "laya": laya.__version__,
+           "transformers": transformers.__version__, "laya": veya.__version__,
            "questions": QUESTIONS, "rows": rows, "cases": cases}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(out, ensure_ascii=False, indent=1))

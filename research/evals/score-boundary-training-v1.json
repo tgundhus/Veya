@@ -1,0 +1,1498 @@
+{
+  "training": [
+    {
+      "family": "scorefit-baggage-belts",
+      "type": "score",
+      "instructions": "Rate the current operational effect on baggage delivery. Use verified current facts, including scope and working alternatives.",
+      "criteria": [
+        "0: Normal service, a routine request, or no current interruption.",
+        "1: A limited interruption with a working temporary option.",
+        "2: A widespread active interruption with no working option and an urgent need."
+      ],
+      "rows": [
+        [
+          "Rename the belts on the briefing slides. Bags are arriving on time at every hall.",
+          0
+        ],
+        [
+          "A drill assumed a total conveyor loss. The actual carousels kept unloading bags throughout.",
+          0
+        ],
+        [
+          "The photograph shows last winter’s jam. Today’s dispatch confirms that all halls are delivering normally.",
+          0
+        ],
+        [
+          "Belt seven stopped, so attendants are delivering its bags at the working belt next door.",
+          1
+        ],
+        [
+          "The international sorter is delayed, but attendants are handing out every affected bag at the staffed desk.",
+          1
+        ],
+        [
+          "All belts have stopped with unloaded flights waiting and the hand-carry route is closed. Staff need restoration now.",
+          2
+        ],
+        [
+          "The floor lead reports all belts healthy. An equally current log records belt seven stopped with attendants moving bags to belt six. Dispatch has not resolved the discrepancy.",
+          0.5
+        ],
+        [
+          "A current jam report mentions no belt number. It might be a single belt with manual delivery or the whole hall with no manual delivery. Airport control cannot yet confirm scope or alternatives.",
+          1.5
+        ],
+        [
+          "Two contemporaneous notices disagree. One says belt seven is isolated with bags moving at belt six. The other says the transfer line is down across the hall and manual delivery is closed. Neither notice has been verified.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-quarry-weighers",
+      "type": "score",
+      "instructions": "Rate the current operational effect on truck weighing. Use verified current facts, including scope and working alternatives.",
+      "criteria": [
+        "0: Normal service, a routine request, or no current interruption.",
+        "1: A limited interruption with a working temporary option.",
+        "2: A widespread active interruption with no working option and an urgent need."
+      ],
+      "rows": [
+        [
+          "Replace the photograph on the scale instructions. All lanes have issued tickets this shift.",
+          0
+        ],
+        [
+          "Yesterday both scales stopped. They were repaired overnight and trucks are being weighed in both lanes now.",
+          0
+        ],
+        [
+          "The risk assessment assumes both weighbridges fail. It is a planning exercise and all tickets are current.",
+          0
+        ],
+        [
+          "Lane two cannot print a ticket. The next lane is weighing its trucks and the queue keeps moving.",
+          1
+        ],
+        [
+          "Every scale is offline, the mobile rig is unavailable, and all loaded trucks are waiting at the gate now.",
+          2
+        ],
+        [
+          "A driver reports lane two is closed but lane one is accepting trucks. A shift record from the same minute says both are open. Neither account has been checked.",
+          0.5
+        ],
+        [
+          "The south gate reports its only scale unavailable. The dispatcher cannot tell whether the other gate is weighing diverted trucks or is also blocked. Trucks are arriving now.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-packet-core",
+      "type": "score",
+      "instructions": "Rate the current operational effect on mobile data service. Use verified current facts, including scope and working alternatives.",
+      "criteria": [
+        "0: Normal service, a routine request, or no current interruption.",
+        "1: A limited interruption with a working temporary option.",
+        "2: A widespread active interruption with no working option and an urgent need."
+      ],
+      "rows": [
+        [
+          "An editor corrected the outage guide. All test calls and subscriber data sessions succeeded in the current window.",
+          0
+        ],
+        [
+          "A red dashboard screenshot from last quarter is in a slide deck. Live metrics show sessions succeeding across the network.",
+          0
+        ],
+        [
+          "The cutover rehearsal simulated loss of the core. The live core continued to pass traffic.",
+          0
+        ],
+        [
+          "The east gateway dropped new connections; routing through the adjacent gateway restores service for those subscribers.",
+          1
+        ],
+        [
+          "Every subscriber session is down, both gateways failed and roaming failover is unavailable. The incident requires action now.",
+          2
+        ],
+        [
+          "The incident lead says only the east gateway has failed and the west gateway is carrying those subscribers. The live alarm says both gateways are down. No packet trace is available yet.",
+          1.5
+        ],
+        [
+          "The log says the east gateway alarm belongs to a simulation and the live paths are up. The field call says the alarm is real and the west route is carrying affected users. The time and source of the alarm have not been confirmed.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-oxygen-supply",
+      "type": "score",
+      "instructions": "Rate the current operational effect on clinic oxygen delivery. Use verified current facts, including scope and working alternatives.",
+      "criteria": [
+        "0: Normal service, a routine request, or no current interruption.",
+        "1: A limited interruption with a working temporary option.",
+        "2: A widespread active interruption with no working option and an urgent need."
+      ],
+      "rows": [
+        [
+          "The team updated the ordering code. All wards have normal pressure and bedside delivery.",
+          0
+        ],
+        [
+          "The memo quotes the year-old central supply failure. The failure was closed and all current lines are healthy.",
+          0
+        ],
+        [
+          "One ward has a pressure fault. Its portable cylinders are covering the ward while maintenance investigates.",
+          1
+        ],
+        [
+          "All ward lines have lost pressure, the cylinder store is empty, and patients need oxygen now.",
+          2
+        ],
+        [
+          "One shift record says all pressure readings are normal. A newer-looking but unsigned record shows a drop in one wing with cylinder cover. Staff cannot determine which record applies to the current shift.",
+          0.5
+        ],
+        [
+          "One current report says a single ward has no line pressure and is using portable cylinders. Another says all wards have lost pressure, no cylinders are available, and patients need oxygen now. The dispatcher cannot verify either report.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-ceramic-case",
+      "type": "score",
+      "instructions": "Count the two valid passing checks for packing crate H6. Check that the evidence refers to the exact item and version.",
+      "criteria": [
+        "0: Neither the tamper seal nor the airway label has passed for the item in scope.",
+        "1: Exactly one of the tamper seal and the airway label has a valid pass.",
+        "2: Both the tamper seal and the airway label have valid passes for the item in scope."
+      ],
+      "rows": [
+        [
+          "Both passes in the packet are for crate H5. For H6 the sealing and labelling records are blank.",
+          0
+        ],
+        [
+          "The seal is stocked at the bench and the label has been ordered, but neither task is complete on H6.",
+          0
+        ],
+        [
+          "The seal was inspected and passed on H6. The airway label is only in draft.",
+          1
+        ],
+        [
+          "The label is attached and verified on H6. The signed seal check belongs to H4.",
+          1
+        ],
+        [
+          "The seal inspection and label scan both passed for H6. H5 was the crate with an unreadable label.",
+          2
+        ],
+        [
+          "A signed sheet confirms the label on H6. There are two equally current seal records for H6, one PASS and one PENDING. The lead has not confirmed the valid record.",
+          1.5
+        ],
+        [
+          "The label is absent. One signed record shows a seal pass for H6, while another signed record says it was never inspected. Both have the same timestamp.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-braille-print",
+      "type": "score",
+      "instructions": "Count the two valid passing checks for edition 4 of the raised-print timetable. Check that the evidence refers to the exact item and version.",
+      "criteria": [
+        "0: Neither the dot spacing check nor the page order check has passed for the item in scope.",
+        "1: Exactly one of the dot spacing check and the page order check has a valid pass.",
+        "2: Both the dot spacing check and the page order check have valid passes for the item in scope."
+      ],
+      "rows": [
+        [
+          "Edition 4 is in the queue with no results. The two certified passes are for edition 3.",
+          0
+        ],
+        [
+          "The editor can see the proof and the test job is booked. Neither check has a result.",
+          0
+        ],
+        [
+          "The spacing gauge passed on edition 4. The sequencing team has acknowledged its ticket without a result.",
+          1
+        ],
+        [
+          "Edition 4 has passed page order. The successful spacing report is for edition 3.",
+          1
+        ],
+        [
+          "Signed reports mark dot spacing and page order as passing on edition 4. Edition 3 had failed spacing.",
+          2
+        ],
+        [
+          "The page-order result is signed for edition 4. The spacing record may apply to edition 3 or edition 4 because its revision field is missing and both proofs were present.",
+          1.5
+        ],
+        [
+          "No page-order result exists. The spacing pass sheet lost the revision label and could belong to either the withdrawn edition or edition 4.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-joinery-panel",
+      "type": "score",
+      "instructions": "Count the two valid passing checks for the replacement access panel. Check that the evidence refers to the exact item and version.",
+      "criteria": [
+        "0: Neither the load check nor the coating check has passed for the item in scope.",
+        "1: Exactly one of the load check and the coating check has a valid pass.",
+        "2: Both the load check and the coating check have valid passes for the item in scope."
+      ],
+      "rows": [
+        [
+          "The old panel passed both checks. The replacement has not gone to the lab.",
+          0
+        ],
+        [
+          "A coating test slot and load rig are ready. Neither test has run on the replacement.",
+          0
+        ],
+        [
+          "The replacement passed the load test. The coating sample has been received but is still being tested.",
+          1
+        ],
+        [
+          "The replacement passed coating. The load acceptance certificate names the old panel.",
+          1
+        ],
+        [
+          "Two signed certificates for the replacement report load PASS and coating PASS. The earlier panel failed coating.",
+          2
+        ],
+        [
+          "The replacement has a verified coating pass. Its two load certificates are equally recent and disagree on whether the load run passed or was stopped before completion.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-wetland-survey",
+      "type": "score",
+      "instructions": "Count the two valid passing checks for the current survey packet. Check that the evidence refers to the exact item and version.",
+      "criteria": [
+        "0: Neither coordinate validation nor species list review has passed for the item in scope.",
+        "1: Exactly one of coordinate validation and species list review has a valid pass.",
+        "2: Both coordinate validation and species list review have valid passes for the item in scope."
+      ],
+      "rows": [
+        [
+          "Both staff members have received the current packet. Their only signed passes belong to the superseded packet.",
+          0
+        ],
+        [
+          "Both checks are still pending on the current packet even though the team accepted it into the queue.",
+          0
+        ],
+        [
+          "Coordinates have been verified and signed for this packet. The biologist has acknowledged receipt without signing the list.",
+          1
+        ],
+        [
+          "The species list passed this version. Coordinate validation was signed only on the superseded packet.",
+          1
+        ],
+        [
+          "The current packet bears a signed coordinates pass and a signed species review pass. The older version was rejected.",
+          2
+        ],
+        [
+          "Coordinates are verified. The biologist’s approval lost its packet identifier, so the same approval could be for this packet or its predecessor.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-field-notes-translation",
+      "type": "score",
+      "instructions": "Rate completion of the current Italian visitor notes.",
+      "criteria": [
+        "0: The complete Italian copy is unavailable.",
+        "1: The complete copy exists but has no reviewer approval.",
+        "2: The complete Italian copy exists and a reviewer has approved it."
+      ],
+      "rows": [
+        [
+          "The reviewer approved the English text. Only the first Italian paragraph has been written.",
+          0
+        ],
+        [
+          "The translator saved the full Italian text. Review of that file is scheduled for next week.",
+          1
+        ],
+        [
+          "The full Italian copy is saved and approved. The unfinished document in the folder is last year’s draft.",
+          2
+        ],
+        [
+          "The complete Italian copy is saved. A signed approval lost its language header and could be for the English or Italian copy. No other approval exists.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-crane-hours",
+      "type": "score",
+      "instructions": "Use verified active operating minutes for the current lifting shift.",
+      "criteria": [
+        "0: Less than 10 verified minutes.",
+        "1: At least 10 and less than 30 verified minutes.",
+        "2: At least 30 verified minutes."
+      ],
+      "rows": [
+        [
+          "The operator was scheduled for 50 minutes. The current signed register documents only four active minutes.",
+          0
+        ],
+        [
+          "The live register documents 17 minutes today. Yesterday’s 42-minute entry belongs to another shift.",
+          1
+        ],
+        [
+          "The signed log for this shift shows 42 active minutes without a gap.",
+          2
+        ],
+        [
+          "Both logs are signed for the same shift. One gives 26 minutes, the other 33, with no timestamp or other basis to prefer either.",
+          1.5
+        ],
+        [
+          "The two valid-looking registers disagree on whether this shift accumulated 8 or 12 verified minutes.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-trail-fault",
+      "type": "score",
+      "instructions": "Rate the current visitor impact of trail defects.",
+      "criteria": [
+        "0: The trail is open with no reported disruption.",
+        "1: One section is blocked and a walkable detour is in use.",
+        "2: The whole trail is closed without a usable detour."
+      ],
+      "rows": [
+        [
+          "A route note was corrected. Hikers can pass through every section today.",
+          0
+        ],
+        [
+          "The flood warning is an exercise. The actual trail stayed open end to end.",
+          0
+        ],
+        [
+          "The boardwalk is closed. Visitors are using the signed woodland loop to get around it.",
+          1
+        ],
+        [
+          "All approaches are barricaded and flooding has removed the last footpath. Visitors cannot use the trail.",
+          2
+        ],
+        [
+          "One report says the boardwalk is closed with the woodland loop open. A contemporaneous report says every approach is closed and there is no detour. Rangers have not checked either.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-grain-inspection",
+      "type": "score",
+      "instructions": "Rate progress of the current barley quality inspection.",
+      "criteria": [
+        "0: No sample from this delivery has been tested.",
+        "1: This delivery has a test result but the final certificate is pending.",
+        "2: The test is complete and the final certificate for this delivery was issued."
+      ],
+      "rows": [
+        [
+          "Yesterday’s lot has a final certificate. This delivery is still in the sampling queue.",
+          0
+        ],
+        [
+          "The moisture result for this delivery is filed. The final certificate has not been issued.",
+          1
+        ],
+        [
+          "The current delivery has the completed test and signed final certificate. The draft sheet belongs to the old delivery.",
+          2
+        ],
+        [
+          "The test result is filed for the current delivery. An issued certificate has no delivery identifier, so it could refer to the current or the earlier delivery.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-contrast-grain-transfer",
+      "type": "score",
+      "instructions": "Assign operational priority for bulk grain transfer by current service impact, the alternative and urgency.",
+      "criteria": [
+        "No active service impact, including planned work and exercises.",
+        "A current interruption limited to one area with a working alternative.",
+        "A widespread current interruption, no available alternative and immediate action required."
+      ],
+      "rows": [
+        [
+          "Maintenance changed the drawing for one silo auger. The operator’s current check shows normal service everywhere.",
+          0
+        ],
+        [
+          "The training record assumes a loss of the terminal conveyor. This was a simulation and all live equipment stayed in service.",
+          0
+        ],
+        [
+          "A previous report said all loaders are blocked and the portable conveyor cannot be deployed. It was closed after restoration, and current service is normal.",
+          0
+        ],
+        [
+          "Today only one silo auger has failed. The verified response is that grain is passing through its spare auger.",
+          1
+        ],
+        [
+          "The previous report described a total stoppage. Today the only failure is one silo auger, and grain is passing through its spare auger.",
+          1
+        ],
+        [
+          "A current failure of the terminal conveyor means all loaders are blocked and the portable conveyor cannot be deployed, and a ship is waiting to load now.",
+          2
+        ],
+        [
+          "The verified situation is that all loaders are blocked and the portable conveyor cannot be deployed and a ship is waiting to load now. The reassuring report that grain is passing through its spare auger belongs to an earlier incident.",
+          2
+        ],
+        [
+          "One current report says all service is normal. A second equally current report says one silo auger stopped and grain is passing through its spare auger. Neither source has been verified.",
+          0.5
+        ],
+        [
+          "One dispatch says only one silo auger is down and grain is passing through its spare auger. A different current dispatch says all loaders are blocked and the portable conveyor cannot be deployed and a ship is waiting to load now. The two reports cannot yet be reconciled.",
+          1.5
+        ],
+        [
+          "There is some confirmed disruption involving one silo auger. The current status feed has no scope or backup data. The dispatcher cannot distinguish a local failure with temporary service from a system-wide stoppage with no backup that needs action now.",
+          1.5
+        ],
+        [
+          "A partial alert mentions one silo auger, with no verified live status. The alert could be a test while service is normal or a real local interruption where grain is passing through its spare auger.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-contrast-airfield-lighting",
+      "type": "score",
+      "instructions": "Assign operational priority for airfield lighting by current service impact, the alternative and urgency.",
+      "criteria": [
+        "No active service impact, including planned work and exercises.",
+        "A current interruption limited to one area with a working alternative.",
+        "A widespread current interruption, no available alternative and immediate action required."
+      ],
+      "rows": [
+        [
+          "Maintenance changed the drawing for one taxiway light circuit. The operator’s current check shows normal service everywhere.",
+          0
+        ],
+        [
+          "The training record assumes a loss of the airfield control supply. This was a simulation and all live equipment stayed in service.",
+          0
+        ],
+        [
+          "A previous report said every runway light is out and no portable light is available. It was closed after restoration, and current service is normal.",
+          0
+        ],
+        [
+          "Today only one taxiway light circuit has failed. The verified response is that working portable lights cover that taxiway.",
+          1
+        ],
+        [
+          "The previous report described a total stoppage. Today the only failure is one taxiway light circuit, and working portable lights cover that taxiway.",
+          1
+        ],
+        [
+          "A current failure of the airfield control supply means every runway light is out and no portable light is available, and aircraft need to land now.",
+          2
+        ],
+        [
+          "The verified situation is that every runway light is out and no portable light is available and aircraft need to land now. The reassuring report that working portable lights cover that taxiway belongs to an earlier incident.",
+          2
+        ],
+        [
+          "One current report says all service is normal. A second equally current report says one taxiway light circuit stopped and working portable lights cover that taxiway. Neither source has been verified.",
+          0.5
+        ],
+        [
+          "One dispatch says only one taxiway light circuit is down and working portable lights cover that taxiway. A different current dispatch says every runway light is out and no portable light is available and aircraft need to land now. The two reports cannot yet be reconciled.",
+          1.5
+        ],
+        [
+          "There is some confirmed disruption involving one taxiway light circuit. The current status feed has no scope or backup data. The dispatcher cannot distinguish a local failure with temporary service from a system-wide stoppage with no backup that needs action now.",
+          1.5
+        ],
+        [
+          "A partial alert mentions one taxiway light circuit, with no verified live status. The alert could be a test while service is normal or a real local interruption where working portable lights cover that taxiway.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-contrast-vaccine-dispatch",
+      "type": "score",
+      "instructions": "Assign operational priority for temperature-controlled dispatch by current service impact, the alternative and urgency.",
+      "criteria": [
+        "No active service impact, including planned work and exercises.",
+        "A current interruption limited to one area with a working alternative.",
+        "A widespread current interruption, no available alternative and immediate action required."
+      ],
+      "rows": [
+        [
+          "Maintenance changed the drawing for one refrigerated van. The operator’s current check shows normal service everywhere.",
+          0
+        ],
+        [
+          "The training record assumes a loss of the depot cooling supply. This was a simulation and all live equipment stayed in service.",
+          0
+        ],
+        [
+          "A previous report said every route is stopped and the reserve vans have failed. It was closed after restoration, and current service is normal.",
+          0
+        ],
+        [
+          "Today only one refrigerated van has failed. The verified response is that a reserve van is carrying its doses.",
+          1
+        ],
+        [
+          "The previous report described a total stoppage. Today the only failure is one refrigerated van, and a reserve van is carrying its doses.",
+          1
+        ],
+        [
+          "A current failure of the depot cooling supply means every route is stopped and the reserve vans have failed, and doses must leave now to stay usable.",
+          2
+        ],
+        [
+          "The verified situation is that every route is stopped and the reserve vans have failed and doses must leave now to stay usable. The reassuring report that a reserve van is carrying its doses belongs to an earlier incident.",
+          2
+        ],
+        [
+          "One current report says all service is normal. A second equally current report says one refrigerated van stopped and a reserve van is carrying its doses. Neither source has been verified.",
+          0.5
+        ],
+        [
+          "One dispatch says only one refrigerated van is down and a reserve van is carrying its doses. A different current dispatch says every route is stopped and the reserve vans have failed and doses must leave now to stay usable. The two reports cannot yet be reconciled.",
+          1.5
+        ],
+        [
+          "There is some confirmed disruption involving one refrigerated van. The current status feed has no scope or backup data. The dispatcher cannot distinguish a local failure with temporary service from a system-wide stoppage with no backup that needs action now.",
+          1.5
+        ],
+        [
+          "A partial alert mentions one refrigerated van, with no verified live status. The alert could be a test while service is normal or a real local interruption where a reserve van is carrying its doses.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-contrast-mine-ventilation",
+      "type": "score",
+      "instructions": "Assign operational priority for mine ventilation by current service impact, the alternative and urgency.",
+      "criteria": [
+        "No active service impact, including planned work and exercises.",
+        "A current interruption limited to one area with a working alternative.",
+        "A widespread current interruption, no available alternative and immediate action required."
+      ],
+      "rows": [
+        [
+          "Maintenance changed the drawing for one tunnel fan. The operator’s current check shows normal service everywhere.",
+          0
+        ],
+        [
+          "The training record assumes a loss of the ventilation bus. This was a simulation and all live equipment stayed in service.",
+          0
+        ],
+        [
+          "A previous report said airflow has stopped in every tunnel and emergency fans will not start. It was closed after restoration, and current service is normal.",
+          0
+        ],
+        [
+          "Today only one tunnel fan has failed. The verified response is that its mobile fan still meets the minimum airflow.",
+          1
+        ],
+        [
+          "The previous report described a total stoppage. Today the only failure is one tunnel fan, and its mobile fan still meets the minimum airflow.",
+          1
+        ],
+        [
+          "A current failure of the ventilation bus means airflow has stopped in every tunnel and emergency fans will not start, and crews are underground now.",
+          2
+        ],
+        [
+          "The verified situation is that airflow has stopped in every tunnel and emergency fans will not start and crews are underground now. The reassuring report that its mobile fan still meets the minimum airflow belongs to an earlier incident.",
+          2
+        ],
+        [
+          "One current report says all service is normal. A second equally current report says one tunnel fan stopped and its mobile fan still meets the minimum airflow. Neither source has been verified.",
+          0.5
+        ],
+        [
+          "One dispatch says only one tunnel fan is down and its mobile fan still meets the minimum airflow. A different current dispatch says airflow has stopped in every tunnel and emergency fans will not start and crews are underground now. The two reports cannot yet be reconciled.",
+          1.5
+        ],
+        [
+          "There is some confirmed disruption involving one tunnel fan. The current status feed has no scope or backup data. The dispatcher cannot distinguish a local failure with temporary service from a system-wide stoppage with no backup that needs action now.",
+          1.5
+        ],
+        [
+          "A partial alert mentions one tunnel fan, with no verified live status. The alert could be a test while service is normal or a real local interruption where its mobile fan still meets the minimum airflow.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-contrast-parcel-sorter",
+      "type": "score",
+      "instructions": "Assign operational priority for parcel sorting by current service impact, the alternative and urgency.",
+      "criteria": [
+        "No active service impact, including planned work and exercises.",
+        "A current interruption limited to one area with a working alternative.",
+        "A widespread current interruption, no available alternative and immediate action required."
+      ],
+      "rows": [
+        [
+          "Maintenance changed the drawing for one sorting lane. The operator’s current check shows normal service everywhere.",
+          0
+        ],
+        [
+          "The training record assumes a loss of the distribution line. This was a simulation and all live equipment stayed in service.",
+          0
+        ],
+        [
+          "A previous report said all sorting lanes are stopped and the manual facility is closed. It was closed after restoration, and current service is normal.",
+          0
+        ],
+        [
+          "Today only one sorting lane has failed. The verified response is that manual sorting is processing its parcels.",
+          1
+        ],
+        [
+          "The previous report described a total stoppage. Today the only failure is one sorting lane, and manual sorting is processing its parcels.",
+          1
+        ],
+        [
+          "A current failure of the distribution line means all sorting lanes are stopped and the manual facility is closed, and the outbound trucks must leave now.",
+          2
+        ],
+        [
+          "The verified situation is that all sorting lanes are stopped and the manual facility is closed and the outbound trucks must leave now. The reassuring report that manual sorting is processing its parcels belongs to an earlier incident.",
+          2
+        ],
+        [
+          "One current report says all service is normal. A second equally current report says one sorting lane stopped and manual sorting is processing its parcels. Neither source has been verified.",
+          0.5
+        ],
+        [
+          "One dispatch says only one sorting lane is down and manual sorting is processing its parcels. A different current dispatch says all sorting lanes are stopped and the manual facility is closed and the outbound trucks must leave now. The two reports cannot yet be reconciled.",
+          1.5
+        ],
+        [
+          "There is some confirmed disruption involving one sorting lane. The current status feed has no scope or backup data. The dispatcher cannot distinguish a local failure with temporary service from a system-wide stoppage with no backup that needs action now.",
+          1.5
+        ],
+        [
+          "A partial alert mentions one sorting lane, with no verified live status. The alert could be a test while service is normal or a real local interruption where manual sorting is processing its parcels.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-contrast-marina-pump",
+      "type": "score",
+      "instructions": "Assign operational priority for marina bilge service by current service impact, the alternative and urgency.",
+      "criteria": [
+        "No active service impact, including planned work and exercises.",
+        "A current interruption limited to one area with a working alternative.",
+        "A widespread current interruption, no available alternative and immediate action required."
+      ],
+      "rows": [
+        [
+          "Maintenance changed the drawing for one slip pump. The operator’s current check shows normal service everywhere.",
+          0
+        ],
+        [
+          "The training record assumes a loss of the main pump supply. This was a simulation and all live equipment stayed in service.",
+          0
+        ],
+        [
+          "A previous report said every slip pump is stopped and the portable pump will not start. It was closed after restoration, and current service is normal.",
+          0
+        ],
+        [
+          "Today only one slip pump has failed. The verified response is that the shared portable pump is serving that slip.",
+          1
+        ],
+        [
+          "The previous report described a total stoppage. Today the only failure is one slip pump, and the shared portable pump is serving that slip.",
+          1
+        ],
+        [
+          "A current failure of the main pump supply means every slip pump is stopped and the portable pump will not start, and boats need pumping immediately.",
+          2
+        ],
+        [
+          "The verified situation is that every slip pump is stopped and the portable pump will not start and boats need pumping immediately. The reassuring report that the shared portable pump is serving that slip belongs to an earlier incident.",
+          2
+        ],
+        [
+          "One current report says all service is normal. A second equally current report says one slip pump stopped and the shared portable pump is serving that slip. Neither source has been verified.",
+          0.5
+        ],
+        [
+          "One dispatch says only one slip pump is down and the shared portable pump is serving that slip. A different current dispatch says every slip pump is stopped and the portable pump will not start and boats need pumping immediately. The two reports cannot yet be reconciled.",
+          1.5
+        ],
+        [
+          "There is some confirmed disruption involving one slip pump. The current status feed has no scope or backup data. The dispatcher cannot distinguish a local failure with temporary service from a system-wide stoppage with no backup that needs action now.",
+          1.5
+        ],
+        [
+          "A partial alert mentions one slip pump, with no verified live status. The alert could be a test while service is normal or a real local interruption where the shared portable pump is serving that slip.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-metal-durability",
+      "type": "score",
+      "instructions": "Score the current result from the number of certified load cycles. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 100 certified load cycles.",
+        "1: At least 100 but less than 300 certified load cycles.",
+        "2: At least 300 certified load cycles."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 25. An earlier run recorded 370.",
+          0
+        ],
+        [
+          "The plan estimated 410. The verified total for this run is only 80.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 160. The previous record was 25.",
+          1
+        ],
+        [
+          "An unverified estimate gives 370. The verified count now stands at 220.",
+          1
+        ],
+        [
+          "The current result is 370 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 80. The signed report for the current trial records 410.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 99 and 102. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 298 and 301. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-boot-duration",
+      "type": "score",
+      "instructions": "Score the current result from the number of verified seconds spent starting up. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 15 verified seconds spent starting up.",
+        "1: At least 15 but less than 50 verified seconds spent starting up.",
+        "2: At least 50 verified seconds spent starting up."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 3. An earlier run recorded 65.",
+          0
+        ],
+        [
+          "The plan estimated 73. The verified total for this run is only 8.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 21. The previous record was 3.",
+          1
+        ],
+        [
+          "An unverified estimate gives 65. The verified count now stands at 38.",
+          1
+        ],
+        [
+          "The current result is 65 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 8. The signed report for the current trial records 73.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 14 and 17. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 48 and 51. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-lab-deliveries",
+      "type": "score",
+      "instructions": "Score the current result from the number of confirmed boxes delivered. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 6 confirmed boxes delivered.",
+        "1: At least 6 but less than 18 confirmed boxes delivered.",
+        "2: At least 18 confirmed boxes delivered."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 1. An earlier run recorded 23.",
+          0
+        ],
+        [
+          "The plan estimated 30. The verified total for this run is only 4.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 10. The previous record was 1.",
+          1
+        ],
+        [
+          "An unverified estimate gives 23. The verified count now stands at 14.",
+          1
+        ],
+        [
+          "The current result is 23 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 4. The signed report for the current trial records 30.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 5 and 8. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 16 and 19. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-casting-output",
+      "type": "score",
+      "instructions": "Score the current result from the number of acceptable castings recorded. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 9 acceptable castings recorded.",
+        "1: At least 9 but less than 40 acceptable castings recorded.",
+        "2: At least 40 acceptable castings recorded."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 0. An earlier run recorded 49.",
+          0
+        ],
+        [
+          "The plan estimated 55. The verified total for this run is only 5.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 13. The previous record was 0.",
+          1
+        ],
+        [
+          "An unverified estimate gives 49. The verified count now stands at 24.",
+          1
+        ],
+        [
+          "The current result is 49 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 5. The signed report for the current trial records 55.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 8 and 11. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 38 and 41. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-trial-participation",
+      "type": "score",
+      "instructions": "Score the current result from the number of verified minutes in the observed trial. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 12 verified minutes in the observed trial.",
+        "1: At least 12 but less than 27 verified minutes in the observed trial.",
+        "2: At least 27 verified minutes in the observed trial."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 2. An earlier run recorded 35.",
+          0
+        ],
+        [
+          "The plan estimated 45. The verified total for this run is only 7.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 15. The previous record was 2.",
+          1
+        ],
+        [
+          "An unverified estimate gives 35. The verified count now stands at 21.",
+          1
+        ],
+        [
+          "The current result is 35 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 7. The signed report for the current trial records 45.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 11 and 14. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 25 and 28. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-garden-flow",
+      "type": "score",
+      "instructions": "Score the current result from the number of measured liters released in the current test. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 8 measured liters released in the current test.",
+        "1: At least 8 but less than 21 measured liters released in the current test.",
+        "2: At least 21 measured liters released in the current test."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 1. An earlier run recorded 27.",
+          0
+        ],
+        [
+          "The plan estimated 35. The verified total for this run is only 4.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 11. The previous record was 1.",
+          1
+        ],
+        [
+          "An unverified estimate gives 27. The verified count now stands at 16.",
+          1
+        ],
+        [
+          "The current result is 27 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 4. The signed report for the current trial records 35.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 7 and 10. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 19 and 22. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-sensor-inspection",
+      "type": "score",
+      "instructions": "Score the current result from the number of verified sensor channels inspected. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 16 verified sensor channels inspected.",
+        "1: At least 16 but less than 34 verified sensor channels inspected.",
+        "2: At least 34 verified sensor channels inspected."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 2. An earlier run recorded 43.",
+          0
+        ],
+        [
+          "The plan estimated 52. The verified total for this run is only 10.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 22. The previous record was 2.",
+          1
+        ],
+        [
+          "An unverified estimate gives 43. The verified count now stands at 28.",
+          1
+        ],
+        [
+          "The current result is 43 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 10. The signed report for the current trial records 52.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 15 and 18. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 32 and 35. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-treatment-plant",
+      "type": "score",
+      "instructions": "Rate current priority for water treatment from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "One operator saw intermittent filtration delays, and the standby vessel sometimes clears the backlog. The active incident needs attention, but the number of affected treatment lines and the reserve capacity remain unverified.",
+          1.5
+        ],
+        [
+          "One operator saw intermittent filtration delays, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "One operator saw intermittent filtration delays. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "One operator saw intermittent filtration delays. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-ice-factory",
+      "type": "score",
+      "instructions": "Rate current priority for industrial ice supply from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "Several orders have been delayed at the loading dock, and the reserve freezer occasionally releases a full load. The active incident needs attention, but there is no verified count of blocked lines or evidence that the reserve can sustain demand.",
+          1.5
+        ],
+        [
+          "Several orders have been delayed at the loading dock, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "Several orders have been delayed at the loading dock. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "Several orders have been delayed at the loading dock. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-printing-centre",
+      "type": "score",
+      "instructions": "Rate current priority for production printing from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "The first shops report that files are stalling before print, and resubmission sometimes gets a job through. The active incident needs attention, but nobody has confirmed how many printers are affected or whether resubmission is reliable.",
+          1.5
+        ],
+        [
+          "The first shops report that files are stalling before print, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "The first shops report that files are stalling before print. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "The first shops report that files are stalling before print. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-radiology-link",
+      "type": "score",
+      "instructions": "Rate current priority for delivery of urgent imaging studies from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A ward reports that some image transfers stall, and retrying succeeds for several uploads. The active incident needs attention, but the control desk has not verified site coverage or sustained retry performance.",
+          1.5
+        ],
+        [
+          "A ward reports that some image transfers stall, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A ward reports that some image transfers stall. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A ward reports that some image transfers stall. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-warehouse-lifts",
+      "type": "score",
+      "instructions": "Rate current priority for warehouse lift availability from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A loading crew reports intermittent lift delays, and manual rerouting has moved some pallets. The active incident needs attention, but the affected aisles and available manual capacity are still unknown.",
+          1.5
+        ],
+        [
+          "A loading crew reports intermittent lift delays, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A loading crew reports intermittent lift delays. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A loading crew reports intermittent lift delays. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-animal-feed-line",
+      "type": "score",
+      "instructions": "Rate current priority for feed distribution from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A technician saw several conveyors cycle slowly, and the spare chute has worked in a few runs. The active incident needs attention, but the current yard-wide scope and effectiveness of the chute are unverified.",
+          1.5
+        ],
+        [
+          "A technician saw several conveyors cycle slowly, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A technician saw several conveyors cycle slowly. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A technician saw several conveyors cycle slowly. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    }
+  ],
+  "calibration": [
+    {
+      "family": "scorefit-cal-water-taxi",
+      "type": "score",
+      "instructions": "Rate the current operational effect on water taxi service. Use verified current facts, including scope and working alternatives.",
+      "criteria": [
+        "0: Normal service, a routine request, or no current interruption.",
+        "1: A limited interruption with a working temporary option.",
+        "2: A widespread active interruption with no working option and an urgent need."
+      ],
+      "rows": [
+        [
+          "Correct the visitor leaflet. Boats are running the normal route.",
+          0
+        ],
+        [
+          "The drill assumed all piers shut. The service ran its published timetable.",
+          0
+        ],
+        [
+          "The west pier is closed. Boats are serving those passengers at the east pier.",
+          1
+        ],
+        [
+          "All water taxis are stopped, there is no road alternative, and passengers need evacuation now.",
+          2
+        ],
+        [
+          "One dock report says service is normal. Another from the same time says the west pier is closed and its passengers are being carried from the east pier. The reports conflict.",
+          0.5
+        ],
+        [
+          "One report says the west pier alone is closed with east running. Another says all piers are shut and there is no other transport. Both remain unverified.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-cal-waterproof-radio",
+      "type": "score",
+      "instructions": "Count the two valid passing checks for radio serial M84. Check that the evidence refers to the exact item and version.",
+      "criteria": [
+        "0: Neither the spray test nor the tuning test has passed for the item in scope.",
+        "1: Exactly one of the spray test and the tuning test has a valid pass.",
+        "2: Both the spray test and the tuning test have valid passes for the item in scope."
+      ],
+      "rows": [
+        [
+          "M83 passed both tests. M84 has no reported results.",
+          0
+        ],
+        [
+          "M84 passed tuning. Its spray test has been scheduled but not run.",
+          1
+        ],
+        [
+          "M84 passed spray. The tuning pass sheet refers to M83.",
+          1
+        ],
+        [
+          "M84 has two signed passes. M83 failed tuning.",
+          2
+        ],
+        [
+          "The tuning pass for M84 is signed. Two equally recent spray records for M84 disagree on whether the test passed or was aborted.",
+          1.5
+        ],
+        [
+          "Tuning has not been tested. The spray pass record omits the serial and could refer to M83 or M84.",
+          0.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-cal-visitor-signage",
+      "type": "score",
+      "instructions": "Score completion of the current entrance sign installation.",
+      "criteria": [
+        "0: The sign has not been installed.",
+        "1: The sign is installed but the site inspector has not approved it.",
+        "2: The installed sign has site inspector approval."
+      ],
+      "rows": [
+        [
+          "A work order was issued. The sign is still in its crate.",
+          0
+        ],
+        [
+          "The new sign is mounted. A signed approval refers to the sign it replaced.",
+          1
+        ],
+        [
+          "The sign is installed and its serial appears on a signed inspector approval.",
+          2
+        ],
+        [
+          "The sign is mounted. The approval form identifies only the entrance and could refer to either the new sign or the old sign at that entrance.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-report-review",
+      "type": "score",
+      "instructions": "Score the current result from the number of verified pages reviewed in this session. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 14 verified pages reviewed in this session.",
+        "1: At least 14 but less than 44 verified pages reviewed in this session.",
+        "2: At least 44 verified pages reviewed in this session."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 2. An earlier run recorded 52.",
+          0
+        ],
+        [
+          "The plan estimated 65. The verified total for this run is only 7.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 19. The previous record was 2.",
+          1
+        ],
+        [
+          "An unverified estimate gives 52. The verified count now stands at 30.",
+          1
+        ],
+        [
+          "The current result is 52 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 7. The signed report for the current trial records 65.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 13 and 16. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 42 and 45. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-number-welding-check",
+      "type": "score",
+      "instructions": "Score the current result from the number of verified welds accepted in this lot. Use the verified value for this run.",
+      "criteria": [
+        "0: Fewer than 7 verified welds accepted in this lot.",
+        "1: At least 7 but less than 25 verified welds accepted in this lot.",
+        "2: At least 25 verified welds accepted in this lot."
+      ],
+      "rows": [
+        [
+          "The signed entry for this run records 1. An earlier run recorded 34.",
+          0
+        ],
+        [
+          "The plan estimated 41. The verified total for this run is only 3.",
+          0
+        ],
+        [
+          "The accepted count for the current record is 14. The previous record was 1.",
+          1
+        ],
+        [
+          "An unverified estimate gives 34. The verified count now stands at 19.",
+          1
+        ],
+        [
+          "The current result is 34 as shown on the verified register.",
+          2
+        ],
+        [
+          "The first trial recorded 3. The signed report for the current trial records 41.",
+          2
+        ],
+        [
+          "Two signed records identify this exact run, and their counts are 6 and 9. Their timestamps are identical and neither source has precedence.",
+          0.5
+        ],
+        [
+          "The two final reports are for this run and give 23 and 26. Both are signed. The operator is checking which count is correct.",
+          1.5
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-test-sample-shipping",
+      "type": "score",
+      "instructions": "Rate current priority for laboratory specimen collection from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A collection driver reports several missed scans, and manual entry has cleared a few of them. The active incident needs attention, but the scope of the problem and reliability of manual entry remain unknown.",
+          1.5
+        ],
+        [
+          "A collection driver reports several missed scans, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A collection driver reports several missed scans. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A collection driver reports several missed scans. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    },
+    {
+      "family": "scorefit-uncertain-cross-river-freight",
+      "type": "score",
+      "instructions": "Rate current priority for river freight service from live impact, affected scope, and workable alternatives.",
+      "criteria": [
+        "No current operational interruption or urgent deadline.",
+        "Limited current disruption with a usable fallback.",
+        "Widespread active stoppage with no functioning fallback and urgent action needed."
+      ],
+      "rows": [
+        [
+          "A dock reports that several load bookings have stalled, and another loading slip has sometimes accepted them. The active incident needs attention, but the affected terminals and capacity of that route have not been confirmed.",
+          1.5
+        ],
+        [
+          "A dock reports that several load bookings have stalled, but it was a simulation. Today’s operational check found all services working normally.",
+          0
+        ],
+        [
+          "A dock reports that several load bookings have stalled. The duty lead confirms the interruption is limited to that unit and its fallback is meeting all affected demand.",
+          1
+        ],
+        [
+          "A dock reports that several load bookings have stalled. A verified update now confirms service is stopped throughout the facility, the backup has failed, and requests are blocked immediately.",
+          2
+        ]
+      ]
+    }
+  ]
+}

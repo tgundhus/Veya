@@ -1,6 +1,6 @@
 """Regression: examples/server.py must not echo exception text to a caller.
 
-`laya/serve.py` answers an inference failure with a fixed 500 (`"inference failed"`) and
+`veya/serve.py` answers an inference failure with a fixed 500 (`"inference failed"`) and
 keeps the cause in the log -- see `test_inference_failure_is_logged_and_not_leaked` in
 tests/test_serve.py, which is where that policy is asserted. The demo server did the
 opposite on all three surfaces: `f"{type(exc).__name__}: {exc}"` was returned by
@@ -25,7 +25,7 @@ import os
 import sys
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-os.environ.setdefault("LAYA_PRELOAD", "0")
+os.environ.setdefault("VEYA_PRELOAD", "0")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -72,14 +72,14 @@ def main():
     except ImportError as exc:
         if (getattr(exc, "name", None) or "").split(".")[0] not in ("fastapi", "httpx", "starlette"):
             raise
-        print("SKIP: fastapi/httpx not installed -- pip install laya[serve] httpx")
+        print("SKIP: fastapi/httpx not installed -- pip install veya[serve] httpx")
         return 0
     try:
         import server as demo
     except ImportError as exc:
         if (getattr(exc, "name", None) or "").split(".")[0] not in ("fastapi", "httpx", "starlette", "multipart"):
             raise
-        print("SKIP: examples/server.py needs the serve extra -- pip install laya[serve]")
+        print("SKIP: examples/server.py needs the serve extra -- pip install veya[serve]")
         return 0
 
     # The lifespan (which builds a real Router) is not entered: TestClient without a
@@ -88,7 +88,7 @@ def main():
     client = TestClient(demo.app, raise_server_exceptions=False)
 
     handler = Collect()
-    logger = logging.getLogger("laya.example-server")
+    logger = logging.getLogger("veya.example-server")
     logger.addHandler(handler)
     # WARNING, not ERROR: the parse-path fallback answers the caller and logs at warning level --
     # a client's bad request is not a server error, but its cause still belongs in the log.

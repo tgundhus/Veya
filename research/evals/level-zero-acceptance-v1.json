@@ -1,0 +1,1501 @@
+{
+  "schema": "veya-qualification-corpus/1",
+  "id": "english-level-zero-acceptance-v1",
+  "description": "Fresh synthetic acceptance for level-zero repair. Boundary candidates contain missing or conflicting evidence and carry no gold answer.",
+  "cases": [
+    {
+      "id": "planetarium-enquiry-1",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The north dome's image has gone green and cuts out during every screening. Can somebody repair the display?",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "projection"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-2",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The school dates are settled. The show now freezes after the introduction and the operator needs help getting playback to continue.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "projection"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-3",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please book a guided session for a class of 24 and send the lesson outline.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "education"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-4",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The projector was replaced last week and works. I need activities for pupils coming on Tuesday.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "education"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-5",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "I have the booking reference, but I want to explain my question to someone before you assign it.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "public_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-6",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "What's the public desk's phone number? I have not asked for a school visit or reported a display fault.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {
+        "decision": "public_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-7",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Please fix the corrupted dome picture and book a new classroom activity for our school group. The teacher asked for both without ranking them.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-8",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "We're already seated with a class. The dome picture failed and the teacher wants to know what to do with the group in the meantime. Both requests are open.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "planetarium-enquiry-9",
+      "family": "planetarium-enquiry",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Please replace the frozen playback in our school's dome session and arrange a new lesson slot. We need both sorted today and don't have a first priority.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Route the visitor to the team that owns the request they are making now. Use the public desk when the request is still unclear.",
+          "criteria": {
+            "projection": "A fault with a projector, dome display, or show playback.",
+            "education": "School bookings, lesson content, or group activities.",
+            "public_desk": "General information, reception, or insufficient detail to route."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-1",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The carrier is on but listeners hear silence on both local frequencies. Please restore the audio.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {
+        "decision": "transmission"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-2",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The slot is already booked. We need the transmitter checked because its output has crackled for two hours.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {
+        "decision": "transmission"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-3",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Could our choir record a five-minute slot next month? We have the piece ready.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {
+        "decision": "programming"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-4",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The on-air problem was resolved yesterday. I am calling to offer an interview for Thursday's program.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {
+        "decision": "programming"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-5",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Someone called from this number and I have a question. I'll tell you the subject when they call back.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {
+        "decision": "duty_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-6",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please tell me where visitors should sign in at the building. I have no on-air problem or proposed segment.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {
+        "decision": "duty_desk"
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-7",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Our slot went out at the wrong time and half the listeners heard silence. We have asked the station to help with both and have no primary request.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-8",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "We want Sunday's repeat moved to a new slot, and the live signal is still breaking up whenever the host speaks. Please address both before Sunday.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "community-radio-enquiry-9",
+      "family": "community-radio-enquiry",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Could you fit our segment in on Friday and investigate why listeners lost the broadcast on the west frequency? We need both requests assigned.",
+      "questions": {
+        "decision": {
+          "type": "choice",
+          "instructions": "Assign the request based on what the caller needs now. Send general or unclassified messages to the duty desk.",
+          "criteria": {
+            "transmission": "On-air sound or signal faults affecting transmission.",
+            "programming": "Scheduling a segment or providing content for a broadcast.",
+            "duty_desk": "General information or a message whose actionable request is unclear."
+          }
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-1",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner signed permission to lend manuscript M to this exhibition. The agreement is current and specifically names M.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-2",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner originally refused. Their latest written decision explicitly supersedes it and grants the loan of manuscript F to this exhibition.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-3",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "A current letter from the owner authorizes manuscript R for this named exhibition and the specified dates.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-4",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The curator requested permission for manuscript G. The owner confirmed receipt but did not decide.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-5",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner authorized manuscript P for the spring show. The requested autumn exhibition is outside the authorization.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-6",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The owner withdrew permission for manuscript Q yesterday and has not restored it.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-7",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The signed grant covers manuscript V if transport coverage is confirmed. One email says the policy was bound, and the broker says the confirmation may have been provisional.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-8",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "One copy of the signed agreement lists manuscript H. A scan in the owner's file looks like manuscript N. No one can confirm which is the final signed copy.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "manuscript-loan-consent-9",
+      "family": "manuscript-loan-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The owner wrote 'you have permission' while discussing this exhibition and an earlier exhibition. The excerpt omits which exhibition they meant.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "Has the owner given current permission to lend the exact manuscript for the specified exhibition? A valid written grant is required."
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-1",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The custodian issued a current entry permit for this visiting team, this station, and today's visit.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-2",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "A corrected permit now covers the visiting team at station 11 today. The custodian signed it and replaced the wrong-station copy.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-3",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The duty custodian's signed access list includes the visiting team for today's entry into this station.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {
+        "decision": true
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-4",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The team emailed the entry application yesterday. The custodian's only reply was an automated receipt.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-5",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The permit was for yesterday and expired at midnight. The team wants to enter today and has no extension.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-6",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Today's valid entry permit names a different team. The current team has not been granted access.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {
+        "decision": false
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-7",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The duty list appears to say 'approved' beside this team, but the same row is also marked 'copy pending' and the custodian is unreachable.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-8",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The custodian issued today's permit, then sent 'hold if the ridge closes'. Dispatch and the gate have conflicting reports about whether the closure is in force.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "weather-station-entry-consent-9",
+      "family": "weather-station-entry-consent",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The station log lists the team with a green mark. The keeper says green usually means authorized, but sometimes means the request was received.",
+      "questions": {
+        "decision": {
+          "type": "noul",
+          "instructions": "May the visiting team enter the exact station today under a current permit from its custodian?"
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-1",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please update the list of contacts for the west instruments. Every site is transmitting and detection coverage is normal.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-2",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The report discusses what would happen if the reserve stations and the primary array both failed. The scenario is a drill, and the real network is detecting normally.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-3",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "A story about the network going dark is circulating. Live station measurements and the coverage monitor confirm that detection never stopped.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-4",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The hill station lost telemetry. The adjacent stations still cover its area and the analysts are receiving their traces.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-5",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One recorder has a failed digitizer. The colocated recorder is supplying a usable feed for that location.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-6",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Both primary and reserve stations lost telemetry. There are active tremors, the region has no detection coverage, and the field units cannot send readings by any route.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-7",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Every detector went offline during the swarm. The backup array is out of range, and there is no substitute before the next emergency bulletin.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-8",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The hill station went offline. The adjacent array might still detect the smallest events, but there are no recent traces to show whether its coverage is usable.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-9",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The console reports loss of every station. Several engineers say their local sensors are still running, and nobody knows whether any readings can reach the detection desk.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "seismograph-network-impact-10",
+      "family": "seismograph-network-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The reference display went dark during a test. Operators disagree about whether only the display or the detection feed went down.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Rate the impact on current earthquake detection from observed disruption, coverage and available substitutes.",
+          "criteria": [
+            "0: routine work or an advisory while current detection coverage is unaffected.",
+            "1: a localized failure while a practical substitute maintains usable detection.",
+            "2: urgent network-wide detection loss with no usable substitute."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-1",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Please add the sign interpreter's name to the printed program. All interpretation channels and services are operating.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-2",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Staff are asking for the log from last month's interpretation outage. Today's festival has full interpretation service.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-3",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The rehearsal script describes complete interpretation loss with failed substitutes. The equipment is working at today's events and there is no interruption.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-4",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "One hall's audio interpretation channel failed. Audience members in that hall switched to the working loan receivers.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-5",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The outdoor session lost its sign language video link. An interpreter has taken the stage there and is covering that session.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-6",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Every active stage lost interpretation and the contracted alternate service could not connect. The public emergency briefing is underway without any interpretation.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-7",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Both the main and substitute channels failed throughout the venue. There is no interpreter available to help any audience during the events now underway.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-8",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The indoor audiences have working receivers. An outdoor stage reports that no audience member there can find the fallback, although staff say one was set up.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-9",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The interpretation operator logged a loss across all channels. The relief team's status reads 'connecting' with no confirmation that anybody has usable coverage.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "festival-interpretation-impact-10",
+      "family": "festival-interpretation-impact",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "A caption monitor went black as a drill ended. It isn't clear whether any live interpretation service was affected.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Assess current interpretation access using the actual interruptions and working alternatives for the festival.",
+          "criteria": [
+            "0: current interpretation service is available and the request is routine or informational.",
+            "1: limited interruption with a usable alternative for the affected audience.",
+            "2: urgent complete loss of interpretation without a usable alternative."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-1",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The contamination lab and owner liaison appear on the pickup checklist. Both result fields for this shipment are blank.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-2",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Both checks were completed for the practice parcel. The shipment being assessed has its own empty record.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-3",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The coordinator wrote to schedule the two checks. Neither is marked complete and there are no clearance certificates for this shipment.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 0
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-4",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The ownership check was signed for the current shipment. The contamination lab has only logged its arrival.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-5",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The contamination test passed for this shipment. The completed ownership check attached to the email is for another shipment.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 1
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-6",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "The lab and owner liaison both signed off this exact shipment. Their valid records match the same container seal.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-7",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "rubric",
+      "state": "Both required checks were completed for the current shipment this morning. An older sample box remains on hold and is outside this shipment.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {
+        "decision": 2
+      },
+      "tags": [
+        "synthetic"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-8",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The lab form has a result for the correct shipment, but the signature field says 'initialed for review'. The ownership check is still pending.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-9",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "The ownership check is signed. A text from the lab says 'clear', but it omits the container number and names two shipments.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    },
+    {
+      "id": "stone-sample-clearance-10",
+      "family": "stone-sample-clearance",
+      "split": "evaluation",
+      "variant": "boundary_candidate",
+      "state": "Both checks appear complete on a photocopy, but the seal number is partly obscured and might refer to this shipment or the one beside it.",
+      "questions": {
+        "decision": {
+          "type": "score",
+          "instructions": "Score clearance for the exact geological sample shipment. Count a completed contamination check and a completed ownership check for that shipment.",
+          "criteria": [
+            "0: neither required check has been completed for this shipment, or the shipment is barred.",
+            "1: exactly one required check has been completed for this shipment.",
+            "2: both required checks have been completed for this shipment."
+          ]
+        }
+      },
+      "expected": {},
+      "tags": [
+        "synthetic",
+        "boundary-candidate",
+        "unlabelled"
+      ]
+    }
+  ]
+}

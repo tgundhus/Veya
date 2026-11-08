@@ -11,12 +11,12 @@ measurable, so that a retrained head has a number to beat:
 
 ## Why this reads a report instead of running a model
 
-`laya-evals run --json REPORT` already writes, per case, the full `answer` (which carries
+`veya-evals run --json REPORT` already writes, per case, the full `answer` (which carries
 `answer.action.act_probability`), the calibrated `confidence`, and the binary `correct`.
 So the diagnostic is pure arithmetic over a report that already exists:
 
 * no checkpoint is loaded and no forward pass is run a second time;
-* model, routing and eval code are untouched, and `laya.evals` gains no public API;
+* model, routing and eval code are untouched, and `veya.evals` gains no public API;
 * any future checkpoint or retraining run produces an apples-to-apples number, because the
   input format is the one the harness already commits.
 
@@ -35,7 +35,7 @@ denominator:
 
 The `paired` set is used for **both** the `act_probability` AUC and the `confidence`
 control, so the comparator covers exactly the same decisions by construction rather than by
-convention. A `score` answer is skipped because `laya.evals` deliberately leaves `correct`
+convention. A `score` answer is skipped because `veya.evals` deliberately leaves `correct`
 null for it; there is no canonical binary definition for a score, and inventing one here
 would be a different experiment.
 
@@ -43,7 +43,7 @@ would be a different experiment.
 
 `roc_auc` is the tie-correct ROC-AUC, the Mann-Whitney U form with mid-ranks for tied
 scores. It agrees with `sklearn.metrics.roc_auc_score` but needs only numpy, which the
-metric math in `laya.evals` already depends on. Concretely:
+metric math in `veya.evals` already depends on. Concretely:
 
     AUC = (sum of mid-ranks of the correct cases - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg)
 
@@ -76,7 +76,7 @@ from typing import Any, Dict, List, Optional, Sequence
 
 import numpy as np
 
-SCHEMA = "laya-evals-report/act-head-eval/1"
+SCHEMA = "veya-evals-report/act-head-eval/1"
 
 # Below this spread every act_probability is the same number to the precision the report
 # stores (4 decimals), so the signal cannot separate anything.
@@ -230,7 +230,7 @@ def report_from_document(document: Any) -> Dict[str, Any]:
         raise ValueError("report must be a JSON object")
     cases = document.get("cases")
     if not isinstance(cases, list):
-        raise ValueError("report has no 'cases' list: is this a laya-evals --json report?")
+        raise ValueError("report has no 'cases' list: is this a veya-evals --json report?")
     analysis = analyse_cases(cases)
     return {
         "schema": SCHEMA,
@@ -285,9 +285,9 @@ def _fmt(value: Optional[float]) -> str:
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Score act_probability against labelled decisions in a laya-evals report."
+        description="Score act_probability against labelled decisions in a veya-evals report."
     )
-    parser.add_argument("report", help="the JSON written by `laya-evals run --json`")
+    parser.add_argument("report", help="the JSON written by `veya-evals run --json`")
     parser.add_argument("--json", dest="json_out", help="write the full result here")
     parser.add_argument("--markdown", dest="md_out", help="write a human summary here")
     args = parser.parse_args(argv)

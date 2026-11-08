@@ -1,6 +1,6 @@
 # Prediction Hooks
 
-Hooks let you observe or shape every decision Laya makes, without forking it.
+Hooks let you observe or shape every decision Veya makes, without forking it.
 
 They are the extension seam for the things every real deployment needs: audit logging, PII
 redaction before inference, caching, metrics, confidence gating, routing overrides, and
@@ -25,12 +25,12 @@ This folder is the full reference. Start here, then dive into the page you need:
 ## Quick start
 
 ```python
-import laya
+import veya
 
 def log(ctx):
     print(ctx.model, ctx.results[0]["answers"], ctx.elapsed_ms)
 
-agent = laya.load("convaiinnovations/laya", on_predict_end=log)
+agent = veya.load("convaiinnovations/laya", on_predict_end=log)
 agent.system_one("I was charged twice.", {"urgent": {"type": "noul", "instructions": "Urgent?"}})
 ```
 
@@ -47,7 +47,7 @@ class Audit:
     def on_error(self, ctx):
         print("failed", ctx.run_id, ctx.error)
 
-laya.load("convaiinnovations/laya", hooks=[Audit()])
+veya.load("convaiinnovations/laya", hooks=[Audit()])
 ```
 
 Hooks can also be added later or scoped to a block:
@@ -63,7 +63,7 @@ without threading it through every call, register it once with
 [process-wide defaults](api.md#process-wide-defaults):
 
 ```python
-from laya import hooks
+from veya import hooks
 
 hooks.set_default_hooks(hooks=[Tracer()])
 ```
@@ -125,24 +125,24 @@ There are three ideas.
 | `on_load` | no | yes |
 | `on_evict` | no | yes |
 
-`laya.serve` and the MCP server call `Router.predict`, so Router hooks fire for them
+`veya.serve` and the MCP server call `Router.predict`, so Router hooks fire for them
 automatically. `Agent` hooks fire whenever the Router runs an attached or built agent.
 
 ## Compatibility
 
 - No hooks configured means no behavioural change. The unset path is regression-tested.
 - All hook parameters are keyword arguments with defaults, so existing calls keep working.
-- `laya/hooks.py` is pure Python: `import laya` does not pull in torch because of it.
+- `veya/hooks.py` is pure Python: `import veya` does not pull in torch because of it.
 - Hooks are synchronous by default. An `async def` event can be wrapped in
   [`AsyncHook`](api.md#async-hooks), or passed as a plain async callable, and it runs to
   completion for you.
 - [`hooks_timeout`](errors.md#timeouts) bounds a slow hook so it cannot hang a served request.
 - Keep hooks fast and non-blocking; see [errors](errors.md) and [patterns](patterns.md) for the
-  consequences on `laya.serve`.
+  consequences on `veya.serve`.
 
 ## See also
 
-- [`examples/hooks/`](https://github.com/tgundhus/laya-pro/tree/main/examples/hooks/): runnable audit, redact, cache and metrics hooks.
-- [`tests/test_hooks.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks.py): the behaviour spec.
-- [`tests/test_hooks_api.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks_api.py): the API-stability guard.
-- [`laya/hooks.py`](https://github.com/tgundhus/laya-pro/blob/main/laya/hooks.py): the implementation.
+- [`examples/hooks/`](https://github.com/tgundhus/Veya/tree/main/examples/hooks/): runnable audit, redact, cache and metrics hooks.
+- [`tests/test_hooks.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks.py): the behaviour spec.
+- [`tests/test_hooks_api.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks_api.py): the API-stability guard.
+- [`veya/hooks.py`](https://github.com/tgundhus/Veya/blob/main/veya/hooks.py): the implementation.

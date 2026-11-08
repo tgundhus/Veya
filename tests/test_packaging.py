@@ -40,13 +40,13 @@ def version_tuple(text):
 pyproject = read("pyproject.toml")
 setup_py = read("setup.py")
 
-check_true("fork/distribution has its own name", re.search(r'^name\s*=\s*"laya-pro"$', pyproject, re.M) is not None)
-check_true("fork/metadata points to this repository", 'Repository = "https://github.com/tgundhus/laya-pro"' in pyproject)
-check_true("fork/metadata points to its documentation", 'Documentation = "https://tgundhus.github.io/laya-pro/"' in pyproject)
+check_true("fork/distribution has its own name", re.search(r'^name\s*=\s*"veya"$', pyproject, re.M) is not None)
+check_true("fork/metadata points to this repository", 'Repository = "https://github.com/tgundhus/Veya"' in pyproject)
+check_true("fork/metadata points to its documentation", 'Documentation = "https://tgundhus.github.io/Veya/"' in pyproject)
 site_config = read("zensical.toml")
-check_true("fork/site has its own canonical URL", 'site_url = "https://tgundhus.github.io/laya-pro/"' in site_config)
+check_true("fork/site has its own canonical URL", 'site_url = "https://tgundhus.github.io/Veya/"' in site_config)
 check_true("fork/docs workflow deploys this repository",
-           "github.repository == 'tgundhus/laya-pro'" in read(".github/workflows/docs.yml"))
+           "github.repository == 'tgundhus/Veya'" in read(".github/workflows/docs.yml"))
 
 # An explicit package list keeps setuptools from treating assets/, research/ and notebooks/ as
 # top-level packages, but it also means a new importable subpackage can disappear from wheels
@@ -58,13 +58,13 @@ try:
     declared_packages = set(ast.literal_eval(package_list.group(1))) if package_list else set()
 except (SyntaxError, ValueError):
     declared_packages = set()
-source_packages = set()
-for package_root, _dirs, files in os.walk(os.path.join(ROOT, "laya")):
+source_packages = {"laya"}
+for package_root, _dirs, files in os.walk(os.path.join(ROOT, "veya")):
     if "__init__.py" not in files:
         continue
     relative = os.path.relpath(package_root, ROOT)
     source_packages.add(relative.replace(os.sep, "."))
-check("setuptools/packages match every importable laya package",
+check("setuptools/packages match every importable veya package",
       sorted(declared_packages), sorted(source_packages))
 
 requires_python = re.search(r'requires-python\s*=\s*"[>=~^]*\s*([\d.]+)"', pyproject)
@@ -95,18 +95,18 @@ for field in ("python_requires", "install_requires", "classifiers"):
         "metadata belongs in pyproject.toml only",
     )
 
-# The release job checks the git tag against pyproject, but laya.__version__ is what the server
+# The release job checks the git tag against pyproject, but veya.__version__ is what the server
 # and SDK report at runtime, so the two strings must not drift apart.
 static_version = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
 check_true("pyproject/declares a static version", static_version is not None)
-init_version = re.search(r'^__version__\s*=\s*"([^"]+)"', read(os.path.join("laya", "__init__.py")), re.M)
-check_true("laya/__init__ declares a literal __version__", init_version is not None)
+init_version = re.search(r'^__version__\s*=\s*"([^"]+)"', read(os.path.join("veya", "__init__.py")), re.M)
+check_true("veya/__init__ declares a literal __version__", init_version is not None)
 check(
-    "version/pyproject matches laya.__version__",
+    "version/pyproject matches veya.__version__",
     static_version.group(1) if static_version else None,
     init_version.group(1) if init_version else None,
 )
-for label, match in (("pyproject", static_version), ("laya/__init__", init_version)):
+for label, match in (("pyproject", static_version), ("veya/__init__", init_version)):
     value = match.group(1) if match else ""
     parts = value.split(".")
     check_true("%s/version is X.Y.Z" % label, len(parts) == 3 and all(p.isdigit() for p in parts), "got %r" % value)
@@ -229,8 +229,8 @@ registered_test_files = (
 )
 
 EXEMPT_TEST_SUITES = {
-    "test_local_e2e.py": "Requires local checkpoints under ~/laya_models (AGENTS.md)",
-    "test_mcp_local_e2e.py": "Requires local checkpoints under ~/laya_models (AGENTS.md)",
+    "test_local_e2e.py": "Requires local checkpoints under ~/veya_models (AGENTS.md)",
+    "test_mcp_local_e2e.py": "Requires local checkpoints under ~/veya_models (AGENTS.md)",
     "test_onnx.py": "Requires onnx extra; skip-guarded on lane without it (AGENTS.md)",
     "test_fast.py": "Requires CUDA and tilelang extra (AGENTS.md)",
     "test_fast_cpu.py": "Requires tilelang extra and a C++ compiler; optional CUDA parity",
@@ -278,7 +278,7 @@ _md = []
 for _dirpath, _dirnames, _filenames in os.walk("."):
     # `.pytest_cache` ships a README of its own and `.venv` is where CONTRIBUTING tells
     # contributors to install; neither is part of the repository. `.hf-cache` holds
-    # third-party dataset cards downloaded by setup_laya.sh (gitignored).
+    # third-party dataset cards downloaded by setup_veya.sh (gitignored).
     _dirnames[:] = [d for d in _dirnames
                     if d not in (".git", "__pycache__", "node_modules", ".pytest_cache",
                                  ".venv", ".hf-cache")]
@@ -311,9 +311,9 @@ check("md/no anchor that matches no heading", _broken_anchors, [])
 # ------------------------------------------------- published READMEs link absolutely
 # `pyproject.toml` uses README.md as the PyPI long description, and PyPI renders it standalone, so a
 # repo-relative target 404s there; the same is true of the npm-published `sdk/typescript` and
-# `laya-ts` READMEs. The check above only proves the target exists in-repo, which is exactly why
+# `veya-ts` READMEs. The check above only proves the target exists in-repo, which is exactly why
 # this went unnoticed -- a relative link is a local success and a published failure.
-for _pub in ("README.md", "sdk/typescript/README.md", "laya-ts/README.md"):
+for _pub in ("README.md", "sdk/typescript/README.md", "veya-ts/README.md"):
     if not os.path.exists(os.path.join(ROOT, _pub)):
         continue
     _rel = [u for _, u in re.findall(r"\[([^\]]*)\]\(([^)\s]+?)(?:\s+\"[^\"]*\")?\)", read(_pub))
@@ -330,16 +330,16 @@ base = read("compose.yaml")
 cuda = read("compose.cuda.yaml")
 dockerfile = read("Dockerfile")
 
-check_true("compose.http/declares laya-serve", "laya-serve:" in http, http[:200])
+check_true("compose.http/declares veya-serve", "veya-serve:" in http, http[:200])
 check_true("compose.http/runs the server command",
-           'command: ["laya-serve"]' in http, "laya-serve is not the container command")
+           'command: ["veya-serve"]' in http, "veya-serve is not the container command")
 check_true("compose.http/publishes a port", re.search(r"^\s*ports:", http, re.M) is not None)
 # Host and container port must come from the same variable, or they drift apart and the
 # published port stops reaching the server.
-port_map = re.search(r'-\s*"(?:\$\{LAYA_BIND_ADDRESS:-[^}]+\}:)?(\$\{[A-Z_]+:-(\d+)\}):(\$\{[A-Z_]+:-(\d+)\})"', http)
-# The API is unauthenticated until LAYA_API_KEY is set, so exposure beyond the host is opt-in.
-check_true("compose.http/publishes on loopback unless LAYA_BIND_ADDRESS is set",
-           '"${LAYA_BIND_ADDRESS:-127.0.0.1}:' in http)
+port_map = re.search(r'-\s*"(?:\$\{VEYA_BIND_ADDRESS:-[^}]+\}:)?(\$\{[A-Z_]+:-(\d+)\}):(\$\{[A-Z_]+:-(\d+)\})"', http)
+# The API is unauthenticated until VEYA_API_KEY is set, so exposure beyond the host is opt-in.
+check_true("compose.http/publishes on loopback unless VEYA_BIND_ADDRESS is set",
+           '"${VEYA_BIND_ADDRESS:-127.0.0.1}:' in http)
 check_true("compose.http/has a healthcheck on /health",
            "healthcheck:" in http and "/health" in http)
 check_true("compose.http/port mapping is present", port_map is not None, http[:300])
@@ -347,23 +347,25 @@ if port_map:
     check("compose.http/host port equals container port", port_map.group(2), port_map.group(4))
     check("compose.http/both sides use the same variable", port_map.group(1), port_map.group(3))
 check_true("compose.http/the server reads the same variable",
-           'LAYA_PORT: "${LAYA_PORT:-8000}"' in http)
+           'VEYA_PORT: "${VEYA_PORT:-8000}"' in http)
 # The block enumerates what it forwards, so a variable the server reads and the file omits is
 # unreachable for the documented compose path -- `docker run -e` still works, compose does not.
 check_true("compose.http/forwards the resident-checkpoint cap",
-           'LAYA_MAX_LOADED: "${LAYA_MAX_LOADED:-}"' in http)
+           'VEYA_MAX_LOADED: "${VEYA_MAX_LOADED:-}"' in http)
 check_true("compose.http/forwards the FastAPI root path",
-           'LAYA_ROOT_PATH: "${LAYA_ROOT_PATH:-}"' in http)
+           'VEYA_ROOT_PATH: "${VEYA_ROOT_PATH:-}"' in http)
 check_true("compose.http/shares the model cache",
-           "model-cache:/home/laya/.cache/huggingface" in http)
-# The base service is what `docker compose run --rm laya` uses; publishing it a port or
+           "model-cache:/home/veya/.cache/huggingface" in http)
+# The base service is what `docker compose run --rm veya` uses; publishing it a port or
 # changing its command would be a breaking change to the quickstart.
 check_true("compose.http/leaves the quickstart service alone",
-           "laya:" not in http, "compose.http.yaml overrides the base `laya` service")
+           "veya:" not in http, "compose.http.yaml overrides the base `veya` service")
 
-# `pip install .` alone puts no `laya-serve` in the image, so the extra is load-bearing.
+# `pip install .` alone puts no `veya-serve` in the image, so the extra is load-bearing.
 check_true("Dockerfile/installs the serve extra", '".[serve]"' in dockerfile, dockerfile[:400])
 check_true("Dockerfile/still runs pip check", "pip check" in dockerfile)
+check_true("Dockerfile/includes the legacy import alias", "COPY laya/ ./laya/" in dockerfile)
+check_true("Docker context/includes the legacy import alias", "!laya/**" in read(".dockerignore"))
 
 # torch 2.14's eager Triton kernels compile on the first CUDA inference and need a C compiler the
 # slim runtime image does not have (#365). The kill switch keeps the stock kernels.
@@ -371,13 +373,13 @@ check_true("Dockerfile/runtime stage disables torch's native Triton JIT (#365)",
            re.search(r"^\s*TORCH_DISABLE_NATIVE_JIT=1", dockerfile.partition("AS runtime")[2], re.M) is not None,
            "without TORCH_DISABLE_NATIVE_JIT=1 a GPU image serves 500s while /health stays green")
 
-# Overrides for `laya` never reach `laya-serve`, a separate service. If the CUDA override does
-# not repeat the args for laya-serve, that service silently serves on CPU.
-check_true("compose.cuda/covers laya-serve too",
-           re.search(r"^\s{2}laya-serve:", cuda, re.M) is not None,
-           "compose.cuda.yaml does not mention laya-serve, so GPU serving would be CPU")
+# Overrides for `veya` never reach `veya-serve`, a separate service. If the CUDA override does
+# not repeat the args for veya-serve, that service silently serves on CPU.
+check_true("compose.cuda/covers veya-serve too",
+           re.search(r"^\s{2}veya-serve:", cuda, re.M) is not None,
+           "compose.cuda.yaml does not mention veya-serve, so GPU serving would be CPU")
 check("compose.cuda/repeats the torch index for the base service",
-      len(re.findall(r'TORCH_INDEX: "\$\{LAYA_TORCH_INDEX:-cu130\}"', cuda)), 2)
+      len(re.findall(r'TORCH_INDEX: "\$\{VEYA_TORCH_INDEX:-cu130\}"', cuda)), 2)
 check("compose.cuda/repeats the device reservation for both services",
       len(re.findall(r"driver: nvidia", cuda)), 2)
 check_true("compose.cuda/no stale reference to a missing file",
@@ -390,17 +392,17 @@ for name in ("compose.yaml", "compose.example.yml", "compose.cuda.yaml", "compos
     check_true("compose/%s exists" % name, os.path.exists(name))
 
 # The ModelScope bake is a build argument, so a deployment that wants it has to carry the
-# arguments into *both* services -- `laya-serve` is its own service and an override for `laya`
+# arguments into *both* services -- `veya-serve` is its own service and an override for `veya`
 # never reaches it, which is the same trap compose.cuda.yaml documents. And the image has to stay
 # offline: a baked snapshot is keyed by a ModelScope commit the Hub cannot confirm, so going online
 # downloads the same weights again instead of serving the baked copy.
 ms = read("compose.modelscope.yaml")
-check_true("compose.modelscope/covers laya-serve too",
-           re.search(r"^\s{2}laya-serve:", ms, re.M) is not None,
-           "compose.modelscope.yaml does not mention laya-serve, so served checkpoints come from "
+check_true("compose.modelscope/covers veya-serve too",
+           re.search(r"^\s{2}veya-serve:", ms, re.M) is not None,
+           "compose.modelscope.yaml does not mention veya-serve, so served checkpoints come from "
            "the Hub and a host without Hugging Face access cannot serve at all")
 # One argument selects the checkpoint, and it defaults to the multilingual one, the checkpoint
-# every Laya caller routes to without being asked.
+# every Veya caller routes to without being asked.
 check("compose.modelscope/repeats the prefetch args for both services",
       len(re.findall(r'MODELSCOPE_MODEL: "\$\{MODELSCOPE_MODEL:-multilingual\}"', ms)), 2)
 check("compose.modelscope/repeats the revision for both services",
@@ -408,8 +410,8 @@ check("compose.modelscope/repeats the revision for both services",
 check("compose.modelscope/keeps every service on the baked cache",
       len(re.findall(r'HF_HUB_OFFLINE: "\$\{HF_HUB_OFFLINE:-1\}"', ms)), 2)
 check_true("compose.modelscope/preloads only what can load offline",
-           'LAYA_MODELS: "${LAYA_MODELS:-multilingual}"' in ms,
-           "LAYA_PRELOAD=1 with the family-wide default would fail on the first checkpoint that "
+           'VEYA_MODELS: "${VEYA_MODELS:-multilingual}"' in ms,
+           "VEYA_PRELOAD=1 with the family-wide default would fail on the first checkpoint that "
            "was not baked")
 
 # The default build must stay exactly what it was: no prefetch, so a plain
@@ -424,7 +426,7 @@ check_true("Dockerfile/prefetch step is conditional",
            re.search(r'^\s*RUN if \[ -n "\$MODELSCOPE_MODEL" \]; then', dockerfile_runtime, re.M) is not None,
            "an unconditional RUN would make every build depend on modelscope.cn")
 check_true("Dockerfile/prefetch hands the cache to the runtime user",
-           "chown -R laya:laya /home/laya/.cache" in dockerfile_runtime,
+           "chown -R veya:veya /home/veya/.cache" in dockerfile_runtime,
            "the tokenizer-compatibility fix writes into the snapshot on first load, and the image "
            "runs as UID 10001")
 check_true("docker/prefetch_modelscope.py exists", os.path.exists("docker/prefetch_modelscope.py"))
@@ -438,19 +440,19 @@ check_true("docker/prefetch_modelscope.py exists", os.path.exists("docker/prefet
 nix_pkg = read(os.path.join("nix", "package.nix"))
 nix_version = re.search(r'^\s*version\s*=\s*"([^"]+)"', nix_pkg, re.M)
 check_true("nix/package.nix declares a version", nix_version is not None, nix_pkg[:200])
-# The release job compares the tag to pyproject, and pyproject is compared to laya.__version__
+# The release job compares the tag to pyproject, and pyproject is compared to veya.__version__
 # above. This is the third declaration of the same string -- it sat at 0.3.4 for sixteen
 # releases because no reader existed.
 check("version/nix matches pyproject",
       nix_version.group(1) if nix_version else None,
       static_version.group(1) if static_version else None)
 
-# `services.laya-serve.models` is joined into LAYA_MODELS, which laya.serve splits and hands to
-# Router.preload() -- and preload normalises every name (laya/router.py:370), so the server takes
+# `services.veya-serve.models` is joined into VEYA_MODELS, which veya.serve splits and hands to
+# Router.preload() -- and preload normalises every name (veya/router.py:370), so the server takes
 # core's aliases. A closed `enum` in the module can only copy that list and fall behind it: it
 # refused ten of the thirteen spellings the same value accepts, and it refused them at nix
 # evaluation time, on the way to starting a service that would have been happy.
-nix_module = read(os.path.join("nix", "laya-serve.nix"))
+nix_module = read(os.path.join("nix", "veya-serve.nix"))
 models_block = re.search(r"models = lib\.mkOption \{(.*?)\n    \};", nix_module, re.S)
 check_true("nix/module has a models option", models_block is not None, nix_module[:200])
 block = models_block.group(1) if models_block else ""
@@ -473,7 +475,7 @@ def dict_keys(source, name):
     return []
 
 
-router_src = read(os.path.join("laya", "router.py"))
+router_src = read(os.path.join("veya", "router.py"))
 canonical = dict_keys(router_src, "DEFAULT_MODELS")
 aliases = dict_keys(router_src, "_ALIASES")
 accepted = sorted(set(canonical) | set(aliases))
@@ -481,7 +483,7 @@ accepted = sorted(set(canonical) | set(aliases))
 # `accepted` below would pass by matching an empty set.
 check_true("nix/core name tables are both populated",
            len(canonical) >= 1 and len(aliases) >= 1,
-           "DEFAULT_MODELS=%r _ALIASES=%r -- laya/router.py changed shape" % (canonical, aliases))
+           "DEFAULT_MODELS=%r _ALIASES=%r -- veya/router.py changed shape" % (canonical, aliases))
 check("nix/models default is exactly core's canonical checkpoints",
       sorted(n.strip('"') for n in
              re.findall(r'default = if cfg\.performanceMode == null then \[([^\]]*)\] else \[\];',
@@ -491,9 +493,9 @@ check("nix/models default is exactly core's canonical checkpoints",
 check_true("nix/models preset default permits bounded preloads",
            re.search(r'default = if cfg\.performanceMode == null then \[[^\]]*\] else \[\];',
                      block, re.S) is not None,
-           "the preset must leave LAYA_MODELS empty so the server can bound its automatic preload")
+           "the preset must leave VEYA_MODELS empty so the server can bound its automatic preload")
 check_true("nix/performance mode reaches the server",
-           "LAYA_PERFORMANCE_MODE = toString cfg.performanceMode;" in nix_module,
+           "VEYA_PERFORMANCE_MODE = toString cfg.performanceMode;" in nix_module,
            "the mode option must be forwarded to the serving process")
 
 # Whatever the module tells its reader to type must be what core accepts, and the module runs no
@@ -504,38 +506,38 @@ check_true("nix/models has a description", description is not None, block[:200])
 described = description.group(1) if description else ""
 undocumented = [n for n in accepted if "`%s`" % n not in described]
 check_true("nix/models describes every name core accepts", not undocumented,
-           "accepted by laya.router.normalise_name but absent from the option text: %s"
+           "accepted by veya.router.normalise_name but absent from the option text: %s"
            % undocumented)
-# And the module must still be the thing that sets LAYA_MODELS, or the checks above describe a
+# And the module must still be the thing that sets VEYA_MODELS, or the checks above describe a
 # wire that no longer exists.
-check_true("nix/module still joins models into LAYA_MODELS",
-           re.search(r'LAYA_MODELS = lib\.concatStringsSep "," cfg\.models;', nix_module) is not None,
-           "the models option no longer feeds LAYA_MODELS; these checks need retargeting")
+check_true("nix/module still joins models into VEYA_MODELS",
+           re.search(r'VEYA_MODELS = lib\.concatStringsSep "," cfg\.models;', nix_module) is not None,
+           "the models option no longer feeds VEYA_MODELS; these checks need retargeting")
 
-# ---- every knob laya reads from the environment has to be reachable from the module
-# `laya.serve` has no config file and no CLI flag for any of it: the process configures itself
-# from LAYA_* and nothing else. On a NixOS host the unit's environment is the only thing that can
+# ---- every knob veya reads from the environment has to be reachable from the module
+# `veya.serve` has no config file and no CLI flag for any of it: the process configures itself
+# from VEYA_* and nothing else. On a NixOS host the unit's environment is the only thing that can
 # hand those variables over, so a name the module never assigns is a control that host cannot ask
 # for.
 #
-# This set is derived from the whole package, not from `laya/serve.py`. Reading serve.py alone is
+# This set is derived from the whole package, not from `veya/serve.py`. Reading serve.py alone is
 # a scope error that passed: the three runtime knobs below were invisible to it. A deployment unit
 # configures a *process*. The MCP launcher and remote transport are separate entry points;
 # their exclusive variables do not configure the HTTP service. Shared helpers (mcp/device.py
 # included) still count, so excluding those two entry points does not hide device controls.
 #
-# Both regexes carry `[A-Z0-9_]` for the same reason: `LAYA_SHA256_DIGESTS`. `[A-Z_]+` matches a
+# Both regexes carry `[A-Z0-9_]` for the same reason: `VEYA_SHA256_DIGESTS`. `[A-Z_]+` matches a
 # prefix of that name, so a narrower pattern reports no gap rather than the one it cannot see.
-# `_ENV_KEY = "LAYA_DEVICE"` is how laya/mcp/device.py names the one variable it reads, and since
-# #574 laya.serve reads the device through it, so the constant counts as a read.
-_READ_PATTERNS = (r'environ\.get\("(LAYA_[A-Z0-9_]+)"', r'_env_bool\("(LAYA_[A-Z0-9_]+)"',
-                  r'environ\["(LAYA_[A-Z0-9_]+)"\]', r'_ENV_KEY = "(LAYA_[A-Z0-9_]+)"')
+# `_ENV_KEY = "VEYA_DEVICE"` is how veya/mcp/device.py names the one variable it reads, and since
+# #574 veya.serve reads the device through it, so the constant counts as a read.
+_READ_PATTERNS = (r'getenv\("(VEYA_[A-Z0-9_]+)"', r'_env_bool\("(VEYA_[A-Z0-9_]+)"',
+                  r'environ\["(VEYA_[A-Z0-9_]+)"\]', r'_ENV_KEY = "(VEYA_[A-Z0-9_]+)"')
 
 
 def env_reads(excluded_paths=()):
-    """Every `LAYA_*` name the package looks up, by walking laya/ rather than listing files."""
+    """Every `VEYA_*` name the package looks up, by walking veya/ rather than listing files."""
     found = set()
-    for root, dirs, files in os.walk(os.path.join(ROOT, "laya")):
+    for root, dirs, files in os.walk(os.path.join(ROOT, "veya")):
         dirs[:] = [d for d in dirs if d != "__pycache__"]
         for name in files:
             if not name.endswith(".py"):
@@ -549,13 +551,13 @@ def env_reads(excluded_paths=()):
     return found
 
 
-read_names = env_reads(("laya/mcp/server.py", "laya/mcp/remote.py"))
-check("nix/only MCP transport variables are excluded from the HTTP process",
-      sorted(env_reads() - read_names), ["LAYA_BASE_URL", "LAYA_REMOTE_TIMEOUT", "LAYA_USER_AGENT"])
-# An assignment only. The `models` description names `LAYA_MODELS` in prose, and prose that
+read_names = env_reads(("veya/mcp/server.py", "veya/mcp/remote.py"))
+check("nix/only MCP-specific variables are excluded from the HTTP process",
+      sorted(env_reads() - read_names), ["VEYA_BASE_URL", "VEYA_MCP_MODE", "VEYA_REMOTE_TIMEOUT", "VEYA_USER_AGENT"])
+# An assignment only. The `models` description names `VEYA_MODELS` in prose, and prose that
 # mentions a variable sets nothing.
-assigned = sorted(set(re.findall(r'\b(LAYA_[A-Z0-9_]+)\s*=', nix_module))
-                  | set(re.findall(r'export (LAYA_[A-Z0-9_]+)=', nix_module)))
+assigned = sorted(set(re.findall(r'\b(VEYA_[A-Z0-9_]+)\s*=', nix_module))
+                  | set(re.findall(r'export (VEYA_[A-Z0-9_]+)=', nix_module)))
 
 # Non-vacuity, twice over: an empty derivation passes both directions below for free, and a
 # digit-blind pattern reproduces the original miss while still looking like ten names found.
@@ -566,15 +568,15 @@ check_true("nix/the derivation reaches a digit-bearing env var",
            "sorted: %s" % sorted(read_names))
 
 # One name is knowingly left unwired, and it is named rather than hidden by a narrower
-# derivation: `LAYA_SHA256_DIGESTS` carries a JSON object, and this module has no way to prove a
+# derivation: `VEYA_SHA256_DIGESTS` carries a JSON object, and this module has no way to prove a
 # shell-quoting claim holds -- nothing in CI evaluates a NixOS module, so every check here is
 # textual. Listing the exception keeps the gap asserted at exactly one name.
-UNWIRED = {"LAYA_SHA256_DIGESTS"}
+UNWIRED = {"VEYA_SHA256_DIGESTS"}
 check("nix/module reaches every env var the HTTP process reads",
       sorted(read_names - set(assigned) - UNWIRED), [])
 # The other direction is the silent failure: a misspelled name is a perfectly good string,
 # systemd exports it, no Python ever looks at it, and the operator's setting does nothing.
-check("nix/module assigns no env var laya never reads",
+check("nix/module assigns no env var veya never reads",
       [n for n in assigned if n not in read_names], [])
 # And the exception list has to stay the size of the real gap: an entry that got wired up, or a
 # name core stopped reading, is a stale excuse that would hide the next one.
@@ -624,24 +626,24 @@ check("nix/idleUnloadSeconds accepts zero to disable unloading",
       option_type("idleUnloadSeconds"), "lib.types.nullOr lib.types.ints.unsigned")
 
 # The same lesson as `models`, stated for the whole module: no option may carry a closed list of
-# names that somebody else validates. uvicorn checks the log level, laya checks the checkpoint
+# names that somebody else validates. uvicorn checks the log level, veya checks the checkpoint
 # name, and a copy here can only fall behind them -- which is how the module came to refuse ten
 # spellings of a value the server accepts.
 check_true("nix/module declares no closed enum over names it does not own",
            "types.enum" not in nix_module, "an enum in this module is a copy of someone "
            "else's list; defer to the thing that validates the value")
 
-# So the AMP vocabularies are read out of `laya.agent` instead, from the comparisons that follow
+# So the AMP vocabularies are read out of `veya.agent` instead, from the comparisons that follow
 # each lookup rather than from a list written down here: a spelling core starts accepting shows up
 # in the set on its own, and this module's prose has to name it. The sets differ by device -- CPU
 # takes bf16 only, CUDA takes fp16 too -- and that asymmetry is the whole content of the two
 # options, so the check runs in both directions like the env-var one above. A `fp16` added to the
 # `cpuAmp` description is a promise the runtime does not keep.
-agent_src = read(os.path.join("laya", "agent.py"))
+agent_src = read(os.path.join("veya", "agent.py"))
 
 
 def amp_tokens(var):
-    anchor = re.search(r'environ\.get\("%s"' % var, agent_src)
+    anchor = re.search(r'getenv\("%s"' % var, agent_src)
     if anchor is None:
         return None                      # reported by the non-vacuity guard below
     window = agent_src[anchor.end():anchor.end() + 300]
@@ -649,10 +651,10 @@ def amp_tokens(var):
                    for t in re.findall(r'"([^"]+)"', group)})
 
 
-AMP_MEANING = {"cudaAmp": "LAYA_CUDA_AMP", "cpuAmp": "LAYA_CPU_AMP"}
+AMP_MEANING = {"cudaAmp": "VEYA_CUDA_AMP", "cpuAmp": "VEYA_CPU_AMP"}
 for _opt, _var in sorted(AMP_MEANING.items()):
     accepted = amp_tokens(_var)
-    check_true("nix/%s's dtype list came from laya/agent.py" % _opt, bool(accepted),
+    check_true("nix/%s's dtype list came from veya/agent.py" % _opt, bool(accepted),
                "no `in (...)` comparison follows `environ.get(\"%s\")`; retarget this" % _var)
     _d = re.search(r"description = ''(.*?)''", option_text(_opt), re.S)
     described = _d.group(1) if _d else ""
@@ -660,12 +662,12 @@ for _opt, _var in sorted(AMP_MEANING.items()):
                all("`%s`" % t in described for t in accepted),
                "core compares %s against %s; the option text says: %s"
                % (_var, accepted, described.strip()[:160]))
-    offered = [t for t in ("fp16", "float16", "bf16", "bfloat16")
+    offered = [t for t in ("fp16", "float16", "bf16", "bfloat16", "fp32", "float32")
                if "`%s`" % t in described and t not in accepted]
     check_true("nix/%s offers no dtype core ignores for it" % _opt, not offered,
-               "%s is not in the set laya.agent compares %s against" % (offered, _var))
+               "%s is not in the set veya.agent compares %s against" % (offered, _var))
 
-# `mpsAmpMinRows` has no vocabulary, but its type is a claim: laya clamps a value below 1 up to 1,
+# `mpsAmpMinRows` has no vocabulary, but its type is a claim: veya clamps a value below 1 up to 1,
 # so `ints.positive` is what keeps the module from accepting an input the service reinterprets.
 check_true("nix/mpsAmpMinRows's type refuses what the runtime would clamp",
            "positive" in option_type("mpsAmpMinRows"),
@@ -684,16 +686,16 @@ for _opt in ("cudaAmp", "cpuAmp"):
 # The device split is the entire content of those two options: CUDA takes a half-precision
 # spelling, CPU does not. Asserted from core rather than from the prose, so the day that stops
 # being true the gate says so instead of the option text quietly overpromising.
-_cuda, _cpu = amp_tokens("LAYA_CUDA_AMP"), amp_tokens("LAYA_CPU_AMP")
+_cuda, _cpu = amp_tokens("VEYA_CUDA_AMP"), amp_tokens("VEYA_CPU_AMP")
 check_true("nix/CUDA and CPU accept different dtype spellings", _cuda != _cpu,
-           "cuda=%r cpu=%r -- if laya honours the same set on both devices now, the `cpuAmp` "
+           "cuda=%r cpu=%r -- if veya honours the same set on both devices now, the `cpuAmp` "
            "description's cross-reference needs retargeting" % (_cuda, _cpu))
 
 
 # --------------------------------------------------------------- declared extras
-# The runtime error in laya/structured.py tells users to install `laya[structured]`, and the
+# The runtime error in veya/structured.py tells users to install `veya[structured]`, and the
 # docs and README repeat it. A reference to an extra pyproject.toml does not declare is a dead
-# end for anyone who follows it, so every `laya[...]` in the code and docs must resolve (#348).
+# end for anyone who follows it, so every `veya[...]` in the code and docs must resolve (#348).
 _extra_section = pyproject.split("[project.optional-dependencies]")[1].split("\n[")[0]
 _declared_extras = set(re.findall(r"^([a-z][\w-]*)\s*=\s*\[", _extra_section, re.M))
 _referenced_extras = {}
@@ -705,7 +707,7 @@ for _dirpath, _dirnames, _filenames in os.walk("."):
         if not _f.endswith((".py", ".md", ".yml", ".toml")):
             continue
         _p = os.path.normpath(os.path.join(_dirpath, _f))
-        for _group in re.findall(r"laya\[([a-z][\w,-]*)\]", read(_p)):
+        for _group in re.findall(r"veya\[([a-z][\w,-]*)\]", read(_p)):
             for _extra in _group.split(","):
                 _referenced_extras.setdefault(_extra.strip(), set()).add(_p)
 
@@ -785,17 +787,17 @@ check_true(
 )
 
 # --------------------------------------------------------------- the API reference
-# `laya.__all__` is what `from laya import *` ships and what the README tells people to call, so
+# `veya.__all__` is what `from veya import *` ships and what the README tells people to call, so
 # an export no page under docs/ names cannot be looked up at all. `cached_embed_fn` was one: the
 # README documents wrapping an embedder in it, each of its three shortlisting siblings has a
 # `:::` directive in reference/helpers.md, and it appeared on no docs page.
 #
 # Like every other check in this file, this one reads source under the directory it walks and
-# imports nothing: no `laya.__getattr__` name resolves, torch never loads, and a computed `__all__`
+# imports nothing: no `veya.__getattr__` name resolves, torch never loads, and a computed `__all__`
 # returns [] for the guard below to report instead of an import quietly yielding whatever the
 # environment happens to have installed.
 def _exported_names():
-    tree = ast.parse(read(os.path.join("laya", "__init__.py")))
+    tree = ast.parse(read(os.path.join("veya", "__init__.py")))
     for node in tree.body:
         targets = getattr(node, "targets", [])
         if isinstance(node, ast.Assign) and any(getattr(t, "id", None) == "__all__" for t in targets):
@@ -812,7 +814,7 @@ _export_list = _exported_names()
 # Guards, not formalities: an empty page list or an unreadable `__all__` would let the sweep below
 # pass without checking anything.
 check_true("docs/reference pages found under docs/", len(_docs_pages) >= 8, _docs_pages[:3])
-check_true("docs/__all__ read as a literal from laya/__init__.py",
+check_true("docs/__all__ read as a literal from veya/__init__.py",
            len(_export_list) >= 20, len(_export_list))
 
 _unreferenced = [n for n in _export_list if not re.search(r"\b%s\b" % re.escape(n), _docs_text)]

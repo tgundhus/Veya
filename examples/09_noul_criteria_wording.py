@@ -4,7 +4,7 @@ A `noul` question is always [false, true]; `criteria` can spell out what each si
 No criteria, symmetric criteria and criteria loaded towards one side are compared over a
 clear true state and a clear false state.
 """
-from _common import banner, device_line, heading, laya, load
+from _common import banner, device_line, heading, veya, load
 
 banner("09", "Wording the two sides of a noul question", """
     `noul` is a two-option question with fixed labels, `false` and `true`. Its `criteria`
@@ -53,7 +53,7 @@ for name, criteria in VARIANTS:
     question = {"refund": {"type": "noul", "instructions": INSTRUCTIONS}}
     if criteria is not None:
         question["refund"]["criteria"] = criteria
-    for option in laya.render_options({"t": "noul", "ins": INSTRUCTIONS, "crit": criteria}):
+    for option in veya.render_options({"t": "noul", "ins": INSTRUCTIONS, "crit": criteria}):
         print("     %s" % option)
     for state_name, state in STATES:
         answer = agent.predict(state, question)["answers"]["refund"]

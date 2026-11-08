@@ -1,4 +1,4 @@
-"""Emit laya_benchmark_colab.ipynb: an extensive head-to-head benchmark of
+"""Emit veya_benchmark_colab.ipynb: an extensive head-to-head benchmark of
 convaiinnovations/laya (ModernBERT-large, English) vs convaiinnovations/laya-multilingual
 (mmBERT-base, 100+ languages), on a Colab T4.
 
@@ -61,9 +61,9 @@ assert torch.cuda.is_available(), "Enable the T4 GPU runtime before running."
 
     md("## 2. Dependencies"),
     code("""
-!pip -q install -U "laya>=0.1.6" "transformers>=4.45" "datasets>=3.0" safetensors huggingface_hub 2>&1 | tail -3
-import laya, transformers, datasets
-print("laya", getattr(laya, "__version__", "?"), "| transformers", transformers.__version__, "| datasets", datasets.__version__)
+!pip -q install -U "veya @ git+https://github.com/tgundhus/Veya.git" "transformers>=4.45" "datasets>=3.0" safetensors huggingface_hub 2>&1 | tail -3
+import veya, transformers, datasets
+print("veya", getattr(veya, "__version__", "?"), "| transformers", transformers.__version__, "| datasets", datasets.__version__)
 """),
 
     md("""## 3. Download both checkpoints
@@ -82,7 +82,7 @@ def patch_tokenizer_config(model_dir):
     '''laya-multilingual ships extra_special_tokens as a LIST (inherited from the mmBERT/Gemma
     tokenizer); transformers expects a dict and raises
     AttributeError: list object has no attribute keys. Without this, AutoTokenizer -- and so
-    laya.load() -- fails outright on that repo. Also normalises tokenizer_class for 4.x/5.x.'''
+    veya.load() -- fails outright on that repo. Also normalises tokenizer_class for 4.x/5.x.'''
     p = os.path.join(model_dir, "tokenizer", "tokenizer_config.json")
     if not os.path.exists(p):
         return []
@@ -129,8 +129,8 @@ for name, repo in REPOS.items():
     print("   ", json.dumps({k: v for k, v in MODEL_META[name].items() if k != "temperature_by_options"}))
 
 def load_agent(name):
-    import laya
-    ag = laya.load(PATHS[name], device="cuda")
+    import veya
+    ag = veya.load(PATHS[name], device="cuda")
     try:
         ag.model.encoder.config.reference_compile = False   # torch.compile hurts on T4-class GPUs
     except Exception as e:
@@ -145,7 +145,7 @@ def load_agent(name):
 import json, math, sys, time
 import numpy as np
 import torch
-from laya.common import QTYPES, build_sequence, collate_items, render_options, temp_bucket
+from veya.common import QTYPES, build_sequence, collate_items, render_options, temp_bucket
 
 def to_internal(qdef):
     t = qdef["type"]
@@ -688,7 +688,7 @@ than a property of the model."""),
     code("""
 import numpy as np
 import bench_engine as BE
-from laya.common import temp_bucket
+from veya.common import temp_bucket
 
 RESULTS["calibration_repair"] = {}
 for model_name in REPOS:
@@ -832,7 +832,7 @@ def main():
         "nbformat": 4,
         "nbformat_minor": 0,
     }
-    out = os.path.join(HERE, "laya_benchmark_colab.ipynb")
+    out = os.path.join(HERE, "veya_benchmark_colab.ipynb")
     with open(out, "w") as f:
         json.dump(nb, f, indent=1)
     print("wrote %s (%d cells)" % (out, len(CELLS)))

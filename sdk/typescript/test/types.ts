@@ -1,7 +1,7 @@
-import { Laya, defineQuestions, emailQuestions, triageQuestions, type Questions, type Answer,
-  type Usage, type LanguageDetection, type ChoiceAnswer, type MinConfidenceMap } from 'laya-pro-client';
+import { Veya, defineQuestions, emailQuestions, triageQuestions, type Questions, type Answer,
+  type Usage, type LanguageDetection, type ChoiceAnswer, type MinConfidenceMap } from 'veya-client';
 
-const client = new Laya();
+const client = new Veya();
 client.predictBatch(['first', { message: 'second' }], { q: { type: 'noul', instructions: '?',
   labels: { false: 'Reject', true: 'Approve' } } }, { batchSize: 4, sortByLength: true });
 // @ts-expect-error The HTTP server requires a state; null is not a request.
@@ -20,6 +20,11 @@ const score: number = result.answers.priority.score;
 const noul: number = result.answers.refund.noul;
 const routingModel: string | undefined = result.routing?.model;
 const actionProbability: number | undefined = result.answers.team.action?.act_probability;
+const decisionPolicy: 'context-balanced-v1' | undefined = result.answers.team.decision_policy;
+const calibrated: false | undefined = result.answers.refund.confidence_calibrated;
+const probeTokens: number | undefined = result.usage.policy_probe_tokens;
+// @ts-expect-error The bias-correction policy does not claim calibrated confidence.
+const correctedAsCalibrated: true | undefined = result.answers.team.confidence_calibrated;
 const noulConfidence: number | undefined = result.answers.refund.confidence;
 const finalists: ('billing' | 'support')[] | undefined = result.answers.team.x_tournament?.finalists;
 const rounds: number | undefined = result.answers.team.x_tournament?.rounds;
@@ -90,7 +95,7 @@ client.predict('hello', questions, { minConfidence: { 'foo:2': 0.9 } });
 // A map assembled at run time is still accepted: Record<string, number> stays assignable.
 const dynamicThresholds: MinConfidenceMap = Object.fromEntries([['choice:2', 0.4]]);
 client.predict('hello', questions, { minConfidence: dynamicThresholds });
-new Laya({ model: 'english' });
+new Veya({ model: 'english' });
 // @ts-expect-error A score answer has no choice field.
 result.answers.priority.choice;
 const jevChoiceConfidence: number | undefined = result.answers.team.x_jev_confidence;

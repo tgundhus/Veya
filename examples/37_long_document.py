@@ -1,12 +1,12 @@
 """Example 37 -- long documents, context budget and truncation.
 
-Laya gives every request a fixed window: the option head takes `head_max_len` and the state gets
+Veya gives every request a fixed window: the option head takes `head_max_len` and the state gets
 the rest of `max_len`. A state larger than that is truncated. This example measures how much of
 a long multilingual document survives at the default, raises the window at runtime, and then
 shows that which *end* of the state survives is decided by the state's own type.
 """
 from _common import banner, device_line, heading, load
-from laya.common import build_sequence, serialize_state, state_room
+from veya.common import build_sequence, serialize_state, state_room
 
 banner("37", "Long documents and truncation", """
     `laya-multilingual` defaults to max_len=1024 (head_max_len=256). The configured split

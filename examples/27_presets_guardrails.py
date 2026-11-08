@@ -1,10 +1,10 @@
 """Example 27 -- guardrail preset on adversarial and benign prompts.
 
-Runs `laya.guard_questions()` over a jailbreak, an instruction-override and a benign
+Runs `veya.guard_questions()` over a jailbreak, an instruction-override and a benign
 technical question, so the contrast between flagged and clean input is visible.
 """
 
-from _common import laya, banner, describe, heading, load
+from _common import veya, banner, describe, heading, load
 
 banner("27", "Preset: LLM input guardrails", """
     `guard_questions()` is a real-time filter for text on its way into an LLM: five
@@ -28,7 +28,7 @@ agent = load("english")
 results = {}
 for label, prompt in PROMPTS:
     heading(label)
-    answers = agent.predict({"prompt": prompt}, laya.guard_questions())["answers"]
+    answers = agent.predict({"prompt": prompt}, veya.guard_questions())["answers"]
     results[label] = answers
     describe(answers)
 

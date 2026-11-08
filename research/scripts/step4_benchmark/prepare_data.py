@@ -1,7 +1,7 @@
 """Prepare LocalLLaMA/typed-decisions for `laya-train` and for evaluation.
 
 The benchmark's own rows are `{state, questions, gold}` with the teacher distribution per
-question. That is exactly the schema `laya.train` reads, so the conversion is a parse, not a
+question. That is exactly the schema `veya.train` reads, so the conversion is a parse, not a
 reshape: the two JSON-string columns are decoded and the row is written back out as JSONL.
 
 Splits:

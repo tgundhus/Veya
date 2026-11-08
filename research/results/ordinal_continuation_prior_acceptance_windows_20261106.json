@@ -1,0 +1,5278 @@
+{
+  "schema": "veya-qualification-report/1",
+  "corpus_id": "english-repair-acceptance-v1",
+  "corpus_sha256": "5b97c8d281b78ca881b018356da92f5fed05433ecfe87ca65f9fe42fb977a51f",
+  "reference": "eager-cpu-fp32",
+  "limits": {
+    "max_label_flip_rate": 0,
+    "max_probability_drift": 0.001,
+    "max_score_drift": 0.001,
+    "min_accuracy": 0.8,
+    "max_accuracy_drop": 0,
+    "max_p95_ms": null,
+    "max_p99_ms": null,
+    "min_boundary_cases": 1,
+    "boundary_margin": 0.05
+  },
+  "batch_sizes": [
+    1
+  ],
+  "repeats": 1,
+  "concurrencies": [
+    1
+  ],
+  "scope": "local-artifact-matrix",
+  "production_qualified": false,
+  "passed": false,
+  "failures": [
+    "eager-cpu-fp32 repeat=0 batch=1 concurrency=1 ordered: choice_accuracy=0.75 is below 0.8",
+    "onnx-cpu-graph repeat=0 batch=1 concurrency=1 ordered: choice_accuracy=0.75 is below 0.8"
+  ],
+  "cells": {
+    "eager-cpu-fp32": {
+      "status": "failed",
+      "identity": {
+        "verification": "local artifacts and runtime",
+        "artifacts": {
+          "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+          "model.safetensors": "07b3c36410397531e9ccef43452949b6b79c66586467f2907acc0582b82c9932",
+          "repair_report.json": "eed04544074c0e0fa45fe80f7afe27b123d7072473d2459ded89cf629e54370e",
+          "rl_agent_config.json": "8ad7643273143ed18a31271fa5a6bb96d5882c707cba5202b046c5f94e0544d5",
+          "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+          "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12"
+        },
+        "backend": "eager",
+        "device": "cpu",
+        "precision": "float32",
+        "torch": "2.14.1+cpu",
+        "threads": 4,
+        "math_settings": {
+          "float32_matmul_precision": "per-backend",
+          "deterministic_algorithms": false,
+          "global_fp32_precision": "none",
+          "mkldnn_enabled": true,
+          "mkldnn_fp32_precision": "none",
+          "mkldnn_matmul_fp32_precision": "none",
+          "mkldnn_conv_fp32_precision": "none",
+          "mkldnn_rnn_fp32_precision": "none"
+        },
+        "model_fingerprint": [
+          "0.3.29",
+          "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-ordinal-continuation-r2-20261106",
+          null,
+          null,
+          [
+            [
+              "rl_agent_config.json",
+              "stat",
+              621,
+              1793989143742429400,
+              3377699723200642
+            ],
+            [
+              "model.safetensors",
+              "stat",
+              843685114,
+              1793989143686157700,
+              4785074606753901
+            ],
+            [
+              "encoder/config.json",
+              "stat",
+              2083,
+              1791495347017115300,
+              7599824373860171
+            ],
+            [
+              "tokenizer/tokenizer.json",
+              "stat",
+              3583228,
+              1791495347047690600,
+              8162774327281518
+            ],
+            [
+              "tokenizer/tokenizer_config.json",
+              "stat",
+              308,
+              1791495347152919700,
+              5066549583464469
+            ]
+          ],
+          512,
+          192,
+          [
+            0.732832670211792,
+            0.5,
+            1.3760658502578735
+          ],
+          {},
+          {},
+          null,
+          null,
+          {
+            "escalate": 0.5
+          },
+          "veya-routing-v1-unicode15"
+        ]
+      },
+      "runs": [
+        {
+          "observations": [
+            {
+              "id": "harbor-service-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.9999,
+                      "workshop": 0.0,
+                      "reception": 0.0001
+                    },
+                    "confidence": 0.9994,
+                    "answer_confidence": 0.9999,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.9999,
+                    "workshop": 0.0,
+                    "reception": 0.0001
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9994,
+                    "answer_confidence": 0.9999,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9998
+                }
+              }
+            },
+            {
+              "id": "harbor-service-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.7318,
+                      "workshop": 0.2672,
+                      "reception": 0.001
+                    },
+                    "confidence": 0.4647,
+                    "answer_confidence": 0.7318,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.7318,
+                    "workshop": 0.2672,
+                    "reception": 0.001
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.4647,
+                    "answer_confidence": 0.7318,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.4646
+                }
+              }
+            },
+            {
+              "id": "harbor-service-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "reception",
+                    "probabilities": {
+                      "moorings": 0.01,
+                      "workshop": 0.0048,
+                      "reception": 0.9852
+                    },
+                    "confidence": 0.9213,
+                    "answer_confidence": 0.9852,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.01,
+                    "workshop": 0.0048,
+                    "reception": 0.9852
+                  },
+                  "label": "reception",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9213,
+                    "answer_confidence": 0.9852,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9752
+                }
+              }
+            },
+            {
+              "id": "harbor-service-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.9671,
+                      "workshop": 0.025,
+                      "reception": 0.0079
+                    },
+                    "confidence": 0.8517,
+                    "answer_confidence": 0.9671,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.9671,
+                    "workshop": 0.025,
+                    "reception": 0.0079
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8517,
+                    "answer_confidence": 0.9671,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9420999999999999
+                }
+              }
+            },
+            {
+              "id": "harbor-service-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.9605,
+                      "workshop": 0.0364,
+                      "reception": 0.0032
+                    },
+                    "confidence": 0.8385,
+                    "answer_confidence": 0.9605,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.9605,
+                    "workshop": 0.0364,
+                    "reception": 0.0032
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8385,
+                    "answer_confidence": 0.9605,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9241
+                }
+              }
+            },
+            {
+              "id": "harbor-service-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "reception",
+                    "probabilities": {
+                      "moorings": 0.2034,
+                      "workshop": 0.2715,
+                      "reception": 0.5251
+                    },
+                    "confidence": 0.075,
+                    "answer_confidence": 0.5251,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.2034,
+                    "workshop": 0.2715,
+                    "reception": 0.5251
+                  },
+                  "label": "reception",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.075,
+                    "answer_confidence": 0.5251,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.2536
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.3873,
+                      "equipment": 0.0781,
+                      "intake": 0.5346
+                    },
+                    "confidence": 0.1796,
+                    "answer_confidence": 0.5346,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.3873,
+                    "equipment": 0.0781,
+                    "intake": 0.5346
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.1796,
+                    "answer_confidence": 0.5346,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.1473
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "equipment",
+                    "probabilities": {
+                      "crop": 0.0177,
+                      "equipment": 0.9823,
+                      "intake": 0.0
+                    },
+                    "confidence": 0.9192,
+                    "answer_confidence": 0.9823,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.0177,
+                    "equipment": 0.9823,
+                    "intake": 0.0
+                  },
+                  "label": "equipment",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9192,
+                    "answer_confidence": 0.9823,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9645999999999999
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.1781,
+                      "equipment": 0.1415,
+                      "intake": 0.6804
+                    },
+                    "confidence": 0.23,
+                    "answer_confidence": 0.6804,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.1781,
+                    "equipment": 0.1415,
+                    "intake": 0.6804
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.23,
+                    "answer_confidence": 0.6804,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5023
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "crop",
+                    "probabilities": {
+                      "crop": 0.967,
+                      "equipment": 0.0117,
+                      "intake": 0.0213
+                    },
+                    "confidence": 0.8483,
+                    "answer_confidence": 0.967,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.967,
+                    "equipment": 0.0117,
+                    "intake": 0.0213
+                  },
+                  "label": "crop",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8483,
+                    "answer_confidence": 0.967,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9457
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.1527,
+                      "equipment": 0.1177,
+                      "intake": 0.7296
+                    },
+                    "confidence": 0.3001,
+                    "answer_confidence": 0.7296,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.1527,
+                    "equipment": 0.1177,
+                    "intake": 0.7296
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3001,
+                    "answer_confidence": 0.7296,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5769
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.17,
+                      "equipment": 0.1182,
+                      "intake": 0.7118
+                    },
+                    "confidence": 0.2758,
+                    "answer_confidence": 0.7118,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.17,
+                    "equipment": 0.1182,
+                    "intake": 0.7118
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.2758,
+                    "answer_confidence": 0.7118,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5418
+                }
+              }
+            },
+            {
+              "id": "municipal-records-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "general",
+                    "probabilities": {
+                      "records": 0.3199,
+                      "web": 0.0351,
+                      "general": 0.645
+                    },
+                    "confidence": 0.3036,
+                    "answer_confidence": 0.645,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.3199,
+                    "web": 0.0351,
+                    "general": 0.645
+                  },
+                  "label": "general",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3036,
+                    "answer_confidence": 0.645,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.3251
+                }
+              }
+            },
+            {
+              "id": "municipal-records-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "web",
+                    "probabilities": {
+                      "records": 0.2029,
+                      "web": 0.4632,
+                      "general": 0.3338
+                    },
+                    "confidence": 0.0475,
+                    "answer_confidence": 0.4632,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.2029,
+                    "web": 0.4632,
+                    "general": 0.3338
+                  },
+                  "label": "web",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0475,
+                    "answer_confidence": 0.4632,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.12940000000000002
+                }
+              }
+            },
+            {
+              "id": "municipal-records-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "general",
+                    "probabilities": {
+                      "records": 0.0056,
+                      "web": 0.0003,
+                      "general": 0.9942
+                    },
+                    "confidence": 0.9664,
+                    "answer_confidence": 0.9942,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.0056,
+                    "web": 0.0003,
+                    "general": 0.9942
+                  },
+                  "label": "general",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9664,
+                    "answer_confidence": 0.9942,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9885999999999999
+                }
+              }
+            },
+            {
+              "id": "municipal-records-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "general",
+                    "probabilities": {
+                      "records": 0.0001,
+                      "web": 0.0,
+                      "general": 0.9999
+                    },
+                    "confidence": 0.9991,
+                    "answer_confidence": 0.9999,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.0001,
+                    "web": 0.0,
+                    "general": 0.9999
+                  },
+                  "label": "general",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9991,
+                    "answer_confidence": 0.9999,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9998
+                }
+              }
+            },
+            {
+              "id": "municipal-records-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "web",
+                    "probabilities": {
+                      "records": 0.0061,
+                      "web": 0.9747,
+                      "general": 0.0192
+                    },
+                    "confidence": 0.8799,
+                    "answer_confidence": 0.9747,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.0061,
+                    "web": 0.9747,
+                    "general": 0.0192
+                  },
+                  "label": "web",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8799,
+                    "answer_confidence": 0.9747,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9555
+                }
+              }
+            },
+            {
+              "id": "municipal-records-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "records",
+                    "probabilities": {
+                      "records": 0.5911,
+                      "web": 0.0401,
+                      "general": 0.3688
+                    },
+                    "confidence": 0.2648,
+                    "answer_confidence": 0.5911,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.5911,
+                    "web": 0.0401,
+                    "general": 0.3688
+                  },
+                  "label": "records",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.2648,
+                    "answer_confidence": 0.5911,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.22229999999999994
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9214,
+                    "confidence": 0.9214,
+                    "answer_confidence": 0.9214,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.0786,
+                    "true": 0.9214
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9214,
+                    "answer_confidence": 0.9214,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8428
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.2085,
+                    "confidence": 0.7915,
+                    "answer_confidence": 0.7915,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.7915,
+                    "true": 0.2085
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.7915,
+                    "answer_confidence": 0.7915,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.583
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9284,
+                    "confidence": 0.9284,
+                    "answer_confidence": 0.9284,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.0716,
+                    "true": 0.9284
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9284,
+                    "answer_confidence": 0.9284,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8568
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1537,
+                    "confidence": 0.8463,
+                    "answer_confidence": 0.8463,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8463,
+                    "true": 0.1537
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8463,
+                    "answer_confidence": 0.8463,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6926000000000001
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.5796,
+                    "confidence": 0.5796,
+                    "answer_confidence": 0.5796,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.4204,
+                    "true": 0.5796
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5796,
+                    "answer_confidence": 0.5796,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.1592
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4431,
+                    "confidence": 0.5569,
+                    "answer_confidence": 0.5569,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5569,
+                    "true": 0.4431
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5569,
+                    "answer_confidence": 0.5569,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.11379999999999996
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.8438,
+                    "confidence": 0.8438,
+                    "answer_confidence": 0.8438,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.1562,
+                    "true": 0.8438
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8438,
+                    "answer_confidence": 0.8438,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6876
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.057,
+                    "confidence": 0.943,
+                    "answer_confidence": 0.943,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.943,
+                    "true": 0.057
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.943,
+                    "answer_confidence": 0.943,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8859999999999999
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.5169,
+                    "confidence": 0.5169,
+                    "answer_confidence": 0.5169,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.4831,
+                    "true": 0.5169
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5169,
+                    "answer_confidence": 0.5169,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.03380000000000005
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.125,
+                    "confidence": 0.875,
+                    "answer_confidence": 0.875,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.875,
+                    "true": 0.125
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.875,
+                    "answer_confidence": 0.875,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.75
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1332,
+                    "confidence": 0.8668,
+                    "answer_confidence": 0.8668,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8668,
+                    "true": 0.1332
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8668,
+                    "answer_confidence": 0.8668,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7336
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4398,
+                    "confidence": 0.5602,
+                    "answer_confidence": 0.5602,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5602,
+                    "true": 0.4398
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5602,
+                    "answer_confidence": 0.5602,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.12040000000000001
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.8475,
+                    "confidence": 0.8475,
+                    "answer_confidence": 0.8475,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.15249999999999997,
+                    "true": 0.8475
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8475,
+                    "answer_confidence": 0.8475,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6950000000000001
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1454,
+                    "confidence": 0.8546,
+                    "answer_confidence": 0.8546,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8546,
+                    "true": 0.1454
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8546,
+                    "answer_confidence": 0.8546,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7092
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9293,
+                    "confidence": 0.9293,
+                    "answer_confidence": 0.9293,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.07069999999999999,
+                    "true": 0.9293
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9293,
+                    "answer_confidence": 0.9293,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8586
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.0584,
+                    "confidence": 0.9416,
+                    "answer_confidence": 0.9416,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.9416,
+                    "true": 0.0584
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9416,
+                    "answer_confidence": 0.9416,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8832
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1505,
+                    "confidence": 0.8495,
+                    "answer_confidence": 0.8495,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8495,
+                    "true": 0.1505
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8495,
+                    "answer_confidence": 0.8495,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6990000000000001
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.3056,
+                    "confidence": 0.6944,
+                    "answer_confidence": 0.6944,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.6944,
+                    "true": 0.3056
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.6944,
+                    "answer_confidence": 0.6944,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.38880000000000003
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0011,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.999,
+                      "1": 0.0009,
+                      "2": 0.0001
+                    },
+                    "confidence": 0.9926,
+                    "answer_confidence": 0.999,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.999,
+                    "1": 0.0009,
+                    "2": 0.0001
+                  },
+                  "label": null,
+                  "score": 0.0011,
+                  "operational": {
+                    "confidence": 0.9926,
+                    "answer_confidence": 0.999,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9981
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.5796,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.472,
+                      "1": 0.4765,
+                      "2": 0.0516
+                    },
+                    "confidence": 0.2168,
+                    "answer_confidence": 0.4765,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.472,
+                    "1": 0.4765,
+                    "2": 0.0516
+                  },
+                  "label": null,
+                  "score": 0.5796,
+                  "operational": {
+                    "confidence": 0.2168,
+                    "answer_confidence": 0.4765,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.004500000000000004
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.1687,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.8514,
+                      "1": 0.1284,
+                      "2": 0.0201
+                    },
+                    "confidence": 0.5638,
+                    "answer_confidence": 0.8514,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.8514,
+                    "1": 0.1284,
+                    "2": 0.0201
+                  },
+                  "label": null,
+                  "score": 0.1687,
+                  "operational": {
+                    "confidence": 0.5638,
+                    "answer_confidence": 0.8514,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7230000000000001
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9263,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.1758,
+                      "1": 0.7221,
+                      "2": 0.1021
+                    },
+                    "confidence": 0.2957,
+                    "answer_confidence": 0.7221,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.1758,
+                    "1": 0.7221,
+                    "2": 0.1021
+                  },
+                  "label": null,
+                  "score": 0.9263,
+                  "operational": {
+                    "confidence": 0.2957,
+                    "answer_confidence": 0.7221,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5463
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.238,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.812,
+                      "1": 0.1379,
+                      "2": 0.0501
+                    },
+                    "confidence": 0.4609,
+                    "answer_confidence": 0.812,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.812,
+                    "1": 0.1379,
+                    "2": 0.0501
+                  },
+                  "label": null,
+                  "score": 0.238,
+                  "operational": {
+                    "confidence": 0.4609,
+                    "answer_confidence": 0.812,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6741
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0006,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.9995,
+                      "1": 0.0005,
+                      "2": 0.0
+                    },
+                    "confidence": 0.9957,
+                    "answer_confidence": 0.9995,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.9995,
+                    "1": 0.0005,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.0006,
+                  "operational": {
+                    "confidence": 0.9957,
+                    "answer_confidence": 0.9995,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9990000000000001
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.7723,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.2284,
+                      "1": 0.771,
+                      "2": 0.0006
+                    },
+                    "confidence": 0.5062,
+                    "answer_confidence": 0.771,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2284,
+                    "1": 0.771,
+                    "2": 0.0006
+                  },
+                  "label": null,
+                  "score": 0.7723,
+                  "operational": {
+                    "confidence": 0.5062,
+                    "answer_confidence": 0.771,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5426
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9918,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.0083,
+                      "1": 0.9917,
+                      "2": 0.0
+                    },
+                    "confidence": 0.9561,
+                    "answer_confidence": 0.9917,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0083,
+                    "1": 0.9917,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.9918,
+                  "operational": {
+                    "confidence": 0.9561,
+                    "answer_confidence": 0.9917,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9834
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0278,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.9729,
+                      "1": 0.0265,
+                      "2": 0.0007
+                    },
+                    "confidence": 0.8838,
+                    "answer_confidence": 0.9729,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.9729,
+                    "1": 0.0265,
+                    "2": 0.0007
+                  },
+                  "label": null,
+                  "score": 0.0278,
+                  "operational": {
+                    "confidence": 0.8838,
+                    "answer_confidence": 0.9729,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9464
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.975,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.0253,
+                      "1": 0.9744,
+                      "2": 0.0003
+                    },
+                    "confidence": 0.8901,
+                    "answer_confidence": 0.9744,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0253,
+                    "1": 0.9744,
+                    "2": 0.0003
+                  },
+                  "label": null,
+                  "score": 0.975,
+                  "operational": {
+                    "confidence": 0.8901,
+                    "answer_confidence": 0.9744,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9491
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 1.0,
+                      "1": 0.0,
+                      "2": 0.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 1.0,
+                    "1": 0.0,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0261,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.9741,
+                      "1": 0.0257,
+                      "2": 0.0002
+                    },
+                    "confidence": 0.8895,
+                    "answer_confidence": 0.9741,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.9741,
+                    "1": 0.0257,
+                    "2": 0.0002
+                  },
+                  "label": null,
+                  "score": 0.0261,
+                  "operational": {
+                    "confidence": 0.8895,
+                    "answer_confidence": 0.9741,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9483999999999999
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.1918,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0013,
+                      "1": 0.8056,
+                      "2": 0.1931
+                    },
+                    "confidence": 0.5444,
+                    "answer_confidence": 0.8056,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0013,
+                    "1": 0.8056,
+                    "2": 0.1931
+                  },
+                  "label": null,
+                  "score": 1.1918,
+                  "operational": {
+                    "confidence": 0.5444,
+                    "answer_confidence": 0.8056,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6125
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.1099,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.8967,
+                      "1": 0.0967,
+                      "2": 0.0066
+                    },
+                    "confidence": 0.6752,
+                    "answer_confidence": 0.8967,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.8967,
+                    "1": 0.0967,
+                    "2": 0.0066
+                  },
+                  "label": null,
+                  "score": 0.1099,
+                  "operational": {
+                    "confidence": 0.6752,
+                    "answer_confidence": 0.8967,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8
+                }
+              }
+            }
+          ],
+          "latency_ms": {
+            "p50": 425.730399962049,
+            "p95": 487.2042000060901,
+            "p99": 510.04640001337975
+          },
+          "latencies_ms": [
+            452.14509998913854,
+            492.8100999677554,
+            487.2042000060901,
+            449.94159997440875,
+            510.04640001337975,
+            471.17550001712516,
+            469.39630003180355,
+            445.0850999564864,
+            430.10459997458383,
+            450.1181000377983,
+            466.3030000519939,
+            467.98220003256574,
+            444.1980999545194,
+            422.43560001952574,
+            434.1644999803975,
+            455.34710003994405,
+            414.33780000079423,
+            433.26870002783835,
+            303.702799952589,
+            319.26060002297163,
+            312.1749999700114,
+            379.89040004322305,
+            353.13269996549934,
+            344.5794999715872,
+            293.04799996316433,
+            340.71710001444444,
+            328.8986000115983,
+            297.68909997073933,
+            329.3937999987975,
+            350.79950001090765,
+            343.6961999977939,
+            363.7256999500096,
+            346.1284000077285,
+            316.15720002446324,
+            367.15130001539364,
+            363.52790001546964,
+            400.5748999770731,
+            436.6386000183411,
+            440.1986000011675,
+            432.968900015112,
+            466.65600000415,
+            435.45829999493435,
+            396.3396000326611,
+            404.06119998078793,
+            404.3910000473261,
+            394.21320002293214,
+            431.99599999934435,
+            433.0191000481136,
+            417.7561000105925,
+            425.730399962049,
+            449.9075000057928,
+            461.3743999507278,
+            439.3643999937922,
+            440.0550999562256
+          ],
+          "metrics": {
+            "choice_accuracy": 0.75,
+            "noul_accuracy": 1.0,
+            "score_mae": 0.15005,
+            "mean_confidence": 0.8681416666666667,
+            "score_within_0.25": 0.8333333333333334
+          },
+          "elapsed_ms": 21963.74920004746,
+          "requests_per_second": 2.458596640681151,
+          "execution": [
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 452.14509998913854,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 492.8100999677554,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 487.2042000060901,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 449.94159997440875,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 510.04640001337975,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 471.17550001712516,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 469.39630003180355,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 445.0850999564864,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 430.10459997458383,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 450.1181000377983,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 466.3030000519939,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 467.98220003256574,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 444.1980999545194,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 422.43560001952574,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 434.1644999803975,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 455.34710003994405,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 414.33780000079423,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 433.26870002783835,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 303.702799952589,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 319.26060002297163,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 312.1749999700114,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 379.89040004322305,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 353.13269996549934,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 344.5794999715872,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 293.04799996316433,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 340.71710001444444,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 328.8986000115983,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 297.68909997073933,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 329.3937999987975,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 350.79950001090765,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 343.6961999977939,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 363.7256999500096,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 346.1284000077285,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 316.15720002446324,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 367.15130001539364,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 363.52790001546964,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 400.5748999770731,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 436.6386000183411,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 440.1986000011675,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 432.968900015112,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 466.65600000415,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 435.45829999493435,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 396.3396000326611,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 404.06119998078793,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 404.3910000473261,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 394.21320002293214,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 431.99599999934435,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 433.0191000481136,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 417.7561000105925,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 425.730399962049,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 449.9075000057928,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 461.3743999507278,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 439.3643999937922,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 440.0550999562256,
+              "forwards": [
+                {
+                  "device": "cpu",
+                  "precision": "float32",
+                  "question_rows": 1
+                }
+              ]
+            }
+          ],
+          "batch_size": 1,
+          "mode": "ordered",
+          "repeat": 0,
+          "concurrency": 1,
+          "comparison": {
+            "label_flips": 0,
+            "labelled_comparisons": 36,
+            "label_flip_rate": 0.0,
+            "max_probability_drift": 0.0,
+            "max_score_drift": 0.0,
+            "max_confidence_drift": 0.0,
+            "max_action_drift": 0.0,
+            "operational_flag_flips": 0,
+            "operational_flag_comparisons": 0,
+            "operational_flag_flip_rate": 0.0
+          },
+          "failures": [
+            "choice_accuracy=0.75 is below 0.8"
+          ]
+        }
+      ]
+    },
+    "onnx-cpu-graph": {
+      "status": "failed",
+      "identity": {
+        "verification": "local artifacts and runtime",
+        "artifacts": {
+          "encoder/config.json": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+          "model.safetensors": "07b3c36410397531e9ccef43452949b6b79c66586467f2907acc0582b82c9932",
+          "repair_report.json": "eed04544074c0e0fa45fe80f7afe27b123d7072473d2459ded89cf629e54370e",
+          "rl_agent_config.json": "8ad7643273143ed18a31271fa5a6bb96d5882c707cba5202b046c5f94e0544d5",
+          "tokenizer/tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+          "tokenizer/tokenizer_config.json": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+          "onnx/english-ordinal.onnx": "6d981ebc24ca6d3e53e6119ab15bf0aaeef0e971962cbd3bf9a085abd7b4b677",
+          "onnx-external/english-ordinal.onnx.data": "195659ee40819a136f27211188f16a6a8397bd2e91490af0e99bfbdf8181702d"
+        },
+        "backend": "onnx",
+        "device": "cpu",
+        "precision": "graph",
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "onnxruntime": "1.30.0",
+        "intra_op_threads": 4,
+        "inter_op_threads": 0,
+        "model_fingerprint": [
+          "0.3.29",
+          "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-ordinal-continuation-r2-20261106",
+          null,
+          null,
+          [
+            [
+              "rl_agent_config.json",
+              "stat",
+              621,
+              1793989143742429400,
+              3377699723200642
+            ],
+            [
+              "english-ordinal.onnx",
+              "stat",
+              3418040,
+              1793989467345142100,
+              2814749769789040
+            ],
+            [
+              "encoder/config.json",
+              "stat",
+              2083,
+              1791495347017115300,
+              7599824373860171
+            ],
+            [
+              "tokenizer/tokenizer.json",
+              "stat",
+              3583228,
+              1791495347047690600,
+              8162774327281518
+            ],
+            [
+              "tokenizer/tokenizer_config.json",
+              "stat",
+              308,
+              1791495347152919700,
+              5066549583464469
+            ]
+          ],
+          512,
+          192,
+          [
+            0.732832670211792,
+            0.5,
+            1.3760658502578735
+          ],
+          {},
+          {},
+          null,
+          null,
+          {
+            "escalate": 0.5
+          },
+          "veya-routing-v1-unicode15"
+        ]
+      },
+      "runs": [
+        {
+          "observations": [
+            {
+              "id": "harbor-service-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.9999,
+                      "workshop": 0.0,
+                      "reception": 0.0001
+                    },
+                    "confidence": 0.9994,
+                    "answer_confidence": 0.9999,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.9999,
+                    "workshop": 0.0,
+                    "reception": 0.0001
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9994,
+                    "answer_confidence": 0.9999,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9998
+                }
+              }
+            },
+            {
+              "id": "harbor-service-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.7318,
+                      "workshop": 0.2672,
+                      "reception": 0.001
+                    },
+                    "confidence": 0.4647,
+                    "answer_confidence": 0.7318,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.7318,
+                    "workshop": 0.2672,
+                    "reception": 0.001
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.4647,
+                    "answer_confidence": 0.7318,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.4646
+                }
+              }
+            },
+            {
+              "id": "harbor-service-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "reception",
+                    "probabilities": {
+                      "moorings": 0.01,
+                      "workshop": 0.0048,
+                      "reception": 0.9852
+                    },
+                    "confidence": 0.9213,
+                    "answer_confidence": 0.9852,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.01,
+                    "workshop": 0.0048,
+                    "reception": 0.9852
+                  },
+                  "label": "reception",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9213,
+                    "answer_confidence": 0.9852,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9752
+                }
+              }
+            },
+            {
+              "id": "harbor-service-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.9671,
+                      "workshop": 0.025,
+                      "reception": 0.0079
+                    },
+                    "confidence": 0.8517,
+                    "answer_confidence": 0.9671,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.9671,
+                    "workshop": 0.025,
+                    "reception": 0.0079
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8517,
+                    "answer_confidence": 0.9671,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9420999999999999
+                }
+              }
+            },
+            {
+              "id": "harbor-service-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "moorings",
+                    "probabilities": {
+                      "moorings": 0.9605,
+                      "workshop": 0.0364,
+                      "reception": 0.0032
+                    },
+                    "confidence": 0.8385,
+                    "answer_confidence": 0.9605,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.9605,
+                    "workshop": 0.0364,
+                    "reception": 0.0032
+                  },
+                  "label": "moorings",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8385,
+                    "answer_confidence": 0.9605,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9241
+                }
+              }
+            },
+            {
+              "id": "harbor-service-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "reception",
+                    "probabilities": {
+                      "moorings": 0.2034,
+                      "workshop": 0.2715,
+                      "reception": 0.5251
+                    },
+                    "confidence": 0.075,
+                    "answer_confidence": 0.5251,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "moorings": 0.2034,
+                    "workshop": 0.2715,
+                    "reception": 0.5251
+                  },
+                  "label": "reception",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.075,
+                    "answer_confidence": 0.5251,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.2536
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.3873,
+                      "equipment": 0.0781,
+                      "intake": 0.5346
+                    },
+                    "confidence": 0.1796,
+                    "answer_confidence": 0.5346,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.3873,
+                    "equipment": 0.0781,
+                    "intake": 0.5346
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.1796,
+                    "answer_confidence": 0.5346,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.1473
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "equipment",
+                    "probabilities": {
+                      "crop": 0.0177,
+                      "equipment": 0.9823,
+                      "intake": 0.0
+                    },
+                    "confidence": 0.9192,
+                    "answer_confidence": 0.9823,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.0177,
+                    "equipment": 0.9823,
+                    "intake": 0.0
+                  },
+                  "label": "equipment",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9192,
+                    "answer_confidence": 0.9823,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9645999999999999
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.1781,
+                      "equipment": 0.1415,
+                      "intake": 0.6804
+                    },
+                    "confidence": 0.23,
+                    "answer_confidence": 0.6804,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.1781,
+                    "equipment": 0.1415,
+                    "intake": 0.6804
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.23,
+                    "answer_confidence": 0.6804,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5023
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "crop",
+                    "probabilities": {
+                      "crop": 0.967,
+                      "equipment": 0.0117,
+                      "intake": 0.0213
+                    },
+                    "confidence": 0.8483,
+                    "answer_confidence": 0.967,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.967,
+                    "equipment": 0.0117,
+                    "intake": 0.0213
+                  },
+                  "label": "crop",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8483,
+                    "answer_confidence": 0.967,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9457
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.1527,
+                      "equipment": 0.1177,
+                      "intake": 0.7296
+                    },
+                    "confidence": 0.3001,
+                    "answer_confidence": 0.7296,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.1527,
+                    "equipment": 0.1177,
+                    "intake": 0.7296
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3001,
+                    "answer_confidence": 0.7296,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5769
+                }
+              }
+            },
+            {
+              "id": "orchard-cooperative-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "intake",
+                    "probabilities": {
+                      "crop": 0.17,
+                      "equipment": 0.1182,
+                      "intake": 0.7118
+                    },
+                    "confidence": 0.2758,
+                    "answer_confidence": 0.7118,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "crop": 0.17,
+                    "equipment": 0.1182,
+                    "intake": 0.7118
+                  },
+                  "label": "intake",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.2758,
+                    "answer_confidence": 0.7118,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5418
+                }
+              }
+            },
+            {
+              "id": "municipal-records-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "general",
+                    "probabilities": {
+                      "records": 0.3199,
+                      "web": 0.0351,
+                      "general": 0.645
+                    },
+                    "confidence": 0.3036,
+                    "answer_confidence": 0.645,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.3199,
+                    "web": 0.0351,
+                    "general": 0.645
+                  },
+                  "label": "general",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.3036,
+                    "answer_confidence": 0.645,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.3251
+                }
+              }
+            },
+            {
+              "id": "municipal-records-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "web",
+                    "probabilities": {
+                      "records": 0.2029,
+                      "web": 0.4632,
+                      "general": 0.3338
+                    },
+                    "confidence": 0.0476,
+                    "answer_confidence": 0.4632,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.2029,
+                    "web": 0.4632,
+                    "general": 0.3338
+                  },
+                  "label": "web",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.0476,
+                    "answer_confidence": 0.4632,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.12940000000000002
+                }
+              }
+            },
+            {
+              "id": "municipal-records-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "general",
+                    "probabilities": {
+                      "records": 0.0056,
+                      "web": 0.0003,
+                      "general": 0.9942
+                    },
+                    "confidence": 0.9664,
+                    "answer_confidence": 0.9942,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.0056,
+                    "web": 0.0003,
+                    "general": 0.9942
+                  },
+                  "label": "general",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9664,
+                    "answer_confidence": 0.9942,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9885999999999999
+                }
+              }
+            },
+            {
+              "id": "municipal-records-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "general",
+                    "probabilities": {
+                      "records": 0.0001,
+                      "web": 0.0,
+                      "general": 0.9999
+                    },
+                    "confidence": 0.9991,
+                    "answer_confidence": 0.9999,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.0001,
+                    "web": 0.0,
+                    "general": 0.9999
+                  },
+                  "label": "general",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9991,
+                    "answer_confidence": 0.9999,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9998
+                }
+              }
+            },
+            {
+              "id": "municipal-records-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "web",
+                    "probabilities": {
+                      "records": 0.0061,
+                      "web": 0.9747,
+                      "general": 0.0192
+                    },
+                    "confidence": 0.8799,
+                    "answer_confidence": 0.9747,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.0061,
+                    "web": 0.9747,
+                    "general": 0.0192
+                  },
+                  "label": "web",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8799,
+                    "answer_confidence": 0.9747,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9555
+                }
+              }
+            },
+            {
+              "id": "municipal-records-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "choice",
+                    "choice": "records",
+                    "probabilities": {
+                      "records": 0.5911,
+                      "web": 0.0401,
+                      "general": 0.3688
+                    },
+                    "confidence": 0.2648,
+                    "answer_confidence": 0.5911,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "records": 0.5911,
+                    "web": 0.0401,
+                    "general": 0.3688
+                  },
+                  "label": "records",
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.2648,
+                    "answer_confidence": 0.5911,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.22229999999999994
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9214,
+                    "confidence": 0.9214,
+                    "answer_confidence": 0.9214,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.0786,
+                    "true": 0.9214
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9214,
+                    "answer_confidence": 0.9214,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8428
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.2085,
+                    "confidence": 0.7915,
+                    "answer_confidence": 0.7915,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.7915,
+                    "true": 0.2085
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.7915,
+                    "answer_confidence": 0.7915,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.583
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9284,
+                    "confidence": 0.9284,
+                    "answer_confidence": 0.9284,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.0716,
+                    "true": 0.9284
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9284,
+                    "answer_confidence": 0.9284,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8568
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1537,
+                    "confidence": 0.8463,
+                    "answer_confidence": 0.8463,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8463,
+                    "true": 0.1537
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8463,
+                    "answer_confidence": 0.8463,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6926000000000001
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.5796,
+                    "confidence": 0.5796,
+                    "answer_confidence": 0.5796,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.4204,
+                    "true": 0.5796
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5796,
+                    "answer_confidence": 0.5796,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.1592
+                }
+              }
+            },
+            {
+              "id": "archive-access-consent-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4431,
+                    "confidence": 0.5569,
+                    "answer_confidence": 0.5569,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5569,
+                    "true": 0.4431
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5569,
+                    "answer_confidence": 0.5569,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.11379999999999996
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.8438,
+                    "confidence": 0.8438,
+                    "answer_confidence": 0.8438,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.1562,
+                    "true": 0.8438
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8438,
+                    "answer_confidence": 0.8438,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6876
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.057,
+                    "confidence": 0.943,
+                    "answer_confidence": 0.943,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.943,
+                    "true": 0.057
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.943,
+                    "answer_confidence": 0.943,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8859999999999999
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.5169,
+                    "confidence": 0.5169,
+                    "answer_confidence": 0.5169,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.4831,
+                    "true": 0.5169
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5169,
+                    "answer_confidence": 0.5169,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.03380000000000005
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.125,
+                    "confidence": 0.875,
+                    "answer_confidence": 0.875,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.875,
+                    "true": 0.125
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.875,
+                    "answer_confidence": 0.875,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.75
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1332,
+                    "confidence": 0.8668,
+                    "answer_confidence": 0.8668,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8668,
+                    "true": 0.1332
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8668,
+                    "answer_confidence": 0.8668,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7336
+                }
+              }
+            },
+            {
+              "id": "specimen-disposal-consent-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.4398,
+                    "confidence": 0.5602,
+                    "answer_confidence": 0.5602,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.5602,
+                    "true": 0.4398
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.5602,
+                    "answer_confidence": 0.5602,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.12040000000000001
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.8475,
+                    "confidence": 0.8475,
+                    "answer_confidence": 0.8475,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.15249999999999997,
+                    "true": 0.8475
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8475,
+                    "answer_confidence": 0.8475,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6950000000000001
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1454,
+                    "confidence": 0.8546,
+                    "answer_confidence": 0.8546,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8546,
+                    "true": 0.1454
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8546,
+                    "answer_confidence": 0.8546,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7092
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.9293,
+                    "confidence": 0.9293,
+                    "answer_confidence": 0.9293,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.07069999999999999,
+                    "true": 0.9293
+                  },
+                  "label": true,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9293,
+                    "answer_confidence": 0.9293,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8586
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.0584,
+                    "confidence": 0.9416,
+                    "answer_confidence": 0.9416,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.9416,
+                    "true": 0.0584
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.9416,
+                    "answer_confidence": 0.9416,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8832
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.1505,
+                    "confidence": 0.8495,
+                    "answer_confidence": 0.8495,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.8495,
+                    "true": 0.1505
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.8495,
+                    "answer_confidence": 0.8495,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6990000000000001
+                }
+              }
+            },
+            {
+              "id": "volunteer-shift-consent-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "noul",
+                    "noul": 0.3056,
+                    "confidence": 0.6944,
+                    "answer_confidence": 0.6944,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "false": 0.6944,
+                    "true": 0.3056
+                  },
+                  "label": false,
+                  "score": null,
+                  "operational": {
+                    "confidence": 0.6944,
+                    "answer_confidence": 0.6944,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.38880000000000003
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0011,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.999,
+                      "1": 0.0009,
+                      "2": 0.0001
+                    },
+                    "confidence": 0.9926,
+                    "answer_confidence": 0.999,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.999,
+                    "1": 0.0009,
+                    "2": 0.0001
+                  },
+                  "label": null,
+                  "score": 0.0011,
+                  "operational": {
+                    "confidence": 0.9926,
+                    "answer_confidence": 0.999,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9981
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.5796,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.472,
+                      "1": 0.4765,
+                      "2": 0.0516
+                    },
+                    "confidence": 0.2168,
+                    "answer_confidence": 0.4765,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.472,
+                    "1": 0.4765,
+                    "2": 0.0516
+                  },
+                  "label": null,
+                  "score": 0.5796,
+                  "operational": {
+                    "confidence": 0.2168,
+                    "answer_confidence": 0.4765,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.004500000000000004
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.1687,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.8514,
+                      "1": 0.1284,
+                      "2": 0.0201
+                    },
+                    "confidence": 0.5638,
+                    "answer_confidence": 0.8514,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.8514,
+                    "1": 0.1284,
+                    "2": 0.0201
+                  },
+                  "label": null,
+                  "score": 0.1687,
+                  "operational": {
+                    "confidence": 0.5638,
+                    "answer_confidence": 0.8514,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.7230000000000001
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9263,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.1758,
+                      "1": 0.7221,
+                      "2": 0.1021
+                    },
+                    "confidence": 0.2957,
+                    "answer_confidence": 0.7221,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.1758,
+                    "1": 0.7221,
+                    "2": 0.1021
+                  },
+                  "label": null,
+                  "score": 0.9263,
+                  "operational": {
+                    "confidence": 0.2957,
+                    "answer_confidence": 0.7221,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5463
+                }
+              }
+            },
+            {
+              "id": "observatory-operations-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.238,
+                    "legend": {
+                      "0": "Low: routine administration without operational disruption.",
+                      "1": "Medium: part of the work is delayed but a usable workaround exists.",
+                      "2": "High: all observing is stopped, with no workaround and a need for immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.812,
+                      "1": 0.1379,
+                      "2": 0.0501
+                    },
+                    "confidence": 0.4609,
+                    "answer_confidence": 0.812,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.812,
+                    "1": 0.1379,
+                    "2": 0.0501
+                  },
+                  "label": null,
+                  "score": 0.238,
+                  "operational": {
+                    "confidence": 0.4609,
+                    "answer_confidence": 0.812,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6741
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0006,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.9995,
+                      "1": 0.0005,
+                      "2": 0.0
+                    },
+                    "confidence": 0.9957,
+                    "answer_confidence": 0.9995,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.9995,
+                    "1": 0.0005,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.0006,
+                  "operational": {
+                    "confidence": 0.9957,
+                    "answer_confidence": 0.9995,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9990000000000001
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.7723,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.2283,
+                      "1": 0.771,
+                      "2": 0.0006
+                    },
+                    "confidence": 0.5062,
+                    "answer_confidence": 0.771,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.2283,
+                    "1": 0.771,
+                    "2": 0.0006
+                  },
+                  "label": null,
+                  "score": 0.7723,
+                  "operational": {
+                    "confidence": 0.5062,
+                    "answer_confidence": 0.771,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.5427
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.9918,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.0083,
+                      "1": 0.9917,
+                      "2": 0.0
+                    },
+                    "confidence": 0.9561,
+                    "answer_confidence": 0.9917,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0083,
+                    "1": 0.9917,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.9918,
+                  "operational": {
+                    "confidence": 0.9561,
+                    "answer_confidence": 0.9917,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9834
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0278,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.9729,
+                      "1": 0.0265,
+                      "2": 0.0007
+                    },
+                    "confidence": 0.8838,
+                    "answer_confidence": 0.9729,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.9729,
+                    "1": 0.0265,
+                    "2": 0.0007
+                  },
+                  "label": null,
+                  "score": 0.0278,
+                  "operational": {
+                    "confidence": 0.8838,
+                    "answer_confidence": 0.9729,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9464
+                }
+              }
+            },
+            {
+              "id": "greenhouse-operations-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.975,
+                    "legend": {
+                      "0": "Low: routine request, normal operations or no impact stated.",
+                      "1": "Medium: a local interruption with a practical temporary alternative.",
+                      "2": "High: a site-wide stoppage with no alternative and an immediate need to act."
+                    },
+                    "probabilities": {
+                      "0": 0.0253,
+                      "1": 0.9744,
+                      "2": 0.0003
+                    },
+                    "confidence": 0.8901,
+                    "answer_confidence": 0.9744,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0253,
+                    "1": 0.9744,
+                    "2": 0.0003
+                  },
+                  "label": null,
+                  "score": 0.975,
+                  "operational": {
+                    "confidence": 0.8901,
+                    "answer_confidence": 0.9744,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9491
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-1",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 1.0,
+                      "1": 0.0,
+                      "2": 0.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 1.0,
+                    "1": 0.0,
+                    "2": 0.0
+                  },
+                  "label": null,
+                  "score": 0.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-2",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.0261,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.9741,
+                      "1": 0.0257,
+                      "2": 0.0002
+                    },
+                    "confidence": 0.8895,
+                    "answer_confidence": 0.9741,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.9741,
+                    "1": 0.0257,
+                    "2": 0.0002
+                  },
+                  "label": null,
+                  "score": 0.0261,
+                  "operational": {
+                    "confidence": 0.8895,
+                    "answer_confidence": 0.9741,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.9483999999999999
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-3",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-4",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 2.0,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0,
+                      "1": 0.0,
+                      "2": 1.0
+                    },
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0,
+                    "1": 0.0,
+                    "2": 1.0
+                  },
+                  "label": null,
+                  "score": 2.0,
+                  "operational": {
+                    "confidence": 1.0,
+                    "answer_confidence": 1.0,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 1.0
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-5",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 1.1918,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.0013,
+                      "1": 0.8056,
+                      "2": 0.1931
+                    },
+                    "confidence": 0.5444,
+                    "answer_confidence": 0.8056,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.0013,
+                    "1": 0.8056,
+                    "2": 0.1931
+                  },
+                  "label": null,
+                  "score": 1.1918,
+                  "operational": {
+                    "confidence": 0.5444,
+                    "answer_confidence": 0.8056,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.6125
+                }
+              }
+            },
+            {
+              "id": "campus-shuttle-operations-6",
+              "answers": {
+                "decision": {
+                  "answer": {
+                    "type": "score",
+                    "score": 0.1099,
+                    "legend": {
+                      "0": "Low: routine information or work that does not affect service.",
+                      "1": "Medium: limited interruption with a usable alternate trip.",
+                      "2": "High: the whole service is blocked without alternate transport and needs immediate action."
+                    },
+                    "probabilities": {
+                      "0": 0.8967,
+                      "1": 0.0967,
+                      "2": 0.0066
+                    },
+                    "confidence": 0.6752,
+                    "answer_confidence": 0.8967,
+                    "action": {
+                      "act_probability": 1.0
+                    }
+                  },
+                  "probabilities": {
+                    "0": 0.8967,
+                    "1": 0.0967,
+                    "2": 0.0066
+                  },
+                  "label": null,
+                  "score": 0.1099,
+                  "operational": {
+                    "confidence": 0.6752,
+                    "answer_confidence": 0.8967,
+                    "act_probability": 1.0
+                  },
+                  "flags": {},
+                  "margin": 0.8
+                }
+              }
+            }
+          ],
+          "latency_ms": {
+            "p50": 280.3290000301786,
+            "p95": 332.12010003626347,
+            "p99": 337.4650999903679
+          },
+          "latencies_ms": [
+            298.22739999508485,
+            337.4650999903679,
+            305.148100014776,
+            275.9910000022501,
+            327.8974999557249,
+            280.6715000187978,
+            284.0074000414461,
+            280.3290000301786,
+            296.8777999631129,
+            298.2687000185251,
+            283.51069998461753,
+            287.5635999953374,
+            260.1217999472283,
+            294.8237999808043,
+            287.7777999965474,
+            276.32980002090335,
+            299.5429000002332,
+            288.2709000259638,
+            240.35150004783645,
+            217.14959997916594,
+            217.59339998243377,
+            225.4329999559559,
+            261.8052000179887,
+            266.63049997296184,
+            219.86999997170642,
+            265.70009998977184,
+            201.73229998908937,
+            206.26370003446937,
+            282.1743999957107,
+            225.21090001100674,
+            267.84739998402074,
+            263.5736000374891,
+            214.62089999113232,
+            236.43210000591353,
+            274.17419996345416,
+            249.39259997336194,
+            278.9629999897443,
+            289.45759998168796,
+            322.3022000165656,
+            263.1394999916665,
+            276.00080001866445,
+            249.82819997239858,
+            249.12749999202788,
+            282.43329998804256,
+            293.5279000084847,
+            262.45450001442805,
+            309.5160000375472,
+            333.3549000089988,
+            293.0033000302501,
+            290.74169998057187,
+            332.12010003626347,
+            317.7391999633983,
+            323.7325000227429,
+            308.50500002270564
+          ],
+          "metrics": {
+            "choice_accuracy": 0.75,
+            "noul_accuracy": 1.0,
+            "score_mae": 0.15005,
+            "mean_confidence": 0.8681416666666667,
+            "score_within_0.25": 0.8333333333333334
+          },
+          "elapsed_ms": 14877.763199969195,
+          "requests_per_second": 3.629577865583437,
+          "execution": [
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 298.22739999508485,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 337.4650999903679,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 305.148100014776,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 275.9910000022501,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 327.8974999557249,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 280.6715000187978,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 284.0074000414461,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 280.3290000301786,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 296.8777999631129,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 298.2687000185251,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 283.51069998461753,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 287.5635999953374,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 260.1217999472283,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 294.8237999808043,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 287.7777999965474,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 276.32980002090335,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 299.5429000002332,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 288.2709000259638,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 240.35150004783645,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 217.14959997916594,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 217.59339998243377,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 225.4329999559559,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 261.8052000179887,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 266.63049997296184,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 219.86999997170642,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 265.70009998977184,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 201.73229998908937,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 206.26370003446937,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 282.1743999957107,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 225.21090001100674,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 267.84739998402074,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 263.5736000374891,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 214.62089999113232,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 236.43210000591353,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 274.17419996345416,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 249.39259997336194,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 278.9629999897443,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 289.45759998168796,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 322.3022000165656,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 263.1394999916665,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 276.00080001866445,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 249.82819997239858,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 249.12749999202788,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 282.43329998804256,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 293.5279000084847,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 262.45450001442805,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 309.5160000375472,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 333.3549000089988,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 293.0033000302501,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 290.74169998057187,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 332.12010003626347,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 317.7391999633983,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 323.7325000227429,
+              "forwards": []
+            },
+            {
+              "states": 1,
+              "target_states": 1,
+              "elapsed_ms": 308.50500002270564,
+              "forwards": []
+            }
+          ],
+          "batch_size": 1,
+          "mode": "ordered",
+          "repeat": 0,
+          "concurrency": 1,
+          "comparison": {
+            "label_flips": 0,
+            "labelled_comparisons": 36,
+            "label_flip_rate": 0.0,
+            "max_probability_drift": 9.999999999998899e-05,
+            "max_score_drift": 0.0,
+            "max_confidence_drift": 0.00010000000000000286,
+            "max_action_drift": 0.0,
+            "operational_flag_flips": 0,
+            "operational_flag_comparisons": 0,
+            "operational_flag_flip_rate": 0.0
+          },
+          "failures": [
+            "choice_accuracy=0.75 is below 0.8"
+          ]
+        }
+      ]
+    }
+  },
+  "coverage": {
+    "evaluation_cases": 54,
+    "families": 9,
+    "labelled_answers": 36,
+    "boundary_answers": 2,
+    "boundary_cases": 2,
+    "boundary_observations": [
+      {
+        "id": "specimen-disposal-consent-3",
+        "qid": "decision",
+        "margin": 0.03380000000000005
+      },
+      {
+        "id": "observatory-operations-2",
+        "qid": "decision",
+        "margin": 0.004500000000000004
+      }
+    ],
+    "requested_cells": [
+      "eager-cpu-fp32",
+      "onnx-cpu-graph"
+    ],
+    "completed_cells": [],
+    "skipped_cells": [],
+    "not_run_cells": []
+  },
+  "measurement": {
+    "latency": "whole completed local call, unsplit per target request; includes local inference queue waiting",
+    "load": "bounded closed-loop callers; threadpool admission waiting excluded; no HTTP SLO claim",
+    "warmth": "model load excluded; first call can include cold operator initialization",
+    "tail_warning": "small samples do not certify production tail latency",
+    "reference": "first serial run; agreement is separate from correctness",
+    "boundary": "measured top-two probability gap; score drift is gated separately"
+  },
+  "matrix": {
+    "schema": "veya-qualification-matrix/1",
+    "reference": "eager-cpu-fp32",
+    "cells": [
+      {
+        "name": "eager-cpu-fp32",
+        "checkpoint": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-ordinal-continuation-r2-20261106",
+        "backend": "eager",
+        "device": "cpu",
+        "precision": "fp32",
+        "required": true,
+        "decision_policy": "canonical"
+      },
+      {
+        "name": "onnx-cpu-graph",
+        "checkpoint": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-ordinal-continuation-r2-20261106",
+        "backend": "onnx",
+        "device": "cpu",
+        "precision": "graph",
+        "onnx_path": "C:\\Users\\TGUNDHUS-PWR\\Documents\\Personal\\Github\\Laya-Pro\\models\\english-ordinal-continuation-r2-20261106\\english-ordinal.onnx",
+        "required": true,
+        "decision_policy": "canonical"
+      }
+    ],
+    "batch_sizes": [
+      1
+    ],
+    "concurrencies": [
+      1
+    ],
+    "repeats": 1,
+    "limits": {
+      "max_label_flip_rate": 0,
+      "max_probability_drift": 0.001,
+      "max_score_drift": 0.001,
+      "max_accuracy_drop": 0,
+      "boundary_margin": 0.05,
+      "min_boundary_cases": 1,
+      "min_accuracy": 0.8
+    }
+  },
+  "matrix_sha256": "27613d0959b5c2465984e7c23f4fbaa08a065785d90472f5a7b7e821adb69f3d",
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "dependencies": {
+      "veya": "0.3.29",
+      "torch": "2.14.1",
+      "transformers": "5.19.0",
+      "safetensors": "0.8.0",
+      "numpy": "2.5.3",
+      "tokenizers": "0.23.2",
+      "onnxruntime": "1.30.0",
+      "onnx": "1.23.2"
+    }
+  },
+  "source_sha256": {
+    "__init__.py": "4a8edd547769efa24713d321c7cc4940cb36e4d06be2150973a95de547400f48",
+    "_agreement.py": "7898f96de5339ba422b04573f06d09205d0a381ddf59537419ea62d61faf9c84",
+    "_compile.py": "ad1c155d822590a32c067dcdb9bba0eaaa5ad5ec0a768fbae372e832e4f20b38",
+    "_eval_policy.py": "b5dc6b1adda855d04f4ebade99172f67645b2e744aaba85e68fed6c1260585d6",
+    "_loading.py": "a3c3f496a06ea6be5b6293bece12df082ab50416d17483c078ff7a155c59fb9f",
+    "_microbatch.py": "06434fdcfc62c5baaf2b33c0e8ce8552a98efb359678d23483de3f96459ef17e",
+    "_routing_unicode.py": "2b7254cdbaa70531d1bc44a3f50c88b9aba72cfd323ff8506e836a8a61a47048",
+    "agent.py": "32296497b9b1b8f32b49ff6043235c9f10c4172627d5f4b16c961a5d98a89fe4",
+    "backends/__init__.py": "2b4e2758ef77e9745bd5f3ad7b11da8f25e83c2b0cea033a5a95ef42a95a94df",
+    "backends/base.py": "0b7c5af75991affd48ef1aed9103cde0465480beba303a11abb12b47f7cf563c",
+    "backends/compile.py": "6c3cfe1946e9462b56f8ebf6b7980702bb467c6927ae304c20c124d84c7c0005",
+    "backends/eager.py": "9034a2db70645f862d76ca5de5d9c1d42a0f5efc13af9a8dac662b1240a0ef6c",
+    "backends/tilelang.py": "84e1805a06d84d20ecef9a0ad56e57835392818a78e0217d45b438ee0f748f44",
+    "calibrate.py": "5e144318d490204b860996bd55fa6401a08d0f26a4870ef8725c5e2906555045",
+    "calibration.py": "02f01e921706c3a82377def99fbfe0f46ae9fb2a6e304415cf18becbf9cc5929",
+    "checkpoint.py": "46dcb708bb036963aef713681c8c63bcd6241b5c4b2305b62551139e9a57b0a4",
+    "cli.py": "af98d644afc21db9fdd35d44fb7a75ba8eeab309d5c30669439393c9f2811b2b",
+    "common.py": "7ac7ab2a7595f4762c8c56d76dfd9b7833e45efe818f2bc7d93767e718da5c2f",
+    "compaction.py": "099285fde0796f957f4c8c0b8ade769415d3f4a2d64ae659e187c5266b3d4504",
+    "confidence.py": "9b3f7487d105d3c57452264cddee503809f71a5be80d1065dcac9ed310148719",
+    "consistency.py": "66de86f78c1877fca246ae0c03145ce4052377f54e0442e709d42e9e2eed6e9d",
+    "decision_policy.py": "6517adfab340ecb7f70ef4e51c42c0faeb9bf30252d67c3680a026dae6c19b65",
+    "email.py": "b1cf0a30abcc7e578c17ee5bb450037a2f9f70139d6b1671ef008d83df0f77e9",
+    "errors.py": "e4868775be86729f30a65c6a5aa4429e0ab88d966c1d30ec6594d0abb6cdafcc",
+    "evals.py": "1c99e45c07b4db2c4617eb683d4ddef26634087e70ec39f8d1392609089dcb27",
+    "evals_cli.py": "fdbbb2029a3ab1b9f2fe2da6442c822c81fadf88a00dacba8701569db9b1e47d",
+    "evals_shortlist.py": "315ef4cb6ddd11cb2ce7082689250e6458d625183f2459b29be5ec6726133d0e",
+    "evidence.py": "00d2eb9285d00cc15e3c8078a56a99ebb75ecb977bb6e64da16e8eed2b828711",
+    "fast.py": "dd464d604198ce672ce8d28c3c594071ffbde9f3576ce488de19ea4420dd815f",
+    "hooks.py": "cb8a838ab7b589fa31c39037518d90b4fae7899fc3d1702ac38f054427d7a388",
+    "inference.py": "5275d72141a1f7f10f3ae22ec941ec77a54a66ca1751b6c62c100ea8866c793f",
+    "inference_common.py": "3a31769d51a6858e8f6a5965ca90b99dbdf5e77abc9a59bccb45d82c47373fbd",
+    "integrations/__init__.py": "aee6c0fa5eb85cf017056f2cd2b551389493acdd9788433319758b443edd005f",
+    "integrations/_controls.py": "7b6b8508093ef36cd0735e8a1a465fd1784bb20f0b900ce2d792e3ba2d1bbf17",
+    "integrations/_errors.py": "1a50fda5790d5c126118b3c14559ff14798d5e1977f878d84d42b2caccd6620c",
+    "integrations/_guard.py": "7cb2322d0ba54089bb3e8f1aa4f9d399ae1bbb39aabd9d415b5a25ac44800ab6",
+    "integrations/agno.py": "a6dac2400f792f15ac6848668d7330e28eaa0a41f9a821e3dbffe4ec50e45ba9",
+    "integrations/crewai.py": "6c4876d75a75c2053b682801de68d44229d0404ce3920115b49d12d75825c202",
+    "integrations/langchain.py": "7d718e4c58070ef5c6f16c328f4c0f56326e8f159e25bafd4640eb153dfb997a",
+    "integrations/llamaindex.py": "924928b99c21427be8187f29f38aa5879c13b31f80761b03efeb3cd5fa2fcd72",
+    "lang.py": "9997be3c05fe83585fb5a31a2e707a3348197db75b829aa46de022c1f0d66714",
+    "mcp/__init__.py": "2e79fd82dce81961d08666529b893b1ccb1a94ed4debd97b6fe260a3081c9d2d",
+    "mcp/_code_budget.py": "9b7aaf87a9accb2bffa00d0339be4ebd7fd247d651cf6d39825e1f12e63ca94e",
+    "mcp/_code_worker.py": "3a18046fc02ef6a3f9484a90ce38baa063cd675575515b0d3c647df9e3343e08",
+    "mcp/code_mode.py": "ad8d5165c33b93553c32933de9b5538a3ca1da07e9a7b9fd32d8fa7fd61afce4",
+    "mcp/device.py": "b92f450443cc1bdbad20b260a247dc1f0c61314b90cb2e789827de7f18cae382",
+    "mcp/remote.py": "f00ebd4fd5700490c4902d2f1c67366fdb8fe58ad1bc74aefadd3a13ba48cdaa",
+    "mcp/server.py": "7b882304a4c910c1d36ba5e18e2e9abaff4c79f7285e820597d1d807d19f1e07",
+    "mcp/tools.py": "a93e7b68e19a780f9c3a0bf8a8e6afba183ca46d637725955bf1adcffa426bc1",
+    "onnx_agent.py": "9699638644feedb20d53afe6d8fdbc6021bb92b5ea56c7de34baece193271513",
+    "performance.py": "97c9cbebc288d8ec50173caa7868a783230a0836c11de510cf911ebb50a7dd9b",
+    "presets.py": "733040bc4b0a02c26f891c1d4f4650551e92bf4b273a78793909e1e944ca1236",
+    "qualification.py": "a80ab9b89706eeb9b1598627012ce43dc9a56ce8654b250cd4b4d603a0888430",
+    "replay.py": "20344f39b3989c8e4f9b4cc20b1e0c17179605f616d9fa959816acd81d697a44",
+    "revisions.py": "de36d888d3ec09832f70cd06773774cb9e30d2ff0527df59ebdab2513de4968b",
+    "router.py": "be6f58084972bdecaa77c0ec9b20fa8480887bd7339d55c129707d094fe31554",
+    "serve.py": "fecb756021b710a7104aa375770a72a6b613d70e50b338da7fe76c3255c306ff",
+    "shortlist.py": "2ab64b58de833d979ede62b23489897d3dadf39ee1b069d561df4a62f1fed978",
+    "structured.py": "48157ae8d53ef17128d2b0e3e923c11dce2bc443ac6c1e0e0cb9d80b432084f6",
+    "tl_kernels.py": "05d77796a773d6fa719e8b90434b4de4f003beae46996d618b8dc6a571627e17",
+    "train.py": "7734fbd896ebc519058b84493ac461337b9df03c1cdbaaf1385fab909cea36cb",
+    "train_cli.py": "5365695d4adf044f8691369bf7eb02001d6b72d50b5db74bc4f364b86c504c05"
+  },
+  "source_changed_during_run": false,
+  "harness": {
+    "created_utc": "2026-11-06T18:26:53.826389+00:00",
+    "script_sha256": "1ba39f35c8928d4fb5194cd95db2e321eadfc013ecad461e640c3c75260d50e6",
+    "corpus_file_sha256": "2576a8a76a366eefb7f94e1aa66d16e9cd27a87d52c0f1912196c43880383d96",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logical_cpus": 32,
+    "cpu_threads": 4,
+    "cpu_interop_threads": 1,
+    "limits": "Synthetic rubric fixture, small local sample; no general accuracy or HTTP p99 claim. Workstation load is uncontrolled. Zero cache use, fp32/eager versus the pinned graph."
+  }
+}

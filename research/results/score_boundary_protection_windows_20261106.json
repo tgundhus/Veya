@@ -1,0 +1,603 @@
+{
+  "schema": "veya-score-protection/1",
+  "corpora": {
+    "acceptance": {
+      "base": "research/results/score_boundary_acceptance_base_windows_20261106.json",
+      "candidate": "research/results/score_boundary_acceptance_windows_20261106.json",
+      "profiles": 32,
+      "identical_protected_answers": 704,
+      "protected_drifts": {
+        "label_flips": 0,
+        "max_probability_drift": 0.0,
+        "max_score_drift": 0.0,
+        "max_confidence_drift": 0.0,
+        "max_action_drift": 0.0,
+        "operational_flag_flips": 0
+      },
+      "base_counts": {
+        "choice": [
+          8,
+          12
+        ],
+        "noul": [
+          9,
+          10
+        ],
+        "score": [
+          18,
+          30
+        ],
+        "score0": [
+          8,
+          10
+        ],
+        "score1": [
+          6,
+          10
+        ],
+        "score2": [
+          4,
+          10
+        ]
+      },
+      "candidate_counts": {
+        "choice": [
+          8,
+          12
+        ],
+        "noul": [
+          9,
+          10
+        ],
+        "score": [
+          18,
+          30
+        ],
+        "score0": [
+          5,
+          10
+        ],
+        "score1": [
+          9,
+          10
+        ],
+        "score2": [
+          4,
+          10
+        ]
+      },
+      "base_score_mae": 0.37302,
+      "candidate_score_mae": 0.38427666666666666,
+      "boundaries": [
+        {
+          "id": "scorefit-fresh-storm-sirens-1",
+          "qid": "decision",
+          "margin": 0.0016999999999999793,
+          "labelled": true
+        },
+        {
+          "id": "scorefit-fresh-mural-release-6",
+          "qid": "decision",
+          "margin": 0.009699999999999986,
+          "labelled": true
+        },
+        {
+          "id": "scorefit-fresh-archive-scan-rate-1",
+          "qid": "decision",
+          "margin": 0.049300000000000066,
+          "labelled": true
+        }
+      ],
+      "nearest_unlabelled": [
+        0.11299999999999993,
+        "scorefit-fresh-broadcast-console-8",
+        "decision"
+      ],
+      "production_qualified": false,
+      "failure_kinds": [
+        "choice_accuracy=0.666667 is below 0.8",
+        "score_within_0.25=0.6 is below 0.8"
+      ]
+    },
+    "original": {
+      "base": "research/results/routing_repair_original_windows_20261106.json",
+      "candidate": "research/results/score_boundary_original_windows_20261106.json",
+      "profiles": 32,
+      "identical_protected_answers": 384,
+      "protected_drifts": {
+        "label_flips": 0,
+        "max_probability_drift": 0.0,
+        "max_score_drift": 0.0,
+        "max_confidence_drift": 0.0,
+        "max_action_drift": 0.0,
+        "operational_flag_flips": 0
+      },
+      "base_counts": {
+        "choice": [
+          4,
+          5
+        ],
+        "noul": [
+          5,
+          5
+        ],
+        "score": [
+          4,
+          5
+        ],
+        "score0": [
+          1,
+          1
+        ],
+        "score1": [
+          0,
+          1
+        ],
+        "score2": [
+          3,
+          3
+        ]
+      },
+      "candidate_counts": {
+        "choice": [
+          4,
+          5
+        ],
+        "noul": [
+          5,
+          5
+        ],
+        "score": [
+          4,
+          5
+        ],
+        "score0": [
+          1,
+          1
+        ],
+        "score1": [
+          0,
+          1
+        ],
+        "score2": [
+          3,
+          3
+        ]
+      },
+      "base_score_mae": 0.08171999999999999,
+      "candidate_score_mae": 0.16355999999999998,
+      "boundaries": [],
+      "nearest_unlabelled": [
+        0.19079999999999991,
+        "authorization-boundary-candidate",
+        "authorized"
+      ],
+      "production_qualified": false,
+      "failure_kinds": [
+        "reference has 0 measured boundary cases; need 1"
+      ]
+    },
+    "prior_acceptance": {
+      "base": "research/results/routing_repair_prior_acceptance_windows_20261106.json",
+      "candidate": "research/results/score_boundary_prior_acceptance_windows_20261106.json",
+      "profiles": 2,
+      "identical_protected_answers": 72,
+      "protected_drifts": {
+        "label_flips": 0,
+        "max_probability_drift": 0.0,
+        "max_score_drift": 0.0,
+        "max_confidence_drift": 0.0,
+        "max_action_drift": 0.0,
+        "operational_flag_flips": 0
+      },
+      "base_counts": {
+        "choice": [
+          9,
+          12
+        ],
+        "noul": [
+          12,
+          12
+        ],
+        "score": [
+          11,
+          12
+        ],
+        "score0": [
+          4,
+          4
+        ],
+        "score1": [
+          3,
+          4
+        ],
+        "score2": [
+          4,
+          4
+        ]
+      },
+      "candidate_counts": {
+        "choice": [
+          9,
+          12
+        ],
+        "noul": [
+          12,
+          12
+        ],
+        "score": [
+          9,
+          12
+        ],
+        "score0": [
+          2,
+          4
+        ],
+        "score1": [
+          3,
+          4
+        ],
+        "score2": [
+          4,
+          4
+        ]
+      },
+      "base_score_mae": 0.08745000000000001,
+      "candidate_score_mae": 0.10739166666666666,
+      "boundaries": [
+        {
+          "id": "specimen-disposal-consent-3",
+          "qid": "decision",
+          "margin": 0.03380000000000005,
+          "labelled": true
+        }
+      ],
+      "nearest_unlabelled": [
+        0.11379999999999996,
+        "archive-access-consent-6",
+        "decision"
+      ],
+      "production_qualified": false,
+      "failure_kinds": [
+        "choice_accuracy=0.75 is below 0.8",
+        "score_within_0.25=0.75 is below 0.8"
+      ]
+    },
+    "older_controls": {
+      "base": "research/results/routing_repair_older_controls_windows_20261106.json",
+      "candidate": "research/results/score_boundary_older_controls_windows_20261106.json",
+      "profiles": 2,
+      "identical_protected_answers": 64,
+      "protected_drifts": {
+        "label_flips": 0,
+        "max_probability_drift": 0.0,
+        "max_score_drift": 0.0,
+        "max_confidence_drift": 0.0,
+        "max_action_drift": 0.0,
+        "operational_flag_flips": 0
+      },
+      "base_counts": {
+        "choice": [
+          12,
+          15
+        ],
+        "noul": [
+          14,
+          15
+        ],
+        "score": [
+          10,
+          15
+        ],
+        "score0": [
+          4,
+          5
+        ],
+        "score1": [
+          4,
+          5
+        ],
+        "score2": [
+          2,
+          5
+        ]
+      },
+      "candidate_counts": {
+        "choice": [
+          12,
+          15
+        ],
+        "noul": [
+          14,
+          15
+        ],
+        "score": [
+          15,
+          15
+        ],
+        "score0": [
+          5,
+          5
+        ],
+        "score1": [
+          5,
+          5
+        ],
+        "score2": [
+          5,
+          5
+        ]
+      },
+      "base_score_mae": 0.30478,
+      "candidate_score_mae": 0.06095333333333333,
+      "boundaries": [
+        {
+          "id": "ctrl-noul-07",
+          "qid": "decision",
+          "margin": 0.03839999999999999,
+          "labelled": true
+        }
+      ],
+      "nearest_unlabelled": [
+        0.15379999999999994,
+        "ctrl-boundary-02",
+        "decision"
+      ],
+      "production_qualified": false,
+      "failure_kinds": [
+        "max_confidence_drift=0.001 exceeds 0.001"
+      ]
+    },
+    "prior_level_zero": {
+      "base": "research/results/routing_repair_prior_level_zero_windows_20261106.json",
+      "candidate": "research/results/score_boundary_prior_level_zero_windows_20261106.json",
+      "profiles": 2,
+      "identical_protected_answers": 72,
+      "protected_drifts": {
+        "label_flips": 0,
+        "max_probability_drift": 0.0,
+        "max_score_drift": 0.0,
+        "max_confidence_drift": 0.0,
+        "max_action_drift": 0.0,
+        "operational_flag_flips": 0
+      },
+      "base_counts": {
+        "choice": [
+          12,
+          12
+        ],
+        "noul": [
+          11,
+          12
+        ],
+        "score": [
+          16,
+          21
+        ],
+        "score0": [
+          6,
+          9
+        ],
+        "score1": [
+          5,
+          6
+        ],
+        "score2": [
+          5,
+          6
+        ]
+      },
+      "candidate_counts": {
+        "choice": [
+          12,
+          12
+        ],
+        "noul": [
+          11,
+          12
+        ],
+        "score": [
+          21,
+          21
+        ],
+        "score0": [
+          9,
+          9
+        ],
+        "score1": [
+          6,
+          6
+        ],
+        "score2": [
+          6,
+          6
+        ]
+      },
+      "base_score_mae": 0.14265714285714287,
+      "candidate_score_mae": 0.06923809523809525,
+      "boundaries": [],
+      "nearest_unlabelled": [
+        0.24609999999999999,
+        "stone-sample-clearance-9",
+        "decision"
+      ],
+      "production_qualified": false,
+      "failure_kinds": [
+        "reference has 0 measured boundary cases; need 1"
+      ]
+    },
+    "prior_evidence": {
+      "base": "research/results/routing_repair_seen_regression_windows_20261106.json",
+      "candidate": "research/results/score_boundary_prior_evidence_windows_20261106.json",
+      "profiles": 2,
+      "identical_protected_answers": 72,
+      "protected_drifts": {
+        "label_flips": 0,
+        "max_probability_drift": 0.0,
+        "max_score_drift": 0.0,
+        "max_confidence_drift": 0.0,
+        "max_action_drift": 0.0,
+        "operational_flag_flips": 0
+      },
+      "base_counts": {
+        "choice": [
+          12,
+          12
+        ],
+        "noul": [
+          12,
+          12
+        ],
+        "score": [
+          11,
+          21
+        ],
+        "score0": [
+          4,
+          9
+        ],
+        "score1": [
+          2,
+          6
+        ],
+        "score2": [
+          5,
+          6
+        ]
+      },
+      "candidate_counts": {
+        "choice": [
+          12,
+          12
+        ],
+        "noul": [
+          12,
+          12
+        ],
+        "score": [
+          21,
+          21
+        ],
+        "score0": [
+          9,
+          9
+        ],
+        "score1": [
+          6,
+          6
+        ],
+        "score2": [
+          6,
+          6
+        ]
+      },
+      "base_score_mae": 0.36789047619047616,
+      "candidate_score_mae": 0.049300000000000004,
+      "boundaries": [
+        {
+          "id": "language-exam-helpdesk-8",
+          "qid": "decision",
+          "margin": 0.0020999999999999908,
+          "labelled": false
+        },
+        {
+          "id": "sculpture-move-permit-2",
+          "qid": "decision",
+          "margin": 0.02279999999999993,
+          "labelled": true
+        },
+        {
+          "id": "canteen-allergen-release-7",
+          "qid": "decision",
+          "margin": 0.0368,
+          "labelled": false
+        }
+      ],
+      "nearest_unlabelled": [
+        0.0020999999999999908,
+        "language-exam-helpdesk-8",
+        "decision"
+      ],
+      "production_qualified": true,
+      "failure_kinds": []
+    },
+    "prior_routing": {
+      "base": "research/results/routing_repair_acceptance_windows_20261106.json",
+      "candidate": "research/results/score_boundary_prior_routing_windows_20261106.json",
+      "profiles": 2,
+      "identical_protected_answers": 72,
+      "protected_drifts": {
+        "label_flips": 0,
+        "max_probability_drift": 0.0,
+        "max_score_drift": 0.0,
+        "max_confidence_drift": 0.0,
+        "max_action_drift": 0.0,
+        "operational_flag_flips": 0
+      },
+      "base_counts": {
+        "choice": [
+          16,
+          18
+        ],
+        "noul": [
+          7,
+          8
+        ],
+        "score": [
+          12,
+          18
+        ],
+        "score0": [
+          1,
+          6
+        ],
+        "score1": [
+          6,
+          6
+        ],
+        "score2": [
+          5,
+          6
+        ]
+      },
+      "candidate_counts": {
+        "choice": [
+          16,
+          18
+        ],
+        "noul": [
+          7,
+          8
+        ],
+        "score": [
+          18,
+          18
+        ],
+        "score0": [
+          6,
+          6
+        ],
+        "score1": [
+          6,
+          6
+        ],
+        "score2": [
+          6,
+          6
+        ]
+      },
+      "base_score_mae": 0.28897222222222224,
+      "candidate_score_mae": 0.0679,
+      "boundaries": [],
+      "nearest_unlabelled": [
+        0.0801,
+        "art-cover-service-desk-8",
+        "decision"
+      ],
+      "production_qualified": false,
+      "failure_kinds": [
+        "reference has 0 measured boundary cases; need 1"
+      ]
+    }
+  }
+}

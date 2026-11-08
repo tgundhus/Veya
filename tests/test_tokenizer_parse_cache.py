@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya import agent as runtime  # noqa: E402
+from veya import agent as runtime  # noqa: E402
 
 
 class TokenizerParseCacheTests(unittest.TestCase):

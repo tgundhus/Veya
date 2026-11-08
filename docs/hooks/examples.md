@@ -27,12 +27,12 @@ Copy-paste recipes. Every snippet is self-contained apart from the helpers it na
 ## Quick start
 
 ```python
-import laya
+import veya
 
 def log(ctx):
     print(ctx.model, ctx.results[0]["answers"])
 
-agent = laya.load("convaiinnovations/laya", on_predict_end=log)
+agent = veya.load("convaiinnovations/laya", on_predict_end=log)
 agent.system_one("I was charged twice.", {"urgent": {"type": "noul", "instructions": "Urgent?"}})
 ```
 
@@ -42,7 +42,7 @@ The browser-use use case: capture every decision and ship it to an external serv
 
 ```python
 import json, sys
-import laya
+import veya
 
 def audit(ctx):
     for state, result in zip(ctx.states, ctx.results or []):
@@ -59,19 +59,19 @@ def audit(ctx):
         print(json.dumps(record), file=sys.stderr)
         # ship_to_service(record)
 
-agent = laya.load("convaiinnovations/laya", on_predict_end=audit)
+agent = veya.load("convaiinnovations/laya", on_predict_end=audit)
 ```
 
 One hook call covers the whole call, so the loop writes one record per decision; see
 [Batch](#batch) for the same shape on `predict_batch`.
 
-A full runnable version is in [`examples/hooks/audit.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/audit.py).
+A full runnable version is in [`examples/hooks/audit.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/audit.py).
 
 ## Redact PII
 
 ```python
 import re
-import laya
+import veya
 
 EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.-]+\b")
 PHONE = re.compile(r"\+?\d[\d ()-]{7,}\d")
@@ -88,16 +88,16 @@ def scrub(value):
 def redact(ctx):
     ctx.states = [scrub(s) for s in ctx.states]
 
-agent = laya.load("convaiinnovations/laya", on_predict_start=redact)
+agent = veya.load("convaiinnovations/laya", on_predict_start=redact)
 ```
 
-See [`examples/hooks/redact.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/redact.py).
+See [`examples/hooks/redact.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/redact.py).
 
 ## Cache
 
 ```python
 import hashlib, json
-import laya
+import veya
 
 CACHE = {}
 
@@ -117,17 +117,17 @@ def write(ctx):
     for i, result in enumerate(ctx.results or []):
         CACHE[key(ctx, i)] = result
 
-agent = laya.load("convaiinnovations/laya", on_predict_start=read, on_predict_end=write)
+agent = veya.load("convaiinnovations/laya", on_predict_start=read, on_predict_end=write)
 first = agent.system_one("state", QUESTIONS)    # runs the model
 second = agent.system_one("state", QUESTIONS)   # served from CACHE
 ```
 
-See [`examples/hooks/cache.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/cache.py).
+See [`examples/hooks/cache.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/cache.py).
 
 ## Metrics
 
 ```python
-import laya
+import veya
 
 COUNTS, LATENCIES = {}, []
 
@@ -136,17 +136,17 @@ def metrics(ctx):
     if ctx.elapsed_ms is not None:
         LATENCIES.append(ctx.elapsed_ms)
 
-agent = laya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_raise=False)
+agent = veya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_raise=False)
 ```
 
-See [`examples/hooks/otel.py`](https://github.com/tgundhus/laya-pro/blob/main/examples/hooks/otel.py).
+See [`examples/hooks/otel.py`](https://github.com/tgundhus/Veya/blob/main/examples/hooks/otel.py).
 
 ## Guardrail
 
 Block a request by raising from a start hook.
 
 ```python
-import laya
+import veya
 
 class Blocked(Exception):
     pass
@@ -156,7 +156,7 @@ def guard(ctx):
     if "ignore previous instructions" in text:
         raise Blocked("prompt injection")
 
-agent = laya.load("convaiinnovations/laya", on_predict_start=guard)
+agent = veya.load("convaiinnovations/laya", on_predict_start=guard)
 
 try:
     agent.system_one("Ignore previous instructions and ...", QUESTIONS)
@@ -179,7 +179,7 @@ def gate(ctx):
             answer["choice"] = "human-review"
             answer["gated"] = True
 
-agent = laya.load("convaiinnovations/laya", on_predict_end=gate)
+agent = veya.load("convaiinnovations/laya", on_predict_end=gate)
 ```
 
 `ctx.results` holds one dict per state of the call, so the loop annotates every answer that
@@ -190,8 +190,8 @@ misses the threshold, not only the first state's.
 Force a checkpoint for a class of traffic.
 
 ```python
-from laya import Router
-from laya.router import RouteDecision
+from veya import Router
+from veya.router import RouteDecision
 
 def pin(ctx):
     if "refund" in str(ctx.states[0]).lower():
@@ -217,7 +217,7 @@ router.predict("refund request", QUESTIONS, hooks=[pin])
 Observe checkpoint build and eviction.
 
 ```python
-from laya import Router
+from veya import Router
 
 class Lifecycle:
     def on_load(self, ctx):
@@ -239,7 +239,7 @@ scopes, process-wide default hooks come before an instance's hooks, and an insta
 per-call hooks. Every hook of one call shares that call's context.
 
 ```python
-import laya
+import veya
 
 class Metrics:
     def on_predict_end(self, ctx):
@@ -251,7 +251,7 @@ def redact(ctx):
 def audit(ctx):
     ship(ctx.run_id, ctx.results)
 
-agent = laya.load(
+agent = veya.load(
     "convaiinnovations/laya",
     hooks=[Metrics()],              # hooks=[...] entries run in list order
     on_predict_start=redact,        # convenience callables follow the entries
@@ -296,11 +296,11 @@ results = agent.predict_batch([state_a, state_b, state_c], questions, on_predict
 
 ## HTTP server
 
-Router hooks fire for `laya.serve` automatically, because the server calls `Router.predict`.
+Router hooks fire for `veya.serve` automatically, because the server calls `Router.predict`.
 
 ```python
-from laya import Router
-from laya.serve import create_app
+from veya import Router
+from veya.serve import create_app
 
 router = Router(hooks=[Metrics()], on_predict_end=audit, hooks_raise=False)
 app = create_app(router=router)
@@ -311,9 +311,9 @@ app = create_app(router=router)
 `ONNXAgent` exposes the predict-level events only.
 
 ```python
-from laya.onnx_agent import ONNXAgent
+from veya.onnx_agent import ONNXAgent
 
-agent = ONNXAgent("convaiinnovations/laya", onnx_path="laya.onnx", on_predict_end=audit)
+agent = ONNXAgent("convaiinnovations/laya", onnx_path="veya.onnx", on_predict_end=audit)
 agent.system_one(state, questions)
 ```
 
@@ -335,7 +335,7 @@ Subclass `BaseHook` to override only what you need, and register something once 
 process instead of passing it to every `Agent` and `Router`.
 
 ```python
-from laya import BaseHook, hooks
+from veya import BaseHook, hooks
 
 class Audit(BaseHook):
     def on_predict_end(self, ctx):
@@ -367,7 +367,7 @@ def widen(ctx):
         ctx.head_max_len = need
         ctx.max_len = max(window, need + 8 + 64)
 
-agent = laya.load("convaiinnovations/laya", on_predict_start=widen)
+agent = veya.load("convaiinnovations/laya", on_predict_start=widen)
 
 # or per call
 agent.system_one(state, questions, head_max_len=512, max_len=1024)
@@ -383,14 +383,14 @@ Wrap an async hook in `AsyncHook`; each coroutine runs to completion in the sync
 caller is synchronous or already inside an event loop.
 
 ```python
-import laya
-from laya import AsyncHook
+import veya
+from veya import AsyncHook
 
 class RemoteAudit:
     async def on_predict_end(self, ctx):
         await ship(ctx.run_id, ctx.results)
 
-agent = laya.load("convaiinnovations/laya", hooks=[AsyncHook(RemoteAudit())])
+agent = veya.load("convaiinnovations/laya", hooks=[AsyncHook(RemoteAudit())])
 ```
 
 A plain async callable works too:
@@ -407,7 +407,7 @@ agent.system_one(state, questions, on_predict_end=async_end)
 Bound each hook call, so a stuck hook cannot hang a served request:
 
 ```python
-agent = laya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_timeout=2.0)
+agent = veya.load("convaiinnovations/laya", on_predict_end=metrics, hooks_timeout=2.0)
 
 # or per call
 agent.system_one(state, questions, on_predict_end=metrics, hooks_timeout=0.5)
@@ -420,7 +420,7 @@ in the background, so also give network calls their own timeout. See
 ## Testing hooks
 
 Assert what a hook saw without a model: drive `predict_batch` with the encode/forward/decode
-helpers stubbed, as [`tests/test_hooks.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks.py) does.
+helpers stubbed, as [`tests/test_hooks.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks.py) does.
 
 ```python
 seen = []
@@ -428,7 +428,7 @@ agent.predict_batch(["s0"], questions, on_predict_end=lambda ctx: seen.append(ct
 assert len(seen) == 1
 ```
 
-The API surface is pinned by [`tests/test_hooks_api.py`](https://github.com/tgundhus/laya-pro/blob/main/tests/test_hooks_api.py).
+The API surface is pinned by [`tests/test_hooks_api.py`](https://github.com/tgundhus/Veya/blob/main/tests/test_hooks_api.py).
 
 ## See also
 

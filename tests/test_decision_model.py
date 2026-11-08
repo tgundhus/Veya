@@ -1,4 +1,4 @@
-"""Regression tests for DecisionModel.forward (laya/common.py).
+"""Regression tests for DecisionModel.forward (veya/common.py).
 
 Uses a tiny from-config BERT encoder (no pretrained weights downloaded) so
 these run fast and offline, unlike tests/test_local_e2e.py which needs a
@@ -11,7 +11,7 @@ from transformers import AutoConfig, AutoModel
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from laya.common import DecisionModel
+from veya.common import DecisionModel
 
 
 def _tiny_model(head_layers: int = 1, n_act: int = 2) -> DecisionModel:

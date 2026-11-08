@@ -25,9 +25,9 @@ body:
       description: The smallest script or sequence that shows the problem.
       render: python
       placeholder: |
-        import laya
+        import veya
 
-        agent = laya.load("convaiinnovations/laya")
+        agent = veya.load("convaiinnovations/laya")
         print(agent.system_one("...", {"q": {"type": "noul", "instructions": "?"}}))
     validations:
       required: true
@@ -42,10 +42,10 @@ body:
       required: false
 
   - type: input
-    id: laya-version
+    id: veya-version
     attributes:
-      label: Laya version
-      description: The output of `python -c "import laya; print(laya.__version__)"`.
+      label: Veya version
+      description: The output of `python -c "import veya; print(veya.__version__)"`.
     validations:
       required: true
 

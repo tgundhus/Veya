@@ -1,9 +1,9 @@
 ---
-title: Deploying Laya-Pro
-description: Configure local HTTP and MCP inference, authentication, resource bounds, precision and cache retention for Laya-Pro.
+title: Deploying Veya
+description: Configure local HTTP and MCP inference, authentication, resource bounds, precision and cache retention for Veya.
 ---
 
-# Deploying Laya-Pro
+# Deploying Veya
 
 Pin a reviewed source commit and checkpoint revision, pre-download model files, and validate
 your questions against labelled examples before serving traffic. A confidence threshold
@@ -11,19 +11,19 @@ should come from the errors and coverage measured on that workload.
 
 ## HTTP and MCP
 
-`laya-serve` exposes single and batch inference plus `/health`. Bind to loopback for a local
-application with `LAYA_HOST=127.0.0.1`. For a shared deployment, set `LAYA_API_KEY` and use
+`veya-serve` exposes single and batch inference plus `/health`. Bind to loopback for a local
+application with `VEYA_HOST=127.0.0.1`. For a shared deployment, set `VEYA_API_KEY` and use
 TLS at your reverse proxy. Public health probes report liveness; authenticated health reports
 resident checkpoints and runtime details.
 
-Set `LAYA_PRELOAD=0` for lazy loading, or preload only the required checkpoints with
-`LAYA_MODELS=english,multilingual`. `LAYA_MAX_LOADED` bounds residency; `LAYA_THREADS` controls
-CPU threading. Bound concurrency and work using `LAYA_MAX_CONCURRENT`,
-`LAYA_MAX_TOKEN_BUDGET` and `LAYA_MAX_BATCH_TOKENS`. A `503` means the admission limit is
+Set `VEYA_PRELOAD=0` for lazy loading, or preload only the required checkpoints with
+`VEYA_MODELS=english,multilingual`. `VEYA_MAX_LOADED` bounds residency; `VEYA_THREADS` controls
+CPU threading. Bound concurrency and work using `VEYA_MAX_CONCURRENT`,
+`VEYA_MAX_TOKEN_BUDGET` and `VEYA_MAX_BATCH_TOKENS`. A `503` means the admission limit is
 full; choose retry and backoff in the calling application.
 
 MCP over stdio uses the same local models and cache settings. It can instead call your HTTP
-server using `LAYA_BASE_URL`. In that mode, configure retention on the HTTP server.
+server using `VEYA_BASE_URL`. In that mode, configure retention on the HTTP server.
 See [HTTP configuration](http-api.md), [MCP](cli-mcp.md) and [Docker](docker.md).
 
 For a smaller CPU installation, the optional [ONNX services](onnx-runtime.md#http-and-local-mcp)
@@ -36,11 +36,18 @@ Caching is opt-in. Both the HTTP and local MCP builders read:
 
 | Variable | Behavior | Default |
 |---|---|---|
-| `LAYA_CACHE` | Enable an in-memory cache | disabled |
-| `LAYA_CACHE_PATH` | SQLite file; a nonempty path enables caching | unset |
-| `LAYA_CACHE_TTL` | Retention in seconds; `none` keeps entries indefinitely | `86400` |
-| `LAYA_CACHE_MAXSIZE` | Target bound for stored decisions | `10000` |
-| `LAYA_CACHE_RENEW_ON_HIT` | Renew retention on use | disabled |
+| `VEYA_CACHE` | Enable an in-memory cache | disabled |
+| `VEYA_CACHE_PATH` | SQLite file; a nonempty path enables caching | unset |
+| `VEYA_CACHE_TTL` | Retention in seconds; `none` keeps entries indefinitely | `86400` |
+| `VEYA_CACHE_MAXSIZE` | Target bound for stored decisions; `none` disables capacity eviction | `10000` |
+| `VEYA_CACHE_FINGERPRINT` | Explicit policy identity; empty uses automatic model/configuration identity | unset |
+| `VEYA_CACHE_REQUIRED` | Refuse predictions unless replayed or committed; cache must be enabled | `0` |
+| `VEYA_CACHE_REQUIRE_EXISTING` | Refuse to create a missing SQLite decision database | `0` |
+| `VEYA_CACHE_EXPECTED_STORE_ID` | Require an existing database with this store identity | unset |
+| `VEYA_REPLAY_MANIFEST` | Verified policy metadata for replay without loading model weights | unset |
+| `VEYA_DECISION_POLICY` | Select `canonical` or [context-balanced decisions](decision-policy.md) | checkpoint default |
+| `VEYA_HTTP_REPLAY_FAST_PATH` | Let verified HTTP hits bypass inference queues; requires a manifest | `1` |
+| `VEYA_CACHE_RENEW_ON_HIT` | Renew retention on use | disabled |
 
 Fixed retention checks age from the stored decision. Renewal extends a frequently replayed
 decision's lifetime and is unsuitable when every decision must be recomputed within a fixed
@@ -53,9 +60,39 @@ request coalescing does not prevent every process from computing a simultaneous 
 the shared store resolves which decision wins.
 
 Inspect `cache_info()` or authenticated runtime status for hits, misses, conflicts and errors.
-If the store fails, the engine computes the request again, which may produce a different answer.
+In default optional mode, a failed store permits recomputation, which may produce a different
+answer. Required mode below refuses successful predictions on storage failure.
 The memory bound is enforced on each write. SQLite checks it periodically to amortize database
 maintenance and can temporarily exceed it; call `prune()` for immediate enforcement.
+
+For retained decisions without scheduled expiry or capacity eviction, configure:
+
+```text
+VEYA_CACHE_PATH=/absolute/path/decisions.sqlite
+VEYA_CACHE_TTL=none
+VEYA_CACHE_MAXSIZE=none
+VEYA_CACHE_FINGERPRINT=policy-v1
+VEYA_CACHE_REQUIRED=1
+```
+
+The first stored decision for an exact request is replayed after ordinary process
+restarts, including a borderline 0.51 answer that a replacement model would score
+at 0.49. A fixed fingerprint deliberately keeps that model's earlier decisions
+across model/configuration upgrades; change the policy identity to permit fresh
+decisions. The routed checkpoint name, ordered questions, state and per-call token
+budgets remain part of the key. Use the same routed checkpoint name across upgrades.
+With no capacity bound, monitor database growth and maintain backups.
+
+Set `VEYA_CACHE_REQUIRED=1` to require replay or successful commit before returning
+a prediction. Required cache failures return a sanitized HTTP 503 or MCP
+`decision_cache_unavailable` error, including when other hooks use `hooks_raise=False`.
+Required SQLite stores use FULL synchronization; default optional stores remain
+fail-open with NORMAL synchronization. Runtime status reports `decision_cache.required`.
+The flag does not disable configured expiry/eviction or make memory storage persistent.
+To detect a missing or replaced database before serving, initialize it deliberately, then
+pin its UUID with `VEYA_CACHE_EXPECTED_STORE_ID` and enable `VEYA_CACHE_REQUIRE_EXISTING`.
+The [verified replay guide](replay.md) explains approval and recovery. Preserve the database
+and policy identity for durable replay. Exact replay does not prove the original decision was correct.
 
 ## Retention and deletion
 

@@ -1,6 +1,6 @@
 """Edge-case sweep: the inference paths the repo's other suites do not cover.
 
-`tests/test_local_e2e.py` and `verify/laya_smoke_test.py` check that Laya answers the right things.
+`tests/test_local_e2e.py` and `verify/veya_smoke_test.py` check that Veya answers the right things.
 This checks the shapes and API paths around that: one forward pass answering many questions,
 high-cardinality choice sets (the `head_max_len` option budget), odd input shapes and encodings,
 long-context truncation, the router lifecycle (preload / LRU / attach / unload) and explicit
@@ -23,13 +23,13 @@ os.environ.setdefault("USE_TORCH", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)          # repository root; <root>/laya/email.py must not shadow stdlib email
+sys.path.insert(0, ROOT)          # repository root; <root>/veya/email.py must not shadow stdlib email
 
 import torch  # noqa: E402
 
-import laya  # noqa: E402
-from laya.common import build_sequence  # noqa: E402
-from laya.router import Router  # noqa: E402
+import veya  # noqa: E402
+from veya.common import build_sequence  # noqa: E402
+from veya.router import Router  # noqa: E402
 
 FAILS = []
 
@@ -58,7 +58,7 @@ def main():
     ap.add_argument("--device", default="auto")
     args = ap.parse_args()
 
-    models = {"english": os.path.join(args.models, "laya"),
+    models = {"english": os.path.join(args.models, "veya"),
               "multilingual": os.path.join(args.models, "laya-multilingual"),
               "typed-decisions": os.path.join(args.models, "laya-typed-decisions")}
     for name, path in models.items():
@@ -81,7 +81,7 @@ def main():
 
     # ------------------------------------------------------------ 1. many questions, one pass
     head("1. One forward pass answering many questions")
-    en = laya.load(models["english"], device=device)
+    en = veya.load(models["english"], device=device)
     many = {"q%02d" % i: {"type": "noul", "instructions": "Does the message mention item %d?" % i}
             for i in range(12)}
     t0 = time.perf_counter()
@@ -131,7 +131,7 @@ def main():
     head("4. Long-context truncation (per sequence)")
     long_text = "We were billed twice for invoice 4411 and nobody has replied. " * 300
     for name in ("english", "multilingual"):
-        agent = en if name == "english" else laya.load(models["multilingual"], device=device)
+        agent = en if name == "english" else veya.load(models["multilingual"], device=device)
         max_len, head_len = agent.cfg["max_len"], agent.cfg["head_max_len"]
         lengths = [len(build_sequence(agent.tok, {"body": long_text}, agent._to_internal(mixed[qid]),
                                       max_len, head_len)[0]) for qid in mixed]
@@ -146,7 +146,7 @@ def main():
 
     # ------------------------------------------------------------ 5. multilingual breadth
     head("5. Multilingual: scripts and long context")
-    ml = laya.load(models["multilingual"], device=device)
+    ml = veya.load(models["multilingual"], device=device)
     for label, text in [("german", "Ich wurde zweimal fuer Rechnung 4411 belastet, bitte erstatten Sie den Betrag."),
                         ("chinese", "发票4411被重复扣款，请今天退款。"),
                         ("arabic", "تم خصم المبلغ مرتين للفاتورة 4411، يرجى رد المبلغ اليوم."),
@@ -169,7 +169,7 @@ def main():
         r.load(n)
     report("max_loaded=2 evicts least-recently-used", r.loaded == ["multilingual", "typed-decisions"],
            "loaded=%s" % r.loaded)
-    spare = laya.load(models["english"], device=device)
+    spare = veya.load(models["english"], device=device)
     r.attach("english", spare)
     report("attach() registers an existing agent", "english" in r.loaded, "loaded=%s" % r.loaded)
     del spare
@@ -182,13 +182,13 @@ def main():
         if dev == "mps" and not (hasattr(torch.backends, "mps") and torch.backends.mps.is_available()):
             print("   SKIP mps not available on this machine")
             continue
-        agent = laya.load(models["multilingual"], device=dev)
+        agent = veya.load(models["multilingual"], device=dev)
         try:
             a = agent.predict({"message": "Ich wurde zweimal belastet, bitte erstatten."}, triage)["answers"]
             report("device=%r runs (resolved to %s)" % (dev, agent.device.type),
                    agent.device.type == dev and shapes_ok(a, triage)[0])
             if dev == "mps":
-                cpu = laya.load(models["multilingual"], device="cpu")
+                cpu = veya.load(models["multilingual"], device="cpu")
                 same = (json.dumps(cpu.predict({"message": "Ich wurde zweimal belastet, bitte erstatten."},
                                                triage)["answers"], sort_keys=True)
                         == json.dumps(a, sort_keys=True))

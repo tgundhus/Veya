@@ -1,6 +1,6 @@
 ---
 title: SDKs and local MCP integration
-description: Connect Python, TypeScript, Java or .NET applications to Laya-Pro, or expose local decisions through MCP tools.
+description: Connect Python, TypeScript, Java or .NET applications to Veya, or expose local decisions through MCP tools.
 ---
 
 # SDKs and integration
@@ -29,7 +29,7 @@ records which SDK tests ran in this environment.
 ## Python
 
 ```python
-from laya import DecisionCache, Router, triage_questions
+from veya import DecisionCache, Router, triage_questions
 
 with DecisionCache("decisions.sqlite", ttl=86400) as cache:
     with Router(hooks=[cache]) as router:
@@ -44,7 +44,7 @@ weights, pass `models={"english": "/path/to/checkpoint"}` and select `model="eng
 If the workload uses other languages, configure their checkpoint paths too.
 
 Use `Router(performance_mode=2)` for a smaller resource budget, or set
-`LAYA_PERFORMANCE_MODE=2` before starting a Python, HTTP or local MCP engine.
+`VEYA_PERFORMANCE_MODE=2` before starting a Python, HTTP or local MCP engine.
 With the variable unset, defaults are unchanged; `performance_mode="default"` ignores it for
 an instance. Explicit existing settings take precedence. The [five modes](performance-modes.md)
 control resources without changing models, precision or cache policy. Remote HTTP clients and
@@ -52,7 +52,7 @@ MCP sessions use the server's resource settings.
 
 Schema helpers and framework adapters are covered in [structured decisions](structured.md),
 [LangChain / LangGraph](langchain.md), [LlamaIndex](llamaindex.md) and [CrewAI](crewai.md).
-The optional `agno` extra adds Agno 3.x routing and guardrails (tested with 3.1.12). `LayaAgnoRouter(agent=router)`
+The optional `agno` extra adds Agno 3.x routing and guardrails (tested with 3.1.12). `VeyaAgnoRouter(agent=router)`
 selects a member; the application executes it. Local and self-hosted HTTP paths support `task`
 and `lang_guess`, and refuse malformed decisions before selecting an agent.
 Set `AGNO_TELEMETRY=false` to disable the framework's telemetry.
@@ -63,14 +63,14 @@ Install the standalone client with `python -m pip install ./sdk/python`. Its app
 needs only the standard library; run the inference server separately.
 
 ```python
-from laya_client import LayaClient
+from veya_client import VeyaClient
 
-client = LayaClient(base_url="http://127.0.0.1:8000", api_key="your-server-token")
+client = VeyaClient(base_url="http://127.0.0.1:8000", api_key="your-server-token")
 result = client.predict("Please refund the duplicate charge", questions, model="english")
 batch = client.predict_batch(["Payment failed", "Cannot sign in"], questions, batch_size=2)
 ```
 
-The [client README](https://github.com/tgundhus/laya-pro/tree/main/sdk/python) covers errors,
+The [client README](https://github.com/tgundhus/Veya/tree/main/sdk/python) covers errors,
 strict response validation, controls and isolated package verification.
 
 ## TypeScript over HTTP
@@ -83,13 +83,13 @@ npm ci
 npm test
 npm pack
 # In your application:
-npm install /path/to/laya-pro/sdk/typescript/laya-pro-client-0.1.0.tgz
+npm install /path/to/veya/sdk/typescript/veya-client-0.1.0.tgz
 ```
 
 ```typescript
-import { Laya, triageQuestions } from 'laya-pro-client';
+import { Veya, triageQuestions } from 'veya-client';
 
-const client = new Laya({ baseURL: 'http://127.0.0.1:8000', timeoutMs: 120_000 });
+const client = new Veya({ baseURL: 'http://127.0.0.1:8000', timeoutMs: 120_000 });
 const result = await client.predict('Payment failed', triageQuestions());
 const batch = await client.predictBatch(
   ['Payment failed', 'Cannot sign in'], triageQuestions(), { batchSize: 8 }
@@ -98,7 +98,7 @@ const batch = await client.predictBatch(
 
 The client validates requests and responses, preserves routing and confidence fields,
 supports cancellation and deadlines, and reports server errors. It does not retry inference
-automatically. [HTTP SDK source and full API](https://github.com/tgundhus/laya-pro/tree/main/sdk/typescript).
+automatically. [HTTP SDK source and full API](https://github.com/tgundhus/Veya/tree/main/sdk/typescript).
 
 ## Native SDKs
 
@@ -107,42 +107,42 @@ finalists after elimination; their probabilities describe that final set. The bo
 cache reuses label vectors between requests and stays in memory. Clear it when the model changes;
 it is separate from Python's decision retention policy.
 
-- [TypeScript ONNX SDK](https://github.com/tgundhus/laya-pro/tree/main/laya-ts): export ONNX
+- [TypeScript ONNX SDK](https://github.com/tgundhus/Veya/tree/main/veya-ts): export ONNX
   artifacts, build with `npm ci` and `npm run build`, then install the packed local package.
-- [Java SDK](https://github.com/tgundhus/laya-pro/tree/main/laya-java): build and test with
+- [Java SDK](https://github.com/tgundhus/Veya/tree/main/veya-java): build and test with
   the checked-in Gradle wrapper and a compatible JDK. The source API namespace is retained
   for compatibility.
-- [.NET SDK](https://github.com/tgundhus/laya-pro/tree/main/laya-dotnet): build the solution,
+- [.NET SDK](https://github.com/tgundhus/Veya/tree/main/veya-dotnet): build the solution,
   then reference the local project or packed artifact. Follow its exporter and tokenizer guide.
 
-Use artifacts built from this checkout for Laya-Pro. Maven Central, NuGet and npm names in
+Use artifacts built from this checkout for Veya. Maven Central, NuGet and npm names in
 upstream examples identify upstream releases until this fork publishes its own artifacts.
 
 ## Local MCP
 
-Install `laya-pro[mcp]` from the repository. Configure your editor with the absolute executable
+Install `veya[mcp]` from the repository. Configure your editor with the absolute executable
 path from the environment where it is installed:
 
 ```json
 {
   "mcpServers": {
-    "laya-pro": {
-      "command": "/absolute/path/to/venv/bin/laya-mcp-server",
+    "veya": {
+      "command": "/absolute/path/to/venv/bin/veya-mcp-server",
       "env": {
-        "LAYA_DEVICE": "cpu",
-        "LAYA_PRELOAD": "0",
-        "LAYA_CACHE_PATH": "/absolute/path/to/decisions.sqlite",
-        "LAYA_CACHE_TTL": "604800",
-        "LAYA_CACHE_MAXSIZE": "10000"
+        "VEYA_DEVICE": "cpu",
+        "VEYA_PRELOAD": "0",
+        "VEYA_CACHE_PATH": "/absolute/path/to/decisions.sqlite",
+        "VEYA_CACHE_TTL": "604800",
+        "VEYA_CACHE_MAXSIZE": "10000"
       }
     }
   }
 }
 ```
 
-On Windows, use the environment's `Scripts/laya-mcp-server.exe`. Keep protocol output on
-stdout and logs on stderr. `laya_status` reports runtime readiness and cache statistics when
-enabled. `laya_predict` and `laya_predict_batch` evaluate questions; schema, shortlist and email
+On Windows, use the environment's `Scripts/veya-mcp-server.exe`. Keep protocol output on
+stdout and logs on stderr. `veya_status` reports runtime readiness and cache statistics when
+enabled. `veya_predict` and `veya_predict_batch` evaluate questions; schema, shortlist and email
 tools are also available.
-For a separate server, set `LAYA_BASE_URL` and configure caching on that server.
+For a separate server, set `VEYA_BASE_URL` and configure caching on that server.
 [Tool contracts and remote mode](cli-mcp.md).

@@ -105,7 +105,7 @@ def make_forward(agent, backend, model_dir):
 def forward_requests(agent, fn, reqs):
     """Every (state, question) pair of every request becomes one row, built by upstream build_sequence;
     calibration and answer schema mirror Agent.predict, so only the forward pass differs."""
-    from laya.common import (
+    from veya.common import (
         QTYPES,
         build_sequence,
         collate_items,
@@ -151,7 +151,7 @@ def serve(args):
     max_delay, run one forward on a single worker thread, answer everyone."""
     from aiohttp import web
 
-    from laya.agent import Agent
+    from veya.agent import Agent
 
     agent = Agent(args.model_dir, device="cuda")
     fn = make_forward(agent, args.backend, args.model_dir)
@@ -359,7 +359,7 @@ def export(args):
     import torch
     from onnxruntime.transformers.float16 import convert_float_to_float16
 
-    from laya.agent import Agent
+    from veya.agent import Agent
 
     class Wrapper(torch.nn.Module):
         def __init__(self, m):

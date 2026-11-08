@@ -2,7 +2,7 @@ import argparse
 import os
 import torch
 
-from laya.agent import Agent
+from veya.agent import Agent
 
 
 def _constant(graph, name):
@@ -99,7 +99,7 @@ def quantize_model(model_path: str, output_path: str, per_channel: bool = False)
 
 
 def int8_output_path(output_path: str) -> str:
-    """`laya.onnx` -> `laya.int8.onnx`, next to the fp32 export it was quantized from."""
+    """`veya.onnx` -> `veya.int8.onnx`, next to the fp32 export it was quantized from."""
     root, ext = os.path.splitext(output_path)
     return "%s.int8%s" % (root, ext or ".onnx")
 
@@ -112,7 +112,7 @@ def export_to_onnx(model_id_or_path: str, output_path: str):
     # 1. Dummy tensors for tracing. torch.export specialises any dimension that is 1 (or equal
     # to another) at trace time, so a batch-1 dummy baked batch=1 into the decision head's
     # attention: the export ran at batch 1 and failed at batch >= 2 (#695). Batch, sequence and
-    # marker counts are therefore all > 1 and pairwise different. laya-ts's exporter does the same.
+    # marker counts are therefore all > 1 and pairwise different. veya-ts's exporter does the same.
     batch, seq_len, num_markers = 2, 17, 3
     dummy_input_ids = torch.randint(0, 100, (batch, seq_len), dtype=torch.long)
     dummy_attention_mask = torch.ones((batch, seq_len), dtype=torch.long)
@@ -179,9 +179,9 @@ def export_to_onnx(model_id_or_path: str, output_path: str):
     print(f"Successfully exported ONNX model to: {output_path}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Export a Laya model to ONNX format")
+    parser = argparse.ArgumentParser(description="Export a Veya model to ONNX format")
     parser.add_argument("--model", type=str, default="convaiinnovations/laya", help="HuggingFace Hub ID or local path")
-    parser.add_argument("--output", type=str, default="laya.onnx", help="Output path for the ONNX file")
+    parser.add_argument("--output", type=str, default="veya.onnx", help="Output path for the ONNX file")
     parser.add_argument("--quantize", "--int8", dest="quantize", action="store_true",
                         help="Also write an INT8 weight-only quantized copy (CPU-only speed and "
                              "size win, at a real accuracy cost) next to --output, named "

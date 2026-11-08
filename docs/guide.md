@@ -1,41 +1,46 @@
-# Using Laya-Pro
+# Using Veya
 
 The engine in detail: installing it, the command line, routing, batches and long documents,
 confidence and abstention, question types, and the HTTP and MCP servers. The
-[README](https://github.com/tgundhus/laya-pro#readme) has the overview, the benchmarks and the
+[README](https://github.com/tgundhus/Veya#readme) has the overview, the benchmarks and the
 quickstart; [Limits](limits.md) has what the models do not do well; [Decision
 consistency](consistency.md) covers the decision cache.
 
 ## Installation
 
 Python 3.10 or newer (`huggingface_hub` 1.x, `transformers` 5.x and `torch` 2.14 set that floor).
-Laya-Pro installs from its repository; `pip install laya` from PyPI installs the original Laya,
-without Laya-Pro's changes. Git must be installed.
+Install Veya from its repository until a Veya registry release is published.
+The upstream `laya` distribution is a separate project. Git must be installed.
+When upgrading, uninstall the former `laya-pro` distribution before installing
+`veya`; the legacy `laya` import namespace overlaps. The same rule applies to
+`laya-pro-client` / `veya-client` and `laya-pro-onnx` / `veya-onnx`. Removing an old
+distribution after installing its replacement can delete the replacement's files.
 
 ```bash
-python -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
-python -m pip install "laya-pro[serve,onnx] @ git+https://github.com/tgundhus/laya-pro.git"   # with extras
+python -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
+python -m pip install "veya[serve,onnx] @ git+https://github.com/tgundhus/Veya.git"   # with extras
 python -m pip install -e .                                                           # a source checkout
 ```
 
-Extras: `serve` (HTTP server), `mcp` (MCP server), `onnx` (ONNX Runtime), `langchain` (LangChain and
-LangGraph), `llamaindex`, `crewai`, `structured` (pydantic models for `decide`) and `fast` (the
-TileLang GPU fast path).
+Extras: `serve` (HTTP), `mcp` (classic MCP), `codemode` (local JavaScript MCP),
+`replay` (ONNX manifest preparation), `onnx` (ONNX Runtime), `langchain` / `langgraph`,
+`llamaindex`, `crewai`, `agno`, `structured` (pydantic models for `decide`) and `fast`
+(TileLang GPU kernels). Prepared replay manifests do not require the ONNX parser at runtime.
 
 **In a new virtual environment.** On macOS or Linux:
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
-.venv/bin/python -I -c "import laya; print(laya.__version__)"
+.venv/bin/python -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
+.venv/bin/python -I -c "import veya; print(veya.__version__)"
 ```
 
 On Windows PowerShell:
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
-.\.venv\Scripts\python.exe -I -c "import laya; print(laya.__version__)"
+.\.venv\Scripts\python.exe -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
+.\.venv\Scripts\python.exe -I -c "import veya; print(veya.__version__)"
 ```
 
 The last line prints the installed version without loading a checkpoint; `-I` keeps a source copy
@@ -46,29 +51,29 @@ may need `sudo apt install python3-venv` first.
 
 ```bash
 uv venv --python 3.12
-uv pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+uv pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 ```
 
-In a uv project, add it as a dependency with `uv add "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"`.
+In a uv project, add it as a dependency with `uv add "veya @ git+https://github.com/tgundhus/Veya.git"`.
 `uv pip` also takes `--torch-backend=auto` (or a named backend such as `cpu`) to install the PyTorch
 build that matches the machine.
 
 **A specific PyTorch build.** For a CPU-only or a particular CUDA build, install PyTorch first with
-[its installation guide](https://pytorch.org/get-started/locally/), then Laya-Pro. For an Intel GPU
+[its installation guide](https://pytorch.org/get-started/locally/), then Veya. For an Intel GPU
 (XPU), install a supported driver and an XPU build of PyTorch first:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/xpu
-.\.venv\Scripts\python.exe -m pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+.\.venv\Scripts\python.exe -m pip install "veya @ git+https://github.com/tgundhus/Veya.git"
 .\.venv\Scripts\python.exe -c "import torch; print(torch.xpu.is_available())"
 ```
 
-Laya picks an available XPU when no device is given; `device="xpu"` in `laya.load()` or
+Veya picks an available XPU when no device is given; `device="xpu"` in `veya.load()` or
 `Router(device="xpu")` asks for it explicitly.
 
 **Troubleshooting.**
 
-- **`ModuleNotFoundError: No module named 'laya'`:** install and run with the same virtual
+- **`ModuleNotFoundError: No module named 'veya'`:** install and run with the same virtual
   environment's Python, and select that interpreter in your editor.
 - **Missing `rl_agent_config.json`:** it ships with each checkpoint, beside `model.safetensors`. For
   a local model, pass the directory that holds both.
@@ -82,12 +87,12 @@ it runs a sample request and keeps downloaded models between runs.
 
 PyTorch stops publishing macOS **x86_64** wheels at 2.2.2 (2.3 and later are Apple-silicon only),
 while transformers 5.x requires torch >= 2.4 and torch 2.2.2 was built against NumPy 1.x. A plain
-`pip install "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"` on an Intel Mac therefore resolves a stack that cannot run — torch 2.2.2 with
+`pip install "veya @ git+https://github.com/tgundhus/Veya.git"` on an Intel Mac therefore resolves a stack that cannot run — torch 2.2.2 with
 transformers 5.x and NumPy 2.x, and torch fails to initialise NumPy 2, which `predict()` needs for
 its final `.numpy()` conversion. Pin the stack:
 
 ```bash
-pip install "numpy<2" "torch==2.2.2" "transformers==4.57.6" "laya-pro @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "numpy<2" "torch==2.2.2" "transformers==4.57.6" "veya @ git+https://github.com/tgundhus/Veya.git"
 ```
 
 `transformers` 4.57.x is the last 4.x line and the newest one that runs on torch 2.2.2. The
@@ -98,16 +103,16 @@ than the 4.x defaults. Apple-silicon and CUDA machines need none of this pinning
 
 ## Running from this checkout
 
-`setup_laya.sh` stands the whole thing up in the checkout: an isolated `.venv` with the pinned
+`setup_veya.sh` stands the whole thing up in the checkout: an isolated `.venv` with the pinned
 stack, the three checkpoints under `models/` (gitignored, ~2.3 GB), and a verification run. It is
 idempotent, so re-running only fills in what is missing. The numbers below are from the machine it
 was developed on — an Intel Mac Pro, no CUDA, AMD Radeon GPUs reachable through Metal (MPS); the
 script itself is not Intel-specific. Commands are relative to the repository root.
 
 ```bash
-./setup_laya.sh                                    # venv + pinned deps + checkpoints + verify
-.venv/bin/python verify/laya_smoke_test.py --models ./models            # real weights, device auto -> MPS
-.venv/bin/python verify/laya_smoke_test.py --models ./models --device cpu
+./setup_veya.sh                                    # venv + pinned deps + checkpoints + verify
+.venv/bin/python verify/veya_smoke_test.py --models ./models            # real weights, device auto -> MPS
+.venv/bin/python verify/veya_smoke_test.py --models ./models --device cpu
 .venv/bin/python verify/numerics_check.py          # RoPE bases, determinism, SDPA vs eager
 .venv/bin/python verify/bench_devices.py           # CPU vs MPS, thread scaling
 .venv/bin/python verify/edge_sweep.py              # edge cases: option budgets, truncation, router lifecycle
@@ -122,7 +127,7 @@ after warm-up):
 
 | checkpoint | CPU (28 threads) | MPS (Radeon Pro Vega II) |
 |---|---|---|
-| `laya` (421M) | 453 ms — 113 ms/question | **146 ms — 37 ms/question** |
+| `veya` (421M) | 453 ms — 113 ms/question | **146 ms — 37 ms/question** |
 | `laya-multilingual` (322M) | 192 ms — 48 ms/question | **121 ms — 30 ms/question** |
 | `laya-typed-decisions` (421M) | 441 ms — 110 ms/question | **145 ms — 36 ms/question** |
 
@@ -134,34 +139,34 @@ so warm up before timing. Individual runs move by a few percent with machine loa
 To keep the router fully offline, point it at the local checkpoints rather than the hub repos:
 
 ```python
-from laya import Router
+from veya import Router
 
-router = Router(models={"english": "models/laya",
+router = Router(models={"english": "models/veya",
                         "multilingual": "models/laya-multilingual",
                         "typed-decisions": "models/laya-typed-decisions"},
                 preload=True)
 ```
 
 Full notes — version rationale, the two portability fixes this needed, and every verification
-run — are in [`LOCAL_SETUP.md`](https://github.com/tgundhus/laya-pro/blob/main/LOCAL_SETUP.md).
+run — are in [`LOCAL_SETUP.md`](https://github.com/tgundhus/Veya/blob/main/LOCAL_SETUP.md).
 
 
 ## Command line
 
-Installing the package also installs a `laya` command for quick local testing, no script needed:
+Installing the package also installs a `veya` command for quick local testing, no script needed:
 
 ```bash
-laya "I was charged twice, please refund"            # routing decision only; works offline, no download
-laya "Refactor this service" --predict               # full answers (downloads the checkpoint on first use)
-laya "Mein Konto wurde zweimal belastet" --lang de   # force a language instead of detecting it
-laya "My payment failed twice" --lang-guess en        # a soft hint: nudge routing, still fall through to detection
-laya "My payment failed twice" --model ml            # pin a checkpoint: names, aliases and casing all resolve as the SDK resolves them
-laya "My payment failed twice" --preset triage       # answer a ready-made preset (triage, email, guard, moderation, router)
-laya --batch tickets.txt --predict                   # score a file of requests, one per line, in one batch
-cat tickets.txt | laya --batch - --predict --json    # stdin; one JSON line of answers per request
-laya "Where is my card" --questions intents.json     # answer your own questions, written in a JSON file
-laya "Refund my card" --predict --min-confidence 0.9 # mark an answer the model is unsure of
-laya                                                 # interactive mode
+veya "I was charged twice, please refund"            # routing decision only; works offline, no download
+veya "Refactor this service" --predict               # full answers (downloads the checkpoint on first use)
+veya "Mein Konto wurde zweimal belastet" --lang de   # force a language instead of detecting it
+veya "My payment failed twice" --lang-guess en        # a soft hint: nudge routing, still fall through to detection
+veya "My payment failed twice" --model ml            # pin a checkpoint: names, aliases and casing all resolve as the SDK resolves them
+veya "My payment failed twice" --preset triage       # answer a ready-made preset (triage, email, guard, moderation, router)
+veya --batch tickets.txt --predict                   # score a file of requests, one per line, in one batch
+cat tickets.txt | veya --batch - --predict --json    # stdin; one JSON line of answers per request
+veya "Where is my card" --questions intents.json     # answer your own questions, written in a JSON file
+veya "Refund my card" --predict --min-confidence 0.9 # mark an answer the model is unsure of
+veya                                                 # interactive mode
 ```
 
 `--lang` is decisive: a real code picks the checkpoint and skips detection. `--lang-guess` is the
@@ -170,14 +175,14 @@ forcing it — and a hint that resolves to nothing falls through to the built-in
 `Router(lang_guess=...)` behaviour the library offers. Neither flag changes the routing decision's
 precedence rules; `--lang-guess` just adds a hint those rules read before detection.
 
-Routing alone never downloads a checkpoint, so it returns in milliseconds. `--predict` loads the routed checkpoint, which needs network access to the Hugging Face hub the first time; if a checkpoint cannot be downloaded, the CLI says so instead of crashing. `--batch` (with or without `--predict`) sends the whole file through `Router.predict_batch` in one process, so the requests share checkpoint loads and forward passes — measured 2.6x on 20 tickets vs looping `predict` one by one, with `--batch-size N` to bound the forward pass, `--sort-by-length` to group similarly sized requests inside it, and `--json` for JSONL output. Batch routing (`laya --batch FILE`, no `--predict`) likewise answers with `route_batch` in one pass, still without loading anything.
+Routing alone never downloads a checkpoint, so it returns in milliseconds. `--predict` loads the routed checkpoint, which needs network access to the Hugging Face hub the first time; if a checkpoint cannot be downloaded, the CLI says so instead of crashing. `--batch` (with or without `--predict`) sends the whole file through `Router.predict_batch` in one process, so the requests share checkpoint loads and forward passes — measured 2.6x on 20 tickets vs looping `predict` one by one, with `--batch-size N` to bound the forward pass, `--sort-by-length` to group similarly sized requests inside it, and `--json` for JSONL output. Batch routing (`veya --batch FILE`, no `--predict`) likewise answers with `route_batch` in one pass, still without loading anything.
 
 `--sort-by-length` reaches the length grouping `Agent.predict_batch` has done since #294, which
 until now only the library call in [Batch Mode](#batches)
 could ask for. A forward pass pads every state in it to the longest one, so a two-line request
 sharing a pass with a two-paragraph one spends most of its compute on padding; grouping by length
 first puts comparable sizes together. Measured on 128 real Yelp reviews of 69-2,293 characters,
-run as `laya --batch FILE --predict --model laya --batch-size 8` with and without the flag, four
+run as `veya --batch FILE --predict --model veya --batch-size 8` with and without the flag, four
 interleaved rounds on an Apple-silicon Mac at the CLI's own device pick: 41.25 s median unsorted
 against 29.23 s sorted, a **paired median of 1.42x** (1.39-1.44x across the four pairs), with all
 128 decisions identical and still in input order. `research/` measures the same knob at 2.15x over
@@ -198,19 +203,19 @@ Device selection is automatic, in this order: **CUDA → MPS → CPU**. Mixed pr
 CUDA; CPU and MPS run fp32. Override with `device=`, which is accepted by both entry points:
 
 ```python
-agent = laya.load("convaiinnovations/laya", device="cpu")      # or "cuda", "mps"
+agent = veya.load("convaiinnovations/laya", device="cpu")      # or "cuda", "mps"
 router = Router(preload=True, device="mps")
 ```
 
 ## Web playground
 
-`examples/server.py` is a self-contained FastAPI app for testing Laya without writing any code:
+`examples/server.py` is a self-contained FastAPI app for testing Veya without writing any code:
 a two-pane playground (edit the request as a form or as JSON, run it with Ctrl+Enter, read each
 answer's full distribution and calibrated confidence, copy it as curl or Python), plus a plain
 JSON API (`/predict`, `/predict/batch`) for scripting against.
 
 ```bash
-pip install "laya-pro[serve] @ git+https://github.com/tgundhus/laya-pro.git"
+pip install "veya[serve] @ git+https://github.com/tgundhus/Veya.git"
 python examples/server.py               # http://127.0.0.1:8000
 ```
 
@@ -234,17 +239,17 @@ curl -s localhost:8000/predict -H 'content-type: application/json' -d '{
 pins the device. See `python examples/server.py --help` for the rest.
 
 A request body may carry `model` to pin a checkpoint instead of letting the router choose, and it
-takes exactly the spellings `laya --model` takes: names, aliases and casing all resolve through
-`laya.router`. `GET /models` lists the checkpoints and the aliases alongside them.
+takes exactly the spellings `veya --model` takes: names, aliases and casing all resolve through
+`veya.router`. `GET /models` lists the checkpoints and the aliases alongside them.
 
-Both `/predict` and `/predict/batch` also accept the four per-call controls `laya-serve`
+Both `/predict` and `/predict/batch` also accept the four per-call controls `veya-serve`
 forwards on `/v1/systemone`: `lang_guess` (a soft ISO hint that participates in routing, where
 `lang` skips detection entirely), `max_len` and `head_max_len` (per-call token-budget overrides,
-capped by `LAYA_MAX_TOKEN_BUDGET`), and `min_confidence` (core's abstention threshold; the answer
+capped by `VEYA_MAX_TOKEN_BUDGET`), and `min_confidence` (core's abstention threshold; the answer
 comes back with `abstention` and `abstention_threshold` fields naming whether it fired). An absent key means "inherit what the
 Router was built with", so a caller never has to send them back as `null`; a body that names
 `hooks`, `hooks_raise`, `hooks_timeout`, `on_predict_start`, or `on_predict_end` is refused with
-422 rather than silently dropped, matching what `laya-serve` does for the same fields. On
+422 rather than silently dropped, matching what `veya-serve` does for the same fields. On
 `/predict/batch`, `min_confidence` reaches `Router.predict_batch` as a call argument rather than
 a per-request key; the other three travel inside each request dict, so states in one batch may
 name different budgets.
@@ -261,15 +266,15 @@ Measured on the running server: 64 real reviews of 91–2,293 characters, one ch
 
 ### JavaScript / TypeScript
 
-[`laya-pro-client`](https://github.com/tgundhus/laya-pro/blob/main/sdk/typescript/README.md) supports JavaScript and TypeScript
-applications over HTTP to a self-hosted `laya-serve` `/v1/systemone` server. It
+[`veya-client`](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) supports JavaScript and TypeScript
+applications over HTTP to a self-hosted `veya-serve` `/v1/systemone` server. It
 includes inferred answer types, all five question presets, ESM/CommonJS exports,
 and cancellation.
 
 ```bash
 # From this checkout, install and start the Python inference service:
 pip install -e '.[serve]'
-LAYA_HOST=127.0.0.1 LAYA_MODELS=english laya-serve
+VEYA_HOST=127.0.0.1 VEYA_MODELS=english veya-serve
 
 # In another terminal:
 cd sdk/typescript
@@ -278,11 +283,11 @@ npm run build
 node examples/triage.mjs
 ```
 
-The npm package is named `laya-pro-client`. Use it when a JavaScript or TypeScript
-application talks over HTTP to self-hosted Python `laya-serve`. Use `laya-ts`
+The npm package is named `veya-client`. Use it when a JavaScript or TypeScript
+application talks over HTTP to self-hosted Python `veya-serve`. Use `veya-ts`
 when inference must run directly inside JavaScript through its local ONNX
 runtime, without a Python server.
-See [installation, examples, and publishing](https://github.com/tgundhus/laya-pro/blob/main/sdk/typescript/README.md) and the
+See [installation, examples, and publishing](https://github.com/tgundhus/Veya/blob/main/sdk/typescript/README.md) and the
 [repository analysis](typescript-sdk.md) for architecture and scope.
 
 
@@ -292,12 +297,12 @@ To try the Python SDK in a CPU container, see the
 [Docker Compose quickstart](docker.md). It runs a sample request and keeps
 downloaded models between runs.
 
-Laya ships three checkpoints. The built-in **`Router`** is the recommended entry point: it evaluates any state in any language, automatically detects scripts and languages in sub-milliseconds, and dispatches to the optimal checkpoint in a single forward pass.
+Veya ships three checkpoints. The built-in **`Router`** is the recommended entry point: it evaluates any state in any language, automatically detects scripts and languages in sub-milliseconds, and dispatches to the optimal checkpoint in a single forward pass.
 
 ### Minimal example (30 seconds)
 
 ```python
-from laya import Router
+from veya import Router
 
 router = Router()  # downloads only the selected checkpoint on first use
 result = router.predict(
@@ -314,12 +319,12 @@ Each `result["answers"][qid]` is an answer dict: `choice` is the selected label,
 expected ordinal level, and `noul` is P(true). `confidence` is a separate field in that dict;
 `probabilities` is available for `choice` and `score`. `result["routing"]` explains which checkpoint was
 picked and why. Values depend on the checkpoint and input. For ready-made question sets see
-`laya.presets` (`triage_questions`, `moderation_questions`, `email_questions`, ...).
+`veya.presets` (`triage_questions`, `moderation_questions`, `email_questions`, ...).
 
 Full walkthrough:
 
 ```python
-from laya import Router
+from veya import Router
 
 # Preload checkpoints into memory for instant sub-35ms routing
 router = Router(preload=True)
@@ -358,7 +363,7 @@ questions = {
     }
 }
 
-# 3. English state -> automatically routed to laya (ModernBERT-large, 39.5 ms)
+# 3. English state -> automatically routed to veya (ModernBERT-large, 39.5 ms)
 res_en = router.predict(state, questions)
 print("Department :", res_en["answers"]["department"]["choice"])  # -> billing (confidence: 0.94)
 print("Routing    :", res_en["routing"]["model"])                 # -> english
@@ -399,8 +404,8 @@ router.route({"body": "Please refund the duplicate charge"}).model  # -> english
 ```
 
 Running one of the shipped servers rather than your own `Router`, the same setting is
-`LAYA_DEFAULT_MODEL=multilingual` — in the environment of `laya-serve`, the MCP server or the
-`laya-serve` container ([docs/docker.md](docker.md)). It is the routing fallback only: text
+`VEYA_DEFAULT_MODEL=multilingual` — in the environment of `veya-serve`, the MCP server or the
+`veya-serve` container ([docs/docker.md](docker.md)). It is the routing fallback only: text
 the detector can place is routed on what it detects, whatever this is set to.
 
 ### Batches across checkpoints
@@ -435,7 +440,7 @@ results = router.predict_batch(requests, batch_size=8, sort_by_length=True)
 
 On a shared benchmark (17,416 questions, one T4 GPU, identical questions per model):
 
-| Benchmark / Task | English (`laya`) | Multilingual (`laya-multilingual`) | `Router` (Routed) |
+| Benchmark / Task | English (`veya`) | Multilingual (`laya-multilingual`) | `Router` (Routed) |
 |---|---|---|---|
 | MASSIVE intent, English | **0.783** | 0.657 | **0.783** |
 | MASSIVE intent, 13 other languages | 0.306 | **0.451** | **0.451** |
@@ -487,7 +492,7 @@ cheaper.
 Routing asks one question: *can the English checkpoint read this state?* The built-in detector answers it from the script and a function-word heuristic, and is deliberately dependency-free. That heuristic is best-effort on Latin-script languages it holds no word list for, so a short request can carry no usable signal:
 
 ```python
-from laya.lang import analyse
+from veya.lang import analyse
 analyse("Care este ora in Tokyo?")
 # {'script': 'latin', 'language': 'en', 'is_english': True}   -> the English checkpoint
 ```
@@ -513,12 +518,12 @@ The hint only decides *English or not*: a code whose primary subtag is `en`, `en
 If you only need a single checkpoint for a dedicated pipeline, you can load models directly:
 
 ```python
-import laya
+import veya
 
 # 1. Load a specific checkpoint directly from the hub
-agent = laya.load("convaiinnovations/laya")                           # English root
-agent_ml = laya.load("convaiinnovations/laya", subfolder="multilingual") # 100+ languages
-agent_td = laya.load("convaiinnovations/laya", subfolder="typed-decisions")
+agent = veya.load("convaiinnovations/laya")                           # English root
+agent_ml = veya.load("convaiinnovations/laya", subfolder="multilingual") # 100+ languages
+agent_td = veya.load("convaiinnovations/laya", subfolder="typed-decisions")
 
 # 2. Run all questions in ONE single forward pass (~35 ms on GPU)
 result = agent.predict(state, questions)
@@ -567,7 +572,7 @@ your workload, particularly with mixed precision. Batching is a **GPU
 throughput win** — on an RTX 5060 Ti, per-decision latency drops from ~10 ms one-by-one to ~1 ms
 batched (measured ~9–10×). On CPU, increasing batch size alone may not speed up inference;
 length grouping can help by reducing the padded work in a mixed-length workload. See the
-[CPU measurements and reproduction commands](https://github.com/tgundhus/laya-pro/blob/main/research/README.md#length-batching).
+[CPU measurements and reproduction commands](https://github.com/tgundhus/Veya/blob/main/research/README.md#length-batching).
 
 `ONNXAgent.predict_batch(states, questions, batch_size=..., sort_by_length=...)` has the same
 contract, backed by one ONNX Runtime session run per chunk, so an ONNX deployment gets the same
@@ -586,10 +591,10 @@ result = router.predict(long_document, questions, model="multilingual", max_len=
 ```
 
 Accuracy and time by document length, reproducible with
-[`research/scripts/bench_long_context.py`](https://github.com/tgundhus/laya-pro/blob/main/research/scripts/bench_long_context.py):
+[`research/scripts/bench_long_context.py`](https://github.com/tgundhus/Veya/blob/main/research/scripts/bench_long_context.py):
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tgundhus/laya-pro/main/assets/long_context_8192.png" alt="laya-multilingual with max_len=8192: 16 to 18 of 20 requests correct with up to about 4,000 tokens of text before them, more variable beyond" width="100%" />
+  <img src="https://raw.githubusercontent.com/tgundhus/Veya/main/assets/long_context_8192.png" alt="laya-multilingual with max_len=8192: 16 to 18 of 20 requests correct with up to about 4,000 tokens of text before them, more variable beyond" width="100%" />
 </p>
 
 16 to 18 of 20 requests were answered correctly with up to about 4,000 tokens of text before them;
@@ -661,22 +666,22 @@ result = router.predict_long(state, questions, model="multilingual")
 
 ## GPU fast path
 
-`pip install "laya-pro[fast] @ git+https://github.com/tgundhus/laya-pro.git"` adds an optional forward built from fused [TileLang](https://github.com/tile-ai/tilelang)
+`pip install "veya[fast] @ git+https://github.com/tgundhus/Veya.git"` adds an optional forward built from fused [TileLang](https://github.com/tile-ai/tilelang)
 kernels: GEMM + bias/activation epilogues, GEMM + GEGLU, residual + LayerNorm, in-place RoPE, and a
 sliding-window flash attention that reads the packed QKV buffer directly. Weights stay resident in bf16
 and every (batch, length) bucket is captured as a CUDA graph, so a one-question call no longer pays
 ~200 kernel launches from Python.
 
 ```python
-agent = laya.load("convaiinnovations/laya", fast=True)   # or: agent.accelerate()
+agent = veya.load("convaiinnovations/laya", fast=True)   # or: agent.accelerate()
 agent.predict(state, questions)                            # same API, same answers
 ```
 
 Numerics: on a fixed set of 60 states the fast path stays within 0.046 of an fp32 forward and within 0.076 of the stock
 bf16 path (max |Δp| ≤ 0.05 vs fp32 on both checkpoints, argmax agreement ≥ 47/48 per question type; every per-option
-probability is in `benchmarks/results/parity_*.json`) — see `benchmarks/parity_fast.py` and [BENCHMARKS.md](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#gpu-fast-path).
+probability is in `benchmarks/results/parity_*.json`) — see `benchmarks/parity_fast.py` and [BENCHMARKS.md](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#gpu-fast-path).
 The fast path runs in the agent's autocast dtype at the time `accelerate()` is called: bf16 by default, fp16 if
-`agent.dtype` is `torch.float16`, where it stays within 0.009 of fp32 on the same set ([BENCHMARKS.md](https://github.com/tgundhus/laya-pro/blob/main/BENCHMARKS.md#fp16)).
+`agent.dtype` is `torch.float16`, where it stays within 0.009 of fp32 on the same set ([BENCHMARKS.md](https://github.com/tgundhus/Veya/blob/main/BENCHMARKS.md#fp16)).
 Falls back to the stock forward on CPU/MPS or when `tilelang` is not installed; `agent.deaccelerate()`
 restores it. Kernels compile once per shape bucket on first use (a few seconds, cached on disk).
 
@@ -686,7 +691,7 @@ restores it. Kernels compile once per shape bucket on first use (a few seconds, 
 single-row graph compiles into startup; startup can take tens of seconds. To defer the work:
 
 ```python
-agent = laya.load("convaiinnovations/laya", compile=True, compile_warmup=False)
+agent = veya.load("convaiinnovations/laya", compile=True, compile_warmup=False)
 seconds = agent.warmup()         # manual entry point, also accepts shapes=[(rows, tokens, markers)]
 ```
 
@@ -703,20 +708,20 @@ avoids extra SDPA graph specialisations on PyTorch versions that distinguish len
 reported token usage still counts the original, unpadded sequence.
 Inductor caches compiled graphs under `TORCHINDUCTOR_CACHE_DIR` (by default in `/tmp`); point it at a
 persistent directory to keep them across restarts. Alternatively, load with
-`compile=True, compile_cache=True` to use `$XDG_CACHE_HOME/laya/torchinductor` (or
-`~/.cache/laya/torchinductor`). This opt-in sets the process-wide environment variable only if
+`compile=True, compile_cache=True` to use `$XDG_CACHE_HOME/veya/torchinductor` (or
+`~/.cache/veya/torchinductor`). This opt-in sets the process-wide environment variable only if
 absent; an existing value always wins. It does nothing on eager or TileLang loads.
 
 `compile_mode="reduce-overhead"` is a separate opt-in for CUDA graphs. With `compile=True`, it
 can reduce launch overhead on repeated shapes, but each new shape needs recording and GPU memory
-can grow. Laya copies outputs out of reusable graph buffers and serializes these CUDA forwards.
+can grow. Veya copies outputs out of reusable graph buffers and serializes these CUDA forwards.
 The default mode remains unchanged. See [the engineering notes](compile-and-fast-path.md)
 for measurements and limitations.
 
 
 ## Confidence and abstention
 
-Because Laya's probabilities are trained with strictly proper scoring rules (RLCD), confidence scores are statistically meaningful:
+Because Veya's probabilities are trained with strictly proper scoring rules (RLCD), confidence scores are statistically meaningful:
 
 ```python
 dept = answers["department"]["choice"]
@@ -728,9 +733,9 @@ else:
     escalate_to_human_agent(dept, reason=f"Low confidence ({conf:.2f})")
 ```
 
-A threshold is a policy you choose from measured accuracy at that coverage on your data, not a property of the model. Both checkpoints are over-confident as shipped and `laya-multilingual` has no fitted temperatures at all, so fit them before relying on these numbers — see [Calibration](limits.md#calibration) below, and the [fine-tuning notebook](https://github.com/tgundhus/laya-pro/blob/main/notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb) for the fitting loop itself. Then pick the point where the errors you accept are ones you can live with. Confidence orders decisions; it does not establish that a decision is correct.
+A threshold is a policy you choose from measured accuracy at that coverage on your data, not a property of the model. Both checkpoints are over-confident as shipped and `laya-multilingual` has no fitted temperatures at all, so fit them before relying on these numbers — see [Calibration](limits.md#calibration) below, and the [fine-tuning notebook](https://github.com/tgundhus/Veya/blob/main/notebooks/veya_finetune_typed_decisions_2xT4_kaggle.ipynb) for the fitting loop itself. Then pick the point where the errors you accept are ones you can live with. Confidence orders decisions; it does not establish that a decision is correct.
 
-A threshold also depends on the autocast dtype. On CUDA at compute capability 8 or above the runtime uses the checkpoint's `amp_dtype`, which is bf16 for all three shipped checkpoints. On the fixed set from `benchmarks/parity_fast.py` (60 states, 288 questions per checkpoint, RTX 2000 Ada) bf16 moves a probability by up to 0.073 against the fp32 forward and flips 3 of 864 argmaxes across the three checkpoints; fp16 stays within 0.019 and flips none, at the same latency. `LAYA_CUDA_AMP=fp16` selects fp16 and `LAYA_CUDA_AMP=bf16` selects bf16 (`LAYA_CPU_AMP=bf16` is the CPU counterpart). MPS autocasts in fp16 too, but the overhead dominates on a single small row, so there it engages only once a call reaches `mps_amp_min_rows` rows -- 5 by default, `LAYA_MPS_AMP_MIN_ROWS` to move it; a value that does not parse falls back to 5 and anything below 1 is clamped to 1. On MPS, `agent.dtype` is the autocast target, so it says float16 even when every call stays below the gate and runs in fp32; `agent.dtype_for(rows)` returns the precision a call with that many rows runs in. Fit and measure a threshold in the dtype you serve with.
+A threshold also depends on the autocast dtype. On CUDA at compute capability 8 or above the runtime uses the checkpoint's `amp_dtype`, which is bf16 for all three shipped checkpoints. On the fixed set from `benchmarks/parity_fast.py` (60 states, 288 questions per checkpoint, RTX 2000 Ada) bf16 moves a probability by up to 0.073 against the fp32 forward and flips 3 of 864 argmaxes across the three checkpoints; fp16 stays within 0.019 and flips none, at the same latency. `VEYA_CUDA_AMP=fp16` selects fp16, `VEYA_CUDA_AMP=bf16` selects bf16 and `VEYA_CUDA_AMP=fp32` disables autocast. The long spellings `float16`, `bfloat16` and `float32` are accepted too; values are trimmed and an invalid nonempty value fails loading. An fp32 agent retains the stock forward instead of enabling 16-bit TileLang kernels (`VEYA_CPU_AMP=bf16` is the CPU counterpart). MPS autocasts in fp16 too, but the overhead dominates on a single small row, so there it engages only once a call reaches `mps_amp_min_rows` rows -- 5 by default, `VEYA_MPS_AMP_MIN_ROWS` to move it; a value that does not parse falls back to 5 and anything below 1 is clamped to 1. On MPS, `agent.dtype` is the autocast target, so it says float16 even when every call stays below the gate and runs in fp32; `agent.dtype_for(rows)` returns the precision a call with that many rows runs in. Fit and measure a threshold in the dtype you serve with.
 
 ### Opt-in abstention: `min_confidence`
 
@@ -746,7 +751,7 @@ else:
     route_automatically(ans["choice"])
 ```
 
-The threshold reads `answer_confidence` (`max(p)`) — the calibrated quantity, invariant to the number of options — never the entropy `confidence`. With `decide(..., min_confidence=...)` a low-confidence field comes back as `None` in the schema output, while `return_details=True` keeps the answer and its confidence. [LangChain `LayaRouter`](langchain.md)'s `confidence_threshold` reads the same value: `answer_confidence` when the answer carries it, `confidence` otherwise. Left unset, `min_confidence` changes nothing.
+The threshold reads `answer_confidence` (`max(p)`) — the calibrated quantity, invariant to the number of options — never the entropy `confidence`. With `decide(..., min_confidence=...)` a low-confidence field comes back as `None` in the schema output, while `return_details=True` keeps the answer and its confidence. [LangChain `VeyaRouter`](langchain.md)'s `confidence_threshold` reads the same value: `answer_confidence` when the answer carries it, `confidence` otherwise. Left unset, `min_confidence` changes nothing.
 
 A gate is a policy, and a policy whose application you cannot observe is not one. `low_confidence` is written only when the gate fires, so its absence cannot tell you "a gate ran and this answer cleared it" apart from "no gate ran at all" — you could neither compute an abstention rate nor prove the gate was in effect. **When you pass `min_confidence`,** every answer therefore also reports `abstention`:
 
@@ -760,10 +765,10 @@ A gate is a policy, and a policy whose application you cannot observe is not one
 
 Left without `min_confidence`, the response is byte-for-byte what it was before any of this: no `abstention`, no `abstention_threshold`, no flag. That is deliberate — a field on every answer that only some calls populate is a schema change for callers who never asked to be gated. The presence of `abstention` is how you tell a gated run from an ungated one; a `min_confidence` of exactly `0.0` still counts as set, so it reports states, and `flag_low_confidence` treats `0.0` as a no-op because nothing can fall below it.
 
-The same gate is a flag on the `laya` command:
+The same gate is a flag on the `veya` command:
 
 ```bash
-laya "Is it the blue one or the green one" --preset triage --min-confidence 0.9
+veya "Is it the blue one or the green one" --preset triage --min-confidence 0.9
 ```
 
 ```text
@@ -775,7 +780,7 @@ churn_risk  : 0.158  [low-confidence]
 Each marked answer gets `[low-confidence]` on its printed line and the answer itself is still
 printed, so a run at a terminal reads the same way the dict does; `--json` carries the raw
 `low_confidence` and `abstention` keys. `--batch FILE` applies one threshold to the whole file, which is the shape
-`predict_batch` takes. Routing has no answer to gate, so `laya --min-confidence 0.9 "..."` without
+`predict_batch` takes. Routing has no answer to gate, so `veya --min-confidence 0.9 "..."` without
 `--predict`, `--preset` or `--questions` is refused rather than ignored.
 
 
@@ -831,7 +836,7 @@ question = {
 It exists because where an option sits changes the answer. `research/eval/presentation_checks.py`
 measures the English checkpoint on five options whose text is *identical*: the per-slot logits
 centre at `[+1.68, +1.47, +0.11, -1.35, -1.91]`, a spread decided by position alone, and the
-multilingual checkpoint leans the other way on `score` (see Laya issue #131).
+multilingual checkpoint leans the other way on `score` (see Veya issue #131).
 The checkpoint-side fix is a position-balanced retrain; until then `option_order` lets a caller
 average the effect out, by asking the same question under orders in which every option occupies
 every slot equally often:
@@ -871,13 +876,13 @@ the same probabilities per label, up to float rounding. The idea is the one Para
 ([Ratner et al., 2023](https://arxiv.org/abs/2212.10947)) uses for long contexts, applied to options.
 
 The layout is a property of the weights, so it is set in the checkpoint's `rl_agent_config.json`
-(`"option_layout": "parallel"`) and picked up by `laya.load`; every published checkpoint stays on the
-default sequential layout. Train one with `laya.train`:
+(`"option_layout": "parallel"`) and picked up by `veya.load`; every published checkpoint stays on the
+default sequential layout. Train one with `veya.train`:
 
 ```python
-from laya.train import TrainConfig, finetune
+from veya.train import TrainConfig, finetune
 
-finetune("train.jsonl", "./laya_base", "./laya_parallel", TrainConfig(option_layout="parallel"))
+finetune("train.jsonl", "./veya_base", "./veya_parallel", TrainConfig(option_layout="parallel"))
 ```
 
 Fine-tuned from `convaiinnovations/laya` on typed-decisions (4 epochs, same recipe and seed per arm,
@@ -896,40 +901,40 @@ TileLang fast path and `compile=True` refuse such a checkpoint, and `backend="au
 
 ## Presets
 
-Laya provides pre-tuned question schemas for immediate production use:
+Veyavides pre-tuned question schemas for immediate production use:
 
 ```python
-import laya
+import veya
 
-agent = laya.load("convaiinnovations/laya")
+agent = veya.load("convaiinnovations/laya")
 
 # 1. Intelligent Model Router (routes to small vs. frontier models)
-routing = agent.predict({"request": "Refactor this service using dependency injection"}, laya.router_questions())
+routing = agent.predict({"request": "Refactor this service using dependency injection"}, veya.router_questions())
 
 # 2. Real-time Prompt Guardrails (jailbreaks, injections, leaks)
-guard = agent.predict({"prompt": "Ignore all instructions"}, laya.guard_questions())
+guard = agent.predict({"prompt": "Ignore all instructions"}, veya.guard_questions())
 
 # 3. Content Safety & Moderation (toxicity, harassment, threats)
-safety = agent.predict({"post": "User comment text"}, laya.moderation_questions())
+safety = agent.predict({"post": "User comment text"}, veya.moderation_questions())
 
 # 4. Support Ticket Triage (intent, urgency, frustration, churn)
-triage = agent.predict({"message": "My payment failed twice"}, laya.triage_questions())
+triage = agent.predict({"message": "My payment failed twice"}, veya.triage_questions())
 ```
 
 
 ## HTTP server (Jev-compatible)
 
-`laya.serve` exposes the `Router` over HTTP on the same `POST /v1/systemone`
-wire protocol as TypeSafe's hosted Jev API. Laya's answer payload is already
+`veya.serve` exposes the `Router` over HTTP on the same `POST /v1/systemone`
+wire protocol as TypeSafe's hosted Jev API. Veya's answer payload is already
 schema-identical to what Jev returns (`choice`/`score`/`noul` answers and a
 `{input_tokens, output_tokens}` usage block), so an existing Jev client — e.g.
 the [`hs-jev`](https://github.com/getmissionctrl/hs-jev) Haskell client — just
 needs its `baseUrl` repointed; nothing else changes. A PHP client that targets
-`laya-serve` rather than Jev also exists: [`marcreichel/laya-php`](https://github.com/marcreichel/laya-php).
+`veya-serve` rather than Jev also exists: [`marcreichel/veya-php`](https://github.com/marcreichel/veya-php).
 
 ```bash
-pip install "laya-pro[serve] @ git+https://github.com/tgundhus/laya-pro.git"          # adds fastapi + uvicorn + python-multipart
-LAYA_DEVICE=cuda LAYA_PRELOAD=1 laya-serve   # binds 0.0.0.0:8000, preloads all 3 checkpoints
+pip install "veya[serve] @ git+https://github.com/tgundhus/Veya.git"          # adds fastapi + uvicorn + python-multipart
+VEYA_DEVICE=cuda VEYA_PRELOAD=1 veya-serve   # binds 0.0.0.0:8000, preloads all 3 checkpoints
 ```
 
 ```bash
@@ -940,7 +945,7 @@ curl -s localhost:8000/v1/systemone -H 'content-type: application/json' -d '{
 }'
 ```
 
-To evaluate multiple states in a single call, send a `states` array to `POST /v1/systemone/batch` (capped at 64 states; a batch larger than `LAYA_MAX_BATCH_TOKENS` is split across several forward passes rather than refused):
+To evaluate multiple states in a single call, send a `states` array to `POST /v1/systemone/batch` (capped at 64 states; a batch larger than `VEYA_MAX_BATCH_TOKENS` is split across several forward passes rather than refused):
 
 ```bash
 curl -s localhost:8000/v1/systemone/batch -H 'content-type: application/json' -d '{
@@ -956,18 +961,18 @@ curl -s localhost:8000/v1/systemone/batch -H 'content-type: application/json' -d
 The endpoint shares forward passes via `Router.predict_batch` and returns an array of `results` in matching order along with aggregated `total_usage`.
 
 
-Configuration is by environment variable: `LAYA_HOST`, `LAYA_PORT`,
-`LAYA_DEVICE`, `LAYA_PRELOAD`, `LAYA_MODELS` (comma list to preload),
-`LAYA_THREADS` (cap torch intra-op threads for CPU inference — keep at or below
-physical cores), `LAYA_AUTO_TASK`, `LAYA_DEFAULT_MODEL` (the checkpoint a state with no
+Configuration is by environment variable: `VEYA_HOST`, `VEYA_PORT`,
+`VEYA_DEVICE`, `VEYA_PRELOAD`, `VEYA_MODELS` (comma list to preload),
+`VEYA_THREADS` (cap torch intra-op threads for CPU inference — keep at or below
+physical cores), `VEYA_AUTO_TASK`, `VEYA_DEFAULT_MODEL` (the checkpoint a state with no
 language evidence falls back to, `english` by default; set it to `multilingual` when most of
-your traffic is not English), `LAYA_MAX_LOADED` (checkpoints resident at
-once, 2 by default; raise it to 3 when `LAYA_AUTO_TASK` makes a third one
+your traffic is not English), `VEYA_MAX_LOADED` (checkpoints resident at
+once, 2 by default; raise it to 3 when `VEYA_AUTO_TASK` makes a third one
 reachable on demand, or the server rebuilds one every time routing switches),
-`LAYA_IDLE_UNLOAD_SECONDS` (unload idle checkpoints; `0` disables it, `300` frees device memory
-after five minutes and makes the next request pay a cold load), and `LAYA_API_KEY` (when set, clients must
+`VEYA_IDLE_UNLOAD_SECONDS` (unload idle checkpoints; `0` disables it, `300` frees device memory
+after five minutes and makes the next request pay a cold load), and `VEYA_API_KEY` (when set, clients must
 send `Authorization: Bearer <key>`). A client's `model` field is honoured when it
-names a Laya checkpoint (`english`/`multilingual`/`typed-decisions` or a published Hub id).
+names a Veya checkpoint (`english`/`multilingual`/`typed-decisions` or a published Hub id).
 `jev-1` and `convaiinnovations/laya` still mean the router auto-selects by script/language.
 A path or an unpublished Hub id (`/path/to/checkpoint`, `org/repo`) is a 422 on both
 `/v1/systemone` and `/v1/systemone/batch` instead of being answered by another checkpoint.
@@ -977,63 +982,63 @@ The same body can also carry `task`,
 (`hooks`, `on_predict_start`, `on_predict_end`, `hooks_raise`, `hooks_timeout`) are refused
 with 422, because a hook is a callable that has to live where the server runs.
 
-When publishing the server under a reverse-proxy prefix such as `/laya`, set
-`LAYA_ROOT_PATH=/laya`. The proxy should strip that prefix before forwarding;
+When publishing the server under a reverse-proxy prefix such as `/veya`, set
+`VEYA_ROOT_PATH=/veya`. The proxy should strip that prefix before forwarding;
 the setting controls FastAPI-generated URLs and leaves the internal routes unchanged.
 
 Three things differ from Jev when you port a client:
 
-* **Options per question.** A question's options share the checkpoint's option budget, `head_max_len` (192 tokens on `laya`, 256 on the other two), not Jev's cap of 255 options. In addition, the HTTP server (`laya.serve`) enforces an amplification guard of at most 100 choice options per question (`MAX_CHOICE_OPTIONS = 100`, rejected with 413 before inference). Once options overflow the token budget, around 20 options with a short description each, every option is trimmed to fit, so long or similar labels can reach the model reading the same ([Where Jev leads](limits.md#where-jev-leads)). Once they no longer fit the window at all, the library rejects the request with 422. For more candidates, narrow them first with `predict_shortlist` ([Honest limits](limits.md#known-limits)).
+* **Options per question.** A question's options share the checkpoint's option budget, `head_max_len` (192 tokens on `veya`, 256 on the other two), not Jev's cap of 255 options. In addition, the HTTP server (`veya.serve`) enforces an amplification guard of at most 100 choice options per question (`MAX_CHOICE_OPTIONS = 100`, rejected with 413 before inference). Once options overflow the token budget, around 20 options with a short description each, every option is trimmed to fit, so long or similar labels can reach the model reading the same ([Where Jev leads](limits.md#where-jev-leads)). Once they no longer fit the window at all, the library rejects the request with 422. For more candidates, narrow them first with `predict_shortlist` ([Honest limits](limits.md#known-limits)).
 * **Score levels.** Every level needs a description. A `null` level is rejected with 422 rather than scored and echoed back in `legend`.
-* **`confidence`** on `choice` and `score` answers is 1 minus normalised entropy, a measure of how concentrated the distribution is, not Jev's `(n·p_max − 1)/(n − 1)`. A threshold carried over from Jev does not transfer. For one calibrated number on every question type, gate on `answer_confidence`, the probability of the reported answer. Both values shift with the number of options, so fit and validate any cutoff on held-out data at the option counts your workload uses (Laya issue #394).
+* **`confidence`** on `choice` and `score` answers is 1 minus normalised entropy, a measure of how concentrated the distribution is, not Jev's `(n·p_max − 1)/(n − 1)`. A threshold carried over from Jev does not transfer. For one calibrated number on every question type, gate on `answer_confidence`, the probability of the reported answer. Both values shift with the number of options, so fit and validate any cutoff on held-out data at the option counts your workload uses (Veya issue #394).
 
 ### Nix / NixOS
 
 This repo is a flake. On a machine with an NVIDIA GPU:
 
 ```bash
-nix run .#laya-serve          # build (prebuilt CUDA torch, no compile) and serve
+nix run .#veya-serve          # build (prebuilt CUDA torch, no compile) and serve
 nix develop                   # dev shell: torch-bin, transformers, fastapi, pytest
 ```
 
 For a NixOS host, import the module and enable the service:
 
 ```nix
-# flake inputs:  laya.url = "github:<you>/laya";  # or path:/… on the same host
+# flake inputs:  veya.url = "github:<you>/veya";  # or path:/… on the same host
 {
-  imports = [ laya.nixosModules.default ];
-  services.laya-serve = {
+  imports = [ veya.nixosModules.default ];
+  services.veya-serve = {
     enable = true;
     host = "0.0.0.0";           # or bind to the Tailscale/LAN address
     openFirewall = true;
     device = "cuda";
     models = [ "english" "multilingual" "typed-decisions" ];
-    # apiKeyFile = config.age.secrets.laya-api-key.path;  # optional bearer auth
+    # apiKeyFile = config.age.secrets.veya-api-key.path;  # optional bearer auth
   };
 }
 ```
 
 The module runs a hardened `DynamicUser` systemd unit with CUDA device access,
-caches weights under `/var/lib/laya-serve`, and reads the bearer token (if any)
+caches weights under `/var/lib/veya-serve`, and reads the bearer token (if any)
 via `LoadCredential` so it never enters the store.
 
 
 ## MCP server
 
-Laya can be exposed as an [MCP](https://modelcontextprotocol.io) stdio server, so any MCP
+Veya can be exposed as an [MCP](https://modelcontextprotocol.io) stdio server, so any MCP
 client (OpenClaw, Claude Desktop, Cursor, ...) can call typed decisions as tools
-(`laya_predict`, `laya_predict_batch`, `laya_route`, `laya_route_batch`, `laya_decide`, `laya_shortlist`, `laya_preset`, `laya_status`) without writing glue code.
+(`veya_predict`, `veya_predict_batch`, `veya_route`, `veya_route_batch`, `veya_decide`, `veya_shortlist`, `veya_preset`, `veya_status`) without writing glue code.
 This is an **optional extra**: the core package has no `mcp` dependency.
 
 ```bash
-pip install "laya-pro[mcp] @ git+https://github.com/tgundhus/laya-pro.git"
-laya-mcp-server          # or: python -m laya.mcp.server
+pip install "veya[mcp] @ git+https://github.com/tgundhus/Veya.git"
+veya-mcp-server          # or: python -m veya.mcp.server
 ```
 
-To share a `laya-serve` on your own hardware across editor sessions, set
-`LAYA_BASE_URL=http://127.0.0.1:8000` in each MCP client's environment. Its prediction tools use
-HTTP and import no torch; routing stays local. Set `LAYA_API_KEY` to the server's bearer key and
-`LAYA_REMOTE_TIMEOUT` to the allowed HTTP wait (300 seconds by default). `laya_shortlist` is
+To share a `veya-serve` on your own hardware across editor sessions, set
+`VEYA_BASE_URL=http://127.0.0.1:8000` in each MCP client's environment. Its prediction tools use
+HTTP and import no torch; routing stays local. Set `VEYA_API_KEY` to the server's bearer key and
+`VEYA_REMOTE_TIMEOUT` to the allowed HTTP wait (300 seconds by default). `veya_shortlist` is
 unavailable in this mode. See [shared-server MCP setup](cli-mcp.md#share-one-model-server-across-mcp-sessions).
 
 Example MCP client configuration (stdio transport):
@@ -1041,49 +1046,49 @@ Example MCP client configuration (stdio transport):
 ```json
 {
   "mcpServers": {
-    "laya": {
-      "command": "laya-mcp-server",
-      "env": { "LAYA_DEVICE": "cpu" }
+    "veya": {
+      "command": "veya-mcp-server",
+      "env": { "VEYA_DEVICE": "cpu" }
     }
   }
 }
 ```
 
 The environment variables follow the contract documented at the top of
-[`laya/serve.py`](https://github.com/tgundhus/laya-pro/blob/main/laya/serve.py), so the same variable has one meaning across the
+[`veya/serve.py`](https://github.com/tgundhus/Veya/blob/main/veya/serve.py), so the same variable has one meaning across the
 package:
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `LAYA_DEVICE` | (auto) | Same as `laya.serve`: the device type is lower-cased (`CUDA` → `cuda`, `CUDA:0` → `cuda:0`) and passed to torch, whose device parser is case-sensitive |
-| `LAYA_PRELOAD` | `1` | Same as `laya.serve`: build the checkpoints at startup, not lazily |
-| `LAYA_MODELS` | `english,multilingual` | Comma list to preload (serve contract). MCP difference: an empty value preloads `english,multilingual` so `typed-decisions` stays lazy; in `laya.serve` empty means every checkpoint |
-| `LAYA_THREADS` | (torch default) | Same as `laya.serve`: cap torch intra-op threads for CPU inference; keep it at or below the physical core count |
-| `LAYA_AUTO_TASK` | `0` | Same as `laya.serve`: `1` lets a request whose question ids match a typed-decisions workflow route to that checkpoint, which is then loaded on demand; it never joins the preload list |
+| `VEYA_DEVICE` | (auto) | Same as `veya.serve`: the device type is lower-cased (`CUDA` → `cuda`, `CUDA:0` → `cuda:0`) and passed to torch, whose device parser is case-sensitive |
+| `VEYA_PRELOAD` | `1` | Same as `veya.serve`: build the checkpoints at startup, not lazily |
+| `VEYA_MODELS` | `english,multilingual` | Comma list to preload (serve contract). MCP difference: an empty value preloads `english,multilingual` so `typed-decisions` stays lazy; in `veya.serve` empty means every checkpoint |
+| `VEYA_THREADS` | (torch default) | Same as `veya.serve`: cap torch intra-op threads for CPU inference; keep it at or below the physical core count |
+| `VEYA_AUTO_TASK` | `0` | Same as `veya.serve`: `1` lets a request whose question ids match a typed-decisions workflow route to that checkpoint, which is then loaded on demand; it never joins the preload list |
 
 The tools return structured JSON (answers with probabilities, routing metadata, device,
-`latency_ms`). `laya_predict_batch` and `laya_route_batch` are the MCP form of
+`latency_ms`). `veya_predict_batch` and `veya_route_batch` are the MCP form of
 [`Router.predict_batch` / `route_batch`](#batches):
 one tool call takes an array of `{state, questions, model?, task?, lang?, lang_guess?, max_len?, head_max_len?}` requests, routes them
 first, groups them by checkpoint, and shares forward passes between requests with the same
 question schema, returning the answers in input order. `max_len` / `head_max_len` are per request
 there, exactly as `Router.predict_batch` reads them, so one wide question can raise its own budget
 without shrinking the rest of the batch to it. On 16 mixed-language tickets through
-the tool functions themselves, one batch call beat 16 `laya_predict` calls by **2.1-2.3x on
+the tool functions themselves, one batch call beat 16 `veya_predict` calls by **2.1-2.3x on
 MPS** (983-1082 ms -> 467-477 ms) and **~1.25x on CPU** (1861-2471 ms -> 1470-1911 ms), with
 **0/16 decision flips** (choice label, rounded score, noul sign) against the loop. Prefer it
 whenever a client has more than a few requests: each saved round trip is also an MCP
-request/response. `laya_decide` is the MCP form of [`laya.decide`](structured.md): it
+request/response. `veya_decide` is the MCP form of [`veya.decide`](structured.md): it
 takes a JSON schema (enum choices, booleans, bounded integers) instead of hand-written
 questions and returns the decided `values` projected onto that schema -- enum member, integer
 level, boolean -- beside per-field `confidence` and `probabilities`, so a client that already
-knows the answer shape never parses an answer map by hand. `laya_shortlist` is the MCP form of [`predict_shortlist`](limits.md#known-limits):
+knows the answer shape never parses an answer map by hand. `veya_shortlist` is the MCP form of [`predict_shortlist`](limits.md#known-limits):
 it shortlists a many-option choice question to its `k` most likely labels by embedding
 similarity (mean-pooled from the answering checkpoint's own encoder, so no extra model is
 downloaded), answers in one forward pass, and returns per-question shortlist metadata
 (kept labels, cosine scores, `k`, option count, and whether the question passed through
 unshortlisted). The guardrails shown on every decision
-tool point clients to `laya_shortlist` for >20-option choices. As with the SDK, use it for structured
+tool point clients to `veya_shortlist` for >20-option choices. As with the SDK, use it for structured
 decisions only; not for open Q&A or
 text generation. Tests: `tests/test_mcp.py` (CI, no weights) and
 `tests/test_mcp_local_e2e.py` (local, real weights and a real stdio handshake).

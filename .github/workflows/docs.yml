@@ -5,10 +5,10 @@ name: Docs
 
 on:
   pull_request:
-    paths: [docs/**, laya/**, zensical.toml, requirements-docs.txt, scripts/check_site.py, .github/workflows/docs.yml]
+    paths: [docs/**, veya/**, zensical.toml, requirements-docs.txt, scripts/check_site.py, .github/workflows/docs.yml]
   push:
     branches: [main]
-    paths: [docs/**, laya/**, zensical.toml, requirements-docs.txt, scripts/check_site.py, .github/workflows/docs.yml]
+    paths: [docs/**, veya/**, zensical.toml, requirements-docs.txt, scripts/check_site.py, .github/workflows/docs.yml]
   workflow_dispatch:
 
 permissions:
@@ -60,7 +60,7 @@ jobs:
     needs: build
     # Select Settings -> Pages -> Source: GitHub Actions before deploying this fork's docs.
     # Other repositories still run the strict build above.
-    if: github.event_name != 'pull_request' && github.repository == 'tgundhus/laya-pro'
+    if: github.event_name != 'pull_request' && github.repository == 'tgundhus/Veya'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

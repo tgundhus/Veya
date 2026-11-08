@@ -35,7 +35,7 @@ node_modules/
 .ruff_cache/
 .idea/
 
-# local setup artifacts from setup_laya.sh: ~2.3 GB of checkpoint weights and the download caches
+# local setup artifacts from setup_veya.sh: ~2.3 GB of checkpoint weights and the download caches
 models/
 .hf-cache/
 .pip-cache/
@@ -52,13 +52,13 @@ session-*.md
 *-session.md
 .claude-session*
 
-# laya-ts: exported weights (regenerate via laya-ts/scripts/export_onnx.py)
+# veya-ts: exported weights (regenerate via veya-ts/scripts/export_onnx.py)
 model-*/
 *.onnx
 *.onnx.data
 
-# laya-ts: build output + deps
-laya-ts/dist/
+# veya-ts: build output + deps
+veya-ts/dist/
 node_modules/
 
 # uv lockfile (repo pins via pip/venv, not uv)
