@@ -145,11 +145,14 @@ jobs:
           echo "OK: no unsafe deserialization in veya/ or veya-ts/scripts/"
       - name: No shell-out or dynamic exec in the shipped package
         run: |
+          # Only the bounded QuickJS guest entry point is allowed; Python eval/exec
+          # and every other matching call remain forbidden, including in that worker.
           if grep -rnE "os\.system\(|subprocess\.|shell=True|\beval\(|\bexec\(" veya/ \
-               | grep -v "\.eval()"; then
+               | grep -v "\.eval()" \
+               | grep -vE '^veya/mcp/_code_worker\.py:[0-9]+:        pump = bounded\(lambda: context\.eval\(program\)\)$'; then
             echo "::error::shell-out or dynamic execution in the shipped package"
             exit 1
           fi
-          echo "OK: no os.system/subprocess/eval/exec in veya/"
+          echo "OK: no Python eval/exec or shell-out in veya/"
       - name: ONNX exporter requires safetensors weights
         run: python tests/test_export_onnx_safety.py
