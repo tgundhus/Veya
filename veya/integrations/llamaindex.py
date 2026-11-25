@@ -73,6 +73,7 @@ from ._controls import router_kwargs as _router_kwargs  # noqa: E402
 # One class for every integration, so `except VeyaLowConfidenceError` catches all of them.
 from ._errors import VeyaLowConfidenceError  # noqa: E402
 from ._guard import answers_map as _answers_map  # noqa: E402
+from ._guard import core_abstention as _core_abstention  # noqa: E402
 from ._guard import malformed as _malformed  # noqa: E402
 from ._guard import probability_map as _probability_map  # noqa: E402
 from ..confidence import _gate_confidence  # noqa: E402
@@ -387,6 +388,12 @@ class VeyaSingleSelector(BaseSelector):
         chosen_key = ans.get("choice")
         if chosen_key is not None and not isinstance(chosen_key, str):
             raise _malformed(where, "selector choice must be a string, got %s" % type(chosen_key).__name__)
+        gate = _core_abstention(ans, res)
+        if gate is not None:
+            if self.fallback_index is None:
+                raise gate
+            reason = f"Selected fallback index {self.fallback_index} because {gate}."
+            return SelectorResult(selections=[ToolSelection(index=self.fallback_index, reason=reason)])
         conf = _gated_confidence(ans)
 
         # Confidence gating
@@ -536,6 +543,9 @@ class VeyaMultiSelector(BaseSelector):
         # selection rather than being refused. Restricting to the caller's own keys also keeps an
         # unknown extra key from winning the ranking.
         ans = _answers_map(res, where).get("selector", {})
+        gate = _core_abstention(ans, res)
+        if gate is not None:
+            raise gate
         key_list = list(criteria.keys())
         probs = _probability_map(ans, key_list, where)
 
@@ -637,6 +647,7 @@ class VeyaQueryRouter:
         self.descriptions = descriptions or {}
         self.instructions = instructions
         self.confidence_threshold = confidence_threshold
+        self._abstention_fallback_key = fallback_key
         self.fallback_key = fallback_key or next(iter(query_engines.keys()), None)
         self.agent = agent
         self.base_url = base_url
@@ -696,6 +707,11 @@ class VeyaQueryRouter:
         chosen = ans.get("choice")
         if chosen is not None and not isinstance(chosen, str):
             raise _malformed(where, "'choice' must be a string, got %s" % type(chosen).__name__)
+        gate = _core_abstention(ans, res)
+        if gate is not None:
+            if self._abstention_fallback_key is not None and self._abstention_fallback_key in self.query_engines:
+                return self._abstention_fallback_key
+            raise gate
         conf = _gated_confidence(ans)
 
         if self.confidence_threshold > 0.0 and conf < self.confidence_threshold:

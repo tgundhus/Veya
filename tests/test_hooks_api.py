@@ -244,6 +244,23 @@ check_param("Router.predict_batch", Router.predict_batch, "sort_by_length", Fals
 check_param("Router.predict_batch", Router.predict_batch, "diagnostics", None,
             inspect.Parameter.KEYWORD_ONLY)
 
+# An invalid count is rejected before hooks or model loading, including for empty batches.
+_batch_agent = Agent.__new__(Agent)
+_batch_onnx = ONNXAgent.__new__(ONNXAgent)
+_batch_router = Router()
+for _call, _args in ((_batch_agent.predict_batch, ([], {})), (_batch_onnx.predict_batch, ([], {})),
+                     (_batch_router.predict_batch, ([],)), (_batch_agent.predict_long, ("", {})),
+                     (_batch_onnx.predict_long, ("", {})), (_batch_router.predict_long, ("", {})),
+                     (_inference_common.window_batch_cap, (16, 312, 312))):
+    for _bad_size in (True, False, 2.0, "2"):
+        _witness = "%s rejects batch_size=%r" % (_call.__qualname__, _bad_size)
+        try:
+            _call(*_args, batch_size=_bad_size)
+        except ValueError as _exc:
+            check_true(_witness, "batch_size" in str(_exc), str(_exc))
+        else:
+            check_true(_witness, False)
+
 # per-call token-budget overrides
 for label, fn in (("Agent.predict_batch", Agent.predict_batch),
                   ("Agent.system_one", Agent.system_one),
@@ -479,6 +496,7 @@ from veya.integrations.langchain import (  # noqa: E402
 
 for label, cls in (("VeyaRouter", VeyaRouter), ("VeyaGuardrail", VeyaGuardrail),
                    ("VeyaTriage", VeyaTriage), ("VeyaEvaluator", VeyaEvaluator)):
+    check_param("langchain/%s" % label, cls.__init__, "remote_batch", False, inspect.Parameter.KEYWORD_ONLY)
     for method in ("invoke", "batch", "abatch"):
         check_true("langchain/%s.%s exists" % (label, method),
                    callable(getattr(cls, method, None)))
@@ -1962,6 +1980,30 @@ check_param("DecisionModel", DecisionModel.__init__, "choice_adapter_width", 0)
 check_param("DecisionModel", DecisionModel.__init__, "score_adapter_width", 0)
 
 check_true("migration/legacy integration class", _legacy.LayaRouter is veya.VeyaRouter)
+
+from veya.integrations import VeyaLowConfidenceError as _IntegrationGateError  # noqa: E402
+from veya.integrations.crewai import VeyaCrewRouter as _CrewRouter  # noqa: E402
+
+_ungated_choice = {"answers": {"delegation": {"choice": "agent_0", "abstention": "unevaluated",
+                                             "abstention_threshold": 0.8}}}
+_gate_router = _CrewRouter(agent=type("Runner", (), {"predict": lambda *args: _ungated_choice})())
+try:
+    _gate_router.route("hello", ["first", "second"])
+except _IntegrationGateError as exc:
+    check("integration gate/no fabricated confidence", exc.confidence, None)
+    check("integration gate/reported threshold", exc.threshold, 0.8)
+    check_true("integration gate/retains raw decision", exc.raw_decision is _ungated_choice)
+else:
+    check_true("integration gate/refuses an unevaluated answer", False)
+
+from veya.train import items_from_rows as _training_items  # noqa: E402
+try:
+    _training_items(None, [{"state": "state", "questions": {"q": {"type": "noul", "instructions": "Ready?"}},
+                            "teacher_answers": [{"q": "yes"}]}], 64, 32)
+except ValueError as exc:
+    check_true("training teacher labels must match their typed question", "invalid typed answer" in str(exc))
+else:
+    check_true("training teacher labels must match their typed question", False)
 
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:

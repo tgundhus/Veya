@@ -127,6 +127,38 @@ class DataTests(unittest.TestCase):
         self.assertIsNone(reason)
         return item
 
+    def test_teacher_observations_keep_typed_labels_and_canonical_order(self):
+        choice = dict(DEPARTMENT, criteria=[1, "two"], option_order=[1, 0])
+        row = {
+            "state": "app crash",
+            "questions": {"team": choice, "level": LEVEL, "urgent": URGENT},
+            "teacher_answers": [
+                {"team": 1, "level": 0, "urgent": False},
+                {"team": "two", "level": 1, "urgent": True},
+                {"team": "two", "level": 0, "urgent": False},
+            ],
+        }
+        items, skipped = items_from_rows(self.tok, [row], 64, 40, label_smoothing=0.2)
+        self.assertEqual(skipped, {})
+        self.assertEqual([i["target"] for i in items], [[1/3, 2/3], [2/3, 1/3], [2/3, 1/3]])
+        good = row["teacher_answers"][0]
+        for bad, detail in (([], "nonempty"), ([{}], "exactly"), ([dict(good, extra=0)], "exactly"),
+                            ([dict(good, team=True)], "team"), ([dict(good, team=1.0)], "team"),
+                            ([dict(good, level=True)], "level"), ([dict(good, level=0.5)], "level"),
+                            ([dict(good, urgent="false")], "urgent")):
+            with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, detail):
+                items_from_rows(self.tok, [dict(row, teacher_answers=bad)], 64, 40)
+        with self.assertRaisesRegex(ValueError, "combined with gold"):
+            items_from_rows(self.tok, [dict(row, gold={})], 64, 40)
+
+    def test_teacher_jsonl_rejects_ambiguous_observations_at_source_line(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            data = Path(tmpdir) / "teacher.jsonl"
+            for answers in ('[{"q": "a", "q": "b"}]', '[{"q": NaN}]', '[{"q": 1e999}]'):
+                data.write_text('# export\n{"teacher_answers": %s}' % answers, encoding="utf-8-sig")
+                with self.assertRaisesRegex(ValueError, r"teacher\.jsonl:2: (duplicate|non-finite)"):
+                    read_data(str(data))
+
     def test_target_from_gold_orders_and_normalises(self):
         def target(question, probs):
             return target_from_gold(to_internal("q", question), {"probabilities": probs})
@@ -532,6 +564,35 @@ class EndToEndTests(unittest.TestCase):
         config = TrainConfig(**kwargs)
         with patch("huggingface_hub.snapshot_download", side_effect=AssertionError("unexpected download")):
             return finetune(str(self.data), str(self.root / "base"), str(self.root / out), config, device="cpu")
+
+    def test_train_cli_learns_from_teacher_repeats_with_state_held_out(self):
+        train_path = self.root / "teacher.jsonl"
+        # Three sibling questions per state, kept together in the calibration split.
+        train_rows = [{"state": state, "questions": {"team": DEPARTMENT, "urgent": URGENT, "level": LEVEL},
+                       "teacher_answers": [
+                           {"team": "billing" if state in BILLING_STATES else "technical", "urgent": True, "level": 0},
+                           {"team": "billing" if state in BILLING_STATES else "technical", "urgent": False, "level": 1},
+                       ]}
+                      for state in BILLING_STATES + TECH_STATES]
+        train_path.write_text("\n".join(map(json.dumps, train_rows)), encoding="utf-8")
+        human_path = self.root / "human.jsonl"
+        human_path.write_text(json.dumps({"state": "one two", "questions": {"urgent": URGENT},
+                                         "expected": {"urgent": True}}), encoding="utf-8")
+        out = self.root / "teacher-out"
+        args = ["--data", str(train_path), "--base", str(self.root / "base"), "--eval", str(human_path)]
+        self.assertEqual(train_cli_main(args + ["--dry-run"]), 0)
+        # The default calibration budget is two items, too small for a whole state.
+        # Give the Python entry point enough room for two complete groups.
+        config = TrainConfig(epochs=1, calib_frac=0.25, eval_data=str(human_path), loss="soft-ce")
+        summary = finetune(str(train_path), str(self.root / "base"), str(out), config, device="cpu")
+        self.assertEqual((summary["train_items"], summary["calibration_items"]), (18, 6))
+        report = json.loads((out / "train_report.json").read_text(encoding="utf-8"))
+        self.assertEqual(report["teacher_supervision"], {"source_rows": 8, "answer_sets": 16,
+                                                        "calibration_split": "grouped_by_state_tokens"})
+        self.assertEqual(report["eval_mode"], "held_out")
+        self.assertEqual(report["eval_items"], 1)
+        self.assertIn("delta_accuracy", report["comparison"])
+        self.assertTrue((out / "model.safetensors").is_file())
 
     def test_finetune_learns_and_saves_a_loadable_checkpoint(self):
         report = self.run_finetune("out")

@@ -223,6 +223,22 @@ describe("revision plumbing", () => {
     expect(new Router().revision).toBeNull();
     expect(new Router().revisions).toEqual({});
   });
+
+  it("inherits the shared revision when a model has no pin", async () => {
+    const spy = vi.spyOn(Agent, "load").mockImplementation(async () =>
+      new Agent({ provider: fakeProvider(), cfg: {} }));
+    try {
+      for (const revisions of [{ english: null }, { english: "" }, { english: "   " }, {}, { english: "own-sha" }]) {
+        await new Router({ revision: "shared-sha", revisions }).load("english");
+      }
+      await new Router({ revision: "   " }).load("english");
+      expect(spy.mock.calls.map(([, opts]) => opts?.revision)).toEqual(
+        ["shared-sha", "shared-sha", "shared-sha", "shared-sha", "own-sha", undefined],
+      );
+    } finally {
+      spy.mockRestore();
+    }
+  });
 });
 
 describe("Router digest tests", () => {

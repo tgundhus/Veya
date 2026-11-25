@@ -321,9 +321,21 @@ differences are worth knowing:
 - `batch()` shares one forward pass, so a failure fails the batch; that is also why
   `return_exceptions=True` falls back to the per-input loop.
 
-Remote mode (`base_url`) keeps the per-request loop, because `veya-serve` answers one decision per
-`POST`. A runner you supply yourself only needs `predict_batch` to take the fast path; without it
-the runnable behaves like any other `Runnable`.
+Set `remote_batch=True` with `base_url` to send one request to the self-hosted server's
+`/v1/systemone/batch` endpoint. The server applies its batch size and token limits. The client
+checks that there is one complete result per input and raises on a failed batch. The default
+remote loop works with single-request servers. `return_exceptions=True` always uses individual
+requests so each input gets its own outcome. A local runner can provide `predict_batch` to take
+the batched path.
+
+```python
+router = VeyaRouter(
+    criteria={"billing": "invoices", "technical": "bugs"},
+    base_url="http://127.0.0.1:8000",
+    remote_batch=True,
+)
+routes = router.batch(["refund my invoice", "the app crashes"])
+```
 
 This matters most on MPS: LangChain's default `batch` runs `invoke` concurrently on a thread pool,
 and concurrent PyTorch MPS forwards abort the process
@@ -404,8 +416,10 @@ router = VeyaRouter(
 )
 ```
 
-Unlike `task` and `lang_guess` -- Router-only routing keywords a direct `Agent.predict` rejects --
-these two are safe on every runner and every deployment.
+An explicit core abstention, including a configured gate that could not evaluate the answer,
+sends `VeyaRouter` to its configured `fallback`. Without a fallback it raises
+`VeyaLowConfidenceError`. For remote routing, use the extended server response so the adapter
+receives the core gate status. `lang` and `min_confidence` work with both Agent and Router.
 
 ---
 

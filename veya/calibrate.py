@@ -76,8 +76,12 @@ def _validated_pair(logits, target, k=None):
             vector = np.asarray(value)
             if vector.ndim != 1 or vector.dtype.kind not in "iuf":
                 raise ValueError("%s must be a one-dimensional numeric vector" % name)
-            with np.errstate(over="ignore", invalid="ignore"):
-                vector = vector.astype(np.float32)
+            # Own the snapshot even when an input iterator reuses its buffers.
+            if vector.dtype == np.float32:
+                vector = vector.copy()
+            else:
+                with np.errstate(over="ignore", invalid="ignore"):
+                    vector = vector.astype(np.float32)
         except (TypeError, ValueError, OverflowError) as exc:
             raise ValueError("%s must be a one-dimensional numeric vector" % name) from exc
         if not np.isfinite(vector).all():
@@ -91,13 +95,14 @@ def _validated_pair(logits, target, k=None):
     if isinstance(k, bool) or not isinstance(k, Integral) or k < 1 or k > len(logits):
         raise ValueError("k must be an integer between 1 and the vector length")
     logits, target = logits[:k], target[:k]
-    if (target < 0).any() or not np.isclose(target.sum(), 1.0, rtol=1e-5, atol=1e-6):
+    # With a reference sum of 1, relative 1e-5 and absolute 1e-6 add to 1.1e-5.
+    if (target < 0).any() or abs(float(target.sum()) - 1.0) > 1.1e-5:
         raise ValueError("target must be a nonnegative probability vector summing to 1")
     return logits, target, int(k)
 
 
 def _pairs_by_width(pairs: Sequence) -> List[Tuple[torch.Tensor, torch.Tensor]]:
-    """One (logits, target) matrix per distinct option count, narrowest first.
+    """Group validated float32 pairs into matrices by option count, narrowest first.
 
     A ragged pool -- a question type holding 2-option and 12-option decisions -- cannot be
     one matrix. Any value used to square off the short rows is a real column in the single
@@ -108,7 +113,7 @@ def _pairs_by_width(pairs: Sequence) -> List[Tuple[torch.Tensor, torch.Tensor]]:
     """
     groups: Dict[int, List[Tuple[np.ndarray, np.ndarray]]] = {}
     for z, t in pairs:
-        groups.setdefault(len(_vec(z)), []).append((_vec(z), _vec(t)))
+        groups.setdefault(len(z), []).append((z, t))
     return [(torch.from_numpy(np.stack([z for z, _ in groups[w]])),
              torch.from_numpy(np.stack([t for _t, t in groups[w]]))) for w in sorted(groups)]
 
@@ -141,8 +146,12 @@ def fit_one_temperature(pairs: Sequence, min_n: Optional[int] = None) -> float:
         sel.append((z, t))
     if len(sel) < min_n:
         return 1.0
-    groups = _pairs_by_width(sel)
-    n_rows = float(len(sel))
+    return _fit_validated_temperature(sel)
+
+
+def _fit_validated_temperature(pairs: Sequence[Tuple[np.ndarray, np.ndarray]]) -> float:
+    groups = _pairs_by_width(pairs)
+    n_rows = float(len(pairs))
     log_lo = float(np.log(TEMP_MIN)) - LOG_T_MARGIN
     log_hi = float(np.log(TEMP_MAX)) + LOG_T_MARGIN
     with torch.enable_grad():
@@ -197,7 +206,7 @@ def _ece_report(recs, temperature, temperature_by_options) -> Dict[str, Any]:
         conf_b.append(float(p0.max()))
         cor_b.append(float(int(p0.argmax()) == y))
         t_scale = temperature_by_options.get(temp_bucket(qt, k), temperature[qt])
-        p1 = _softmax(z[:k], t_scale)
+        p1 = p0 if t_scale == 1.0 else _softmax(z[:k], t_scale)
         conf_a.append(float(p1.max()))
         cor_a.append(float(int(p1.argmax()) == y))
     return {
@@ -243,11 +252,9 @@ def _ece_split(recs, seed):
             fit_idx.extend(idxs)
             excluded.append(key)
             continue
-        perm = rng.permutation(n)
-        for j in perm[:n_eval]:
-            eval_idx.append(idxs[int(j)])
-        for j in perm[n_eval:]:
-            fit_idx.append(idxs[int(j)])
+        perm = np.asarray(idxs)[rng.permutation(n)]
+        eval_idx.extend(perm[:n_eval].tolist())
+        fit_idx.extend(perm[n_eval:].tolist())
 
     fit_idx.sort()
     eval_idx.sort()
@@ -262,13 +269,13 @@ def _fit_groups(by_type, by_bucket):
         pairs = by_type[qt]
         # MIN_TYPE_N, not MIN_BUCKET_N: the scalar has to exist when every bucket is small.
         if len(pairs) >= MIN_TYPE_N:
-            temperature[qt] = fit_one_temperature(pairs, min_n=MIN_TYPE_N)
+            temperature[qt] = _fit_validated_temperature(pairs)
 
     temperature_by_options = {}
     for key, pairs in by_bucket.items():
         if len(pairs) < MIN_BUCKET_N:
             continue
-        temperature_by_options[key] = fit_one_temperature(pairs)
+        temperature_by_options[key] = _fit_validated_temperature(pairs)
     return temperature, temperature_by_options
 
 
@@ -338,25 +345,29 @@ def _select_abstention_threshold(pairs: Sequence[Tuple[float, int]], target_erro
     pseudo-error so a bucket does not clear the gate on a lucky short run. Returns 1.0 when no cut
     holds the risk -- the bucket is too unreliable to accept anything short of a reported certainty.
     """
-    ordered = sorted(pairs, key=lambda cc: cc[0], reverse=True)
-    levels = sorted({c for c, _ in ordered}, reverse=True)
-    n = len(ordered)
-    n_acc = n_err = idx = 0
-    best = None
+    if not pairs:
+        return 1.0
+    ordered = np.asarray(pairs, dtype=np.float64)
+    if not np.isfinite(ordered[:, 0]).all():
+        raise ValueError("confidence must be finite")
+    ordered = ordered[np.argsort(-ordered[:, 0], kind="stable")]
+    confs = ordered[:, 0]
     # Evaluate the error over the WHOLE accepted set {conf >= tau} at each distinct level, not
     # incrementally within a tie: a threshold accepts every answer at its own confidence, so a tie
     # group's errors must all be counted before the level is judged (else the cut sinks into a bad
     # cohort on its first few correct members).
-    for tau in levels:
-        while idx < n and ordered[idx][0] >= tau:
-            n_acc += 1
-            n_err += 0 if ordered[idx][1] else 1
-            idx += 1
-        rate = (n_err + 1.0) / (n_acc + 1.0) if conservative else (n_err / n_acc)
-        if n_acc > 0 and rate <= target_error:
-            best = tau
-    if best is None:
+    ends = np.flatnonzero(np.concatenate((confs[1:] != confs[:-1], [True])))
+    accepted = ends + 1
+    errors = np.cumsum(ordered[:, 1] == 0)[ends]
+    rates = (errors + 1.0) / (accepted + 1.0) if conservative else errors / accepted
+    # A NumPy scalar can coerce a Python float differently from a float64 array.
+    within_risk = rates <= target_error if type(target_error) is float else [
+        rate <= target_error for rate in rates.tolist()
+    ]
+    eligible = ends[within_risk]
+    if not len(eligible):
         return 1.0
+    best = confs[eligible[-1]]
     return float(min(1.0, max(0.0, best)))
 
 
@@ -463,10 +474,11 @@ def fit_binning_map(records: Iterable, temperature: Sequence[float],
         conf = np.asarray([c for c, _ in pairs], dtype=float)
         corr = np.asarray([c for _, c in pairs], dtype=float)
         idx = np.clip((conf * bins).astype(int), 0, bins - 1)
-        values = []
-        for b in range(bins):
-            mask = idx == b
-            values.append(float(corr[mask].mean()) if mask.any() else (b + 0.5) / bins)
+        bin_indices = range(bins)
+        counts = np.bincount(idx, minlength=len(bin_indices))
+        correct = np.bincount(idx, weights=corr, minlength=len(bin_indices))
+        values = [float(correct[b] / counts[b]) if counts[b] else (b + 0.5) / bins
+                  for b in bin_indices]
         out[key] = {"bins": bins, "values": values}
     return out
 

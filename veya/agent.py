@@ -61,7 +61,7 @@ from .hooks import (
     normalise_hooks, validate_timeout,
 )
 from .revisions import resolve_revision, snapshot_revision, verify_digests
-from .performance import _apply_torch_threads, resolve_performance_mode
+from .performance import _apply_torch_threads, _check_batch_size, resolve_performance_mode
 
 
 def _verify_compatibility(model: torch.nn.Module, cfg: Dict, weights: Dict[str, torch.Tensor], model_id: str):
@@ -1161,7 +1161,8 @@ class Agent(HookRegistry):
                     The same `questions` are evaluated against every state.
             questions: Question definitions, exactly as accepted by `system_one`.
             batch_size: Optional cap on states per forward pass. `None` sends them all in one pass;
-                        set it to bound peak memory when batching many or long states.
+                        set it to bound peak memory when batching many or long states. The cap
+                        must be an integer, with zero and negative values also leaving it unset.
             hooks (HookArg): Per-call hooks, appended after any installed on the Agent.
                     See `veya.hooks`.
             on_predict_start (PredictHookArg): A per-call start hook. It may rewrite the
@@ -1185,6 +1186,7 @@ class Agent(HookRegistry):
         """
         if batch_size is None and self.performance_config:
             batch_size = self.performance_config["batch_size"]
+        batch_size = _check_batch_size(batch_size)
         mc = check_min_confidence(min_confidence) if min_confidence is not None else None
         active = compose_hooks(self.hooks, hooks, on_predict_start, on_predict_end)
         raise_errors = self.hooks_raise if hooks_raise is None else bool(hooks_raise)
@@ -1454,6 +1456,7 @@ class Agent(HookRegistry):
         """
         if batch_size is None and self.performance_config:
             batch_size = self.performance_config["batch_size"]
+        batch_size = _check_batch_size(batch_size)
         if state is None:
             raise TypeError("state must not be None; pass a string, dict, or list")
         if not isinstance(questions, dict):

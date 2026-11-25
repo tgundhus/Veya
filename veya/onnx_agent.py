@@ -35,7 +35,7 @@ from .inference_common import (
 )
 from .confidence import apply_confidence_gate, check_min_confidence
 from .decision_policy import infer_balanced, resolve_decision_policy
-from .performance import resolve_performance_mode
+from .performance import _check_batch_size, resolve_performance_mode
 
 
 def _collate_items_numpy(batch: List[List[Dict[str, Any]]], pad_id: int) -> Dict[str, np.ndarray]:
@@ -383,7 +383,8 @@ class ONNXAgent(HookRegistry):
                     The same `questions` are evaluated against every state.
             questions: Question definitions, exactly as accepted by `system_one`.
             batch_size: Optional cap on states per session run. `None` sends them all in one run;
-                        set it to bound peak memory when batching many or long states.
+                        set it to bound peak memory when batching many or long states. The cap
+                        must be an integer, with zero and negative values also leaving it unset.
             lang: Per-language temperature override applied to every state; see
                     `lang_temperatures`.
             hooks (HookArg): Per-call hooks, appended after any installed on the agent.
@@ -408,6 +409,7 @@ class ONNXAgent(HookRegistry):
         """
         if batch_size is None and self.performance_config:
             batch_size = self.performance_config["batch_size"]
+        batch_size = _check_batch_size(batch_size)
         mc = check_min_confidence(min_confidence) if min_confidence is not None else None
         active = compose_hooks(self.hooks, hooks, on_predict_start, on_predict_end)
         raise_errors = self.hooks_raise if hooks_raise is None else bool(hooks_raise)
@@ -544,6 +546,7 @@ class ONNXAgent(HookRegistry):
 
         if batch_size is None and self.performance_config:
             batch_size = self.performance_config["batch_size"]
+        batch_size = _check_batch_size(batch_size)
         hook_kwargs = {"hooks": hooks, "on_predict_start": on_predict_start,
                        "on_predict_end": on_predict_end, "hooks_raise": hooks_raise,
                        "hooks_timeout": hooks_timeout}

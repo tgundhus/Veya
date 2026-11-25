@@ -12,6 +12,8 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
+from .performance import _check_batch_size
+
 QTYPES = {"choice": 0, "score": 1, "noul": 2}
 QTYPE_NAMES = {v: k for k, v in QTYPES.items()}
 _DEFAULT_NOUL_LABELS = {"false": "false", "true": "true"}
@@ -475,6 +477,7 @@ def window_batch_cap(n_windows: int, window: int, config_budget: int,
     produced: peak memory stays at parity with the behaviour before the cap, and the scan still reads
     the whole document, just in more passes. An explicit `batch_size` is always honoured.
     """
+    batch_size = _check_batch_size(batch_size)
     if batch_size and batch_size > 0:
         return batch_size
     if window >= config_budget:

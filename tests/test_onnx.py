@@ -157,3 +157,36 @@ def test_onnx_numerical_parity(exported):
         )
 
     print("ONNX numerical parity test passed for all 3 question types!")
+
+
+@pytest.mark.skipif(not HAS_ONNX, reason="onnx and onnxruntime are required")
+def test_dotnet_export_verifies_selected_checkpoint(tmp_path, monkeypatch, capsys):
+    """A compatible checkpoint beside the export must not become its reference."""
+    import importlib.util
+    import re
+    from functools import partial
+    from pathlib import Path
+
+    from safetensors.torch import load_file, save_file
+    from test_predict_batch import build_tiny_repo
+
+    script = Path(__file__).resolve().parents[1] / "veya-dotnet" / "tools" / "export_onnx.py"
+    spec = importlib.util.spec_from_file_location("dotnet_fused_exporter", script)
+    exporter = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(exporter)
+
+    selected = tmp_path / "selected"
+    build_tiny_repo(selected)
+    output = tmp_path / "out"
+    output.mkdir()
+    weights = load_file(selected / "model.safetensors")
+    weights["scorer.3.bias"] += 1.0
+    save_file(weights, output / "model.safetensors")
+    monkeypatch.setattr(exporter, "build_model", partial(exporter.build_model, encoder_dir=str(selected / "encoder")))
+    exporter.export_one(str(selected), str(output), token=None, opset=18, do_verify=True)
+
+    report = capsys.readouterr().out
+    gaps = re.search(r"shape sweep done: [1-9]\d* combos, max diff\s+logits (\S+)\s+act_logits (\S+)", report)
+    assert gaps, report
+    assert float(gaps[1]) <= 1e-3, gaps.group()
+    assert float(gaps[2]) <= 1e-2, gaps.group()

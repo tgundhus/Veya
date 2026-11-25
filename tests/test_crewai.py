@@ -982,6 +982,7 @@ _CREWAI_NESTED_SCREEN = [
     ({"answers": {"harm_severity": {"type": "noul", "noul": "high"}}}, "noul-str"),
     ({"answers": {"harm_severity": {"type": "noul", "noul": None}}}, "noul-null"),
     ({"answers": {"harm_severity": {"type": "noul", "noul": True}}}, "noul-bool"),
+    ({"answers": {"harm_severity": {"type": "noul", "noul": 10**400}}}, "noul-wide-int"),
 ]
 for _body, _label in _CREWAI_NESTED_SCREEN:
     with patch("urllib.request.build_opener") as _m:

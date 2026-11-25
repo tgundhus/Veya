@@ -88,6 +88,7 @@ from ._controls import require_router_controls as _require_router_controls  # no
 from ._controls import router_kwargs as _router_kwargs  # noqa: E402
 from ._guard import answer_number as _answer_number  # noqa: E402
 from ._guard import answers_map as _answers_map  # noqa: E402
+from ._guard import core_abstention as _core_abstention  # noqa: E402
 from ._guard import malformed as _malformed  # noqa: E402
 from ._guard import score_violation_probability as _score_violation_probability  # noqa: E402
 from ..confidence import _gate_confidence  # noqa: E402
@@ -123,7 +124,7 @@ class AgnoRouteDecision:
         agent_index: Zero-based position in the ``agents`` sequence.
         name: Display name extracted from the agent (``agent.name``).
         role: Role string extracted from the agent (``agent.role``).
-        confidence: Answer confidence reported by the decision model.
+        confidence: Answer confidence, or None if the configured gate could not evaluate it.
         reason: Human-readable one-line explanation appended by this wrapper.
         raw_decision: Unmodified dict returned by ``runner.predict`` or the
             veya-serve HTTP response.
@@ -132,7 +133,7 @@ class AgnoRouteDecision:
     agent_index: int
     name: str
     role: str
-    confidence: float
+    confidence: Optional[float]
     reason: str
     raw_decision: Dict[str, Any]
 
@@ -581,24 +582,24 @@ class VeyaAgnoRouter:
         # Gate on the same number core's `flag_low_confidence` gates on:
         # `answer_confidence` first, then the entropy `confidence` field, so an
         # answer carrying only the older field is still gated (fail-closed).
-        conf = _gate_confidence(ans)
-        if conf is None:
+        gate = _core_abstention(ans, res)
+        conf = gate.confidence if gate is not None else _gate_confidence(ans)
+        if conf is None and gate is None:
             conf = 1.0
 
-        if not isinstance(chosen_key, str) or chosen_key not in criteria:
+        if gate is None and (not isinstance(chosen_key, str) or chosen_key not in criteria):
             raise _malformed(where, "unknown agent choice %r for a %d-agent team" % (chosen_key, len(agents)))
-        chosen_idx = list(criteria).index(chosen_key)
 
         # Confidence gating (same logic as VeyaCrewRouter).
-        if self.confidence_threshold > 0.0 and conf < self.confidence_threshold:
+        if gate is not None or (self.confidence_threshold > 0.0 and conf < self.confidence_threshold):
             if self.fallback_agent_index is not None:
                 fallback_obj = agents[self.fallback_agent_index]
                 fallback_name = _get_agent_name(fallback_obj, self.fallback_agent_index)
                 fallback_role = _get_agent_role(fallback_obj, self.fallback_agent_index)
-                reason = (
-                    f"Routed to fallback agent '{fallback_name}' because routing confidence "
-                    f"({conf:.3f}) was below threshold ({self.confidence_threshold:.3f})."
+                why = str(gate) if gate is not None else (
+                    f"routing confidence ({conf:.3f}) was below threshold ({self.confidence_threshold:.3f})"
                 )
+                reason = f"Routed to fallback agent '{fallback_name}' because {why}."
                 return AgnoRouteDecision(
                     agent=fallback_obj,
                     agent_index=self.fallback_agent_index,
@@ -608,6 +609,8 @@ class VeyaAgnoRouter:
                     reason=reason,
                     raw_decision=res,
                 )
+            if gate is not None:
+                raise gate
             if self.raise_on_low_confidence:
                 raise VeyaLowConfidenceError(
                     f"Agno routing confidence {conf:.3f} below threshold "
@@ -617,6 +620,7 @@ class VeyaAgnoRouter:
                     raw_decision=res,
                 )
 
+        chosen_idx = list(criteria).index(chosen_key)
         selected_agent = agents[chosen_idx]
         selected_name = _get_agent_name(selected_agent, chosen_idx)
         selected_role = _get_agent_role(selected_agent, chosen_idx)

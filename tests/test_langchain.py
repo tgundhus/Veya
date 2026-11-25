@@ -7,6 +7,7 @@ model downloads or GPU.
 import json
 import os
 import sys
+from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -21,6 +22,7 @@ from veya.integrations.langchain import (
     _can_batch,
     _extract_text,
 )
+from veya.integrations._errors import VeyaLowConfidenceError
 
 PASS, FAIL = [], []
 
@@ -672,7 +674,7 @@ check("batch/evaluator equals invoke loop", graded,
 check("batch/evaluator one forward call", len(eval_batch_agent.batch_calls), 1)
 check("batch/evaluator answers", [g["faithfulness"]["noul"] for g in graded], [0.98, 0.98])
 
-# --- remote mode: no HTTP batch endpoint, so one request per input -----------
+# --- default remote mode sends one request per input ------------------------
 remote_calls = []
 
 
@@ -699,6 +701,59 @@ try:
     check("batch/remote request count", len(remote_calls), len(ROUTER_INPUTS))
 finally:
     langchain_module._call_remote = _real_call_remote
+
+# Opt-in HTTP batching uses exactly one request with the same decision controls as invoke.
+with patch.object(langchain_module.urllib.request, "build_opener") as opener_factory:
+    opener = opener_factory.return_value
+    response = opener.open.return_value.__enter__.return_value
+    remote_batch_node = VeyaRouter(
+        criteria=remote_node.criteria, confidence_threshold=0.75, fallback="human_agent",
+        base_url="http://127.0.0.1:8000/v1/systemone/", api_key="test-key", remote_batch=True,
+        state_key="ticket", model="english", max_len=256, head_max_len=96,
+        lang="en", min_confidence=0.0, task="routing", lang_guess="en",
+    )
+    inputs = [{"ticket": state} for state in ROUTER_INPUTS]
+    rows = [mock_router_response(state, remote_batch_node._questions()) for state in ROUTER_INPUTS]
+    response.read.return_value = json.dumps({"results": rows}).encode()
+    check("batch/opt-in HTTP outputs equal the invoke loop", remote_batch_node.batch(inputs), remote_solo)
+    check("batch/opt-in HTTP request count", opener.open.call_count, 1)
+    sent = opener.open.call_args.args[0]
+    check("batch/opt-in HTTP destination", sent.full_url, "http://127.0.0.1:8000/v1/systemone/batch")
+    check("batch/opt-in HTTP authorization", sent.get_header("Authorization"), "Bearer test-key")
+    check("batch/opt-in HTTP body", json.loads(sent.data),
+          {"states": ROUTER_INPUTS, "questions": remote_batch_node._questions(),
+           "model": "english", "max_len": 256, "head_max_len": 96, "lang": "en",
+           "min_confidence": 0.0, "task": "routing", "lang_guess": "en"})
+    for invalid in (rows[:-1], [rows[0], rows[1], {"answers": {}}]):
+        response.read.return_value = json.dumps({"results": invalid}).encode()
+        opener.open.reset_mock()
+        try:
+            remote_batch_node.batch(inputs)
+        except RuntimeError as exc:
+            check_true("batch/opt-in malformed response", "Malformed decision response" in str(exc))
+            check("batch/opt-in malformed response is never retried", opener.open.call_count, 1)
+        else:
+            check_true("batch/opt-in malformed response rejected", False)
+
+    with patch.object(langchain_module, "_call_remote", side_effect=ValueError("per-input failure")) as single:
+        opener.open.reset_mock()
+        outcomes = remote_batch_node.batch(inputs, return_exceptions=True)
+        check("batch/opt-in per-input exceptions", [str(e) for e in outcomes], ["per-input failure"] * len(inputs))
+        check("batch/opt-in per-input call count", single.call_count, len(inputs))
+        check("batch/opt-in per-input path avoids batch endpoint", opener.open.call_count, 0)
+
+abstaining = MockVeyaAgent(lambda _state, _questions: {"answers": {"route": {
+    "choice": "billing", "answer_confidence": 0.3, "abstention": "abstained",
+    "abstention_threshold": 0.8,
+}}})
+check("router/core abstention uses fallback",
+      VeyaRouter(criteria=remote_node.criteria, agent=abstaining, fallback="human").invoke("refund"), "human")
+try:
+    VeyaRouter(criteria=remote_node.criteria, agent=abstaining).invoke("refund")
+except VeyaLowConfidenceError:
+    check_true("router/core abstention refuses dispatch without fallback", True)
+else:
+    check_true("router/core abstention refuses dispatch without fallback", False)
 
 # --- abatch reaches the same batched call -----------------------------------
 if _RUNNABLE_AVAILABLE:

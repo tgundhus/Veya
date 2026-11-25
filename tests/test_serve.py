@@ -1936,6 +1936,52 @@ def test_batch_happy_path(monkeypatch):
     assert "X-Inference-Time-Ms" in r.headers
 
 
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_langchain_remote_batch_reaches_authenticated_batch_route(monkeypatch, async_mode):
+    import urllib.request
+    from io import BytesIO
+    from urllib.parse import urlsplit
+
+    from veya.integrations.langchain import VeyaRouter
+
+    if async_mode:
+        pytest.importorskip("langchain_core")
+
+    class BatchRouter:
+        def predict_batch(self, requests, **kwargs):
+            calls.append((requests, kwargs))
+            return [
+                {"answers": {"route": {"type": "choice", "choice": choice,
+                                      "probabilities": {"billing": 0.8, "tech": 0.2}}}}
+                for choice in ("billing", "tech")
+            ]
+
+    calls = []
+    paths = []
+    monkeypatch.setenv("VEYA_API_KEY", "test-key")
+    with TestClient(create_app(router=BatchRouter())) as client:
+        def open_in_app(request, timeout):
+            path = urlsplit(request.full_url).path
+            paths.append(path)
+            response = client.post(path, content=request.data, headers=dict(request.header_items()))
+            assert response.status_code == 200, response.text
+            return BytesIO(response.content)
+
+        monkeypatch.setattr(urllib.request, "build_opener", lambda *_: SimpleNamespace(open=open_in_app))
+        node = VeyaRouter(criteria={"billing": "refunds", "tech": "errors"},
+                          base_url="http://veya.test", api_key="test-key", remote_batch=True,
+                          lang="en", min_confidence=0.2)
+        states = ["refund invoice", "app crashes"]
+        outputs = asyncio.run(node.abatch(states)) if async_mode else node.batch(states)
+        assert outputs == ["billing", "tech"]
+    assert paths == ["/v1/systemone/batch"]
+    assert len(calls) == 1
+    requests, kwargs = calls[0]
+    assert [item["state"] for item in requests] == ["refund invoice", "app crashes"]
+    assert [item["lang"] for item in requests] == ["en", "en"]
+    assert kwargs["min_confidence"] == 0.2
+
+
 def test_batch_sums_output_tokens():
     """total_usage must sum output_tokens, not report a hardcoded 0 (each result carries its own)."""
     class _UsageRouter:

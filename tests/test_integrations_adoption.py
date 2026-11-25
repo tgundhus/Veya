@@ -6,8 +6,9 @@ from types import SimpleNamespace
 import pytest
 
 from veya._eval_policy import load_policy
+from veya.confidence import apply_confidence_gate
 from veya.evals import EvalError
-from veya.integrations import agno
+from veya.integrations import VeyaLowConfidenceError, agno, crewai, llamaindex
 from veya.integrations._controls import require_router_controls
 
 
@@ -34,6 +35,58 @@ def test_agno_rejects_unknown_choices_before_fallback(choice):
     adapter = agno.VeyaAgnoRouter(agent=runner, confidence_threshold=0.9, fallback_agent_index=0)
     with pytest.raises(RuntimeError, match="unknown agent choice"):
         adapter.route("hello", ["first", "second"])
+
+
+def _core_gated_runner(confidence):
+    def predict(state, questions, *, min_confidence):
+        qid, question = next(iter(questions.items()))
+        keys = list(question["criteria"])
+        answer = {"type": "choice", "choice": keys[0], "probabilities": {keys[0]: 0.6, keys[1]: 0.4}}
+        if confidence is not None:
+            answer["answer_confidence"] = confidence
+        result = {"answers": {qid: answer}}
+        apply_confidence_gate([result], min_confidence)
+        return result
+
+    return SimpleNamespace(predict=predict)
+
+
+@pytest.mark.parametrize("router", [agno.VeyaAgnoRouter, crewai.VeyaCrewRouter])
+@pytest.mark.parametrize("confidence, status", [(0.6, "abstained"), (None, "unevaluated"), (0.9, "passed")])
+def test_framework_routers_honor_core_abstention(router, confidence, status):
+    runner = _core_gated_runner(confidence)
+    candidates = ["first", "backup"]
+    route = router(agent=runner, min_confidence={"choice:2": 0.8}, fallback_agent_index=1)
+    decision = route.route("hello", candidates)
+    assert decision.agent == ("first" if status == "passed" else "backup")
+    assert decision.raw_decision["answers"]["delegation"]["abstention"] == status
+    assert decision.confidence == confidence
+    if status != "passed":
+        route_without_fallback = router(agent=runner, min_confidence=0.8)
+        with pytest.raises(VeyaLowConfidenceError) as exc:
+            route_without_fallback.route("hello", candidates)
+        assert exc.value.confidence == confidence
+        assert exc.value.threshold == 0.8
+
+
+@pytest.mark.parametrize("confidence", [0.6, None])
+def test_llamaindex_selectors_and_query_router_honor_core_abstention(confidence):
+    runner = _core_gated_runner(confidence)
+    choices = [llamaindex.ToolMetadata(name=name, description=name) for name in ("first", "backup")]
+    for selector in (llamaindex.VeyaSingleSelector, llamaindex.VeyaMultiSelector):
+        with pytest.raises(VeyaLowConfidenceError):
+            selector(agent=runner, min_confidence=0.8).select(choices, "hello")
+    fallback = llamaindex.VeyaSingleSelector(agent=runner, min_confidence=0.8, fallback_index=1)
+    assert fallback.select(choices, "hello").selections[0].index == 1
+
+    def unexpected_dispatch(*args):
+        pytest.fail("the first engine was not configured as a fallback")
+
+    engines = {"first": unexpected_dispatch, "backup": lambda state: ("fallback", state)}
+    with pytest.raises(VeyaLowConfidenceError):
+        llamaindex.VeyaQueryRouter(engines, agent=runner, min_confidence=0.8).query("hello")
+    safe = llamaindex.VeyaQueryRouter(engines, fallback_key="backup", agent=runner, min_confidence=0.8)
+    assert safe.query("hello") == ("fallback", "hello")
 
 
 @pytest.mark.parametrize("index", [True, -1, 2, 1.5])
