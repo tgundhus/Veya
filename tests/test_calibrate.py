@@ -29,9 +29,11 @@ from veya.calibrate import (  # noqa: E402
     _ece_report,
     _ece_split,
     _iter_records,
+    _select_abstention_threshold,
     _softmax,
     apply_binning_map,
     apply_calibration_payload,
+    fit_abstention_thresholds,
     fit_binning_map,
     calibration_payload,
     fit_one_temperature,
@@ -317,6 +319,25 @@ check("records/numpy integer and explicit padding", soft_record[3], 2)
 check_true("records/soft target kept", np.allclose(soft_record[2], [0.3, 0.7]))
 check_true("records/soft target fits", np.isfinite(fit_one_temperature([(soft_record[1], soft_record[2])], min_n=1)))
 check("records/empty dataset still neutral", fit_temperature_map([])["temperature"], [1.0] * 3)
+
+
+def _reused_buffers():
+    logits = np.empty(2, dtype=np.float32)
+    target = np.empty(2, dtype=np.float32)
+    for answer in (0, 1):
+        logits[:] = [2, 1]
+        target[:] = (answer == 0, answer == 1)
+        yield 0, logits, target, 2
+    logits[:] = np.nan
+    target[:] = np.nan
+
+
+for idx, (_, logits, target, _) in enumerate(_iter_records(_reused_buffers())):
+    check("records/shared logit buffer snapshots row %d" % idx, logits.tolist(), [2.0, 1.0])
+    check("records/shared target buffer snapshots row %d" % idx, target.tolist(),
+          [float(idx == 0), float(idx == 1)])
+
+
 for name, pairs, min_n in (
     ("mismatched lengths", [([1, 2], [1])], None),
     ("invalid below sample floor", [([np.nan, 2], [1, 0])], None),
@@ -963,6 +984,27 @@ _entry = bmap["choice:2"]
 check("binning/records bins", _entry["bins"], 10)
 check("binning/one value per bin", len(_entry["values"]), 10)
 check_true("binning/values are probabilities", all(0.0 <= v <= 1.0 for v in _entry["values"]), _entry["values"])
+_bin_edges = [(QTYPES["choice"], [0, 0], [1, 0]), (QTYPES["choice"], [1000, -1000], [0, 1])]
+check("binning/empty midpoints, boundary, and exact certainty",
+      fit_binning_map(_bin_edges, [1.0] * 3, {}, bins=4, min_bucket_n=1)["choice:2"]["values"],
+      [0.125, 0.375, 1.0, 0.0])
+
+_ties = [(0.9, 1), (0.8, 1), (0.8, 0), (0.7, 1)]
+check("threshold/judges all equal confidences together",
+      _select_abstention_threshold(_ties, 0.2, conservative=False), 0.9)
+check("threshold/searches past an ineligible cohort at the conservative risk limit",
+      _select_abstention_threshold(_ties, 0.4, conservative=True), 0.7)
+_risk = np.float32(0.04)
+check("threshold/preserves scalar promotion at the risk limit",
+      _select_abstention_threshold([(0.8, 1)] * 24 + [(0.8, 0)], _risk, conservative=False),
+      0.8 if 1 / 25 <= _risk else 1.0)
+try:
+    fit_abstention_thresholds(_bin_edges, [1.0] * 3, {}, min_bucket_n=1,
+                             binning_map={"choice:2": {"bins": 1, "values": [float("nan")]}})
+except ValueError as exc:
+    check_true("threshold/rejects nonfinite bin confidence", "finite" in str(exc))
+else:
+    check_true("threshold/rejects nonfinite bin confidence", False)
 
 # apply: a bucket with no map returns the confidence unchanged; edges clamp into range.
 check("binning/apply unknown bucket is identity", apply_binning_map(0.73, "choice:6-10", bmap), 0.73)
