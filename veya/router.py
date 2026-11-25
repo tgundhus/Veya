@@ -1457,6 +1457,8 @@ class Router(HookRegistry):
         raise_errors = self.hooks_raise if hooks_raise is None else bool(hooks_raise)
         active = compose_hooks(self.hooks, hooks)
         timeout = self.hooks_timeout if hooks_timeout is None else validate_timeout(hooks_timeout)
+        if not active:
+            return decision
         ctx = PredictContext(states=[state], questions=questions or {}, decision=decision, router=self)
         dispatch(active, "on_route", ctx, raise_errors=raise_errors, lock=self._hooks_lock, timeout=timeout)
         return ctx.decision

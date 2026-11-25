@@ -97,6 +97,40 @@ def test_invalid_batch_fails_before_loading(fake_agent, items, error, fragment):
     assert router.loaded == []
 
 
+def test_hookless_routing_avoids_context_allocation(monkeypatch):
+    from veya.hooks import PredictContext, clear_default_hooks, default_hooks, set_default_hooks
+
+    created = []
+
+    def track_context(*args, **kwargs):
+        ctx = PredictContext(*args, **kwargs)
+        created.append(ctx)
+        return ctx
+
+    class PinMultilingual:
+        def on_route(self, ctx):
+            ctx.decision = {**ctx.decision, "model": "multilingual"}
+
+    monkeypatch.setattr("veya.router.PredictContext", track_context)
+    router = Router()
+    items = [request("forced", lang="en"), request("مرحبا")]
+    saved_defaults = default_hooks()
+    try:
+        clear_default_hooks()
+        assert router.route("forced", Q, lang="en")["model"] == "english"
+        assert [row["model"] for row in router.route_batch(items)] == ["english", "multilingual"]
+        with pytest.raises(ValueError, match="hooks_timeout"):
+            router.route("forced", Q, lang="en", hooks_timeout=True)
+        assert created == []
+
+        set_default_hooks([PinMultilingual()])
+        assert router.route("forced", Q, lang="en")["model"] == "multilingual"
+        assert len(created) == 1
+        assert created[0].run_id
+    finally:
+        set_default_hooks(saved_defaults)
+
+
 def test_inference_exception_propagates_and_cache_remains_consistent(fake_agent):
     built, calls = fake_agent
     router = Router(max_loaded=1)
