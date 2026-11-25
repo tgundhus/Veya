@@ -496,6 +496,7 @@ from veya.integrations.langchain import (  # noqa: E402
 
 for label, cls in (("VeyaRouter", VeyaRouter), ("VeyaGuardrail", VeyaGuardrail),
                    ("VeyaTriage", VeyaTriage), ("VeyaEvaluator", VeyaEvaluator)):
+    check_param("langchain/%s" % label, cls.__init__, "remote_batch", False, inspect.Parameter.KEYWORD_ONLY)
     for method in ("invoke", "batch", "abatch"):
         check_true("langchain/%s.%s exists" % (label, method),
                    callable(getattr(cls, method, None)))

@@ -39,6 +39,7 @@ from ._controls import require_router_controls as _require_router_controls, rout
 from ._guard import answer_number as _answer_number
 from ._guard import answers_map as _answers_map
 from ._guard import core_abstention as _core_abstention
+from ._guard import malformed as _malformed
 from ._guard import score_violation_probability as _score_violation_probability
 
 
@@ -184,22 +185,18 @@ def _call_remote(
     if not url.endswith("/v1/systemone"):
         url = f"{url}/v1/systemone"
 
-    payload: Dict[str, Any] = {"state": state, "questions": questions}
-    if model:
-        payload["model"] = model
-    if max_len is not None:
-        payload["max_len"] = max_len
-    if head_max_len is not None:
-        payload["head_max_len"] = head_max_len
-    if lang is not None:
-        payload["lang"] = lang
-    if min_confidence is not None:
-        payload["min_confidence"] = min_confidence
-    if task is not None:
-        payload["task"] = task
-    if lang_guess is not None:
-        payload["lang_guess"] = lang_guess
+    parsed = _post_json(url, dict(state=state, questions=questions,
+                                  **_predict_kwargs(model, max_len, head_max_len, lang, min_confidence),
+                                  **_router_kwargs(task, lang_guess)), api_key, timeout)
+    if "answers" in parsed and not isinstance(parsed["answers"], dict):
+        raise RuntimeError(
+            f"Malformed decision response from Veya server at {url}: "
+            f"'answers' must be a JSON object, got {type(parsed['answers']).__name__}"
+        )
+    return parsed
 
+
+def _post_json(url: str, payload: Dict[str, Any], api_key: Optional[str], timeout: float) -> Dict[str, Any]:
     data = json.dumps(payload).encode("utf-8")
     headers = {"Content-Type": "application/json"}
     if api_key:
@@ -226,18 +223,22 @@ def _call_remote(
             f"Malformed decision response from Veya server at {url}: "
             f"expected a JSON object, got {type(parsed).__name__}"
         )
-    # `parsed` is an object now, but its `answers` field is the same arbitrary JSON: a gateway can
-    # answer `{"answers": []}`. The consumers read it four ways -- `result["answers"][question_id]`,
-    # `.get("answers", {}).get("intent", …)`, `.items()` and one that hands it back to the caller --
-    # so a non-object leaks TypeError/AttributeError, or worse a non-mapping into user code, past the
-    # fail-closed paths. This is the guard above one level deeper. A missing `answers` is left alone:
-    # `VeyaRouter` already reports that as its own KeyError, and the guardrail as no violations.
-    if "answers" in parsed and not isinstance(parsed["answers"], dict):
-        raise RuntimeError(
-            f"Malformed decision response from Veya server at {url}: "
-            f"'answers' must be a JSON object, got {type(parsed['answers']).__name__}"
-        )
     return parsed
+
+
+def _call_remote_batch(base_url: str, states: List[Any], questions: Dict[str, Any],
+                       api_key: Optional[str], overrides: Dict[str, Any]) -> List[Dict[str, Any]]:
+    root = base_url.rstrip("/").removesuffix("/v1/systemone")
+    url = root + "/v1/systemone/batch"
+    response = _post_json(url, dict(states=states, questions=questions, **overrides), api_key, 10.0)
+    results = response.get("results")
+    where = f"Veya server at {url}"
+    if not isinstance(results, list) or len(results) != len(states):
+        raise _malformed(where, f"expected one batch result per input ({len(states)})")
+    for i, result in enumerate(results):
+        if _answers_map(result, where).keys() != questions.keys():
+            raise _malformed(where, f"batch result {i} must answer every requested question exactly once")
+    return results
 
 
 _DEFAULT_ROUTER = None
@@ -399,6 +400,15 @@ class _BatchedRunnable:
             return outcomes
         hook_kwargs = _hook_kwargs(self.hooks, self.on_predict_start, self.on_predict_end,
                                    self.hooks_raise, self.hooks_timeout)
+        if self.base_url and self.remote_batch:
+            _reject_remote_hooks(hook_kwargs, self.base_url)
+            hints = _router_kwargs(self.task, self.lang_guess)
+            _reject_remote_lang_guess(hints, self.base_url)
+            overrides = _predict_kwargs(self.model, self.max_len, self.head_max_len, self.lang, self.min_confidence)
+            overrides.update(hints)
+            states = [_extract_text(item, self.state_key) for item in inputs]
+            results = _call_remote_batch(self.base_url, states, self._questions(), self.api_key, overrides)
+            return [self._finish(result, item) for result, item in zip(results, inputs)]
         if not _can_batch(self.agent, self.base_url, hooked=bool(hook_kwargs)):
             if _RUNNABLE_AVAILABLE:
                 # LangChain's own loop already understands both config shapes.
@@ -458,6 +468,7 @@ class VeyaRouter(_BatchedRunnable, RunnableSerializable):
     state_key: Optional[Union[str, Callable[[Any], Any]]] = None
     agent: Optional[Any] = None
     base_url: Optional[str] = None
+    remote_batch: bool = False
     api_key: Optional[str] = None
     model: Optional[str] = None
     max_len: Optional[int] = None
@@ -501,6 +512,7 @@ class VeyaRouter(_BatchedRunnable, RunnableSerializable):
         *,
         task: Optional[str] = None,
         lang_guess: Optional[Any] = None,
+        remote_batch: bool = False,
         **kwargs: Any,
     ):
         if _RUNNABLE_AVAILABLE:
@@ -512,6 +524,7 @@ class VeyaRouter(_BatchedRunnable, RunnableSerializable):
                 state_key=state_key,
                 agent=agent,
                 base_url=base_url,
+                remote_batch=remote_batch,
                 api_key=api_key,
                 model=model,
                 max_len=max_len,
@@ -535,6 +548,7 @@ class VeyaRouter(_BatchedRunnable, RunnableSerializable):
             self.state_key = state_key
             self.agent = agent
             self.base_url = base_url
+            self.remote_batch = remote_batch
             self.api_key = api_key
             self.model = model
             self.max_len = max_len
@@ -582,7 +596,6 @@ class VeyaRouter(_BatchedRunnable, RunnableSerializable):
                 return self.fallback
 
         return choice
-
 
     def invoke(self, input: Any, config: Optional[RunnableConfig] = None) -> str:
         """Route input to a destination branch label."""
@@ -635,6 +648,7 @@ class VeyaGuardrail(_BatchedRunnable, RunnableSerializable):
     state_key: Optional[Union[str, Callable[[Any], Any]]] = None
     agent: Optional[Any] = None
     base_url: Optional[str] = None
+    remote_batch: bool = False
     api_key: Optional[str] = None
     model: Optional[str] = None
     max_len: Optional[int] = None
@@ -676,6 +690,7 @@ class VeyaGuardrail(_BatchedRunnable, RunnableSerializable):
         *,
         task: Optional[str] = None,
         lang_guess: Optional[Any] = None,
+        remote_batch: bool = False,
         **kwargs: Any,
     ):
         if not 0.0 <= threshold <= 1.0:
@@ -689,6 +704,7 @@ class VeyaGuardrail(_BatchedRunnable, RunnableSerializable):
                 state_key=state_key,
                 agent=agent,
                 base_url=base_url,
+                remote_batch=remote_batch,
                 api_key=api_key,
                 model=model,
                 max_len=max_len,
@@ -712,6 +728,7 @@ class VeyaGuardrail(_BatchedRunnable, RunnableSerializable):
             self.state_key = state_key
             self.agent = agent
             self.base_url = base_url
+            self.remote_batch = remote_batch
             self.api_key = api_key
             self.model = model
             self.max_len = max_len
@@ -843,6 +860,7 @@ class VeyaTriage(_BatchedRunnable, RunnableSerializable):
     state_key: Optional[Union[str, Callable[[Any], Any]]] = None
     agent: Optional[Any] = None
     base_url: Optional[str] = None
+    remote_batch: bool = False
     api_key: Optional[str] = None
     model: Optional[str] = None
     max_len: Optional[int] = None
@@ -880,6 +898,7 @@ class VeyaTriage(_BatchedRunnable, RunnableSerializable):
         *,
         task: Optional[str] = None,
         lang_guess: Optional[Any] = None,
+        remote_batch: bool = False,
         **kwargs: Any,
     ):
         if _RUNNABLE_AVAILABLE:
@@ -887,6 +906,7 @@ class VeyaTriage(_BatchedRunnable, RunnableSerializable):
                 state_key=state_key,
                 agent=agent,
                 base_url=base_url,
+                remote_batch=remote_batch,
                 api_key=api_key,
                 model=model,
                 max_len=max_len,
@@ -906,6 +926,7 @@ class VeyaTriage(_BatchedRunnable, RunnableSerializable):
             self.state_key = state_key
             self.agent = agent
             self.base_url = base_url
+            self.remote_batch = remote_batch
             self.api_key = api_key
             self.model = model
             self.max_len = max_len
@@ -994,6 +1015,7 @@ class VeyaEvaluator(_BatchedRunnable, RunnableSerializable):
     state_key: Optional[Union[str, Callable[[Any], Any]]] = None
     agent: Optional[Any] = None
     base_url: Optional[str] = None
+    remote_batch: bool = False
     api_key: Optional[str] = None
     model: Optional[str] = None
     max_len: Optional[int] = None
@@ -1032,6 +1054,7 @@ class VeyaEvaluator(_BatchedRunnable, RunnableSerializable):
         *,
         task: Optional[str] = None,
         lang_guess: Optional[Any] = None,
+        remote_batch: bool = False,
         **kwargs: Any,
     ):
         if _RUNNABLE_AVAILABLE:
@@ -1040,6 +1063,7 @@ class VeyaEvaluator(_BatchedRunnable, RunnableSerializable):
                 state_key=state_key,
                 agent=agent,
                 base_url=base_url,
+                remote_batch=remote_batch,
                 api_key=api_key,
                 model=model,
                 max_len=max_len,
@@ -1060,6 +1084,7 @@ class VeyaEvaluator(_BatchedRunnable, RunnableSerializable):
             self.state_key = state_key
             self.agent = agent
             self.base_url = base_url
+            self.remote_batch = remote_batch
             self.api_key = api_key
             self.model = model
             self.max_len = max_len
