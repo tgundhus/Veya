@@ -109,6 +109,24 @@ describe("Router.routeBatch / predictBatch", () => {
     expect(router.loaded).toEqual(["typed-decisions"]);
   });
 
+  it("batches a route hook's alias with the canonical checkpoint", async () => {
+    const { router, calls } = makeRouter();
+    const models: unknown[] = [];
+    const results = await router.predictBatch([req("alias"), req("full", { model: "multilingual" })], null, {
+      hooks: {
+        onRoute(ctx) {
+          if (ctx.states[0] === "alias") ctx.decision = { ...ctx.decision, model: "ml" };
+        },
+      },
+      onPredictStart(ctx) { models.push(ctx.model); },
+    });
+    expect(calls.map(([checkpoint, states]) => [checkpoint, states])).toEqual([
+      ["multilingual", ["alias", "full"]],
+    ]);
+    expect(models).toEqual(["multilingual", "multilingual"]);
+    expect(results.map((r) => r.routing.model)).toEqual(["ml", "multilingual"]);
+  });
+
   it("rejects malformed batches before loading anything", () => {
     const { router, built } = makeRouter();
     expect(() => router.routeBatch(null as never)).toThrow(TypeError);

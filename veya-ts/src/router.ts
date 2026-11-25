@@ -284,6 +284,10 @@ export function digestsFromEnv(
 export const _digestsFromEnv = digestsFromEnv;
 export const _digests_from_env = digestsFromEnv;
 
+function revisionPin(value: string | null | undefined): string | null {
+  return value != null && String(value).trim() ? value : null;
+}
+
 function toSpec(spec: string | ModelSpec | [string, string | null]): ModelSpec {
   if (typeof spec === "string") return { repo: spec, subfolder: null };
   if (Array.isArray(spec)) {
@@ -379,9 +383,10 @@ export class Router extends HookRegistry {
       } else {
         const { Agent } = await import("./agent.js");
         const spec = this.models[key];
-        const revision = Object.prototype.hasOwnProperty.call(this.revisions, key)
+        const perModelRevision = Object.prototype.hasOwnProperty.call(this.revisions, key)
           ? this.revisions[key]
-          : this.revision;
+          : undefined;
+        const revision = revisionPin(perModelRevision) ?? revisionPin(this.revision);
         const opts: Record<string, unknown> = {
           subfolder: spec.subfolder,
           device: this.device ?? undefined,
@@ -877,9 +882,9 @@ export class Router extends HookRegistry {
     const decisions = this.routeBatch(requests, opts);
     if (decisions.length === 0) return [];
 
-    const groups = new Map<string, number[]>();
+    const groups = new Map<ModelName, number[]>();
     for (let i = 0; i < decisions.length; i++) {
-      const model = decisions[i].model;
+      const model = normaliseName(decisions[i].model);
       const bucket = groups.get(model);
       if (bucket) bucket.push(i);
       else groups.set(model, [i]);
