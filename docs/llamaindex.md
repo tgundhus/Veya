@@ -200,6 +200,11 @@ than a forced selection. Both are read by `Agent.predict` and `Router.predict` a
 unset one is omitted, not sent as `None`, so it cannot shadow the deployment's own default;
 `min_confidence=0.0` and `lang=""` are real values and are forwarded as given.
 
+When core reports `abstained` or cannot evaluate a configured confidence gate, the single
+selector uses its configured `fallback_index` and the query router uses an explicit `fallback_key`.
+Without a configured fallback they raise `VeyaLowConfidenceError`. The multi-selector also raises
+this error, so a gated answer cannot dispatch tools based on its probabilities.
+
 ```python
 selector = VeyaSingleSelector(
     instructions="Which tool or query engine is best suited to answer this query?",

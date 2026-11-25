@@ -1,14 +1,15 @@
 """Exceptions shared by the framework integrations."""
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 
 class VeyaLowConfidenceError(ValueError):
-    """Raised by CrewAI or LlamaIndex selection when the caller enables low-confidence errors.
+    """Raised when a routing confidence policy declines to dispatch without a fallback.
 
-    Requires a positive threshold, `raise_on_low_confidence=True`, and no fallback index.
+    An unevaluated core gate can report no confidence. Custom runners may omit its threshold.
     """
 
-    def __init__(self, message: str, confidence: float, threshold: float, raw_decision: Dict[str, Any]):
+    def __init__(self, message: str, confidence: Optional[float], threshold: Optional[float],
+                 raw_decision: Dict[str, Any]):
         super().__init__(message)
         self.confidence = confidence
         self.threshold = threshold

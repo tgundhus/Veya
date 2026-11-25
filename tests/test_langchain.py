@@ -21,6 +21,7 @@ from veya.integrations.langchain import (
     _can_batch,
     _extract_text,
 )
+from veya.integrations._errors import VeyaLowConfidenceError
 
 PASS, FAIL = [], []
 
@@ -699,6 +700,19 @@ try:
     check("batch/remote request count", len(remote_calls), len(ROUTER_INPUTS))
 finally:
     langchain_module._call_remote = _real_call_remote
+
+abstaining = MockVeyaAgent(lambda _state, _questions: {"answers": {"route": {
+    "choice": "billing", "answer_confidence": 0.3, "abstention": "abstained",
+    "abstention_threshold": 0.8,
+}}})
+check("router/core abstention uses fallback",
+      VeyaRouter(criteria=remote_node.criteria, agent=abstaining, fallback="human").invoke("refund"), "human")
+try:
+    VeyaRouter(criteria=remote_node.criteria, agent=abstaining).invoke("refund")
+except VeyaLowConfidenceError:
+    check_true("router/core abstention refuses dispatch without fallback", True)
+else:
+    check_true("router/core abstention refuses dispatch without fallback", False)
 
 # --- abatch reaches the same batched call -----------------------------------
 if _RUNNABLE_AVAILABLE:

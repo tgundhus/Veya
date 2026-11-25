@@ -196,6 +196,11 @@ than a forced delegation. Both are read by `Agent.predict` and `Router.predict` 
 path. An unset one is omitted, not sent as `None`, so it cannot shadow the deployment's own default;
 `min_confidence=0.0` and `lang=""` are real values and are forwarded as given.
 
+When core reports `abstained` or cannot evaluate a configured confidence gate, the router
+uses `fallback_agent_index` if set. Otherwise it raises `VeyaLowConfidenceError` with the raw
+decision so the caller can review it. `raise_on_low_confidence` still controls the separate
+wrapper `confidence_threshold` when core has not blocked dispatch.
+
 ```python
 router = VeyaCrewRouter(
     confidence_threshold=0.80,

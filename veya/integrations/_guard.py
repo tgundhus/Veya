@@ -2,6 +2,29 @@
 import math
 from typing import Any, Dict, Iterable, Optional
 
+from ..confidence import GATE_ABSTAINED, GATE_UNEVALUATED, _gate_confidence
+from ._errors import VeyaLowConfidenceError
+
+
+def core_abstention(answer: Dict[str, Any], result: Dict[str, Any]) -> Optional[VeyaLowConfidenceError]:
+    """Return the routing error for an evaluated rejection or an unevaluated configured gate."""
+    status = answer.get("abstention")
+    if status == GATE_UNEVALUATED:
+        reason = "Veya's confidence gate could not evaluate the answer"
+        confidence = None
+    elif status == GATE_ABSTAINED:
+        reason = "Veya's confidence gate abstained"
+        try:
+            confidence = _gate_confidence(answer)
+        except OverflowError:
+            confidence = None
+    else:
+        return None
+    threshold = answer.get("abstention_threshold")
+    if type(threshold) not in (int, float) or not 0.0 <= threshold <= 1.0:
+        threshold = None
+    return VeyaLowConfidenceError(reason, confidence=confidence, threshold=threshold, raw_decision=result)
+
 
 def score_violation_probability(answer: Dict[str, Any], levels: int = 0) -> float:
     """Probability that a `score` answer is at or above the middle of its scale.

@@ -59,6 +59,7 @@ from ._controls import decision_kwargs as _decision_kwargs  # noqa: E402
 from ._controls import predict_kwargs as _predict_kwargs, reject_remote_hooks as _reject_remote_hooks  # noqa: E402
 from ._guard import answer_number as _answer_number  # noqa: E402
 from ._guard import answers_map as _answers_map  # noqa: E402
+from ._guard import core_abstention as _core_abstention  # noqa: E402
 from ._guard import malformed as _malformed  # noqa: E402
 from ._guard import score_violation_probability as _score_violation_probability  # noqa: E402
 from ..confidence import _gate_confidence  # noqa: E402
@@ -77,7 +78,7 @@ class CrewRouteDecision:
     agent: Any
     agent_index: int
     role: str
-    confidence: float
+    confidence: Optional[float]
     reason: str
     raw_decision: Dict[str, Any]
 
@@ -395,19 +396,20 @@ class VeyaCrewRouter:
         # first, falling back to the entropy `confidence` so an answer that carries only the
         # older field is still gated rather than silently passed (fail-closed). An answer with
         # no usable number at all is treated as fully confident.
-        conf = _gate_confidence(ans)
-        if conf is None:
+        gate = _core_abstention(ans, res)
+        conf = gate.confidence if gate is not None else _gate_confidence(ans)
+        if conf is None and gate is None:
             conf = 1.0
 
         # Confidence gating
-        if self.confidence_threshold > 0.0 and conf < self.confidence_threshold:
+        if gate is not None or (self.confidence_threshold > 0.0 and conf < self.confidence_threshold):
             if self.fallback_agent_index is not None:
                 fallback_obj = agents[self.fallback_agent_index]
                 fallback_role = _get_agent_role(fallback_obj, self.fallback_agent_index)
-                reason = (
-                    f"Delegated to fallback agent '{fallback_role}' because routing confidence "
-                    f"({conf:.3f}) was below threshold ({self.confidence_threshold:.3f})."
+                why = str(gate) if gate is not None else (
+                    f"routing confidence ({conf:.3f}) was below threshold ({self.confidence_threshold:.3f})"
                 )
+                reason = f"Delegated to fallback agent '{fallback_role}' because {why}."
                 return CrewRouteDecision(
                     agent=fallback_obj,
                     agent_index=self.fallback_agent_index,
@@ -416,6 +418,8 @@ class VeyaCrewRouter:
                     reason=reason,
                     raw_decision=res,
                 )
+            if gate is not None:
+                raise gate
             if self.raise_on_low_confidence:
                 raise VeyaLowConfidenceError(
                     f"Routing confidence {conf:.3f} below threshold {self.confidence_threshold:.3f} "

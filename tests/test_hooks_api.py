@@ -1980,6 +1980,21 @@ check_param("DecisionModel", DecisionModel.__init__, "score_adapter_width", 0)
 
 check_true("migration/legacy integration class", _legacy.LayaRouter is veya.VeyaRouter)
 
+from veya.integrations import VeyaLowConfidenceError as _IntegrationGateError  # noqa: E402
+from veya.integrations.crewai import VeyaCrewRouter as _CrewRouter  # noqa: E402
+
+_ungated_choice = {"answers": {"delegation": {"choice": "agent_0", "abstention": "unevaluated",
+                                             "abstention_threshold": 0.8}}}
+_gate_router = _CrewRouter(agent=type("Runner", (), {"predict": lambda *args: _ungated_choice})())
+try:
+    _gate_router.route("hello", ["first", "second"])
+except _IntegrationGateError as exc:
+    check("integration gate/no fabricated confidence", exc.confidence, None)
+    check("integration gate/reported threshold", exc.threshold, 0.8)
+    check_true("integration gate/retains raw decision", exc.raw_decision is _ungated_choice)
+else:
+    check_true("integration gate/refuses an unevaluated answer", False)
+
 from veya.train import items_from_rows as _training_items  # noqa: E402
 try:
     _training_items(None, [{"state": "state", "questions": {"q": {"type": "noul", "instructions": "Ready?"}},

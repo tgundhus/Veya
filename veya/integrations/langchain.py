@@ -38,6 +38,7 @@ from ._controls import reject_remote_lang_guess as _reject_remote_lang_guess
 from ._controls import require_router_controls as _require_router_controls, router_kwargs as _router_kwargs
 from ._guard import answer_number as _answer_number
 from ._guard import answers_map as _answers_map
+from ._guard import core_abstention as _core_abstention
 from ._guard import score_violation_probability as _score_violation_probability
 
 
@@ -562,6 +563,11 @@ class VeyaRouter(_BatchedRunnable, RunnableSerializable):
     def _finish(self, result: Dict[str, Any], input: Any) -> str:
         self.last_decision = result
         ans = result["answers"][self.question_id]
+        abstention = _core_abstention(ans, result)
+        if abstention is not None:
+            if self.fallback is not None:
+                return self.fallback
+            raise abstention
         choice = ans["choice"]
         # Gate on the same number core's `flag_low_confidence` gates on: `answer_confidence`
         # first, falling back to the entropy `confidence` so an answer that carries only the
@@ -576,6 +582,7 @@ class VeyaRouter(_BatchedRunnable, RunnableSerializable):
                 return self.fallback
 
         return choice
+
 
     def invoke(self, input: Any, config: Optional[RunnableConfig] = None) -> str:
         """Route input to a destination branch label."""

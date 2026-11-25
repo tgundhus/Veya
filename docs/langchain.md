@@ -404,8 +404,10 @@ router = VeyaRouter(
 )
 ```
 
-Unlike `task` and `lang_guess` -- Router-only routing keywords a direct `Agent.predict` rejects --
-these two are safe on every runner and every deployment.
+An explicit core abstention, including a configured gate that could not evaluate the answer,
+sends `VeyaRouter` to its configured `fallback`. Without a fallback it raises
+`VeyaLowConfidenceError`. For remote routing, use the extended server response so the adapter
+receives the core gate status. `lang` and `min_confidence` work with both Agent and Router.
 
 ---
 
