@@ -244,6 +244,23 @@ check_param("Router.predict_batch", Router.predict_batch, "sort_by_length", Fals
 check_param("Router.predict_batch", Router.predict_batch, "diagnostics", None,
             inspect.Parameter.KEYWORD_ONLY)
 
+# An invalid count is rejected before hooks or model loading, including for empty batches.
+_batch_agent = Agent.__new__(Agent)
+_batch_onnx = ONNXAgent.__new__(ONNXAgent)
+_batch_router = Router()
+for _call, _args in ((_batch_agent.predict_batch, ([], {})), (_batch_onnx.predict_batch, ([], {})),
+                     (_batch_router.predict_batch, ([],)), (_batch_agent.predict_long, ("", {})),
+                     (_batch_onnx.predict_long, ("", {})), (_batch_router.predict_long, ("", {})),
+                     (_inference_common.window_batch_cap, (16, 312, 312))):
+    for _bad_size in (True, False, 2.0, "2"):
+        _witness = "%s rejects batch_size=%r" % (_call.__qualname__, _bad_size)
+        try:
+            _call(*_args, batch_size=_bad_size)
+        except ValueError as _exc:
+            check_true(_witness, "batch_size" in str(_exc), str(_exc))
+        else:
+            check_true(_witness, False)
+
 # per-call token-budget overrides
 for label, fn in (("Agent.predict_batch", Agent.predict_batch),
                   ("Agent.system_one", Agent.system_one),

@@ -44,7 +44,7 @@ from collections.abc import Sequence as SequenceABC
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from .confidence import apply_confidence_gate, check_min_confidence
-from .performance import _apply_torch_threads, _without_torch_threads, resolve_performance_mode
+from .performance import _apply_torch_threads, _check_batch_size, _without_torch_threads, resolve_performance_mode
 from .hooks import (
     HookRegistry, PredictContext, aggregate_usage, compose_hooks, dispatch, normalise_hooks,
     validate_timeout,
@@ -1759,6 +1759,7 @@ class Router(HookRegistry):
         """
         if batch_size is None and self.performance_config:
             batch_size = self.performance_config["batch_size"]
+        batch_size = _check_batch_size(batch_size)
         token = _SCAN.set(_ScanLong(window=window, stride=stride, aggregate=aggregate,
                                     batch_size=batch_size, lang=lang))
         try:
@@ -1917,7 +1918,8 @@ class Router(HookRegistry):
                 ``questions`` and may include ``model``, ``task``, ``lang`` or
                 ``lang_guess`` routing overrides and ``max_len`` / ``head_max_len`` token-budget
                 overrides.
-            batch_size: Optional maximum number of states per Agent forward-pass batch.
+            batch_size: Optional integer maximum number of states per Agent forward-pass batch.
+                        Zero or a negative value leaves the cap unset.
             hooks_timeout: Override the Router's ``hooks_timeout`` for this call.
             min_confidence: Optional float or per-bucket mapping for confidence gating.
             sort_by_length: Forwarded to every ``Agent.predict_batch`` call, so each question
@@ -1941,6 +1943,7 @@ class Router(HookRegistry):
             raise TypeError("diagnostics must be a dict or None")
         if batch_size is None and self.performance_config:
             batch_size = self.performance_config["batch_size"]
+        batch_size = _check_batch_size(batch_size)
         mc = check_min_confidence(min_confidence) if min_confidence is not None else None
         decisions = self.route_batch(requests, hooks=hooks, hooks_raise=hooks_raise, hooks_timeout=hooks_timeout)
         if not decisions:

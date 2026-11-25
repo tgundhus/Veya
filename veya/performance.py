@@ -7,6 +7,7 @@ from ._env import getenv
 import os
 from contextlib import contextmanager
 from contextvars import ContextVar
+from numbers import Integral
 from typing import Any, Dict, Optional
 
 
@@ -18,6 +19,15 @@ _PRESETS = {
     5: ("dedicated", 16, 16, 3, True, 131072, 16),
 }
 _THREADS_OWNED = ContextVar("veya_performance_threads_owned", default=False)
+
+
+def _check_batch_size(value: Any) -> Optional[int]:
+    """Validate a Python batch cap; None and nonpositive integers leave it unset."""
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, Integral):
+        raise ValueError("batch_size must be an integer count, got %r" % (value,))
+    return int(value)
 
 
 def parse_performance_mode(value: Any) -> Optional[int]:
