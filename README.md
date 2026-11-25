@@ -19,12 +19,12 @@ prevent a three-way latency ranking. These synthetic cases do not establish gene
 [Chart data and source hashes](https://github.com/tgundhus/Veya/blob/main/research/results/readme_comparison_sources_20261107.json) ·
 [Benchmark protocol](https://github.com/tgundhus/Veya/blob/main/research/benchmarks/feishu_zh/README.md).
 
-Selected upstream changes are reviewed through Laya 0.4.18, with a
+Selected upstream changes are reviewed through Laya 0.5.4, including local training from
+saved teacher answers and faster calibration fitting. See the
+[25 November upstream review](docs/reports/upstream-review-2026-11-25.md) for the changes
+Veya adopted and the upstream features that need separate qualification. The
 [5 November comparison](https://github.com/tgundhus/Veya/blob/main/docs/reports/decision-engines-2026-11-05.md)
-covering newer Laya changes and four related decision engines. Review coverage
-does not mean every upstream change has been adopted. The
-[runtime adoption report](https://github.com/tgundhus/Veya/blob/main/docs/reports/runtime-adoption-2026-11-05.md)
-records the resulting changes, measurements and qualification limits.
+covers four related decision engines and earlier Laya changes.
 
 The [production capabilities report](https://github.com/tgundhus/Veya/blob/main/docs/reports/production-capabilities-2026-11-05.md)
 adds verified model-free replay, cache-aware HTTP scheduling, a shared Python/TypeScript
@@ -253,11 +253,10 @@ measurements and verification limits separately from these September measurement
 
 ## Limits and version policy
 
-This version incorporates upstream **0.3.29** and selected correctness and integration changes
-reviewed through **0.4.18**. The distribution remains 0.3.29 and retains Veya's English
-fallback for ambiguous Latin text. This is selected upstream coverage, not complete behavioral
-parity; the [30 October review](https://github.com/tgundhus/Veya/blob/main/docs/reports/upstream-review-2026-10-30.md)
-records adopted changes, measurements and limits.
+Veya is based on Laya **0.3.29** and incorporates selected changes reviewed through **0.5.4**.
+The distribution remains 0.3.29 and retains Veya's English fallback for ambiguous Latin text.
+The [25 November review](docs/reports/upstream-review-2026-11-25.md) records the selected changes,
+measurements and limits.
 
 Validate accuracy and confidence on representative labelled data. Large choice sets,
 underspecified criteria and ordinal scores remain difficult. Replay improves repeatability,

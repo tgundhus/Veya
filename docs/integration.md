@@ -57,6 +57,11 @@ selects a member; the application executes it. Local and self-hosted HTTP paths 
 and `lang_guess`, and refuse malformed decisions before selecting an agent.
 Set `AGNO_TELEMETRY=false` to disable the framework's telemetry.
 
+LangChain can batch inputs against a self-hosted Veya server with `remote_batch=True`.
+LangChain, CrewAI, Agno and LlamaIndex routing adapters use their configured fallback when
+Veya explicitly abstains. Where no fallback is configured, they raise
+`veya.integrations.VeyaLowConfidenceError`. Use the extended HTTP response to carry the gate status.
+
 ### Python over HTTP
 
 Install the standalone client with `python -m pip install ./sdk/python`. Its application environment
