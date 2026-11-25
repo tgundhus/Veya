@@ -315,24 +315,75 @@ def make_item(tok, q: Dict[str, Any], target: Sequence[float], state_ids: List[i
             "qtype": QTYPES[q["t"]], "k": k}, None
 
 
+def _teacher_targets(row):
+    """Count complete, typed observations in canonical option order."""
+    repeats, questions = row["teacher_answers"], row.get("questions")
+    if "gold" in row or "expected" in row:
+        raise ValueError("teacher_answers cannot be combined with gold or expected on the same row")
+    if not isinstance(questions, dict) or not questions:
+        raise ValueError("teacher_answers requires a nonempty questions object")
+    if not isinstance(repeats, list) or not repeats:
+        raise ValueError("teacher_answers must be a nonempty list of answer objects")
+    internal = {}
+    vocabularies = {}
+    counts = {}
+    for qid, question in questions.items():
+        q = to_internal(qid, question)
+        internal[qid] = q
+        if q["t"] == "choice":
+            labels = q["crit"]
+        elif q["t"] == "score":
+            labels = range(len(q["crit"]))
+        else:
+            labels = (False, True)
+        vocabularies[qid] = {(type(label), label): i for i, label in enumerate(labels)}
+        counts[qid] = [0] * len(labels)
+    for i, answers in enumerate(repeats, 1):
+        if not isinstance(answers, dict) or answers.keys() != questions.keys():
+            raise ValueError("teacher repeat %d must answer exactly the questions in the row" % i)
+        for qid, answer in answers.items():
+            idx = vocabularies[qid].get((type(answer), answer)) if type(answer) in (str, bool, int, float) else None
+            if idx is None:
+                raise ValueError("teacher repeat %d has an invalid typed answer for question %r" % (i, qid))
+            counts[qid][idx] += 1
+    return [(internal[qid], [count / len(repeats) for count in values]) for qid, values in counts.items()]
+
+
 def items_from_rows(tok, rows: Iterable[Dict[str, Any]], max_len: int,
                     head_max_len: int,
                     label_smoothing: float = 0.0) -> Tuple[List[Dict[str, Any]], Dict[str, int]]:
-    """Items from `{state, questions, gold}` or `{state, questions, expected}` rows; returns `(items, skipped)`.
+    """Items from `{state, questions, gold}`, `expected`, or `teacher_answers` rows.
 
     `skipped` counts, by reason, questions that were labelled but could not become an item:
     `empty_text`, `empty_label`, `invalid_question` and `invalid_target` (a `ValueError` from
     `to_internal`, `target_from_gold` or `target_from_expected`), plus the reasons `make_item`
     gives. Questions with neither a `gold` nor an `expected` entry are not counted -- the row
-    simply does not label them.
+    simply does not label them. Malformed teacher rows raise an error so partial teacher
+    responses do not silently change the training distribution. Returns `(items, skipped)`.
     """
     items, skipped = [], {}
-    for row in rows:
+    for row_number, row in enumerate(rows, 1):
         state = row.get("state")
+        teacher = None
+        if "teacher_answers" in row:
+            try:
+                if state is None or (isinstance(state, str) and not state.strip()):
+                    raise ValueError("teacher_answers requires a state")
+                teacher = _teacher_targets(row)
+            except ValueError as exc:
+                raise ValueError("teacher row %d: %s" % (row_number, exc)) from exc
         if state is None or (isinstance(state, str) and not state.strip()):
             skipped["empty_text"] = skipped.get("empty_text", 0) + 1
             continue
         state_ids = encode_state(tok, state, max_len)
+        if teacher is not None:
+            for q, target in teacher:
+                item, reason = make_item(tok, q, target, state_ids, head_max_len, max_len)
+                if reason is None:
+                    items.append(item)
+                else:
+                    skipped[reason] = skipped.get(reason, 0) + 1
+            continue
         for qid, question in row.get("questions", {}).items():
             gold_q = row.get("gold", {}).get(qid) if isinstance(row.get("gold"), dict) else None
             expected_q = row.get("expected", {}).get(qid) if isinstance(row.get("expected"), dict) else None
@@ -435,12 +486,33 @@ def read_data(path: str, text_column: str = "text", label_column: str = "label",
 
 
 def read_jsonl(path: str) -> List[Dict[str, Any]]:
+    def unique_object(pairs):
+        obj = dict(pairs)
+        if len(obj) != len(pairs):
+            raise ValueError("duplicate JSON object key")
+        return obj
+
+    def finite_float(value):
+        number = float(value)
+        if not math.isfinite(number):
+            raise ValueError("non-finite JSON number")
+        return number
+
     rows = []
-    with open(path, encoding="utf-8") as f:
-        for line in f:
+    with open(path, encoding="utf-8-sig") as f:
+        for number, line in enumerate(f, 1):
             line = line.strip()
             if line and not line.startswith("#"):
-                rows.append(json.loads(line))
+                try:
+                    row = json.loads(line)
+                    if not isinstance(row, dict):
+                        raise ValueError("expected a JSON object")
+                    if "teacher_answers" in row:
+                        row = json.loads(line, object_pairs_hook=unique_object,
+                                         parse_constant=finite_float, parse_float=finite_float)
+                except (ValueError, RecursionError) as exc:
+                    raise ValueError("%s:%d: %s" % (path, number, exc)) from exc
+                rows.append(row)
     return rows
 
 
@@ -487,6 +559,28 @@ def split_calibration(items: Sequence[Any], calib_max: int, calib_frac: float,
     train = [it for i, it in enumerate(items) if i not in held]
     calib = [it for i, it in enumerate(items) if i in held]
     return train, calib
+
+
+def _split_training_items(rows, items, config):
+    if not any("teacher_answers" in row for row in rows):
+        return split_calibration(items, config.calib_max, config.calib_frac, config.calib_seed)
+
+    # Sibling questions and repeated model inputs stay together for teacher datasets.
+    groups = {}
+    for i, item in enumerate(items):
+        groups.setdefault(tuple(item["state_ids"]), []).append(i)
+    order = list(groups.values())
+    random.Random(config.calib_seed).shuffle(order)
+    available = min(config.calib_max, int(len(items) * config.calib_frac))
+    held = set()
+    for group in order:
+        if len(group) <= available:
+            held.update(group)
+            available -= len(group)
+        if not available:
+            break
+    return ([item for i, item in enumerate(items) if i not in held],
+            [item for i, item in enumerate(items) if i in held])
 
 
 # ----------------------------------------------------------------------------------- losses
@@ -991,7 +1085,7 @@ def finetune(data: str, model_dir: str, output_dir: str, config: Optional[TrainC
              device: Optional[str] = "auto") -> Dict[str, Any]:
     """Preprocess, train, calibrate and save; returns a summary of the run.
 
-    `data` is a JSONL file of `{state, questions, gold}` or `{state, questions, expected}` rows,
+    `data` is a JSONL file of `{state, questions, gold}`, `expected`, or `teacher_answers` rows,
     or a CSV file with text and label columns.
     `model_dir` is a local checkpoint directory -- the layout `veya.load` reads. The result in
     `output_dir` loads with `veya.load(output_dir)`.
@@ -1015,7 +1109,8 @@ def finetune(data: str, model_dir: str, output_dir: str, config: Optional[TrainC
                                      label_smoothing=config.label_smoothing)
     if not items:
         raise ValueError("%s produced no training items (skipped: %r)" % (data, skipped))
-    train_items, calib_items = split_calibration(items, config.calib_max, config.calib_frac, config.calib_seed)
+    train_items, calib_items = _split_training_items(rows, items, config)
+    teacher_rows = [row for row in rows if "teacher_answers" in row]
 
     eval_skipped = {}
     eval_mode = None
@@ -1038,31 +1133,18 @@ def finetune(data: str, model_dir: str, output_dir: str, config: Optional[TrainC
             warnings.warn("veya.train: %s" % (eval_note,), RuntimeWarning, stacklevel=2)
             print("eval items 0 from %s (skipped %r)" % (config.eval_data, eval_skipped), flush=True)
         else:
-            # Build input signatures from normalized, usable items:
-            # (state token ids, normalized question schema).
-            # Checked separately from targets to detect shared inputs even when labels differ (#967).
-            train_input_sigs = {
-                (tuple(it["state_ids"]), json.dumps(it["q"], sort_keys=True))
-                for it in train_items
-            }
-            calib_input_sigs = {
-                (tuple(it["state_ids"]), json.dumps(it["q"], sort_keys=True))
-                for it in calib_items
-            }
+            # Check inputs independently of targets (#967). Teacher data holds out full
+            # states, so another question on a seen state still counts as overlap.
+            def eval_signature(item):
+                state_ids = tuple(item["state_ids"])
+                return state_ids if teacher_rows else (state_ids, json.dumps(item["q"], sort_keys=True))
 
-            train_overlap_count = sum(
-                1 for it in eval_items
-                if (tuple(it["state_ids"]), json.dumps(it["q"], sort_keys=True)) in train_input_sigs
-            )
-            calib_overlap_count = sum(
-                1 for it in eval_items
-                if (tuple(it["state_ids"]), json.dumps(it["q"], sort_keys=True)) in calib_input_sigs
-            )
-            total_overlap_count = sum(
-                1 for it in eval_items
-                if (tuple(it["state_ids"]), json.dumps(it["q"], sort_keys=True)) in train_input_sigs
-                or (tuple(it["state_ids"]), json.dumps(it["q"], sort_keys=True)) in calib_input_sigs
-            )
+            train_input_sigs = {eval_signature(it) for it in train_items}
+            calib_input_sigs = {eval_signature(it) for it in calib_items}
+            eval_sigs = [eval_signature(item) for item in eval_items]
+            train_overlap_count = sum(sig in train_input_sigs for sig in eval_sigs)
+            calib_overlap_count = sum(sig in calib_input_sigs for sig in eval_sigs)
+            total_overlap_count = sum(sig in train_input_sigs or sig in calib_input_sigs for sig in eval_sigs)
 
             if total_overlap_count > 0:
                 eval_mode = "overlapping_eval"
@@ -1216,6 +1298,12 @@ def finetune(data: str, model_dir: str, output_dir: str, config: Optional[TrainC
         "abstention_thresholds": abstention_thresholds,
         "training": asdict(config),
     }
+    if teacher_rows:
+        train_report["teacher_supervision"] = {
+            "source_rows": len(teacher_rows),
+            "answer_sets": sum(len(row["teacher_answers"]) for row in teacher_rows),
+            "calibration_split": "grouped_by_state_tokens",
+        }
 
     out_cfg = dict(cfg, max_len=max_len, head_max_len=head_max_len, fine_tuned=True,
                    temperature=fitted["temperature"])
@@ -1301,7 +1389,7 @@ def dry_run(data: str, model_dir: str, config: Optional[TrainConfig] = None) -> 
                                      label_smoothing=config.label_smoothing)
     # The training budget is set by the post-calibration item count, so split the same way
     # finetune does rather than report on the raw valid-item count.
-    train_items, calib_items = split_calibration(items, config.calib_max, config.calib_frac, config.calib_seed)
+    train_items, calib_items = _split_training_items(rows, items, config)
     summary = {
         "data": data,
         "rows_read": len(rows),

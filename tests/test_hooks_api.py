@@ -1980,6 +1980,15 @@ check_param("DecisionModel", DecisionModel.__init__, "score_adapter_width", 0)
 
 check_true("migration/legacy integration class", _legacy.LayaRouter is veya.VeyaRouter)
 
+from veya.train import items_from_rows as _training_items  # noqa: E402
+try:
+    _training_items(None, [{"state": "state", "questions": {"q": {"type": "noul", "instructions": "Ready?"}},
+                            "teacher_answers": [{"q": "yes"}]}], 64, 32)
+except ValueError as exc:
+    check_true("training teacher labels must match their typed question", "invalid typed answer" in str(exc))
+else:
+    check_true("training teacher labels must match their typed question", False)
+
 print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
 for f in FAIL:
     print("  FAIL", f)

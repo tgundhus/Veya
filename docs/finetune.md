@@ -49,8 +49,8 @@ are skipped and counted.
 
 ### From JSONL
 
-Each line is one case, and a case may ask several questions of any type. Two label shapes are
-read, and a file may mix them:
+Each line is one case, and a case may ask several questions of any type. A file may mix
+rows with `expected`, `gold` or `teacher_answers` labels:
 
 ```json
 {"state": "We were billed twice for March.",
@@ -67,6 +67,51 @@ read, and a file may mix them:
 - `gold` holds a teacher's probabilities per question, the notebook's schema:
   `{"department": {"probabilities": {"billing": 0.9, "technical": 0.1}}}`. Noul probabilities are
   keyed `"false"`/`"true"` and score probabilities by the level index as a string.
+- `teacher_answers` holds the saved answers themselves. Veya turns the frequency of each
+  answer into a soft target for training.
+
+### Learn from saved teacher answers
+
+Use the same decision instructions, ordered options and state for every repeat. Collect
+each repeat independently, without showing the teacher the student's choice or earlier
+teacher answers. A teacher can be a reviewer, a rules engine, a locally served model,
+or a frontier model called by a separate collection tool. Veya reads the saved JSONL file
+and trains locally.
+
+```json
+{"case_id":"ticket-001","state":"I was charged twice.","questions":{"route":{"type":"choice","instructions":"Which team should handle this?","criteria":["billing","support"]},"urgent":{"type":"noul","instructions":"Does this need an answer today?"}},"teacher_answers":[{"route":"billing","urgent":false},{"route":"support","urgent":false},{"route":"billing","urgent":true}]}
+```
+
+Every entry in `teacher_answers` contains exactly one answer for each question ID. A choice
+must match the label and its JSON type, a `noul` answer must be a JSON boolean, and a `score`
+answer must be a zero-based integer level. Keep `gold` and `expected` on separate rows from
+`teacher_answers`. In the example, billing gets two-thirds of the route target, while
+support gets one-third. A single observation gives a one-hot target. Repeating a case
+refines that case's distribution and keeps its weight in the training set fixed.
+
+Keep case IDs and a local record of the teacher's model, immutable revision when available,
+prompt version, settings and repeat IDs. You can store this with the raw inputs in a `teacher`
+metadata object. Reserve a set of human-labelled cases before collecting training labels.
+Keep near duplicates, items from the same conversation or other related case families on the
+same side of that split. With teacher rows, training keeps questions with identical tokenized
+states together when reserving calibration examples. Compare the dry run's valid and train
+item counts to see how many it reserved. Entire groups must fit the holdout budget.
+
+```bash
+veya-train --data teacher.jsonl --base ./base-checkpoint --eval held-out-human.jsonl --dry-run
+veya-train --data teacher.jsonl --base ./base-checkpoint --eval held-out-human.jsonl --out ./candidate
+```
+
+Inspect the before and after metrics on the held-out cases. For choice questions, you can
+also compare the candidate's agreement with independent teacher repeats on a separate sample.
+Reserve human labels for checking correctness and calibration because agreement can include
+shared mistakes. See [the saved-run agreement protocol](evals.md#comparing-a-student-with-repeated-teacher-decisions).
+
+To spend fewer teacher calls on routine decisions, run the base checkpoint locally in batches
+on the candidate pool. Prioritize abstentions or low-confidence cases for labelling and keep a
+random audit sample of accepted decisions to reveal mistakes in the confident answers. Measure
+the number of teacher calls and compare accuracy, coverage and latency on the same held-out
+traffic before adopting a new checkpoint.
 
 ### Check the data before a long run
 
