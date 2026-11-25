@@ -107,11 +107,18 @@ def answer_number(answer: Dict[str, Any], field: str, where: str = "Veya",
     refused because every comparison against NaN silently answers False, i.e. "safe".
     """
     value = answer.get(field, default)
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
-        raise RuntimeError(
-            "%s from %s: %r must be a finite number, got %r"
-            % (MALFORMED_PREFIX, where, field, value))
-    return float(value)
+    if not isinstance(value, bool) and isinstance(value, (int, float)):
+        try:
+            number = float(value)
+        except OverflowError:
+            raise RuntimeError(
+                "%s from %s: %r must be a finite number, got an out-of-range integer"
+                % (MALFORMED_PREFIX, where, field)) from None
+        if math.isfinite(number):
+            return number
+    raise RuntimeError(
+        "%s from %s: %r must be a finite number, got %r"
+        % (MALFORMED_PREFIX, where, field, value))
 
 
 def probability_map(answer: Dict[str, Any], keys: Iterable[str], where: str = "Veya") -> Dict[str, float]:
